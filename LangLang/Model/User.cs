@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Consts;
+using System;
 using System.Collections.Generic;
 
 public abstract class User
@@ -8,19 +9,25 @@ public abstract class User
 	private string name;
 	private string surname;
 	private DateTime birthDate;
-	private string gender;
+	private Gender gender;
 	private string phoneNumber;
 
+	public string Email { get; set; }
+	public string Password { get; set; }	
+	public string Name { get; set; }
+    public string Surname { get; set; }
+    public DateTime BirthDate { get; set; }
+	public Gender Gender { get; set; }
+	public string PhoneNumber { get; set; }
 
-
-	public User(string email, string password, string name, string surname, DateTime birthDate, string gender, string phoneNumber)
+    public User(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
 	{
-		this.email = email;
-		this.password = password;
-		this.name = name;
-		this.surname = surname; 
-		this.birthDate = birthDate;
-		this.gender = gender;
-		this.phoneNumber = phoneNumber;
+		Email = email;
+		Password = password;
+		Name = name;
+		Surname = surname; 
+		BirthDate = birthDate;
+		Gender = gender;
+		PhoneNumber = phoneNumber;
     }
 }
