@@ -4,14 +4,6 @@ using System.Collections.Generic;
 
 public abstract class User
 {
-	private string email;
-	private string password;
-	private string name;
-	private string surname;
-	private DateTime birthDate;
-	private Gender gender;
-	private string phoneNumber;
-
 	public string Email { get; set; }
 	public string Password { get; set; }	
 	public string Name { get; set; }
