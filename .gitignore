@@ -14,6 +14,8 @@
 *.userosscache
 *.sln.docstates
 
+LangLang/Data
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -1060,3 +1062,4 @@ coverage*[.json, .xml, .info]
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,csharp,visualstudio,visualstudiocode,vs,vim,rider,intellij+all,intellij+iml,intellij
+
