@@ -7,7 +7,7 @@ public class StudentDAO
     private static StudentDAO instance;
     Dictionary<string, Student> students;
 
-
+    //Singleton
 	private StudentDAO()
 	{
 	}
@@ -34,5 +34,17 @@ public class StudentDAO
 	{
 		return students[email];
 	}
+
+    public void AddStudent(Student student)
+    {
+        students[student.Email] = student;
+        JsonUtil.WriteToFile(students, Constants.StudentFilePath);
+    }
+
+    public void DeleteStudent(string email)
+    {
+        students.Remove(email);
+    }
+
 
 }
