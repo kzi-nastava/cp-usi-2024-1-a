@@ -1,0 +1,49 @@
+﻿<Window x:Class="LangLang.View.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:LangLang.ViewModel"
+        mc:Ignorable="d"
+        Height="400" Width="330"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+        <Window.DataContext>
+            <viewModels:LoginViewModel/>
+        </Window.DataContext>
+        <!-- Set window startup location to center of the screen -->
+
+    <Border Background="White" CornerRadius="6" Margin="0,0,0,-6">
+        <StackPanel Orientation="Vertical" Margin="20">
+            <TextBlock Text="Login" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Padding="10" />
+
+            <Grid VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Email" Grid.Row="0" Margin="0,15" HorizontalAlignment="Left"/>
+                <TextBox x:Name="txtEmail" Grid.Row="1" Padding="0,5" Width="255" BorderThickness="0,0,0,1" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged"/>
+                <TextBlock Text="Password" Grid.Row="2" Margin="0,15" HorizontalAlignment="Left"/>
+                <PasswordBox x:Name="txtPassword" Grid.Row="3" Padding="0,5" Width="255" BorderThickness="0,0,0,1" HorizontalAlignment="Left"/>
+            </Grid>
+
+            <TextBlock Text="error message" HorizontalAlignment="Right"/>
+
+            <Button x:Name="LoginBtn" Content="Login" FontSize="16" Foreground="White" Background="Black" Margin="0,25" Height="35" Width="250" BorderThickness="0" Click="LoginBtn_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <TextBlock Text="Sign Up" Margin="0,-5" FontSize="16" HorizontalAlignment="Center" Height="22" Width="60"/>
+        </StackPanel>
+    </Border>
+</Window>
