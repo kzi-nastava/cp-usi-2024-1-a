@@ -76,8 +76,8 @@ public class LoginService
     public void RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, string qualification)
     {
         StudentDAO sd = StudentDAO.GetInstance();
-        bool passed = checkUserData(email, password, name, surname, phoneNumber);
-        passed = !(checkExistingEmail(email)); 
+        bool passed = CheckUserData(email, password, name, surname, phoneNumber);
+        passed = !(CheckExistingEmail(email)); 
 
         if (passed)
         {
@@ -85,7 +85,7 @@ public class LoginService
         }
     }
 
-    public bool checkExistingEmail(string email)
+    public bool CheckExistingEmail(string email)
     {
         StudentDAO sd = StudentDAO.GetInstance();
         //other daos
@@ -97,7 +97,7 @@ public class LoginService
         return false;
     }
 
-    public bool checkUserData(string email, string password, string name, string surname, string phoneNumber)
+    public bool CheckUserData(string email, string password, string name, string surname, string phoneNumber)
     {
         bool passed = true;
         try
