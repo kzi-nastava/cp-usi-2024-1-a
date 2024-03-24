@@ -41,6 +41,27 @@ public class Course
     public double ListeningAvgScore { get; set; }
     public double SpeakingAvgScore { get; set; }
 
+    public Course()
+    {
+        Name = "";
+        Language = new Language("English", "en");
+        Level = LanguageLvl.A1;
+        Duration = 0;
+        Schedule = new List<WorkDay> { WorkDay.MON };
+        Start = DateOnly.MaxValue;
+        Online = false;
+        MaxStudents = 0;
+        NumStudents = 0;
+        State = CourseState.ACTIVE;
+        //set default values for attributes for reports
+        NumPenaltyPts = 0;
+        NumStudentsPassed = 0;
+        ReadingAvgScore = 0;
+        WritingAvgScore = 0;
+        ListeningAvgScore = 0;
+        SpeakingAvgScore = 0;
+    }
+
     public Course(string name, Language language, LanguageLvl level, int duration, List<WorkDay> schedule, DateOnly start, bool online, int maxStudents, int numStudents, CourseState state)
     {
         Name = name;
@@ -100,64 +121,7 @@ public class Course
         return NumStudents == MaxStudents;
     }
 
-    public bool CanBeUpdated()
-    {
-        if ((start.DayNumber - DateOnly.FromDateTime(DateTime.Now).DayNumber) > 7)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public bool UpdateCourse(string name, Language language, LanguageLvl level, int duration, List<WorkDay> schedule, DateOnly start, bool online, int maxStudents, int numStudents, CourseState state)
-    {
-        if(!CanBeUpdated())
-        {
-            return false;
-        }
-        if(name != null)
-        {
-            Name = name;
-        }
-        if(language != null)
-        {
-            Language = language;
-        }
-        if(level != 0)
-        {
-            Level = level;
-        }
-        if(duration != 0)
-        {
-            Duration = duration;
-        }
-        if(schedule != null)
-        {
-            Schedule = schedule;
-        }
-        if(string.IsNullOrEmpty(start.ToString()) == false)
-        {
-            Start = start;
-        }
-        if(online != false)
-        {
-            Online = online;
-        }
-        if(maxStudents != 0)
-        {
-            MaxStudents = maxStudents;
-        }
-        if(numStudents != 0)
-        {
-            NumStudents = numStudents;
-        }
-        if(state != 0)
-        {
-            State = state;
-        }
-        return true;
-    }
-
+   
 
 
 }
