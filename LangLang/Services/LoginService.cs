@@ -8,43 +8,52 @@ using System.Windows.Controls;
 
 public class LoginService
 {
-    public User LoggedUser { get; set; }
-    public Role Role { get; set; }
+    //Singleton
+    private static LoginService instance;
+    private LoginService()
+    {
+    }
 
-
+    public static LoginService GetInstance()
+    {
+        if (instance == null)
+        {
+            instance = new LoginService();
+        }
+        return instance;
+    }
 
 
     public void LogIn(string email, string password)
     {
         //in order to differentiate between non-existing email and just incorrect password
+        bool validUser = false;
         bool validEmail = false;
 
-        LogInStudent(email, password, validEmail);
+        LogInStudent(email, password, validEmail, validUser);
         //LogInTutor(email, password, validEmail);
         //LogInDirector(email, password, validEmail);
 
 
         //LoginFailed
-        if (LoggedUser == null)
+        if (!validUser)
         {
-            if(validEmail == true)
-            {
-                MessageBox.Show($"Wrong password", "", MessageBoxButton.OK);
-            }
-            else
+            if(!validEmail) 
             {
                 MessageBox.Show($"User doesn't exist", "", MessageBoxButton.OK);
             }
+            else
+            {
+                MessageBox.Show($"Wrong password", "", MessageBoxButton.OK);
+            }
         }
-
 
     }
 
 
-    private void LogInStudent(string email, string password, bool validEmail)
+    private void LogInStudent(string email, string password, bool validEmail, bool validUser)
     {
         StudentDAO sd = StudentDAO.GetInstance();
-
         Student student = sd.FindStudent(email);
 
         if (student != null)
@@ -55,50 +64,40 @@ public class LoginService
             }
             else
             {
-                LoggedUser = student;
-                Role = Role.Student;
+                validUser = true;
+
+                StudentService ss = StudentService.GetInstance();
+                ss.LoggedUser = student;
             }
 
         }
     }
-
-    /*
-    private void LogInTutor(string email, string password, bool wrongPassword)
-    {
-        TutorDAO td = TutorDAO.GetInstance();
-
-        Tutor tutor = td.FindTutor(email);
-
-        if (tutor != null)
-        {
-            if(tutor.Password != password)
-            {
-                wrongPassword = true;
-            }
-            else
-            {
-                LoggedUser = tutor;
-                Role = Role.Tutor;
-            }
-
-        }
-    }
-    */
-
 
     public void RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, string qualification)
     {
         StudentDAO sd = StudentDAO.GetInstance();
         bool passed = checkUserData(email, password, name, surname, phoneNumber);
+        passed = !(checkExistingEmail(email)); 
 
         if (passed)
         {
             sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", null, null));
         }
-
     }
 
-    private bool checkUserData(string email, string password, string name, string surname, string phoneNumber)
+    public bool checkExistingEmail(string email)
+    {
+        StudentDAO sd = StudentDAO.GetInstance();
+        //other daos
+
+        if (sd.FindStudent(email) != null)  //or other searches
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool checkUserData(string email, string password, string name, string surname, string phoneNumber)
     {
         bool passed = true;
         try
@@ -117,17 +116,6 @@ public class LoginService
         passed = password.Length > 8;               //password must include numbers, an upper character and should be longer than 8
         passed = !(password.Any(char.IsDigit));
         passed = !(password.Any(char.IsUpper));
-
-
-        StudentDAO sd = StudentDAO.GetInstance();
-        //other daos
-
-        if (sd.FindStudent(email) != null)  //or other searches
-        {
-            passed = false;
-        }
-        
-
         return passed;
     }
 
