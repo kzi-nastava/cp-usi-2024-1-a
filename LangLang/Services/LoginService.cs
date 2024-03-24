@@ -10,6 +10,9 @@ public class LoginService
 {
     //Singleton
     private static LoginService instance;
+    public bool validUser = false;
+    public bool validEmail = false;
+
     private LoginService()
     {
     }
@@ -27,31 +30,16 @@ public class LoginService
     public void LogIn(string email, string password)
     {
         //in order to differentiate between non-existing email and just incorrect password
-        bool validUser = false;
-        bool validEmail = false;
+        validUser = false;
+        validEmail = false;
 
-        LogInStudent(email, password, validEmail, validUser);
-        //LogInTutor(email, password, validEmail);
-        //LogInDirector(email, password, validEmail);
-
-
-        //LoginFailed
-        if (!validUser)
-        {
-            if(!validEmail) 
-            {
-                MessageBox.Show($"User doesn't exist", "", MessageBoxButton.OK);
-            }
-            else
-            {
-                MessageBox.Show($"Wrong password", "", MessageBoxButton.OK);
-            }
-        }
-
+        LogInStudent(email, password);
+        //LogInTutor(email, password);
+        //LogInDirector(email, password);
     }
 
 
-    private void LogInStudent(string email, string password, bool validEmail, bool validUser)
+    private void LogInStudent(string email, string password)
     {
         StudentDAO sd = StudentDAO.GetInstance();
         Student student = sd.FindStudent(email);
