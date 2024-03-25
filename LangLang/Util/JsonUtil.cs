@@ -21,51 +21,19 @@ public static class JsonUtil
         }
     }
 
-    public static Dictionary<string, Student> loadAllStudents(string path)
+    public static Dictionary<string, T> ReadFromFile<T>(string path)
     {
         string jsonString = File.ReadAllText(path);
-        Dictionary<string, Student>? students = null;
+        Dictionary<string, T>? items = null;
         try
         {
-            students = JsonSerializer.Deserialize<Dictionary<string, Student>>(jsonString);
+            items = JsonSerializer.Deserialize<Dictionary<string, T>>(jsonString);
         }
         catch (JsonException ex)
         {
-            Console.WriteLine($"Error deserializing student JSON: {ex.Message}");
+            Console.WriteLine($"Error deserializing JSON: {ex.Message}");
         }
-        return students ?? new Dictionary<string, Student>();
+        return items ?? new Dictionary<string, T>();
     }
-    /*
-    public static Dictionary<string, Tutor> loadAllTutors(string path)
-    {
-        string jsonString = File.ReadAllText(path);
-        Dictionary<string, Tutor>? students = null;
-        try
-        {
-            tutors = JsonSerializer.Deserialize<Dictionary<string, Tutor>>(jsonString);
-        }
-        catch (JsonException ex)
-        {
-            Console.WriteLine($"Error deserializing tutor JSON: {ex.Message}");
-        }
-        return tutors ?? new Dictionary<string, Tutor>();
-    }
-
-    public static Dictionary<string, Director> loadAllDirectors(string path)
-    {
-        string jsonString = File.ReadAllText(path);
-        Dictionary<string, Director>? students = null;
-        try
-        {
-            directors = JsonSerializer.Deserialize<Dictionary<string, Director>>(jsonString);
-        }
-        catch (JsonException ex)
-        {
-            Console.WriteLine($"Error deserializing director JSON: {ex.Message}");
-        }
-        return directors ?? new Dictionary<string, Director>();
-    }
-    */
-
 
 }
