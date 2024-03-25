@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Security;
 using System.Windows;
 using System.Windows.Input;
 
@@ -7,7 +9,9 @@ namespace LangLang.ViewModel
     public class LoginViewModel : INotifyPropertyChanged
     {
         private string _email;
-        private string _password;
+        private SecureString _password;
+        private string _errorMessage;
+
         private readonly LoginService _loginService;
 
         public LoginViewModel()
@@ -26,7 +30,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string Password
+        public SecureString Password
         {
             get => _password;
             set
@@ -36,29 +40,44 @@ namespace LangLang.ViewModel
             }
         }
 
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                _errorMessage = value;
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
+        }
+
         public ICommand LoginCommand { get; }
 
         private void Login(object parameter)
         {
-            MessageBox.Show($"Email inputted: {Email}\nPassword: {Password}");
+            ErrorMessage = "";
 
-            _loginService.LogIn(Email, Password);
+            // Directly access the Email and Password properties
+            string email = Email;
+            string password = ConvertToUnsecureString(Password);
 
+            _loginService.LogIn(email, password);
+
+            //LoginFailed
             if (!_loginService.validUser)
             {
                 if (!_loginService.validEmail)
                 {
-                    MessageBox.Show("User doesn't exist", "", MessageBoxButton.OK);
+                    ErrorMessage = "User doesn't exist";
                 }
                 else
                 {
-                    MessageBox.Show("Wrong password", "", MessageBoxButton.OK);
+                    ErrorMessage = "Incorrect password";
                 }
             }
             else
             {
                 StudentService ss = StudentService.GetInstance();
-                MessageBox.Show($"Successful login Email: {Email}\nPassword: {Password}\nName: {ss.LoggedUser.Name}");
+                MessageBox.Show($"Successfully logged in! Welcome : {ss.LoggedUser.Name} {ss.LoggedUser.Surname}");
             }
         }
 
@@ -68,5 +87,41 @@ namespace LangLang.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        // Helper method to convert SecureString to plain text
+        private string ConvertToUnsecureString(SecureString securePassword)
+        {
+            if (securePassword == null)
+                return string.Empty;
+
+            IntPtr unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = System.Runtime.InteropServices.Marshal.SecureStringToGlobalAllocUnicode(securePassword);
+                return System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedString);
+            }
+            finally
+            {
+                System.Runtime.InteropServices.Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
+
+
+
+        private void ShowTemporaryMessage(string message, int durationMilliseconds)
+        {
+            ErrorMessage = message;
+
+            // Start a timer to hide the message after the specified duration
+            var timer = new System.Timers.Timer(durationMilliseconds);
+            timer.Elapsed += (sender, e) =>
+            {
+                ErrorMessage = ""; // Clear the message
+                timer.Stop(); // Stop the timer
+                timer.Dispose(); // Dispose the timer
+            };
+            timer.Start();
+        }
+
     }
 }

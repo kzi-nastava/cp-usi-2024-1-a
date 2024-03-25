@@ -8,10 +8,11 @@
         Height="400" Width="330"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
-        <Window.DataContext>
-            <viewModels:LoginViewModel/>
-        </Window.DataContext>
-        <!-- Set window startup location to center of the screen -->
+
+    <!-- Set window startup location to center of the screen -->
+    <Window.DataContext>
+        <viewModels:LoginViewModel/>
+    </Window.DataContext>
 
     <Border Background="White" CornerRadius="6" Margin="0,0,0,-6">
         <StackPanel Orientation="Vertical" Margin="20">
@@ -26,14 +27,14 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="Email" Grid.Row="0" Margin="0,15" HorizontalAlignment="Left"/>
-                <TextBox x:Name="txtEmail" Grid.Row="1" Padding="0,5" Width="255" BorderThickness="0,0,0,1" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged"/>
+                <TextBox x:Name="txtEmail" Grid.Row="1" Padding="0,5" Width="255" BorderThickness="0,0,0,1" HorizontalAlignment="Left" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
                 <TextBlock Text="Password" Grid.Row="2" Margin="0,15" HorizontalAlignment="Left"/>
-                <PasswordBox x:Name="txtPassword" Grid.Row="3" Padding="0,5" Width="255" BorderThickness="0,0,0,1" HorizontalAlignment="Left"/>
+                <PasswordBox x:Name="txtPassword" Grid.Row="3" Padding="0,5" Width="255" BorderThickness="0,0,0,1" HorizontalAlignment="Left" PasswordChanged="PasswordBox_PasswordChanged"/>
             </Grid>
 
-            <TextBlock Text="error message" HorizontalAlignment="Right"/>
+            <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Right" Foreground="Red" Margin="0,2" FontWeight="Bold"/>
 
-            <Button x:Name="LoginBtn" Content="Login" FontSize="16" Foreground="White" Background="Black" Margin="0,25" Height="35" Width="250" BorderThickness="0" Click="LoginBtn_Click">
+            <Button x:Name="LoginBtn" Content="Login" FontSize="16" Foreground="White" Background="Black" Margin="0,25" Height="35" Width="250" BorderThickness="0" Command="{Binding LoginCommand}">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border CornerRadius="10" Background="{TemplateBinding Background}">
