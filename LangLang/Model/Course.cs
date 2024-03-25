@@ -5,25 +5,6 @@ using System.Collections.Generic;
 
 public class Course
 {
-    private string name;
-    private Language language;
-    private LanguageLvl level;
-    // representing the number of weeks
-    private int duration;
-    private List<WorkDay> schedule;
-    private DateOnly start;
-    private bool online;
-    private int maxStudents;
-    private int numStudents;
-    private CourseState state;
-    // attributes for reports
-    private int numPenaltyPts;
-    private int numStudentsPassed;
-    private double readingAvgScore;
-    private double writingAvgScore;
-    private double listeningAvgScore;
-    private double speakingAvgScore;
-
     public string Name { get; set; }
     public Language Language { get; set; }
     public LanguageLvl Level { get; set; }
