@@ -41,8 +41,8 @@ namespace LangLang.DAO
                 string id = GetNextCourseId();
                 course.Id = id;
                 courses[id] = course;
-                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
-            }
+            JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
+        }
         }
         public Course GetCourseById(string id)
         {
@@ -58,21 +58,7 @@ namespace LangLang.DAO
             return id.ToString();
         }
 
-        public void DeleteCourse(string id)
         {
-            if(courses != null)
-            {
-                courses.Remove(id);
-                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
-            }
-        }
-        public void UpdateCourse(Course course)
-        {
-            if(courses != null)
-            {
-                courses[course.Id] = course;
-                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
-            }
         }
 
 
