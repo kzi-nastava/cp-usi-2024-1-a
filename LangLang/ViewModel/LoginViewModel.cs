@@ -14,11 +14,22 @@ namespace LangLang.ViewModel
 
         private readonly LoginService _loginService;
 
+ 
+        private readonly Window _window;
+
         public LoginViewModel()
         {
             _loginService = LoginService.GetInstance();
             LoginCommand = new RelayModel(Login);
         }
+
+        public LoginViewModel(Window window)
+        {
+            _window = window;
+            _loginService = LoginService.GetInstance();
+            LoginCommand = new RelayModel(Login);
+        }
+
 
         public string Email
         {
@@ -78,6 +89,7 @@ namespace LangLang.ViewModel
             {
                 StudentService ss = StudentService.GetInstance();
                 MessageBox.Show($"Successfully logged in! Welcome : {ss.LoggedUser.Name} {ss.LoggedUser.Surname}");
+                _window.Close();
             }
         }
 
@@ -104,23 +116,6 @@ namespace LangLang.ViewModel
             {
                 System.Runtime.InteropServices.Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
-        }
-
-
-
-        private void ShowTemporaryMessage(string message, int durationMilliseconds)
-        {
-            ErrorMessage = message;
-
-            // Start a timer to hide the message after the specified duration
-            var timer = new System.Timers.Timer(durationMilliseconds);
-            timer.Elapsed += (sender, e) =>
-            {
-                ErrorMessage = ""; // Clear the message
-                timer.Stop(); // Stop the timer
-                timer.Dispose(); // Dispose the timer
-            };
-            timer.Start();
         }
 
     }

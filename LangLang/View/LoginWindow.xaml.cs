@@ -10,16 +10,16 @@ namespace LangLang.View
         {
             InitializeComponent();
             // Set the DataContext to an instance of LoginViewModel
-            DataContext = new LoginViewModel();
+            DataContext = new LoginViewModel(this);
         }
 
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             var passwordBox = sender as PasswordBox;
-            if (passwordBox != null)
+            if (passwordBox != null && DataContext is LoginViewModel viewModel)
             {
-                ((LoginViewModel)DataContext).Password = passwordBox.SecurePassword;
+                viewModel.Password = passwordBox.SecurePassword;
             }
         }
 
