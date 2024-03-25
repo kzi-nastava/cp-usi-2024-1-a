@@ -58,7 +58,9 @@ namespace LangLang.DAO
             return id.ToString();
         }
 
+        public void DeleteStudent(string name)
         {
+            courses.Remove(name);
         }
 
 
