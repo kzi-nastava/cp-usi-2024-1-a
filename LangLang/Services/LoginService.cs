@@ -43,7 +43,7 @@ public class LoginService
     private void LogInStudent(string email, string password)
     {
         StudentDAO sd = StudentDAO.GetInstance();
-        Student student = sd.FindStudent(email);
+        Student student = sd.GetStudent(email);
 
         if (student != null)
         {
@@ -79,7 +79,7 @@ public class LoginService
         StudentDAO sd = StudentDAO.GetInstance();
         //other daos
 
-        if (sd.FindStudent(email) != null)  //or other searches
+        if (sd.GetStudent(email) != null)  //or other searches
         {
             return true;
         }
