@@ -1,6 +1,7 @@
 ﻿using System;
 using Consts;
 using System.Collections.Generic;
+using LangLang.Model;
 
 public class StudentDAO
 {
@@ -17,6 +18,7 @@ public class StudentDAO
         if (instance == null)
         {
             instance = new StudentDAO();
+            instance.GetAllStudents();
         }
         return instance;
     }
@@ -25,15 +27,22 @@ public class StudentDAO
 	{
         if (students == null)
         {
-            students = JsonUtil.loadAllStudents(Constants.StudentFilePath);
+            students = JsonUtil.ReadFromFile<Student>(Constants.StudentFilePath);
         }
 		return students;
     }
 
 	public Student FindStudent(string email)
 	{
-		return students[email];
-	}
+        if (students.TryGetValue(email, out Student student))
+        {
+            return student;
+        }
+        else
+        {
+            return null;
+        }
+    }
 
     public void AddStudent(Student student)
     {
