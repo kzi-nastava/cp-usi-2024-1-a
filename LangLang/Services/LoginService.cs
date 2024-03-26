@@ -5,6 +5,7 @@ using System.Windows;
 using System.Net.Mail;
 using System.Linq;
 using System.Windows.Controls;
+using LangLang.Model;
 
 public class LoginService
 {
