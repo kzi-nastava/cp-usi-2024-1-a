@@ -26,7 +26,7 @@ public class StudentService
         return instance;
     }
 
-    public void UpdateStudentData(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+    public void UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
     {
         if (LoggedUser.AttendingCourse != "")
         {

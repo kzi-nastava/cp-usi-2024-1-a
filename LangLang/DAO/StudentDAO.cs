@@ -32,7 +32,7 @@ public class StudentDAO
 		return students;
     }
 
-	public Student FindStudent(string email)
+	public Student GetStudent(string email)
 	{
         if (students.TryGetValue(email, out Student student))
         {
