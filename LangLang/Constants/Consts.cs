@@ -7,6 +7,8 @@ namespace Consts
         public const int LessonDuration = 90;   //minutes
         public const int ExamDuration = 4;  //hours
         public const int ClassroomNumber = 2;
+        public const string CourseFilePath = "../../../Data/courses.json";
+        public const string LanguageFilePath = "../../../Data/languages.json";
     
     }
 
@@ -27,11 +29,11 @@ namespace Consts
 
     public enum CourseState
     {
-        ACTIVE, CANCELED, FINISHED
+        Active, Canceled, Finished
     }
     public enum WorkDay
     {
-        MON,TUE,WED,THU,FRI
+        Monday,Tuesday,Wednesday,Thursday,Friday
     }
 
 
