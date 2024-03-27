@@ -38,16 +38,16 @@ namespace LangLang.DAO
         {
             if(languages != null)
             {
-                languages[language.Name] = language;
-            }
+            languages[language.Name] = language;
+        }
         }
 
         public void DeleteLanguage(string name)
         {
             if(languages != null)
             {
-                languages.Remove(name);
-            }
+            languages.Remove(name);
+        }
         }
 
         public Language GetLanguageById(string name)
