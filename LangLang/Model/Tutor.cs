@@ -37,7 +37,7 @@ namespace LangLang.Model
         {
             rating--;
             if (rating < 0 || rating > ratingCounts.Length)
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException($"Rating is too " + ((rating < 0) ? "small" : "large"));
             else
                 ratingCounts[rating]++;
         }
