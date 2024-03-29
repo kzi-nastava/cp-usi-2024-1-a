@@ -7,10 +7,10 @@ namespace LangLang.DAO
 {
     public class TutorDAO
     {
-        private static TutorDAO? instance;
         Dictionary<string, Tutor> tutors = new();
 
         //Singleton
+        private static TutorDAO? instance;
         private TutorDAO()
         {
         }
