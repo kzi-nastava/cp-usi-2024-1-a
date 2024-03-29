@@ -1,4 +1,4 @@
-# Predmetni projekat iz pretmeta USI
+# Predmetni projekat iz predmeta USI
 
 Članovi tima:
 * [Marija Parežanin](https://github.com/marijaparezanin), SV1/2022 
