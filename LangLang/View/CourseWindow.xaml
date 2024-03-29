@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LangLang.ViewModel"
         mc:Ignorable="d"
-        Title="Course" Height="650" Width="800">
+        Title="Course" Height="700" Width="800">
     <Border  Padding="10" >
         <Grid>
             <Grid.ColumnDefinitions>
@@ -16,52 +16,78 @@
                 <RowDefinition/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            
-            <DataGrid CanUserAddRows="False" ItemsSource="{Binding Courses}" Margin="20" x:Name="dgCourses" AutoGenerateColumns="True"  CanUserDeleteRows="False" Grid.Row="0" Grid.Column="0" />
+
+            <DataGrid CanUserAddRows="False" 
+                      ItemsSource="{Binding Courses}" 
+                      SelectedItem="{Binding SelectedItem}"
+                      Margin="20" 
+                      x:Name="dgCourses" 
+                      CanUserDeleteRows="False" 
+                      Grid.Row="0" 
+                      Grid.Column="0" 
+                      IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      >
+                <DataGrid.Columns >
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}"/>
+                    <DataGridTextColumn Header="LanguageLvl" Binding="{Binding Level}"/>
+                    <DataGridTextColumn Header="Duration" Binding="{Binding Duration}"/>
+                    <DataGridTextColumn Header="Schedule" Binding="{Binding Schedule}"/>
+                    <DataGridTextColumn Header="Start" Binding="{Binding Start}"/>
+                    <DataGridTextColumn Header="Online" Binding="{Binding Online}"/>
+                    <DataGridTextColumn Header="MaxStudents" Binding="{Binding MaxStudents}"/>
+                    <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
+                    <DataGridTextColumn Header="State" Binding="{Binding State}"/>
+                </DataGrid.Columns>
+            </DataGrid>
 
             <StackPanel Grid.Column="1" Grid.Row="0" >
                 <Label>Name:</Label>
-                <TextBox Margin="5,0,0,0" Name="tbName" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Margin="5,0,0,0" Name="tbName" Text="{Binding Name}" />
                 <Label>Language:</Label>
-                <ComboBox Margin="5,0,0,0" x:Name="cbLanguages"  ItemsSource="{Binding Languages}"/>
+                <ComboBox Margin="5,0,0,0" x:Name="cbLanguages" SelectedItem="{Binding LanguageName}"  ItemsSource="{Binding Languages}"/>
                 <Label>Language level:</Label>
-                <ComboBox Margin="5,0,0,0" x:Name="cbLevel" ItemsSource="{Binding Levels}"/>
+                <ComboBox Margin="5,0,0,0" x:Name="cbLevel" SelectedItem="{Binding Level}" ItemsSource="{Binding Levels}"/>
                 <Label>Duration:</Label>
-                <ComboBox Margin="5,0,0,0" Name="cbDuration" ItemsSource="{Binding Duration, UpdateSourceTrigger=PropertyChanged}">
-                    <ComboBoxItem Content="2"/>
-                    <ComboBoxItem Content="3"/>
-                    <ComboBoxItem Content="4"/>
-                    <ComboBoxItem Content="5"/>
-                    <ComboBoxItem Content="6"/>
-                </ComboBox>
+                <ComboBox Margin="5,0,0,0" Name="cbDuration" SelectedItem="{Binding Duration}" ItemsSource="{Binding Durations, UpdateSourceTrigger=PropertyChanged}"/> 
+
                 <Label>Shedule:</Label>
-                <ListBox SelectionMode="Multiple" Margin="5,0,0,0" Name="cbSchedule">
-                    <ListBoxItem Content="MON"/>
-                    <ListBoxItem Content="TUE"/>
-                    <ListBoxItem Content="WED"/>
-                    <ListBoxItem Content="THU"/>
-                    <ListBoxItem Content="FRI"/>
-                </ListBox>
+                <Grid Height="120">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ListBox SelectionMode="Multiple" Margin="5,0,0,0" Name="cbSchedule" Grid.Column="0" SelectionChanged="cbSchedule_SelectionChanged" SelectedItem="{Binding ScheduleDays}" ItemsSource="{Binding WorkDays, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Column="1">
+                        <ComboBox Margin="5,2,5,0" Name="cbMonday" SelectedItem="{Binding Monday, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding MondayHours}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbTuesday" SelectedItem="{Binding Tuesday}" ItemsSource="{Binding TuesdayHours}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbWednesday" SelectedItem="{Binding Wednesday}" ItemsSource="{Binding WednesdayHours}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbThursday" SelectedItem="{Binding Thursday}" ItemsSource="{Binding ThursdayHours}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbFriday" SelectedItem="{Binding Friday}" ItemsSource="{Binding FridayHours}"/>
+                    </StackPanel>
+                </Grid>
                 <Label>Start:</Label>
-                <DatePicker Margin="5,0,0,0" Name="dpStart" Text="{Binding Start, UpdateSourceTrigger=PropertyChanged}"/>
+                <DatePicker Margin="5,0,0,0" Name="dpStart" SelectedDate="{Binding Start, UpdateSourceTrigger=PropertyChanged}" />
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,0">
                     <Label>Online</Label>
-                    <CheckBox Margin="5,5,0,0"/>
+                    <CheckBox Margin="5,5,0,0" IsChecked="{Binding Online, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
                 <Label>Max Students:</Label>
                 <TextBox Margin="5,0,0,0" Name="tbMaxStudents" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>Number of students:</Label>
                 <TextBox Margin="5,0,0,0" Name="tbStudentsNum" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>State:</Label>
-                <ComboBox Margin="5,0,0,0" Name="cbState" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Margin="5,0,0,0" Name="cbState" SelectedItem="{Binding State}" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
 
 
 
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Margin="5" Content="Save" Width="70" Command="{Binding AddCourseCommand}" />
-                <Button Margin="5" Content="Update" Width="70"/>
-                <Button Margin="5" Content="Delete" Width="70"/>
+                <Button Margin="5" Content="Update" Width="70" Command="{Binding UpdateCourseCommand}"/>
+                <Button Margin="5" Content="Delete" Width="70"  Command="{Binding DeleteCourseCommand}"/>
             </StackPanel>
         </Grid>
     </Border>
