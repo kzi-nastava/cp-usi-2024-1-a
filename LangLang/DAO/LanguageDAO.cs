@@ -46,16 +46,13 @@ namespace LangLang.DAO
         {
             if(languages != null)
             {
-            languages.Remove(name);
-        }
+                languages.Remove(name);
+            }
         }
 
         public Language GetLanguageById(string name)
         {
-            if(languages == null)
-            {
-                languages = new Dictionary<string, Language>();
-            }
+            languages = new Dictionary<string, Language>();
             return languages[name];
         }
 
