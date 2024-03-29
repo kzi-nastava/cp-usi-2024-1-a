@@ -3,11 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:LangLang.ViewModel"
         xmlns:local="clr-namespace:LangLang.View"
         mc:Ignorable="d"
-        Title="" Height="374" Width="658">
+        Title="" Height="400" Width="658"
+        WindowStartupLocation="CenterScreen">
+
     <Grid>
-        <Border Background="White" CornerRadius="6" Height="358" VerticalAlignment="Top">
+        <Border Background="White" CornerRadius="6" Height="384" VerticalAlignment="Center">
             <StackPanel Orientation="Vertical" Margin="20">
                 <TextBlock Text="Register Student" FontSize="25" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Padding="10" />
 
@@ -58,7 +61,7 @@
 
 
                 </Grid>
-                <Button x:Name="SignUpBtn" Content="Sign up" FontSize="16" Foreground="White" Background="Black" Height="35" Width="250" BorderThickness="0" Command="{Binding SignInCommand}">
+                <Button x:Name="SignUpBtn" Content="Sign up" FontSize="16" Foreground="White" Background="Black" Height="35" Width="250" BorderThickness="0" Command="{Binding SignUpCommand}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -69,8 +72,15 @@
                 </Button>
 
                 <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Right" Foreground="Red" Margin="0,2" FontWeight="Bold"/>
-
-                <TextBlock Text="Log in" Margin="0,-5" FontSize="16" TextAlignment="Center" HorizontalAlignment="Center" Height="22" Width="60"/>
+                <Button Content="Log in" Command="{Binding SignInCommand}" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
         </Border>
     </Grid>

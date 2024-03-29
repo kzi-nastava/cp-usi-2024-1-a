@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace LangLang.Services
 {
-    public class RegistrationService
+    public class RegisterService
     {
-        public bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, string qualification)
+        public static bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, string qualification)
         {
             StudentDAO sd = StudentDAO.GetInstance();
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
