@@ -9,6 +9,7 @@ namespace Consts
         public const int ClassroomNumber = 2;
         public const string CourseFilePath = "../../../Data/courses.json";
         public const string LanguageFilePath = "../../../Data/languages.json";
+        public const string LastIdFilePath = "../../../Data/LastId.json";
     
     }
 
