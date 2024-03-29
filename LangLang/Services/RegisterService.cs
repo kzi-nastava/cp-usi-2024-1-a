@@ -66,8 +66,8 @@ namespace LangLang.Services
             passed &= int.TryParse(phoneNumber, out _);  //checking if it's solely numeric
 
             passed &= password.Length > 8;               //password must include numbers, an upper character and should be longer than 8
-            passed &= !(password.Any(char.IsDigit));
-            passed &= !(password.Any(char.IsUpper));
+            passed &= password.Any(char.IsDigit);
+            passed &= password.Any(char.IsUpper);
             return passed;
         }
 
