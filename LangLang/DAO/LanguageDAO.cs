@@ -8,8 +8,8 @@ namespace LangLang.DAO
 {
     internal class LanguageDAO
     {
-        private static LanguageDAO instance;
-        private Dictionary<string, Language> languages;
+        private static LanguageDAO? instance;
+        private Dictionary<string, Language>? languages;
 
         private LanguageDAO()
         {
@@ -36,12 +36,24 @@ namespace LangLang.DAO
 
         public void AddLanguage(Language language)
         {
-            languages[language.Name] = language;
+            if(languages != null)
+            {
+                languages[language.Name] = language;
+            }
         }
 
         public void DeleteLanguage(string name)
         {
-            languages.Remove(name);
+            if(languages != null)
+            {
+                languages.Remove(name);
+            }
+        }
+
+        public Language GetLanguageById(string name)
+        {
+            languages = new Dictionary<string, Language>();
+            return languages[name];
         }
 
 
