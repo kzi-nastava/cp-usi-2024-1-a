@@ -8,12 +8,13 @@ namespace LangLang.DAO
 {
     internal class CourseDAO
     {
-        private static CourseDAO instance;
-        private Dictionary<string, Course> courses;
+        private static CourseDAO? instance;
+        private Dictionary<string, Course>? courses;
+        private Dictionary<string, LastId> lastId;
 
         private CourseDAO()
         {
-
+            lastId = new Dictionary<string, LastId>();
         }
         public static CourseDAO getInstance()
         {
@@ -35,13 +36,43 @@ namespace LangLang.DAO
 
         public void AddCourse(Course course)
         {
-            courses[course.Name] = course;
-            JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
+            if(courses != null)
+            {
+                string id = GetNextCourseId();
+                course.Id = id;
+                courses[id] = course;
+                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
+            }
+        }
+        public Course GetCourseById(string id)
+        {
+            courses = new Dictionary<string, Course>();
+            return courses[id];
+        }
+        public string GetNextCourseId()
+        {
+            lastId = JsonUtil.ReadFromFile<LastId>(Constants.LastIdFilePath);
+            int id = lastId["Ids"].CourseId;
+            lastId["Ids"].CourseId += 1;
+            JsonUtil.WriteToFile<LastId>(lastId, Constants.LastIdFilePath);
+            return id.ToString();
         }
 
-        public void DeleteStudent(string name)
+        public void DeleteCourse(string id)
         {
-            courses.Remove(name);
+            if(courses != null)
+            {
+                courses.Remove(id);
+                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
+            }
+        }
+        public void UpdateCourse(Course course)
+        {
+            if(courses != null)
+            {
+                courses[course.Id] = course;
+                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
+            }
         }
 
 
