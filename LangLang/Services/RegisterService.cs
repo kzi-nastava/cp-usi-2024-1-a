@@ -15,7 +15,7 @@ namespace LangLang.Services
         {
             StudentDAO sd = StudentDAO.GetInstance();
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
-            passed = !(CheckExistingEmail(email));
+            passed &= !(CheckExistingEmail(email));
 
             if (passed)
             {
@@ -46,6 +46,11 @@ namespace LangLang.Services
 
         public static bool CheckUserData(string email, string password, string name, string surname, string phoneNumber)
         {
+            if(email == null || password == null || name == null || surname == null || phoneNumber == null)
+            {
+                return false;
+            }
+
             bool passed = true;
             try
             {
@@ -56,13 +61,13 @@ namespace LangLang.Services
                 passed = false;
             }
 
-            passed = !(int.TryParse(name, out _));      //checking if it's solely letters
-            passed = !(int.TryParse(surname, out _));
-            passed = int.TryParse(phoneNumber, out _);  //checking if it's solely numeric
+            passed &= !(int.TryParse(name, out _));      //checking if it's solely letters
+            passed &= !(int.TryParse(surname, out _));
+            passed &= int.TryParse(phoneNumber, out _);  //checking if it's solely numeric
 
-            passed = password.Length > 8;               //password must include numbers, an upper character and should be longer than 8
-            passed = !(password.Any(char.IsDigit));
-            passed = !(password.Any(char.IsUpper));
+            passed &= password.Length > 8;               //password must include numbers, an upper character and should be longer than 8
+            passed &= !(password.Any(char.IsDigit));
+            passed &= !(password.Any(char.IsUpper));
             return passed;
         }
 
