@@ -21,5 +21,21 @@ namespace LangLang.Services
         {
             courseDAO.AddCourse(course);
         }
+
+        public Course GetCourseById(string id)
+        {
+            return courseDAO.GetCourseById(id);
+        }
+
+        public void DeleteCourse(string id)
+        {
+            courseDAO.DeleteCourse(id);
+        }
+
+        public void UpdateCourse(Course course)
+        {
+            courseDAO.UpdateCourse(course);
+        }
+
     }
 }
