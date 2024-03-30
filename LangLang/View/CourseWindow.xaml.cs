@@ -1,12 +1,10 @@
 ﻿using LangLang.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace LangLang.View
 {
-    /// <summary>
-    /// Interaction logic for CourseWindow.xaml
-    /// </summary>
     public partial class CourseWindow : Window
     {
         public CourseWindow()
