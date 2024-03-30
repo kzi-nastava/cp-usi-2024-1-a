@@ -32,7 +32,6 @@ namespace LangLang.ViewModel
             LoginCommand = new RelayCommand(Login);
         }
 
-
         private ICommand _signUpCommand;
 
         public ICommand SignUpCommand
