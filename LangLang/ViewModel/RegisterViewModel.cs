@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Net.Mail;
 using System.Security;
 using System.Windows;
 using System.Windows.Input;
@@ -18,7 +20,16 @@ namespace LangLang.ViewModel
         private string _surname;
         private string _phoneNumber;
         private Gender _gender;
-        private string _errorMessage;
+        private DateTime _birthday;
+
+
+
+        private string _errorMessageRequired;
+        private string _errorMessageEmail;
+        private string _errorMessagePassword;
+        private string _errorMessageName;
+        private string _errorMessageSurname;
+        private string _errorMessagePhone;
 
 
         private readonly Window _window;
@@ -44,6 +55,68 @@ namespace LangLang.ViewModel
             SignUpCommand = new RelayCommand(SignUp);
         }
         */
+
+        public string ErrorMessageRequired
+        {
+            get => _errorMessageRequired;
+            set
+            {
+                _errorMessageRequired = value;
+                OnPropertyChanged(nameof(ErrorMessageRequired));
+            }
+        }
+
+        public string ErrorMessageEmail
+        {
+            get => _errorMessageEmail;
+            set
+            {
+                _errorMessageEmail = value;
+                OnPropertyChanged(nameof(ErrorMessageEmail));
+            }
+        }
+
+        public string ErrorMessagePassword
+        {
+            get => _errorMessagePassword;
+            set
+            {
+                _errorMessagePassword = value;
+                OnPropertyChanged(nameof(ErrorMessagePassword));
+            }
+        }
+
+        public string ErrorMessageName
+        {
+            get => _errorMessageName;
+            set
+            {
+                _errorMessageName = value;
+                OnPropertyChanged(nameof(ErrorMessageName));
+            }
+        }
+
+        public string ErrorMessageSurname
+        {
+            get => _errorMessageSurname;
+            set
+            {
+                _errorMessageSurname = value;
+                OnPropertyChanged(nameof(ErrorMessageSurname));
+            }
+        }
+
+        public string ErrorMessagePhone
+        {
+            get => _errorMessagePhone;
+            set
+            {
+                _errorMessagePhone = value;
+                OnPropertyChanged(nameof(ErrorMessagePhone));
+            }
+        }
+
+
         public string Email
         {
             get => _email;
@@ -104,21 +177,30 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string ErrorMessage
+
+        public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
+        public DateTime Birthday
         {
-            get => _errorMessage;
+            get => _birthday;
             set
             {
-                _errorMessage = value;
-                OnPropertyChanged(nameof(ErrorMessage));
+                _birthday = value;
+                OnPropertyChanged(nameof(Birthday));
             }
         }
+
+
 
         public ICommand SignUpCommand { get; }
 
         private void SignUp(object parameter)
         {
-            ErrorMessage = "";
+            ErrorMessageRequired = "";
+            ErrorMessageEmail = "";
+            ErrorMessagePassword = "";
+            ErrorMessageName = "";
+            ErrorMessageSurname = "";
+            ErrorMessagePhone = "";
 
             // Directly access the properties
             string email = Email;
@@ -127,21 +209,55 @@ namespace LangLang.ViewModel
             string surname = Surname;
             string phoneNumber = PhoneNumber;
             Gender gender = Gender;
+            DateTime birthday = Birthday;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, DateTime.Now, gender, phoneNumber, "");
-            MessageBox.Show($"Successfully logged in! Welcome : {successful}");
+            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, "");
 
-
-            if (successful)
+            if (!successful)
             {
-                MessageBox.Show($"Succesfull registration");
+                if (birthday == DateTime.MinValue || email == null || password == null || name == null || surname == null || phoneNumber == null || email == "" || name == "" || surname == "" || password == "" || phoneNumber == "")
+                {
+                    ErrorMessageRequired = "All the fields are required";
+                    return;
+                }
 
-                //I WANT TO OPEN LOGIN HERE AND CLOSE THIS WINDOW;
+                try
+                {
+                    _ = new MailAddress(email);
+                }
+                catch
+                {
+                    ErrorMessageEmail = "Incorrect email";
+                }
+
+                if(int.TryParse(name, out _))
+                {
+                    ErrorMessageName = "Name must be all letters";
+                }
+                
+                if(int.TryParse(surname, out _))
+                {
+                    ErrorMessageSurname = "Surname must be all letters";
+                }
+
+                if(!int.TryParse(phoneNumber, out _))
+                {
+                    ErrorMessagePhone = "Must be made up of numbers";
+                }
+                if(password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
+                {
+                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
+                }
+                    
+
+                if (email != null && RegisterService.CheckExistingEmail(email))
+                {
+                    ErrorMessageEmail = "Email already exists";
+                }
             }
             else
             {
-                MessageBox.Show($"Fail"); 
-                
+                MessageBox.Show($"Succesfull registration");
             }
         }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace LangLang.Services
 {
@@ -14,6 +15,7 @@ namespace LangLang.Services
         public static bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, string qualification)
         {
             StudentDAO sd = StudentDAO.GetInstance();
+
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
             passed &= !(CheckExistingEmail(email));
 
@@ -34,6 +36,11 @@ namespace LangLang.Services
 
         public static bool CheckExistingEmail(string email)
         {
+            if(email == null)
+            {
+                return false;
+            }
+
             StudentDAO sd = StudentDAO.GetInstance();
             //other daos
 
