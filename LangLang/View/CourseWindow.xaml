@@ -27,6 +27,7 @@
                       Grid.Column="0" 
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
+                      SelectionChanged="dgCourses_SelectionChanged"
                       >
                 <DataGrid.Columns >
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
@@ -61,21 +62,21 @@
 
                     <ListBox SelectionMode="Multiple" Margin="5,0,0,0" Name="cbSchedule" Grid.Column="0" SelectionChanged="cbSchedule_SelectionChanged" SelectedItem="{Binding ScheduleDays}" ItemsSource="{Binding WorkDays, UpdateSourceTrigger=PropertyChanged}"/>
                     <StackPanel Grid.Column="1">
-                        <ComboBox Margin="5,2,5,0" Name="cbMonday" SelectedItem="{Binding Monday, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding MondayHours}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbTuesday" SelectedItem="{Binding Tuesday}" ItemsSource="{Binding TuesdayHours}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbWednesday" SelectedItem="{Binding Wednesday}" ItemsSource="{Binding WednesdayHours}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbThursday" SelectedItem="{Binding Thursday}" ItemsSource="{Binding ThursdayHours}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbFriday" SelectedItem="{Binding Friday}" ItemsSource="{Binding FridayHours}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbMonday" SelectedItem="{Binding Monday, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding MondayHours}" Validation.ErrorTemplate="{x:Null}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbTuesday" SelectedItem="{Binding Tuesday}" ItemsSource="{Binding TuesdayHours}" Validation.ErrorTemplate="{x:Null}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbWednesday" SelectedItem="{Binding Wednesday}" ItemsSource="{Binding WednesdayHours}" Validation.ErrorTemplate="{x:Null}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbThursday" SelectedItem="{Binding Thursday}" ItemsSource="{Binding ThursdayHours}" Validation.ErrorTemplate="{x:Null}"/>
+                        <ComboBox Margin="5,2,5,0" Name="cbFriday" SelectedItem="{Binding Friday}" ItemsSource="{Binding FridayHours}" Validation.ErrorTemplate="{x:Null}"/>
                     </StackPanel>
                 </Grid>
                 <Label>Start:</Label>
                 <DatePicker Margin="5,0,0,0" Name="dpStart" SelectedDate="{Binding Start, UpdateSourceTrigger=PropertyChanged}" />
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,0">
                     <Label>Online</Label>
-                    <CheckBox Margin="5,5,0,0" IsChecked="{Binding Online, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Margin="5,5,0,0" IsChecked="{Binding Online, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ToggleMaxStudentsCommand}"/>
                 </StackPanel>
                 <Label>Max Students:</Label>
-                <TextBox Margin="5,0,0,0" Name="tbMaxStudents" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Margin="5,0,0,0" Name="tbMaxStudents" IsReadOnly="{Binding IsMaxStudentsDisabled}" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>Number of students:</Label>
                 <TextBox Margin="5,0,0,0" Name="tbStudentsNum" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>State:</Label>
