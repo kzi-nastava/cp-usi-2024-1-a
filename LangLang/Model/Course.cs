@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace LangLang.Model
 {
-    internal class Course
+    public class Course
     {
         public string Id { get; set; }
         public string Name { get; set; }
