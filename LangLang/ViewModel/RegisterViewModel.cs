@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Security;
 using System.Windows;
 using System.Windows.Input;
+using Consts;
 using LangLang.MVVM;
 using LangLang.Services;
 using LangLang.View;
@@ -16,7 +17,7 @@ namespace LangLang.ViewModel
         private string _name;
         private string _surname;
         private string _phoneNumber;
-        private string _gender;
+        private Gender _gender;
         private string _errorMessage;
 
 
@@ -93,7 +94,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string Gender
+        public Gender Gender
         {
             get => _gender;
             set
@@ -125,9 +126,9 @@ namespace LangLang.ViewModel
             string name = Name;
             string surname = Surname;
             string phoneNumber = PhoneNumber;
-            string gender = Gender;
+            Gender gender = Gender;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, DateTime.Now, Consts.Gender.Other, phoneNumber, "");
+            bool successful = RegisterService.RegisterStudent(email, password, name, surname, DateTime.Now, gender, phoneNumber, "");
             MessageBox.Show($"Successfully logged in! Welcome : {successful}");
 
 

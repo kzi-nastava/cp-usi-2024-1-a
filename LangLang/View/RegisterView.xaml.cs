@@ -21,6 +21,10 @@ namespace LangLang.View
         {
             InitializeComponent();
             DataContext = new RegisterViewModel(this);
+
+            datePicker.DisplayDateStart =DateTime.Today.AddYears(-100);
+            datePicker.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
+
         }
 
 
