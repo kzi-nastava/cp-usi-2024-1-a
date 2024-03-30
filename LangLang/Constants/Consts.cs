@@ -9,7 +9,9 @@ namespace Consts
         public const int ClassroomNumber = 2;
         public const string CourseFilePath = "../../../Data/courses.json";
         public const string LanguageFilePath = "../../../Data/languages.json";
+      
         public const string DirectorFilePath = "../../../Data/Directors.json";
+        public const string LastIdFilePath = "../../../Data/lastId.json";
     }
 
     public enum Gender
