@@ -18,7 +18,7 @@ namespace LangLang.ViewModel
         public ICommand AddCourseCommand { get; }
         public ICommand DeleteCourseCommand { get; }
         public ICommand UpdateCourseCommand { get; }
-        //public ICommand LoadLanguagesCommand { get; }
+        public ICommand ToggleMaxStudentsCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
@@ -177,6 +177,20 @@ namespace LangLang.ViewModel
             }
         }
 
+        private bool isMaxStudentsDisabled;
+        public bool IsMaxStudentsDisabled
+        {
+            get { return isMaxStudentsDisabled; }
+            set
+            {
+                if(isMaxStudentsDisabled != value)
+                {
+                    isMaxStudentsDisabled = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private int maxStudents;
         public int MaxStudents
         {
@@ -257,8 +271,6 @@ namespace LangLang.ViewModel
 
                 }
                 OnPropertyChanged();
-                // Notify the command that the state might have changed
-                //DeleteCourseCommand.R
             }
         }
         public CourseViewModel(Window window)
@@ -283,46 +295,36 @@ namespace LangLang.ViewModel
             LoadWorkDays();
             LoadHours();
             AddCourseCommand = new RelayCommand(SaveCourse, CanSaveCourse);
-            // TODO: set can execute to work only when item is selected!
             DeleteCourseCommand = new RelayCommand(DeleteCourse, CanDeleteCourse);
             UpdateCourseCommand = new RelayCommand(UpdateCourse, CanUpdateCourse);
+            ToggleMaxStudentsCommand = new RelayCommand(ToggleMaxStudents);
         }
 
-        private bool CanUpdateCourse(object? arg)
+        private void ToggleMaxStudents(object? obj)
         {
-            return SelectedItem != null;
-        }
-        private Course? ValidateInputs()
-        {
-            if (Name == "" || LanguageName == null || Duration == null || ScheduleDays.Count == 0 || Start == "" || MaxStudents == 0 || NumStudents == 0)
+            IsMaxStudentsDisabled = !IsMaxStudentsDisabled;
+            if(IsMaxStudentsDisabled)
             {
-                return null;
+                MaxStudents = int.MaxValue;
             }
             else
             {
-                return new Course(
-                        "0",
-                        Name,
-                        _languageService.GetLanguageById(LanguageName),
-                        level,
-                        (int)Duration,
-                        Schedule,
-                        DateTime.Parse(Start),
-                        Online,
-                        NumStudents,
-                        State,
-                        MaxStudents
-                );
+                MaxStudents = 0;
             }
+        }
+        private bool CanUpdateCourse(object? arg)
+        {
+            return SelectedItem != null;
         }
         private void UpdateCourse(object? obj)
         {
             CreateSchedule();
             if(SelectedItem != null)
             {
-                Course? updatedCourse = ValidateInputs();
+                Course? updatedCourse = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
                 if(updatedCourse == null)
                 {
+                    MessageBox.Show("There was an error updating the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 if (SelectedItem != null)
@@ -334,6 +336,7 @@ namespace LangLang.ViewModel
                 }
                 _courseService.UpdateCourse(updatedCourse);
                 Courses.Add(updatedCourse);
+                RemoveInputs();
             }
         }
         private void DeleteCourse(object? args)
@@ -357,16 +360,19 @@ namespace LangLang.ViewModel
         private void SaveCourse(object? obj)
         {
             CreateSchedule();
-            Course? course = ValidateInputs();
+            Course? course = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
 
             if (course == null)
             {
+                MessageBox.Show("There was an error saving the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
            
             _courseService.AddCourse(course);
             Courses.Add(course);
-            
+            RemoveInputs();
+            MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
+
         }
         private void CreateSchedule()
         {
