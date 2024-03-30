@@ -265,7 +265,16 @@ namespace LangLang.ViewModel
                     }
                     Start = selectedItem.Start;
                     Online = selectedItem.Online;
-                    MaxStudents = selectedItem.MaxStudents;
+                    if (Online)
+                    {
+                        MaxStudents = int.MaxValue;
+                        IsMaxStudentsDisabled = true;
+                    }
+                    else
+                    {
+                        MaxStudents = selectedItem.MaxStudents;
+                        IsMaxStudentsDisabled = false;
+                    }
                     NumStudents = selectedItem.NumStudents;
                     State = selectedItem.State;
 
