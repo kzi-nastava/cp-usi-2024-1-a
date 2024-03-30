@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Security;
 using System.Windows;
 using System.Windows.Input;
+using LangLang.MVVM;
+using LangLang.View;
 
 namespace LangLang.ViewModel
 {
@@ -20,16 +22,18 @@ namespace LangLang.ViewModel
         public LoginViewModel()
         {
             _loginService = LoginService.GetInstance();
-            LoginCommand = new RelayModel(Login);
+            LoginCommand = new RelayCommand(Login);
         }
 
         public LoginViewModel(Window window)
         {
             _window = window;
             _loginService = LoginService.GetInstance();
-            LoginCommand = new RelayModel(Login);
+            LoginCommand = new RelayCommand(Login);
         }
 
+
+     
 
         public string Email
         {

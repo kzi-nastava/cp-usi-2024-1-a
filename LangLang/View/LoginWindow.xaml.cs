@@ -9,8 +9,16 @@ namespace LangLang.View
         public LoginWindow()
         {
             InitializeComponent();
-            // Set the DataContext to an instance of LoginViewModel
             DataContext = new LoginViewModel(this);
+        }
+
+
+        private void OpenRegister(object sender, RoutedEventArgs e)
+        {
+            RegisterView view = new RegisterView();
+            view.Show();
+            this.Close();
+
         }
 
 

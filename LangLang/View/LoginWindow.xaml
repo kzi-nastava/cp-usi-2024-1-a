@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:LangLang.ViewModel"
         mc:Ignorable="d"
-        Height="400" Width="330"
+        Height="440" Width="330"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
 
@@ -43,8 +43,15 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-
-            <TextBlock Text="Sign Up" Margin="0,-5" FontSize="16" HorizontalAlignment="Center" Height="22" Width="60"/>
+            <Button Content="Sign Up" Click="OpenRegister" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </StackPanel>
     </Border>
 </Window>
