@@ -52,7 +52,10 @@ namespace LangLang.DAO
 
         public Language GetLanguageById(string name)
         {
-            languages = new Dictionary<string, Language>();
+            if(languages == null)
+            {
+                languages = new Dictionary<string, Language>();
+            }
             return languages[name];
         }
 
