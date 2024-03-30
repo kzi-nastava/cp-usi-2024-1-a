@@ -15,6 +15,12 @@ namespace LangLang.Model
         public List<Course> Courses { get; set; }
         public List<Exam> Exams { get; set; }
 
+        public Tutor() : base("", "", "", "", DateTime.Now, Gender.Other, "")
+        {
+            KnownLanguages = new();
+            Courses = new();
+            Exams = new();
+        }
         public Tutor(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<Course> courses, List<Exam> exams, int[] ratingCounts) : base(email, password, name, surname, birthDate, gender, phoneNumber)
         {
             KnownLanguages = knownLanguages;
@@ -37,7 +43,7 @@ namespace LangLang.Model
         {
             rating--;
             if (rating < 0 || rating > ratingCounts.Length)
-                throw new ArgumentOutOfRangeException($"Rating is too " + ((rating < 0) ? "small" : "large"));
+                throw new ArgumentOutOfRangeException($"Rating is too " + ((rating < 0) ? "low" : "high"));
             else
                 ratingCounts[rating]++;
         }
