@@ -15,5 +15,18 @@ namespace LangLang.View
             DataContext = new CourseViewModel(this);
 
         }
+        private void cbSchedule_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var viewModel = DataContext as CourseViewModel;
+            if (viewModel != null)
+            {
+                var selectedItems = new ObservableCollection<Consts.WorkDay>();
+                foreach (var item in cbSchedule.SelectedItems)
+                {
+                    selectedItems.Add((Consts.WorkDay)item);
+                }
+                viewModel.ScheduleDays = selectedItems;
+            }
+        }
     }
 }
