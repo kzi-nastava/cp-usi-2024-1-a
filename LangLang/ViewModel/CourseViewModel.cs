@@ -19,17 +19,17 @@ namespace LangLang.ViewModel
         public ICommand UpdateCourseCommand { get; }
         //public ICommand LoadLanguagesCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
-        public ObservableCollection<string> Languages { get; set; }
+        public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<CourseState> States { get; set; }
-        public ObservableCollection<int> Durations { get; set; }
-        public ObservableCollection<WorkDay> WorkDays { get; set; }
+        public ObservableCollection<int?> Durations { get; set; }
+        public ObservableCollection<WorkDay?> WorkDays { get; set; }
 
-        public ObservableCollection<TimeOnly> MondayHours { get; set; }
-        public ObservableCollection<TimeOnly> TuesdayHours { get; set; }
-        public ObservableCollection<TimeOnly> WednesdayHours { get; set; }
-        public ObservableCollection<TimeOnly> ThursdayHours { get; set; }
-        public ObservableCollection<TimeOnly> FridayHours { get; set; }
+        public ObservableCollection<TimeOnly?> MondayHours { get; set; }
+        public ObservableCollection<TimeOnly?> TuesdayHours { get; set; }
+        public ObservableCollection<TimeOnly?> WednesdayHours { get; set; }
+        public ObservableCollection<TimeOnly?> ThursdayHours { get; set; }
+        public ObservableCollection<TimeOnly?> FridayHours { get; set; }
 
         private TimeOnly monday;
         public TimeOnly Monday
@@ -120,8 +120,8 @@ namespace LangLang.ViewModel
             }
         }
 
-        private int duration;
-        public int Duration
+        private int? duration;
+        public int? Duration
         {
             get { return duration; }
             set
@@ -264,16 +264,16 @@ namespace LangLang.ViewModel
         {
             _window = window;
             Courses = new ObservableCollection<Course>();
-            Languages = new ObservableCollection<string>();
+            Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
             States = new ObservableCollection<CourseState>();
-            Durations = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-            WorkDays = new ObservableCollection<WorkDay>();
-            MondayHours = new ObservableCollection<TimeOnly> { new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00) };
-            TuesdayHours = new ObservableCollection<TimeOnly>{new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
-            WednesdayHours = new ObservableCollection<TimeOnly>{new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
-            ThursdayHours = new ObservableCollection<TimeOnly>{new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
-            FridayHours = new ObservableCollection<TimeOnly>{new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
+            Durations = new ObservableCollection<int?> {null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            WorkDays = new ObservableCollection<WorkDay?>();
+            MondayHours = new ObservableCollection<TimeOnly?> {null, new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00) };
+            TuesdayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
+            WednesdayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
+            ThursdayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
+            FridayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
             Start = DateTime.Now.ToShortDateString();
             LoadLanguages();
             LoadCourses();
@@ -289,21 +289,22 @@ namespace LangLang.ViewModel
 
         private bool CanUpdateCourse(object arg)
         {
-            return true;
+            return SelectedItem != null;
         }
-        private void UpdateCourse(object obj)
+        private Course? ValidateInputs()
         {
-            CreateSchedule();
-            if(SelectedItem != null)
+            if (Name == "" || LanguageName == null || Duration == null || ScheduleDays.Count == 0 || Start == "" || MaxStudents == 0 || NumStudents == 0)
             {
-                string keyToUpdate = SelectedItem.Id;
-                // TODO: Implement this method
-                Course updatedCourse = new Course(
-                        keyToUpdate,
+                return null;
+            }
+            else
+            {
+                return new Course(
+                        "0",
                         Name,
                         _languageService.GetLanguageById(LanguageName),
                         level,
-                        Duration,
+                        (int)Duration,
                         Schedule,
                         DateTime.Parse(Start),
                         Online,
@@ -311,8 +312,26 @@ namespace LangLang.ViewModel
                         State,
                         MaxStudents
                 );
+            }
+        }
+        private void UpdateCourse(object obj)
+        {
+            CreateSchedule();
+            if(SelectedItem != null)
+            {
+                Course? updatedCourse = ValidateInputs();
+                if(updatedCourse == null)
+                {
+                    return;
+                }
+                if (SelectedItem != null)
+                {
+                    string keyToUpdate = SelectedItem.Id;
+                    updatedCourse.Id = keyToUpdate;
+                    Courses.Remove(SelectedItem);
+
+                }
                 _courseService.UpdateCourse(updatedCourse);
-                Courses.Remove(SelectedItem);
                 Courses.Add(updatedCourse);
             }
         }
@@ -323,11 +342,12 @@ namespace LangLang.ViewModel
                 string keyToDelete = SelectedItem.Id;
                 _courseService.DeleteCourse(keyToDelete);
                 Courses.Remove(SelectedItem);
+                RemoveInputs();
             }
         }
         private bool CanDeleteCourse(object args)
         {
-            return true;
+            return SelectedItem != null;
         }
         private bool CanSaveCourse(object arg)
         {
@@ -335,27 +355,18 @@ namespace LangLang.ViewModel
         }
         private void SaveCourse(object obj)
         {
-            //Course course = new Course();
-            //_courseService.AddCourse(course);
             CreateSchedule();
-            Course course = new Course(
-                    "0",
-                    Name,
-                    _languageService.GetLanguageById(LanguageName),
-                    level,
-                    Duration,
-                    Schedule,
-                    DateTime.Parse(Start),
-                    Online,
-                    NumStudents,
-                    State,
-                    MaxStudents
-                );
+            Course? course = ValidateInputs();
+
+            if (course == null)
+            {
+                return;
+            }
+           
             _courseService.AddCourse(course);
             Courses.Add(course);
             
         }
-
         private void CreateSchedule()
         {
             Schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
@@ -380,9 +391,9 @@ namespace LangLang.ViewModel
             {
                 Languages.Add(language.Name);
             }
+            Languages.Add("");
 
         }
-
         public void LoadLanguageLevels()
         {
             foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
@@ -390,7 +401,6 @@ namespace LangLang.ViewModel
                 Levels.Add(lvl);
             }
         }
-
         public void LoadCourseStates()
         {
             foreach (CourseState state in Enum.GetValues(typeof(CourseState)))
@@ -405,11 +415,26 @@ namespace LangLang.ViewModel
                 WorkDays.Add(day);
             }
         }
-
         public void LoadHours()
         {
             // TODO: load free hours
             return;
+        }
+        public void RemoveInputs()
+        {
+            Name = "";
+            LanguageName = "";
+            Level = LanguageLvl.A1;
+            Duration = null;
+            ScheduleDays = new ObservableCollection<WorkDay>();
+            Online = false;
+            selectedItem = null;
+            MaxStudents = 0;
+            NumStudents = 0;
+            State = CourseState.Active;
+            Start = DateTime.Now.ToShortDateString();
+
+
         }
     }
 }
