@@ -22,18 +22,27 @@ namespace LangLang.ViewModel
 
         private readonly Window _window;
 
+
         public RegisterViewModel()
         {
             SignUpCommand = new RelayCommand(SignUp);
         }
 
+        private RegisterView _registerView;
 
-        public RegisterViewModel(Window window)
+        public RegisterViewModel(RegisterView registerView)
         {
-            _window = window;
+            _registerView = registerView;
             SignUpCommand = new RelayCommand(SignUp);
         }
 
+        /*
+        public RegisterViewModel(Window window)
+        {
+            _window = new Window();
+            SignUpCommand = new RelayCommand(SignUp);
+        }
+        */
         public string Email
         {
             get => _email;
@@ -119,21 +128,21 @@ namespace LangLang.ViewModel
             string gender = Gender;
 
             bool successful = RegisterService.RegisterStudent(email, password, name, surname, DateTime.Now, Consts.Gender.Other, phoneNumber, "");
+            MessageBox.Show($"Successfully logged in! Welcome : {successful}");
+
 
             if (successful)
             {
-                _window.Close();
                 MessageBox.Show($"Succesfull registration");
+
+                //I WANT TO OPEN LOGIN HERE AND CLOSE THIS WINDOW;
             }
             else
             {
-                MessageBox.Show($"Fail");
+                MessageBox.Show($"Fail"); 
+                
             }
         }
-
-
-
-
 
 
         public event PropertyChangedEventHandler PropertyChanged;

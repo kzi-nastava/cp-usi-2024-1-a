@@ -72,7 +72,7 @@
                 </Button>
 
                 <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Right" Foreground="Red" Margin="0,2" FontWeight="Bold"/>
-                <Button Content="Log in" Command="{Binding SignInCommand}" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
+                <Button Content="Log in" Click="OpenLogin" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border CornerRadius="10" Background="{TemplateBinding Background}">

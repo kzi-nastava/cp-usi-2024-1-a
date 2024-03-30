@@ -32,32 +32,8 @@ namespace LangLang.ViewModel
             LoginCommand = new RelayCommand(Login);
         }
 
-        private ICommand _signUpCommand;
 
-        public ICommand SignUpCommand
-        {
-            get
-            {
-                if (_signUpCommand == null)
-                {
-                    _signUpCommand = new RelayCommand(SignUp);
-                }
-                return _signUpCommand;
-            }
-        }
-
-
-        private void SignUp(object parameter)
-        {
-            var registerViewModel = new RegisterViewModel();
-            var registerWindow = new RegisterView();
-            registerWindow.DataContext = registerViewModel;
-
-            //close login window
-            _window.Close();
-
-            registerWindow.ShowDialog();
-        }
+     
 
         public string Email
         {

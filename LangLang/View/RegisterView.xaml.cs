@@ -20,10 +20,31 @@ namespace LangLang.View
         public RegisterView()
         {
             InitializeComponent();
+            DataContext = new RegisterViewModel(this);
         }
 
- 
-     
+
+        private void OpenLogin(object sender, RoutedEventArgs e)
+        {
+            LoginWindow view = new LoginWindow();
+            view.Show();
+            this.Close();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }

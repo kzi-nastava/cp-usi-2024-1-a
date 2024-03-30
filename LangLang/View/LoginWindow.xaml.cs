@@ -13,6 +13,15 @@ namespace LangLang.View
         }
 
 
+        private void OpenRegister(object sender, RoutedEventArgs e)
+        {
+            RegisterView view = new RegisterView();
+            view.Show();
+            this.Close();
+
+        }
+
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             var passwordBox = sender as PasswordBox;

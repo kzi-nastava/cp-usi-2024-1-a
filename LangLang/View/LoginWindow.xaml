@@ -43,7 +43,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button Content="Sign Up" Command="{Binding SignUpCommand}" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
+            <Button Content="Sign Up" Click="OpenRegister" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border CornerRadius="10" Background="{TemplateBinding Background}">
