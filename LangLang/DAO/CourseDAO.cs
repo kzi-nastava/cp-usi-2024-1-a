@@ -3,6 +3,7 @@ using Consts;
 using System.Collections.Generic;
 using LangLang.Model;
 using LangLang.Util;
+using System.IO;
 
 namespace LangLang.DAO
 {
@@ -10,12 +11,23 @@ namespace LangLang.DAO
     {
         private static CourseDAO? instance;
         private Dictionary<string, Course>? courses;
-        private Dictionary<string, LastId> lastId;
+        private Dictionary<string, Course> Courses
+        {
+            get { 
+                if(courses == null)
+                {
+                    Load();
+                } 
+                return courses!;
+            }
+            set { courses = value; }
+        }
+        
+
         private static LastIdDAO lastIdDAO = LastIdDAO.GetInstance();
 
         private CourseDAO()
         {
-            lastId = new Dictionary<string, LastId>();
         }
         public static CourseDAO getInstance()
         {
@@ -28,58 +40,61 @@ namespace LangLang.DAO
 
         public Dictionary<string, Course> getAllCourses()
         {
-            if(courses == null)
-            {
-                courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
-            }
-            return courses;
+            return Courses;
         }
 
         public void AddCourse(Course course)
         {
-            if(courses != null)
-            {
-                string id = lastIdDAO.GetCourseId();
-                lastIdDAO.IncrementCourseId();
-                course.Id = id;
-                courses[id] = course;
-                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
-            }
+            string id = lastIdDAO.GetCourseId();
+            lastIdDAO.IncrementCourseId();
+            course.Id = id;
+            Courses[id] = course;
+            Save(); 
         }
-        public Course GetCourseById(string id)
+        
+        public Course? GetCourseById(string id)
         {
-            if(courses == null)
+            try
             {
-            courses = new Dictionary<string, Course>();
+                return Courses[id];
             }
-            return courses[id];
-        }
-        public string GetNextCourseId()
-        {
-            lastId = JsonUtil.ReadFromFile<LastId>(Constants.LastIdFilePath);
-            int id = lastId["Ids"].CourseId;
-            lastId["Ids"].CourseId += 1;
-            JsonUtil.WriteToFile<LastId>(lastId, Constants.LastIdFilePath);
-            return id.ToString();
+            catch(KeyNotFoundException e)
+            {
+                return null;
+            }
         }
 
         public void DeleteCourse(string id)
         {
-            if(courses != null)
-            {
-                courses.Remove(id);
-                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
-            }
+            Courses.Remove(id);
+            Save();
+            
         }
         public void UpdateCourse(Course course)
         {
-            if(courses != null)
-            {
-                courses[course.Id] = course;
-                JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
-            }
+            Courses[course.Id] = course;
+            Save();
+            
         }
 
-
+        private void Load()
+        {
+            try
+            {
+                courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
+            }catch(DirectoryNotFoundException e)
+            {
+                Courses = new Dictionary<string, Course>();
+                Save();
+            }catch(FileNotFoundException e)
+            {
+                Courses = new Dictionary<string, Course>();
+                Save();
+            }
+        }
+        private void Save()
+        {
+            JsonUtil.WriteToFile<Course>(Courses, Constants.CourseFilePath);
+        }
     }
 }

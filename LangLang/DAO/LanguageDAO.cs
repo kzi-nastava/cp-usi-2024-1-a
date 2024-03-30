@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using LangLang.Model;
 using LangLang.Util;
+using System.IO;
 
 namespace LangLang.DAO
 {
@@ -10,6 +11,18 @@ namespace LangLang.DAO
     {
         private static LanguageDAO? instance;
         private Dictionary<string, Language>? languages;
+        private Dictionary<string, Language> Languages
+        {
+            get
+            {
+                if(languages == null)
+                {
+                    Load();
+                } 
+                return languages!;
+            }
+            set { languages = value; }
+        }
 
         private LanguageDAO()
         {
@@ -27,37 +40,52 @@ namespace LangLang.DAO
 
         public Dictionary<string, Language> getAllLanguages()
         {
-            if(languages == null)
-            {
-                languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
-            }
-            return languages;
+            return Languages;
         }
 
         public void AddLanguage(Language language)
         {
-            if(languages != null)
-            {
-                languages[language.Name] = language;
-            }
+           Languages[language.Name] = language;  
         }
 
         public void DeleteLanguage(string name)
         {
-            if(languages != null)
+            Languages.Remove(name);
+            Save();
+            
+        }
+
+        public Language? GetLanguageById(string name)
+        {
+            try
             {
-                languages.Remove(name);
+                return Languages[name];
+            }catch(KeyNotFoundException e)
+            {
+                return null;
             }
         }
 
-        public Language GetLanguageById(string name)
-        {
-            if(languages == null)
+        private void Load() { 
+            try
             {
-                languages = new Dictionary<string, Language>();
+                languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
             }
-            return languages[name];
+            catch (DirectoryNotFoundException e)
+            {
+                Languages = new Dictionary<string, Language>();
+                Save();
+            }
+            catch (FileNotFoundException e)
+            {
+                Languages = new Dictionary<string, Language>();
+                Save();
+            }
         }
+        private void Save()
+        {
+            JsonUtil.WriteToFile<Language>(Languages, Constants.LanguageFilePath);
+        }   
 
 
 

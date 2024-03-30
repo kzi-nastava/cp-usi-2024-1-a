@@ -70,7 +70,28 @@ namespace LangLang.Model
             ListeningAvgScore = 0;
             SpeakingAvgScore = 0;
         }
-        
+        // Constructor without id when creating a new course
+        public Course(string name, Language language, LanguageLvl level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
+        { 
+            Id = "0";
+            Name = name;
+            Language = language;
+            Level = level;
+            Duration = duration;
+            Schedule = schedule;
+            Start = start.ToShortDateString();
+            Online = online;
+            MaxStudents = maxStudents;
+            NumStudents = numStudents;
+            State = state;
+            //set default values for attributes for reports
+            NumPenaltyPts = 0;
+            NumStudentsPassed = 0;
+            ReadingAvgScore = 0;
+            WritingAvgScore = 0;
+            ListeningAvgScore = 0;
+            SpeakingAvgScore = 0;
+        }
 
         public void AddAttendance()
         {

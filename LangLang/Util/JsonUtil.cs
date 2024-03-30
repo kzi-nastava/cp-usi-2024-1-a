@@ -42,7 +42,7 @@ namespace LangLang.Util
             }
             return items ?? new Dictionary<string, T>();
         }
-        public class TimeOnlyConverter : JsonConverter<TimeOnly>
+        private class TimeOnlyConverter : JsonConverter<TimeOnly>
         {
             public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {

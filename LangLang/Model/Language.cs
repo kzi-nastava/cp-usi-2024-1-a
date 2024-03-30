@@ -6,9 +6,6 @@ namespace LangLang.Model
 {
     public class Language
     {
-        private string name = "";
-        private string code = "";
-
         public string Name { get; set; }
         public string Code { get; set; }
 
