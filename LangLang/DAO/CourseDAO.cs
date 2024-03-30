@@ -25,6 +25,7 @@ namespace LangLang.DAO
             }
             return instance;
         }
+
         public Dictionary<string, Course> getAllCourses()
         {
             if(courses == null)
@@ -33,6 +34,7 @@ namespace LangLang.DAO
             }
             return courses;
         }
+
         public void AddCourse(Course course)
         {
             if(courses != null)
@@ -42,16 +44,25 @@ namespace LangLang.DAO
                 course.Id = id;
                 courses[id] = course;
                 JsonUtil.WriteToFile<Course>(courses, Constants.CourseFilePath);
-        }
+            }
         }
         public Course GetCourseById(string id)
         {
             if(courses == null)
             {
-                courses = new Dictionary<string, Course>();
+            courses = new Dictionary<string, Course>();
             }
             return courses[id];
         }
+        public string GetNextCourseId()
+        {
+            lastId = JsonUtil.ReadFromFile<LastId>(Constants.LastIdFilePath);
+            int id = lastId["Ids"].CourseId;
+            lastId["Ids"].CourseId += 1;
+            JsonUtil.WriteToFile<LastId>(lastId, Constants.LastIdFilePath);
+            return id.ToString();
+        }
+
         public void DeleteCourse(string id)
         {
             if(courses != null)
