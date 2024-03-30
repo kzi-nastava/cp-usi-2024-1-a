@@ -8,6 +8,7 @@ namespace Consts
         public const int ExamDuration = 4;  //hours
         public const int ClassroomNumber = 2;
         public const string CourseFilePath = "../../../Data/courses.json";
+        public const string ExamFilePath = "../../../Data/exams.json";
         public const string LanguageFilePath = "../../../Data/languages.json";
         public const string LastIdFilePath = "../../../Data/lastId.json";
     }
