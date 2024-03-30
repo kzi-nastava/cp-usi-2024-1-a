@@ -1,5 +1,6 @@
 ﻿using Consts;
 using LangLang.Model;
+using LangLang.MVVM;
 using LangLang.Services;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Windows.Input;
 
 namespace LangLang.ViewModel
 {
-    internal class CourseViewModel : ObservableObject
+    internal class CourseViewModel : ViewModelBase
     {
         private readonly Window _window;
         private readonly CourseService _courseService = new();
@@ -38,7 +39,7 @@ namespace LangLang.ViewModel
             set
             {
                 monday = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
 
         }
@@ -50,7 +51,7 @@ namespace LangLang.ViewModel
             set
             {
                 tuesday = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -61,7 +62,7 @@ namespace LangLang.ViewModel
             set
             {
                 wednesday = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -72,7 +73,7 @@ namespace LangLang.ViewModel
             set
             {
                 thursday = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -83,7 +84,7 @@ namespace LangLang.ViewModel
             set
             {
                 friday = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -94,7 +95,7 @@ namespace LangLang.ViewModel
             set
             {
                 name = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -105,7 +106,7 @@ namespace LangLang.ViewModel
             set
             {
                 languageName = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -116,7 +117,7 @@ namespace LangLang.ViewModel
             set
             {
                 level = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -127,7 +128,7 @@ namespace LangLang.ViewModel
             set
             {
                 duration = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
         // Schedule day list of selected days
@@ -138,7 +139,7 @@ namespace LangLang.ViewModel
             set
             {
                 scheduleDays = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -150,7 +151,7 @@ namespace LangLang.ViewModel
             set
             {
                 schedule = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -161,7 +162,7 @@ namespace LangLang.ViewModel
             set
             {
                 start = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -172,7 +173,7 @@ namespace LangLang.ViewModel
             set
             {
                 online = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -183,7 +184,7 @@ namespace LangLang.ViewModel
             set
             {
                 maxStudents = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
         private int numStudents;
@@ -193,7 +194,7 @@ namespace LangLang.ViewModel
             set
             {
                 numStudents = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -204,7 +205,7 @@ namespace LangLang.ViewModel
             set
             {
                 state = value;
-                OnProperyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -255,7 +256,7 @@ namespace LangLang.ViewModel
                     State = selectedItem.State;
 
                 }
-                OnProperyChanged();
+                OnPropertyChanged();
                 // Notify the command that the state might have changed
                 //DeleteCourseCommand.R
             }
@@ -281,13 +282,13 @@ namespace LangLang.ViewModel
             LoadCourseStates();
             LoadWorkDays();
             LoadHours();
-            AddCourseCommand = new RelayModel(SaveCourse, CanSaveCourse);
+            AddCourseCommand = new RelayCommand(SaveCourse, CanSaveCourse);
             // TODO: set can execute to work only when item is selected!
-            DeleteCourseCommand = new RelayModel(DeleteCourse, CanDeleteCourse);
-            UpdateCourseCommand = new RelayModel(UpdateCourse, CanUpdateCourse);
+            DeleteCourseCommand = new RelayCommand(DeleteCourse, CanDeleteCourse);
+            UpdateCourseCommand = new RelayCommand(UpdateCourse, CanUpdateCourse);
         }
 
-        private bool CanUpdateCourse(object arg)
+        private bool CanUpdateCourse(object? arg)
         {
             return SelectedItem != null;
         }
@@ -314,7 +315,7 @@ namespace LangLang.ViewModel
                 );
             }
         }
-        private void UpdateCourse(object obj)
+        private void UpdateCourse(object? obj)
         {
             CreateSchedule();
             if(SelectedItem != null)
@@ -335,7 +336,7 @@ namespace LangLang.ViewModel
                 Courses.Add(updatedCourse);
             }
         }
-        private void DeleteCourse(object args)
+        private void DeleteCourse(object? args)
         {
             if(SelectedItem != null)
             {
@@ -345,15 +346,15 @@ namespace LangLang.ViewModel
                 RemoveInputs();
             }
         }
-        private bool CanDeleteCourse(object args)
+        private bool CanDeleteCourse(object? args)
         {
             return SelectedItem != null;
         }
-        private bool CanSaveCourse(object arg)
+        private bool CanSaveCourse(object? arg)
         {
             return true;
         }
-        private void SaveCourse(object obj)
+        private void SaveCourse(object? obj)
         {
             CreateSchedule();
             Course? course = ValidateInputs();
