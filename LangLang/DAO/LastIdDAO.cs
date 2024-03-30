@@ -54,7 +54,7 @@ namespace LangLang.DAO
 
         public void IncrementExamId()
         {
-            LastId.CourseId++;
+            LastId.ExamId++;
             Save();
         }
 
