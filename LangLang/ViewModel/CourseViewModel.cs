@@ -302,6 +302,12 @@ namespace LangLang.ViewModel
             {
                 return new Course(
                         "0",
+                return null;
+            }
+            else
+            {
+                return new Course(
+                        "0",
                         Name,
                         _languageService.GetLanguageById(LanguageName),
                         level,
