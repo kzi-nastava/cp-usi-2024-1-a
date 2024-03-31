@@ -69,12 +69,7 @@ namespace LangLang.DAO
             {
                 tutors = JsonUtil.ReadFromFile<Tutor>(Constants.TutorFilePath);
             }
-            catch (DirectoryNotFoundException)
-            {
-                Tutors = new();
-                Save();
-            }
-            catch (FileNotFoundException)
+            catch
             {
                 Tutors = new();
                 Save();

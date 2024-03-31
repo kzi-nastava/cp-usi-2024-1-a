@@ -38,6 +38,14 @@ namespace LangLang.DAO
         {
             return Directors.GetValueOrDefault(email);
         }
+        public void UpdateDirector(string id, Director director)
+        {
+            if (Directors.ContainsKey(id))
+            {
+                Directors[id] = director;
+                Save();
+            }
+        }
 
         private void Load()
         {
@@ -45,14 +53,13 @@ namespace LangLang.DAO
             {
                 directors = JsonUtil.ReadFromFile<Director>(Constants.DirectorFilePath);
             }
-            catch (DirectoryNotFoundException)
+            catch
             {
                 Directors = new();
-            }
-            catch (FileNotFoundException)
-            {
-                Directors = new();
+                Save();
             }
         }
+
+        private void Save() => JsonUtil.WriteToFile(Directors, Constants.DirectorFilePath);
     }
 }
