@@ -54,6 +54,7 @@ public class StudentDAO
     public void DeleteStudent(string email)
     {
         students.Remove(email);
+        JsonUtil.WriteToFile(students, Constants.StudentFilePath);
     }
 
 
