@@ -47,11 +47,11 @@ namespace LangLang.DAO
             }
             catch (DirectoryNotFoundException)
             {
-                Directors = new Dictionary<string, Director>();
+                Directors = new();
             }
             catch (FileNotFoundException)
             {
-                Directors = new Dictionary<string, Director>();
+                Directors = new();
             }
         }
     }
