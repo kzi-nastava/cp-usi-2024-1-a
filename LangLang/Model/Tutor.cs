@@ -12,8 +12,8 @@ namespace LangLang.Model
         private int[] ratingCounts = new int[5];
 
         public List<Tuple<Language, LanguageLvl>> KnownLanguages { get; set; }
-        public List<Course> Courses { get; set; }
-        public List<Exam> Exams { get; set; }
+        public List<string> Courses { get; set; }
+        public List<string> Exams { get; set; }
 
         public Tutor() : base("", "", "", "", DateTime.Now, Gender.Other, "")
         {
@@ -21,7 +21,7 @@ namespace LangLang.Model
             Courses = new();
             Exams = new();
         }
-        public Tutor(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<Course> courses, List<Exam> exams, int[] ratingCounts) : base(email, password, name, surname, birthDate, gender, phoneNumber)
+        public Tutor(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<string> courses, List<string> exams, int[] ratingCounts) : base(email, password, name, surname, birthDate, gender, phoneNumber)
         {
             KnownLanguages = knownLanguages;
             Courses = courses;
