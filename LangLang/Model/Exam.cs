@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Consts;
 
 namespace LangLang.Model
 {
     public class Exam
     {
+        public string Id { get; set; }
         public Language Language { get; set; }
         public LanguageLvl LanguageLvl { get; set; }
         public DateTime Time { get; set; }
@@ -12,8 +14,27 @@ namespace LangLang.Model
         public int MaxStudents { get; set; }
         public int NumStudents { get; set; }
 
+        public Exam()
+        {
+            Id = "";
+            Language = new Language();
+            LanguageLvl = LanguageLvl.A1;
+        }
+        
         public Exam(Language language, LanguageLvl languageLvl, DateTime time, int classroomNumber, int maxStudents, int numStudents=0)
         {
+            Id = "";
+            Language = language;
+            LanguageLvl = languageLvl;
+            Time = time;
+            ClassroomNumber = classroomNumber;
+            MaxStudents = maxStudents;
+            NumStudents = numStudents;
+        }
+        
+        public Exam(string id, Language language, LanguageLvl languageLvl, DateTime time, int classroomNumber, int maxStudents, int numStudents=0)
+        {
+            Id = id;
             Language = language;
             LanguageLvl = languageLvl;
             Time = time;
