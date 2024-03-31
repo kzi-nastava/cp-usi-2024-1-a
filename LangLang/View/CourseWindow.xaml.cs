@@ -13,6 +13,8 @@ namespace LangLang.View
         {
             InitializeComponent();
             DataContext = new CourseViewModel(this);
+           
+
 
         }
         private void cbSchedule_SelectionChanged(object sender, SelectionChangedEventArgs e)

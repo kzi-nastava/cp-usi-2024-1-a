@@ -16,14 +16,56 @@
                 <RowDefinition/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
+            <Grid Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0">Course Overview</Label>
+                <Label FontSize="14" Margin="2,30,0,0" >Filter</Label>
+                <StackPanel Orientation="Horizontal" Margin="0,50,0,0">
+                    <Grid Margin="5,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="45"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
 
-            <DataGrid CanUserAddRows="False" 
+                        <StackPanel Orientation="Vertical" Grid.Column="0">
+                            <Label>Language:</Label>
+                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguage" SelectedItem="{Binding LanguageFilter}" ItemsSource="{Binding Languages}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Column="1">
+                            <Label>Language Level:</Label>
+                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguageLvl" SelectedItem="{Binding LevelFilter}" ItemsSource="{Binding Levels}"/>
+
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Column="2">
+                            <Label>Start:</Label>
+                            <DatePicker Margin="5,0,0,0" Name="dpFilterStart" SelectedDate="{Binding StartFilter}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Column="4">
+                            <Label>Online:</Label>
+                            <CheckBox Margin="5,0,0,0" IsChecked="{Binding OnlineFilter}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Column="3">
+                            <Label>Durations:</Label>
+                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterState" SelectedItem="{Binding DurationFilter}" ItemsSource="{Binding Durations}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="5">
+                            <Button Command="{Binding ClearFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="0,25,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                <DataGrid Grid.Row="1" CanUserAddRows="False" 
                       ItemsSource="{Binding Courses}" 
                       SelectedItem="{Binding SelectedItem}"
-                      Margin="20" 
+                      Margin="10,20,10,10" 
                       x:Name="dgCourses" 
                       CanUserDeleteRows="False" 
-                      Grid.Row="0" 
                       Grid.Column="0" 
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
@@ -42,6 +84,7 @@
                     <DataGridTextColumn Header="State" Binding="{Binding State}"/>
                 </DataGrid.Columns>
             </DataGrid>
+            </Grid>
 
             <StackPanel Grid.Column="1" Grid.Row="0" >
                 <Label>Name:</Label>

@@ -19,13 +19,13 @@ namespace LangLang.ViewModel
         public ICommand DeleteCourseCommand { get; }
         public ICommand UpdateCourseCommand { get; }
         public ICommand ToggleMaxStudentsCommand { get; }
+        public ICommand ClearFiltersCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<CourseState> States { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
         public ObservableCollection<WorkDay?> WorkDays { get; set; }
-
         public ObservableCollection<TimeOnly?> MondayHours { get; set; }
         public ObservableCollection<TimeOnly?> TuesdayHours { get; set; }
         public ObservableCollection<TimeOnly?> WednesdayHours { get; set; }
@@ -143,7 +143,6 @@ namespace LangLang.ViewModel
             }
         }
 
-
         private Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
         public Dictionary<WorkDay, Tuple<TimeOnly, int>> Schedule
         {
@@ -219,6 +218,66 @@ namespace LangLang.ViewModel
             set
             {
                 state = value;
+                OnPropertyChanged();
+            }
+        }
+        // FILTER VALUES
+        private string languageFilter = "";
+        public string LanguageFilter
+        {
+            get { return languageFilter; }
+            set
+            {
+                languageFilter = value;
+                FilterCourses();
+                OnPropertyChanged();
+            }
+        }
+
+        private LanguageLvl? levelFilter;
+        public LanguageLvl? LevelFilter
+        {
+            get { return levelFilter; }
+            set
+            {
+                levelFilter = value;
+                FilterCourses();
+                OnPropertyChanged();
+            }
+        }
+
+        private DateTime? startFilter;
+        public DateTime? StartFilter
+        {
+            get { return startFilter; }
+            set
+            {
+                startFilter = value;
+                FilterCourses();
+                OnPropertyChanged();
+            }
+        }
+
+        private bool? onlineFilter;
+        public bool? OnlineFilter
+        {
+            get { return onlineFilter; }
+            set
+            {
+                onlineFilter = value;
+                FilterCourses();
+                OnPropertyChanged();
+            }
+        }
+
+        private int durationFilter;
+        public int DurationFilter
+        {
+            get { return durationFilter; }
+            set
+            {
+                durationFilter = value;
+                FilterCourses();
                 OnPropertyChanged();
             }
         }
@@ -307,6 +366,19 @@ namespace LangLang.ViewModel
             DeleteCourseCommand = new RelayCommand(DeleteCourse, CanDeleteCourse);
             UpdateCourseCommand = new RelayCommand(UpdateCourse, CanUpdateCourse);
             ToggleMaxStudentsCommand = new RelayCommand(ToggleMaxStudents);
+            ClearFiltersCommand = new RelayCommand(ClearFilters);
+        }
+
+        private void ClearFilters(object? obj)
+        {
+            LanguageFilter = "";
+            LevelFilter = null;
+            StartFilter = null;
+            OnlineFilter = null;
+            DurationFilter = 0;
+            Courses.Clear();
+            LoadCourses();
+            OnPropertyChanged();
         }
 
         private void ToggleMaxStudents(object? obj)
@@ -451,6 +523,27 @@ namespace LangLang.ViewModel
             Start = DateTime.Now.ToShortDateString();
 
 
+        }
+        public void FilterCourses()
+        {
+            Courses.Clear();
+            var courses = _courseService.GetAll();
+            foreach(Course course in courses.Values)
+            {
+                if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
+                {
+                    if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter).ToShortDateString()))
+                    {
+                        if(course.Online == OnlineFilter || OnlineFilter == null)
+                        { 
+                            if(course.Duration == DurationFilter || DurationFilter == 0)
+                            {
+                                Courses.Add(course);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
