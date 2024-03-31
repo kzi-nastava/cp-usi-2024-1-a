@@ -54,25 +54,21 @@ namespace LangLang.DAO
 
         public void IncrementExamId()
         {
-            LastId.CourseId++;
+            LastId.ExamId++;
             Save();
         }
 
         private void Load()
         {
-            try
-            {
-                lastId = JsonUtil.ReadFromFile<LastId>(Constants.LastIdFilePath)[jsonKey];
-            }
-            catch (DirectoryNotFoundException e)
+            Dictionary<string, LastId> ret = JsonUtil.ReadFromFile<LastId>(Constants.LastIdFilePath);
+            if (ret.Count <= 0)
             {
                 LastId = new LastId();
                 Save();
             }
-            catch (FileNotFoundException e)
+            else
             {
-                LastId = new LastId();
-                Save();
+                LastId = ret[jsonKey];
             }
         }
 
