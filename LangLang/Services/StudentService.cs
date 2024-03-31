@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using LangLang.Model;
+using LangLang.Services;
 
 public class StudentService
 {
@@ -35,7 +36,7 @@ public class StudentService
         }
 
         LoginService loginService = LoginService.GetInstance();
-        bool checkData = loginService.CheckUserData(LoggedUser.Email, password, name, surname, phoneNumber);
+        bool checkData = RegisterService.CheckUserData(LoggedUser.Email, password, name, surname, phoneNumber);
         if (checkData)
         {
             LoggedUser.Name = name;

@@ -21,7 +21,7 @@ namespace LangLang.Services
 
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", null, null, null));
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", null, null));
                 return true;
             }
             return false;
