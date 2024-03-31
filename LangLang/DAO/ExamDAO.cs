@@ -39,6 +39,19 @@ public class ExamDAO
     {
         return Exams.GetValueOrDefault(id);
     }
+    
+    public List<Exam> GetExamsForIds(List<string> ids)
+    {
+        List<Exam> exams = new();
+        foreach (string id in ids)
+        {
+            if (Exams.ContainsKey(id))
+            {
+                exams.Add(Exams[id]);
+            }
+        }
+        return exams;
+    }
 
     public void AddExam(Exam exam)
     {
