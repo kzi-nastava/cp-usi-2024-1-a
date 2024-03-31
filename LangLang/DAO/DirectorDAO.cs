@@ -2,57 +2,57 @@
 using System.Collections.Generic;
 using LangLang.Model;
 using LangLang.Util;
+using System.Windows.Navigation;
+using System.IO;
 
 namespace LangLang.DAO
 {
     public class DirectorDAO
     {
-        Dictionary<string, Director> directors = new();
-
-        //Singleton
         private static DirectorDAO? instance;
+        private Dictionary<string, Director>? directors;
+        
+        private Dictionary<string, Director> Directors
+        {
+            get
+            {
+                if (directors == null)
+                    Load();
+                return directors!;
+            }
+            set => directors = value;
+        }
+
         private DirectorDAO()
         {
         }
 
         public static DirectorDAO GetInstance()
         {
-            if (instance == null)
-            {
-                instance = new DirectorDAO();
-                instance.GetAllDirectors();
-            }
-            return instance;
+            return instance ??= new DirectorDAO();
         }
 
-        public Dictionary<string, Director> GetAllDirectors()
-        {
-            if (directors == null)
-            {
-                directors = JsonUtil.ReadFromFile<Director>(Constants.DirectorFilePath);
-            }
-            return directors;
-        }
+        public Dictionary<string, Director> GetAllDirectors() => Directors;
 
         public Director? GetDirector(string email)
         {
-            if (directors.TryGetValue(email, out Director? director))
-            {
-                return director;
-            }
-            else
-            {
-                return null;
-            }
+            return Directors.GetValueOrDefault(email);
         }
 
-        public void AddDirector(Director director)
+        private void Load()
         {
-            directors[director.Email] = director;
-            JsonUtil.WriteToFile(directors, Constants.DirectorFilePath);
+            try
+            {
+                directors = JsonUtil.ReadFromFile<Director>(Constants.DirectorFilePath);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Directors = new Dictionary<string, Director>();
+            }
+            catch (FileNotFoundException)
+            {
+                Directors = new Dictionary<string, Director>();
+            }
         }
-
-        public void DeleteDirector(string email) => directors.Remove(email);
-
     }
 }
