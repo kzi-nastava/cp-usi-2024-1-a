@@ -22,6 +22,15 @@ namespace LangLang.Util
 
             try
             {
+                string? directoryPath = Path.GetDirectoryName(path);
+                if (!Directory.Exists(directoryPath))
+                {
+                    if (directoryPath == null)
+                    {
+                        throw new ArgumentException("Invalid path");
+                    }
+                    Directory.CreateDirectory(directoryPath);
+                }
                 File.WriteAllText(path, jsonString);
             }
             catch (Exception ex)
