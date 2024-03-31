@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
+using System.Text.Json.Serialization;
+using System.Windows;
+
 
 namespace LangLang.Util
 {
@@ -14,6 +17,7 @@ namespace LangLang.Util
         public static void WriteToFile<T>(Dictionary<string, T> objects, string path)
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
+            options.Converters.Add(new TimeOnlyConverter());
             string jsonString = JsonSerializer.Serialize(objects, options);
 
             try
@@ -36,8 +40,11 @@ namespace LangLang.Util
             Dictionary<string, T>? items;
             try
             {
-                string jsonString = File.ReadAllText(path);
-                items = JsonSerializer.Deserialize<Dictionary<string, T>>(jsonString);
+
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new TimeOnlyConverter());
+                items = JsonSerializer.Deserialize<Dictionary<string, T>>(jsonString, options);
+
             }
             catch (FileNotFoundException)
             {
@@ -51,5 +58,24 @@ namespace LangLang.Util
             }
             return items ?? new Dictionary<string, T>();
         }
+
+        private class TimeOnlyConverter : JsonConverter<TimeOnly>
+        {
+            public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (reader.TokenType != JsonTokenType.String)
+                {
+                    throw new JsonException();
+                }
+
+                return TimeOnly.Parse(reader.GetString());
+            }
+
+            public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString());
+            }
+        }
+
     }
 }
