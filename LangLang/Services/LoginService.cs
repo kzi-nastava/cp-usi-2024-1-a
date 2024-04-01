@@ -47,37 +47,29 @@ public class LoginService
 
     private void LogInStudent(string email, string password)
     {
-        StudentDAO sd = StudentDAO.GetInstance();
-        Student student = sd.GetStudent(email);
+        Student student = StudentDAO.GetInstance().GetStudent(email);
 
         if (student != null)
         {
             if(student.Password != password)
-            {
                 validEmail = true;  //email is good but password failed
-            }
             else
             {
                 validUser = true;
 
-                StudentService ss = StudentService.GetInstance();
-                ss.LoggedUser = student;
+                StudentService.GetInstance().LoggedUser = student;
                 userType = typeof(Student);
             }
-
         }
     }
     private void LogInTutor(string email, string password)
     {
-        TutorDAO td = TutorDAO.GetInstance();
-        Tutor? tutor = td.GetTutor(email);
+        Tutor? tutor = TutorDAO.GetInstance().GetTutor(email);
 
         if (tutor != null)
         {
             if (tutor.Password != password)
-            {
                 validEmail = true;  //email is good but password failed
-            }
             else
             {
                 validUser = true;
@@ -85,20 +77,16 @@ public class LoginService
                 TutorService.GetInstance().LoggedUser = tutor;
                 userType = typeof(Tutor);
             }
-
         }
     }
     private void LogInDirector(string email, string password)
     {
-        DirectorDAO dd = DirectorDAO.GetInstance();
-        Director? director = dd.GetDirector(email);
+        Director? director = DirectorDAO.GetInstance().GetDirector(email);
 
         if (director != null)
         {
             if (director.Password != password)
-            {
                 validEmail = true;  //email is good but password failed
-            }
             else
             {
                 validUser = true;
@@ -106,7 +94,6 @@ public class LoginService
                 DirectorService.GetInstance().LoggedUser = director;
                 userType = typeof(Director);
             }
-
         }
     }
 
