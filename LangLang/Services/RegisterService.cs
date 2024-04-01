@@ -19,9 +19,14 @@ namespace LangLang.Services
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
             passed &= !(CheckExistingEmail(email));
 
+            if(birthDay == DateTime.MinValue)
+            {
+                return false;
+            }
+
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", null, null));
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", "", null, null, null));
                 return true;
             }
             return false;
@@ -72,7 +77,7 @@ namespace LangLang.Services
             passed &= !(int.TryParse(surname, out _));
             passed &= int.TryParse(phoneNumber, out _);  //checking if it's solely numeric
 
-            passed &= password.Length >= 8;               //password must include numbers, an upper character and should be longer than 8
+            passed &= password.Length > 8;               //password must include numbers, an upper character and should be longer than 8
             passed &= password.Any(char.IsDigit);
             passed &= password.Any(char.IsUpper);
             return passed;
