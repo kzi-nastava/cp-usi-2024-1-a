@@ -13,7 +13,7 @@ namespace LangLang.Services
     internal class CourseService
     {
         CourseDAO courseDAO = CourseDAO.getInstance();
-        LanguageDAO languageDAO = LanguageDAO.getInstance();
+        LanguageDAO languageDAO = LanguageDAO.GetInstance();
 
         public Dictionary<string,Course> GetAll()
         {
