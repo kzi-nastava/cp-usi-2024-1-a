@@ -258,6 +258,10 @@ namespace LangLang.ViewModel
             else
             {
                 MessageBox.Show($"Succesfull registration");
+                LoginWindow view = new LoginWindow();
+                view.Show();
+                _registerView.Close();
+
             }
         }
 
