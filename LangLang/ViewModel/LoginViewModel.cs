@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Input;
 using LangLang.MVVM;
 using LangLang.View;
+using LangLang.Model;
+using LangLang.Services;
 
 namespace LangLang.ViewModel
 {
@@ -91,8 +93,14 @@ namespace LangLang.ViewModel
             }
             else
             {
-                StudentService ss = StudentService.GetInstance();
-                MessageBox.Show($"Successfully logged in! Welcome : {ss.LoggedUser.Name} {ss.LoggedUser.Surname}");
+                User loggedUser;
+                if (_loginService.userType == typeof(Director))
+                    loggedUser = DirectorService.GetInstance().LoggedUser;
+                else if (_loginService.userType == typeof(Tutor))
+                    loggedUser = TutorService.GetInstance().LoggedUser;
+                else
+                    loggedUser = StudentService.GetInstance().LoggedUser;
+                MessageBox.Show($"Successfully logged in! Welcome : {loggedUser.Name} {loggedUser.Surname}");
                 _window.Close();
             }
         }
