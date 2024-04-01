@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 using Consts;
 
 namespace LangLang.Model
@@ -14,6 +15,11 @@ namespace LangLang.Model
         public int MaxStudents { get; set; }
         public int NumStudents { get; set; }
 
+        [JsonIgnore]
+        public DateOnly Date => DateOnly.FromDateTime(Time.Date);
+        [JsonIgnore]
+        public TimeSpan TimeOfDay => Time.TimeOfDay;
+        
         public Exam()
         {
             Id = "";

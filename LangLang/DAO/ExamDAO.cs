@@ -53,12 +53,13 @@ public class ExamDAO
         return exams;
     }
 
-    public void AddExam(Exam exam)
+    public Exam AddExam(Exam exam)
     {
         lastIdDao.IncrementExamId();
         exam.Id = lastIdDao.GetExamId();
         Exams.Add(exam.Id, exam);
         SaveExams();
+        return exam;
     }
 
     public void UpdateExam(string id, Exam exam)

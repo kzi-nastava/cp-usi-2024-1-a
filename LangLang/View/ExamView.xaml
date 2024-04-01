@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModel="clr-namespace:LangLang.ViewModel"
+             xmlns:model="clr-namespace:LangLang.Model"
              mc:Ignorable="d"
              d:DesignHeight="550" d:DesignWidth="800"
              Height="550" Width="800">
@@ -37,11 +37,17 @@
 
                         <StackPanel Orientation="Vertical" Grid.Column="0">
                             <Label>Language:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="CbFilterLanguage" SelectedItem="{Binding LanguageFilter}" ItemsSource="{Binding Languages}"/>
+                            <ComboBox Margin="5,0,0,0" x:Name="CbFilterLanguages" SelectedItem="{Binding FilterLanguage}"  ItemsSource="{Binding Languages}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type model:Language}">
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ComboBox>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Grid.Column="1">
                             <Label>Language Level:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="CbFilterLanguageLvl" SelectedItem="{Binding LevelFilter}" ItemsSource="{Binding Levels}"/>
+                            <ComboBox Margin="5,0,0,0" x:Name="CbFilterLanguageLvl" SelectedItem="{Binding LevelFilter}" ItemsSource="{Binding LanguageLevels}"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Grid.Column="2">
                             <Label>Date:</Label>
@@ -60,34 +66,57 @@
                       AutoGenerateColumns="False"
                       ColumnWidth="*"
                       >
-                <DataGrid.Columns >
-                    <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}"/>
-                    <DataGridTextColumn Header="LanguageLvl" Binding="{Binding Level}"/>
-                    <DataGridTextColumn Header="Date" Binding="{Binding Date}"/>
-                    <DataGridTextColumn Header="Time" Binding="{Binding Time}"/>
-                    <DataGridTextColumn Header="MaxStudents" Binding="{Binding MaxStudents}"/>
-                    <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
-                    <DataGridTextColumn Header="State" Binding="{Binding State}"/>
-                </DataGrid.Columns>
-            </DataGrid>
+                    <DataGrid.Columns >
+                        <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}"/>
+                        <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}"/>
+                        <DataGridTemplateColumn Header="Date">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Time">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TimeOfDay, StringFormat='{}{0:hh\\:mm}'}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="MaxStudents" Binding="{Binding MaxStudents}"/>
+                        <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding State}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </Grid>
 
             <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
                 <Label>Language:</Label>
-                <ComboBox Margin="5,0,0,0" x:Name="CbLanguages" SelectedItem="{Binding LanguageName}"  ItemsSource="{Binding Languages}"/>
+                <ComboBox Margin="5,0,0,0" x:Name="CbLanguages" SelectedItem="{Binding Language}"  ItemsSource="{Binding Languages}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type model:Language}">
+                            <TextBlock Text="{Binding Name}"></TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ComboBox>
+                
                 <Label>Language level:</Label>
-                <ComboBox Margin="5,0,0,0" x:Name="CbLevel" SelectedItem="{Binding Level}" ItemsSource="{Binding Levels}"/>
+                <ComboBox Margin="5,0,0,0" x:Name="CbLevel" SelectedItem="{Binding LanguageLvl}" ItemsSource="{Binding LanguageLevels, UpdateSourceTrigger=PropertyChanged}"/>
+                
                 <Label>Date:</Label>
-                <DatePicker Margin="5,0,0,0" Name="DpDate" SelectedDate="{Binding Start, UpdateSourceTrigger=PropertyChanged}" />
+                <DatePicker Margin="5,0,0,0" Name="DpDate" SelectedDate="{Binding ExamDate, UpdateSourceTrigger=PropertyChanged}" />
+                
                 <Label>Time:</Label>
-                <ComboBox Margin="5,0,0,0" Name="CbTime" SelectedItem="{Binding Duration}" ItemsSource="{Binding Durations, UpdateSourceTrigger=PropertyChanged}"/> 
+                <ComboBox Margin="5,0,0,0" Name="CbTime" SelectedItem="{Binding ExamTime}" ItemsSource="{Binding AvailableTimes}"/>
                 
                 <Label>Max Students:</Label>
-                <TextBox Margin="5,0,0,0" Name="TbMaxStudents" IsReadOnly="{Binding IsMaxStudentsDisabled}" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Margin="5,0,0,0" Name="TbMaxStudents" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
+                
                 <Label>Number of students:</Label>
-                <TextBox Margin="5,0,0,0" Name="TbStudentsNum" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Margin="5,0,0,0" Name="TbStudentsNum" IsReadOnly="True" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
+                
                 <Label>State:</Label>
-                <ComboBox Margin="5,0,0,0" Name="CbState" SelectedItem="{Binding State}" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Margin="5,0,0,0" Text="{Binding State}"></TextBlock>
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Margin="5" Content="Add" Width="70" Height="50" Command="{Binding AddCommand}" />
