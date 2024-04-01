@@ -19,7 +19,7 @@ namespace LangLang.ViewModel
         private readonly CourseService _courseService = new();
         private readonly LanguageService _languageService = new();
         public ICommand ClearExamFiltersCommand { get; }
-        public ICommand ClearFiltersCommand { get; }
+        public ICommand ClearCourseFiltersCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
 
         public ObservableCollection<Exam> Exams { get; set; }
@@ -27,17 +27,6 @@ namespace LangLang.ViewModel
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
-
-        /*private List<Exam> _exams;
-        public List<Exam> Exams
-        {
-            get { return _exams; }
-            set
-            {
-                _exams = value;
-                OnPropertyChanged(nameof(Exams));
-            }
-        }*/
 
         private string name = "";
         public string Name
@@ -107,61 +96,61 @@ namespace LangLang.ViewModel
 
        
         // FILTER VALUES
-        private string languageFilter = "";
-        public string LanguageFilter
+        private string courseLanguageFilter = "";
+        public string CourseLanguageFilter
         {
-            get { return languageFilter; }
+            get { return courseLanguageFilter; }
             set
             {
-                languageFilter = value;
+                courseLanguageFilter = value;
                 FilterCourses();
                 OnPropertyChanged();
             }
         }
 
-        private LanguageLvl? levelFilter;
-        public LanguageLvl? LevelFilter
+        private LanguageLvl? courseLevelFilter;
+        public LanguageLvl? CourseLevelFilter
         {
-            get { return levelFilter; }
+            get { return courseLevelFilter; }
             set
             {
-                levelFilter = value;
+                courseLevelFilter = value;
                 FilterCourses();
                 OnPropertyChanged();
             }
         }
 
-        private DateTime? startFilter;
-        public DateTime? StartFilter
+        private DateTime? courseStartFilter;
+        public DateTime? CourseStartFilter
         {
-            get { return startFilter; }
+            get { return courseStartFilter; }
             set
             {
-                startFilter = value;
+                courseStartFilter = value;
                 FilterCourses();
                 OnPropertyChanged();
             }
         }
 
-        private bool? onlineFilter;
-        public bool? OnlineFilter
+        private bool? courseOnlineFilter;
+        public bool? CourseOnlineFilter
         {
-            get { return onlineFilter; }
+            get { return courseOnlineFilter; }
             set
             {
-                onlineFilter = value;
+                courseOnlineFilter = value;
                 FilterCourses();
                 OnPropertyChanged();
             }
         }
 
-        private int durationFilter;
-        public int DurationFilter
+        private int courseDurationFilter;
+        public int CourseDurationFilter
         {
-            get { return durationFilter; }
+            get { return courseDurationFilter; }
             set
             {
-                durationFilter = value;
+                courseDurationFilter = value;
                 FilterCourses();
                 OnPropertyChanged();
             }
@@ -199,18 +188,18 @@ namespace LangLang.ViewModel
             LoadLanguages();
             LoadCourses();
             LoadLanguageLevels();
-            ClearFiltersCommand = new RelayCommand(ClearFilters);
+            ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
 
         }
 
-        private void ClearFilters(object? obj)
+        private void ClearCourseFilters(object? obj)
         {
-            LanguageFilter = "";
-            LevelFilter = null;
-            StartFilter = null;
-            OnlineFilter = null;
-            DurationFilter = 0;
+            CourseLanguageFilter = "";
+            CourseLevelFilter = null;
+            CourseStartFilter = null;
+            CourseOnlineFilter = null;
+            CourseDurationFilter = 0;
             Courses.Clear();
             LoadCourses();
             OnPropertyChanged();
@@ -285,13 +274,13 @@ namespace LangLang.ViewModel
             var courses = _courseService.GetAll();
             foreach (Course course in courses.Values)
             {
-                if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
+                if ((course.Language.Name == CourseLanguageFilter || CourseLanguageFilter == "") && (course.Level == CourseLevelFilter || CourseLevelFilter == null))
                 {
-                    if (startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter).ToShortDateString()))
+                    if (CourseStartFilter == null || (CourseStartFilter != null && course.Start == ((DateTime)CourseStartFilter).ToShortDateString()))
                     {
-                        if (course.Online == OnlineFilter || OnlineFilter == null)
+                        if (course.Online == CourseOnlineFilter || CourseOnlineFilter == null)
                         {
-                            if (course.Duration == DurationFilter || DurationFilter == 0)
+                            if (course.Duration == CourseDurationFilter || CourseDurationFilter == 0)
                             {
                                 Courses.Add(course);
                             }

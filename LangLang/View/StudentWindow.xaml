@@ -118,16 +118,15 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <ComboBox Margin="10" x:Name="cbFilterLanguage" SelectedItem="{Binding LanguageFilter, Mode=TwoWay}" ItemsSource="{Binding Languages}" Width="100" Height="25"/>
-                    <ComboBox Margin="10" x:Name="cbFilterLanguageLvl" SelectedItem="{Binding LevelFilter, Mode=TwoWay}" ItemsSource="{Binding Levels}" Width="100" Height="25"/>
-                    <DatePicker Margin="10" Name="dpFilterStart" SelectedDate="{Binding StartFilter, Mode=TwoWay}" Width="150" Height="25"/>
-                    <CheckBox Margin="10" IsChecked="{Binding OnlineFilter, Mode=TwoWay}"  Width="45" Height="25"/>
-                    <ComboBox Margin="10" x:Name="cbFilterState" SelectedItem="{Binding DurationFilter, Mode=TwoWay}" ItemsSource="{Binding Durations}" Width="100" Height="25"/>
-                    <Button Command="{Binding ClearFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="30,10,10,10" Height="25"/>
+                    <ComboBox Margin="10" x:Name="cbFilterLanguage" SelectedItem="{Binding CourseLanguageFilter, Mode=TwoWay}" ItemsSource="{Binding Languages}" Width="100" Height="25"/>
+                    <ComboBox Margin="10" x:Name="cbFilterLanguageLvl" SelectedItem="{Binding CourseLevelFilter, Mode=TwoWay}" ItemsSource="{Binding Levels}" Width="100" Height="25"/>
+                    <DatePicker Margin="10" Name="dpFilterStart" SelectedDate="{Binding CourseStartFilter, Mode=TwoWay}" Width="150" Height="25"/>
+                    <CheckBox Margin="10" IsChecked="{Binding CourseOnlineFilter, Mode=TwoWay}"  Width="45" Height="25"/>
+                    <ComboBox Margin="10" x:Name="cbFilterState" SelectedItem="{Binding CourseDurationFilter, Mode=TwoWay}" ItemsSource="{Binding Durations}" Width="100" Height="25"/>
+                    <Button Command="{Binding ClearCourseFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="30,10,10,10" Height="25"/>
                 </StackPanel>
 
 
-                <!-- DataGrid -->
                 <DataGrid Grid.Row="3" ItemsSource="{Binding Courses}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
@@ -160,6 +159,7 @@
                         <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>
+
 
                 <!-- Two buttons -->
                 <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
