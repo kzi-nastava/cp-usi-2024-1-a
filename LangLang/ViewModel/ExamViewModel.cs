@@ -15,6 +15,9 @@ internal class ExamViewModel : ViewModelBase
     private LanguageService languageService;
     
     public RelayCommand AddCommand { get; set; }
+    public RelayCommand SelectedExamChangedCommand { get; set; }
+    public RelayCommand UpdateCommand { get; set; }
+    public RelayCommand DeleteCommand { get; set; }
 
     private ObservableCollection<Exam> exams;
     private ObservableCollection<Language> languages;
@@ -25,7 +28,7 @@ internal class ExamViewModel : ViewModelBase
 
     private Language? language;
     private LanguageLvl? languageLvl;
-    private String? examDate;
+    private DateTime? examDate;
     private TimeOnly? examTime;
     private int maxStudents;
     private int numStudents;
@@ -70,7 +73,7 @@ internal class ExamViewModel : ViewModelBase
         get => languageLvl;
         set => SetField(ref languageLvl, value);
     }
-    public string? ExamDate
+    public DateTime? ExamDate
     {
         get => examDate;
         set => SetField(ref examDate, value);
@@ -115,11 +118,14 @@ internal class ExamViewModel : ViewModelBase
         availableTimes = new ObservableCollection<TimeOnly>{TimeOnly.Parse("08:00"), TimeOnly.Parse("12:00"), TimeOnly.Parse("16:00")};
         
         AddCommand = new RelayCommand(execute => AddExam(), execute => CanAddExam());
+        SelectedExamChangedCommand = new RelayCommand(execute => SelectExam());
+        UpdateCommand = new RelayCommand(execute => UpdateExam(), execute => CanUpdateExam());
+        DeleteCommand = new RelayCommand(execute => DeleteExam(), execute => CanDeleteExam());
     }
     
     private void AddExam()
     {
-        DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(DateTime.ParseExact(ExamDate, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture)) : null;
+        DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
         try
         {
             Exam exam = examService.AddExam(Language, LanguageLvl, selectedDate, ExamTime, MaxStudents);
@@ -134,7 +140,7 @@ internal class ExamViewModel : ViewModelBase
 
     private bool CanAddExam()
     {
-        return true;
+        return Language != null && LanguageLvl != null && ExamDate != null && ExamTime != null && MaxStudents > 0;
     }
     
     private void ResetFields()
@@ -144,5 +150,55 @@ internal class ExamViewModel : ViewModelBase
         ExamDate = null;
         ExamTime = null;
         MaxStudents = 0;
+    }
+
+    private void SelectExam()
+    {
+        if (SelectedExam == null) return;
+        Language = SelectedExam.Language;
+        LanguageLvl = SelectedExam.LanguageLvl;
+        ExamDate = SelectedExam.Time.Date;
+        ExamTime = SelectedExam.TimeOfDay;
+        MaxStudents = SelectedExam.MaxStudents;
+        NumStudents = SelectedExam.NumStudents;
+        // State = SelectedExam.State;
+    }
+
+    private void UpdateExam()
+    {
+        DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
+        try
+        {
+            Exam exam = examService.UpdateExam(selectedExam!.Id, Language, LanguageLvl, selectedDate, ExamTime, MaxStudents);
+            Exams[Exams.IndexOf(SelectedExam!)] = exam;
+            ResetFields();
+        }
+        catch (ArgumentException e)
+        {
+            MessageBox.Show($"Error updating exam: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+    
+    private bool CanUpdateExam()
+    {
+        return SelectedExam != null;
+    }
+    
+    private void DeleteExam()
+    {
+        try
+        {
+            examService.DeleteExam(selectedExam!.Id);
+            Exams.Remove(SelectedExam!);
+        }
+        catch (ArgumentException e)
+        {
+            MessageBox.Show($"Error deleting exam: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+    
+    private bool CanDeleteExam()
+    {
+        return SelectedExam != null;
     }
 }

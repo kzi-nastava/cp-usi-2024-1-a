@@ -66,4 +66,32 @@ public class ExamService
         Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, maxStudents);
         return examDao.AddExam(exam);
     }
+    
+    public Exam UpdateExam(string id, Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int maxStudents)
+    {
+        if(!IsExamValid(language, languageLvl, examDate, examTime, maxStudents))
+        {
+            throw new ArgumentException("Invalid exam data");
+        }
+
+        int classroomNumber = 1; // TODO: Update after TimetableService implementation
+        
+        DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
+        Exam? exam = new Exam(id, language!, languageLvl!.Value, dateTime, classroomNumber, maxStudents);
+        exam = examDao.UpdateExam(id, exam);
+        if (exam == null)
+        {
+            throw new ArgumentException("Exam not found");
+        }
+        return exam;
+    }
+    
+    public void DeleteExam(string id)
+    {
+        if (examDao.GetExamById(id) == null)
+        {
+            throw new ArgumentException("Exam not found");
+        }
+        examDao.DeleteExam(id);
+    }
 }

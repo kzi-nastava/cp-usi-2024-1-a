@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:model="clr-namespace:LangLang.Model"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
              d:DesignHeight="550" d:DesignWidth="800"
              Height="550" Width="800">
@@ -87,6 +88,11 @@
                         <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
                         <DataGridTextColumn Header="State" Binding="{Binding State}"/>
                     </DataGrid.Columns>
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="SelectionChanged">
+                            <b:InvokeCommandAction Command="{Binding SelectedExamChangedCommand}" />
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
                 </DataGrid>
             </Grid>
 

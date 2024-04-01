@@ -20,5 +20,14 @@ namespace LangLang.Model
             Code = code;
         }
 
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            Language other = (Language) obj;
+            return Code == other.Code;
+        }
     }
 }

@@ -62,13 +62,12 @@ public class ExamDAO
         return exam;
     }
 
-    public void UpdateExam(string id, Exam exam)
+    public Exam? UpdateExam(string id, Exam exam)
     {
-        if (Exams.ContainsKey(id))
-        {
-            Exams[id] = exam;
-        }
+        if (!Exams.ContainsKey(id)) return null;
+        Exams[id] = exam;
         SaveExams();
+        return exam;
     }
 
     public void DeleteExam(string id)

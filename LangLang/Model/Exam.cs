@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using Consts;
 
@@ -18,7 +17,7 @@ namespace LangLang.Model
         [JsonIgnore]
         public DateOnly Date => DateOnly.FromDateTime(Time.Date);
         [JsonIgnore]
-        public TimeSpan TimeOfDay => Time.TimeOfDay;
+        public TimeOnly TimeOfDay => TimeOnly.FromDateTime(Time);
         
         public Exam()
         {
