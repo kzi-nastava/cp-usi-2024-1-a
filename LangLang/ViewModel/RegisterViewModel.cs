@@ -12,7 +12,7 @@ using LangLang.View;
 
 namespace LangLang.ViewModel
 {
-    public class RegisterViewModel : INotifyPropertyChanged
+    internal class RegisterViewModel : ViewModelBase
     {
         private string _email;
         private string _password;
@@ -260,22 +260,6 @@ namespace LangLang.ViewModel
                 MessageBox.Show($"Succesfull registration");
             }
         }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
-
-
-
-
-
-
 
 
 
