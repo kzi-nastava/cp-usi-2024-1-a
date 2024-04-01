@@ -80,7 +80,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button x:Name="DeleteProfileBtn1" Content="Delete Profile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                    <Button x:Name="DeleteProfileBtn1" Content="Delete Profile"  Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -177,7 +177,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button x:Name="DeleteProfileBtn" Content="Delete Profile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                    <Button x:Name="DeleteProfileBtn" Content="Delete Profile" Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">

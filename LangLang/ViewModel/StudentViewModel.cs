@@ -295,21 +295,6 @@ namespace LangLang.ViewModel
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //FILTERING EXAM
         // Add properties for exam filtering criteria
         // Define new filter properties for exams
@@ -371,14 +356,6 @@ namespace LangLang.ViewModel
                 }
             }
         }
-
-
-
-
-
-
-
-
 
 
 

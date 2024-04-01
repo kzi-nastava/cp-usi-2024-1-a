@@ -40,5 +40,15 @@ namespace LangLang.View
             view.Show();
 
         }
+
+        private void DeleteProfile(object sender, RoutedEventArgs e)
+        {
+            StudentService ss = StudentService.GetInstance();
+            ss.DeleteMyAccount();
+            MessageBox.Show("Your profile has been successfully deleted");
+            LoginWindow view = new LoginWindow();
+            view.Show();
+            this.Close();
+        }
     }
 }
