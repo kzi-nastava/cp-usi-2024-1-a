@@ -95,12 +95,20 @@ namespace LangLang.ViewModel
             {
                 User loggedUser;
                 if (_loginService.userType == typeof(Director))
+		{
                     loggedUser = DirectorService.GetInstance().LoggedUser;
-                else if (_loginService.userType == typeof(Tutor))
-                    loggedUser = TutorService.GetInstance().LoggedUser;
-                else
-                    loggedUser = StudentService.GetInstance().LoggedUser;
-                MessageBox.Show($"Successfully logged in! Welcome : {loggedUser.Name} {loggedUser.Surname}");
+                }
+		else if (_loginService.userType == typeof(Tutor))
+                {
+		    loggedUser = TutorService.GetInstance().LoggedUser;
+                }
+		else
+                {
+		    loggedUser = StudentService.GetInstance().LoggedUser;
+                    StudentWindow studentWindow = new StudentWindow();
+                    studentWindow.Show();
+		}
+		MessageBox.Show($"Successfully logged in! Welcome : {loggedUser.Name} {loggedUser.Surname}");
                 _window.Close();
             }
         }
