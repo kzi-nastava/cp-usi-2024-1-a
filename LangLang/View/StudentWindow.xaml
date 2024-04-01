@@ -4,11 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LangLang.View"
+        xmlns:consts="clr-namespace:Consts"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="StudentWindow" Height="753" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <!-- Set DataContext here -->
+    <Window.Resources>
+        <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
+        <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
+    </Window.Resources>
 
 
     <TabControl>
@@ -66,7 +71,7 @@
 
                 <!-- Two buttons -->
                 <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="EditProfileBtn1" Content="Edit Profile" FontSize="14" Foreground="White" Background="#34a0a4" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                    <Button x:Name="EditProfileBtn1" Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -75,7 +80,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button x:Name="DeleteProfileBtn1" Content="Delete Profile" FontSize="14" Foreground="White" Background="#91261f" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                    <Button x:Name="DeleteProfileBtn1" Content="Delete Profile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -163,7 +168,7 @@
 
                 <!-- Two buttons -->
                 <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="EditProfileBtn" Content="Edit Profile" FontSize="14" Foreground="White" Background="#34a0a4" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                    <Button x:Name="EditProfileBtn"  Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -172,7 +177,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button x:Name="DeleteProfileBtn" Content="Delete Profile" FontSize="14" Foreground="White" Background="#91261f" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                    <Button x:Name="DeleteProfileBtn" Content="Delete Profile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">

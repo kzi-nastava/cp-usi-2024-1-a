@@ -1,19 +1,23 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Net.Mail;
-using System.Security;
-using System.Windows;
-using System.Windows.Input;
-using Consts;
+﻿using Consts;
+using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services;
 using LangLang.View;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace LangLang.ViewModel
 {
-    internal class RegisterViewModel : ViewModelBase
+    internal class StudentAccountViewModel : ViewModelBase
     {
+        private StudentService studentService = StudentService.GetInstance();
+
         private string _email;
         private string _password;
         private string _name;
@@ -22,10 +26,7 @@ namespace LangLang.ViewModel
         private Gender _gender;
         private DateTime _birthday;
 
-
-
         private string _errorMessageRequired;
-        private string _errorMessageEmail;
         private string _errorMessagePassword;
         private string _errorMessageName;
         private string _errorMessageSurname;
@@ -35,26 +36,33 @@ namespace LangLang.ViewModel
         private readonly Window _window;
 
 
-        public RegisterViewModel()
+        public StudentAccountViewModel()
         {
-            SignUpCommand = new RelayCommand(SignUp);
+            ConfirmCommand = new RelayCommand(ConfirmInput);
         }
 
-        private RegisterView _registerView;
 
-        public RegisterViewModel(RegisterView registerView)
+        private StudentAccountWindow _accountWindow;
+
+        public StudentAccountViewModel(StudentAccountWindow accountWindow)
         {
-            _registerView = registerView;
-            SignUpCommand = new RelayCommand(SignUp);
+            _accountWindow = accountWindow;
+            ConfirmCommand = new RelayCommand(ConfirmInput);
+            SetUserData();
         }
 
-        /*
-        public RegisterViewModel(Window window)
+
+        private void SetUserData()
         {
-            _window = new Window();
-            SignUpCommand = new RelayCommand(SignUp);
+            Student user = studentService.LoggedUser;
+            Email = user.Email;
+            Name = user.Name;
+            Surname = user.Surname;
+            PhoneNumber = user.PhoneNumber;
+            Gender = user.Gender;
+            Birthday = user.BirthDate;
+            Password = user.Password; // Assuming you don't want to display the password
         }
-        */
 
         public string ErrorMessageRequired
         {
@@ -66,15 +74,6 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string ErrorMessageEmail
-        {
-            get => _errorMessageEmail;
-            set
-            {
-                _errorMessageEmail = value;
-                OnPropertyChanged(nameof(ErrorMessageEmail));
-            }
-        }
 
         public string ErrorMessagePassword
         {
@@ -176,8 +175,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(Gender));
             }
         }
-
-
         public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
         public DateTime Birthday
         {
@@ -191,12 +188,11 @@ namespace LangLang.ViewModel
 
 
 
-        public ICommand SignUpCommand { get; }
+        public ICommand ConfirmCommand { get; }
 
-        private void SignUp(object parameter)
+        private void ConfirmInput(object parameter)
         {
             ErrorMessageRequired = "";
-            ErrorMessageEmail = "";
             ErrorMessagePassword = "";
             ErrorMessageName = "";
             ErrorMessageSurname = "";
@@ -211,57 +207,50 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, "");
+            bool successful = RegisterService.CheckUserData(studentService.LoggedUser.Email, password, name, surname, phoneNumber);
 
-            if (!successful)
+            if (successful)
             {
-                if (birthday == DateTime.MinValue || email == null || password == null || name == null || surname == null || phoneNumber == null || email == "" || name == "" || surname == "" || password == "" || phoneNumber == "")
+                bool canEdit = studentService.UpdateStudent(password, name, surname,birthday, gender, phoneNumber);
+                if (canEdit)
+                {
+                    MessageBox.Show($"Succesfull update");
+                }
+                else
+                {
+                    ErrorMessageRequired = "Student applied for courses, editing profile not allowed";
+                    return;
+                }
+
+            }
+            else {
+                if (birthday == DateTime.MinValue || password == null || name == null || surname == null || phoneNumber == null || name == "" || surname == "" || password == "" || phoneNumber == "")
                 {
                     ErrorMessageRequired = "All the fields are required";
                     return;
                 }
 
-                try
-                {
-                    _ = new MailAddress(email);
-                }
-                catch
-                {
-                    ErrorMessageEmail = "Incorrect email";
-                }
-
-                if(int.TryParse(name, out _))
+                if (int.TryParse(name, out _))
                 {
                     ErrorMessageName = "Name must be all letters";
                 }
-                
-                if(int.TryParse(surname, out _))
+
+                if (int.TryParse(surname, out _))
                 {
                     ErrorMessageSurname = "Surname must be all letters";
                 }
 
-                if(!int.TryParse(phoneNumber, out _))
+                if (!int.TryParse(phoneNumber, out _))
                 {
                     ErrorMessagePhone = "Must be made up of numbers";
                 }
-                if(password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
+                if (password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
-                    
 
-                if (email != null && RegisterService.CheckExistingEmail(email))
-                {
-                    ErrorMessageEmail = "Email already exists";
-                }
             }
-            else
-            {
-                MessageBox.Show($"Succesfull registration");
-            }
+
         }
-
-
-
     }
 }
