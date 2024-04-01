@@ -27,27 +27,23 @@ public class StudentService
         return instance;
     }
 
-    public void UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+    public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
     {
         if (LoggedUser.AttendingCourse != "")
         {
             MessageBox.Show($"User is attending a course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
+            return false;
         }
 
-        LoginService loginService = LoginService.GetInstance();
-        bool checkData = RegisterService.CheckUserData(LoggedUser.Email, password, name, surname, phoneNumber);
-        if (checkData)
-        {
-            LoggedUser.Name = name;
-            LoggedUser.Surname = surname;
-            LoggedUser.BirthDate = birthDate;
-            LoggedUser.Gender = gender;
-            LoggedUser.PhoneNumber = phoneNumber;
 
-            studentDAO.AddStudent(LoggedUser);  //since its a hashmap it will replace it
-        }
-       
+        LoggedUser.Name = name;
+        LoggedUser.Surname = surname;
+        LoggedUser.BirthDate = birthDate;
+        LoggedUser.Gender = gender;
+        LoggedUser.PhoneNumber = phoneNumber;
+
+        studentDAO.AddStudent(LoggedUser);  //since its a hashmap it will replace it
+        return true;
     }
 
     /*
