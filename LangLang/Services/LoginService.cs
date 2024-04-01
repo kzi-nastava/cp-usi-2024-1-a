@@ -37,11 +37,11 @@ public class LoginService
         validUser = false;
         validEmail = false;
 
-        LogInStudent(email, password);
+        LogInDirector(email, password);
         if (validUser) return;
         LogInTutor(email, password);
         if (validUser) return;
-        LogInDirector(email, password);
+        LogInStudent(email, password);
     }
 
 
