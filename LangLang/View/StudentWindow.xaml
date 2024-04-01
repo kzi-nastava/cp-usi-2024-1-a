@@ -44,7 +44,7 @@
                     <ComboBox Margin="10" SelectedItem="{Binding ExamLanguageFilter, Mode=TwoWay}" ItemsSource="{Binding Languages}" Width="100" Height="25"/>
                     <ComboBox Margin="10" SelectedItem="{Binding ExamLevelFilter, Mode=TwoWay}" ItemsSource="{Binding Levels}" Width="100" Height="25"/>
                     <DatePicker Margin="10" SelectedDate="{Binding ExamStartFilter, Mode=TwoWay}" Width="150" Height="25"/>
-                    <Button Command="{Binding ClearFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="30,10,10,10" Height="25"/>
+                    <Button Command="{Binding ClearExamFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="30,10,10,10" Height="25"/>
                 </StackPanel>
 
 

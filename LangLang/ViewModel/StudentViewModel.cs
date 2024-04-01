@@ -18,14 +18,17 @@ namespace LangLang.ViewModel
         private readonly Window _window;
         private readonly CourseService _courseService = new();
         private readonly LanguageService _languageService = new();
+        public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearFiltersCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
+
+        public ObservableCollection<Exam> Exams { get; set; }
+
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
 
-
-        private List<Exam> _exams;
+        /*private List<Exam> _exams;
         public List<Exam> Exams
         {
             get { return _exams; }
@@ -34,9 +37,7 @@ namespace LangLang.ViewModel
                 _exams = value;
                 OnPropertyChanged(nameof(Exams));
             }
-        }
-
-
+        }*/
 
         private string name = "";
         public string Name
@@ -189,6 +190,7 @@ namespace LangLang.ViewModel
         {
             _window = window;
             Courses = new ObservableCollection<Course>();
+            Exams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
             Durations = new ObservableCollection<int?> { null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
@@ -198,6 +200,8 @@ namespace LangLang.ViewModel
             LoadCourses();
             LoadLanguageLevels();
             ClearFiltersCommand = new RelayCommand(ClearFilters);
+            ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
+
         }
 
         private void ClearFilters(object? obj)
@@ -212,6 +216,15 @@ namespace LangLang.ViewModel
             OnPropertyChanged();
         }
 
+        private void ClearExamFilters(object? obj)
+        {
+            ExamLanguageFilter = "";
+            ExamLevelFilter = null;
+            ExamStartFilter = null;
+            Exams.Clear();
+            LoadExams();
+            OnPropertyChanged();
+        }
 
 
         public void LoadCourses()
@@ -228,7 +241,10 @@ namespace LangLang.ViewModel
         {
             ExamDAO examDAO = ExamDAO.GetInstance();
             var examsDictionary = examDAO.GetAllExams();
-            Exams = new List<Exam>(examsDictionary.Values);
+            foreach (Exam exam in examsDictionary.Values)
+            {
+                Exams.Add(exam);
+            }
         }
 
 
