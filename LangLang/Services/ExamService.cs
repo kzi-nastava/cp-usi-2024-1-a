@@ -63,7 +63,12 @@ public class ExamService
         int classroomNumber = 1; // TODO: Update after TimetableService implementation
         
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
-        Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, maxStudents);
+        Exam.State examState = Exam.State.NotStarted;
+        if(dateTime - Constants.ConfirmableExamTime < DateTime.Now)
+        {
+            examState = Exam.State.Confirmable;
+        }
+        Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
         return examDao.AddExam(exam);
     }
     
@@ -75,9 +80,26 @@ public class ExamService
         }
 
         int classroomNumber = 1; // TODO: Update after TimetableService implementation
+
+        Exam? oldExam = examDao.GetExamById(id);
+        if (oldExam == null)
+        {
+            throw new ArgumentException("Exam not found");
+        }
+        
+        if(oldExam.ExamState != Exam.State.NotStarted && oldExam.ExamState != Exam.State.Confirmable)
+        {
+            throw new ArgumentException("Exam cannot be updated at this state");
+        }
         
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
-        Exam? exam = new Exam(id, language!, languageLvl!.Value, dateTime, classroomNumber, maxStudents);
+        Exam.State examState = Exam.State.NotStarted;
+        if(dateTime - Constants.ConfirmableExamTime < DateTime.Now)
+        {
+            examState = Exam.State.Confirmable;
+        }
+        
+        Exam? exam = new Exam(id, language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
         exam = examDao.UpdateExam(id, exam);
         if (exam == null)
         {

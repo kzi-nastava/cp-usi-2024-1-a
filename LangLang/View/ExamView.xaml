@@ -88,7 +88,7 @@
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="MaxStudents" Binding="{Binding MaxStudents}"/>
                         <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
-                        <DataGridTextColumn Header="State" Binding="{Binding State}"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding ExamState}"/>
                     </DataGrid.Columns>
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="SelectionChanged">
@@ -124,7 +124,7 @@
                 <TextBox Margin="5,0,0,0" Name="TbStudentsNum" IsReadOnly="True" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 
                 <Label>State:</Label>
-                <TextBlock Margin="5,0,0,0" Text="{Binding State}"></TextBlock>
+                <TextBlock Margin="5,0,0,0" Text="{Binding ExamState}"></TextBlock>
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Margin="5" Content="Add" Width="70" Height="50" Command="{Binding AddCommand}" />

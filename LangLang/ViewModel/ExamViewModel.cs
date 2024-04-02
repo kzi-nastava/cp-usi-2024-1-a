@@ -33,7 +33,7 @@ internal class ExamViewModel : ViewModelBase
     private TimeOnly? examTime;
     private int maxStudents;
     private int numStudents;
-    private string state = string.Empty; // TODO: change after enum definition
+    private Exam.State examState;
     
     private Language? filterLanguage;
     private LanguageLvl? filterLanguageLvl;
@@ -96,10 +96,10 @@ internal class ExamViewModel : ViewModelBase
         get => numStudents;
         set => SetField(ref numStudents, value);
     }
-    public string State
+    public Exam.State ExamState
     {
-        get => state;
-        set => SetField(ref state, value);
+        get => examState;
+        set => SetField(ref examState, value);
     }
     
     public Language? FilterLanguage
@@ -186,7 +186,7 @@ internal class ExamViewModel : ViewModelBase
         ExamTime = SelectedExam.TimeOfDay;
         MaxStudents = SelectedExam.MaxStudents;
         NumStudents = SelectedExam.NumStudents;
-        // State = SelectedExam.State;
+        ExamState = SelectedExam.ExamState;
     }
 
     private void UpdateExam()

@@ -13,7 +13,14 @@ namespace LangLang.Model
         public int ClassroomNumber { get; set; }
         public int MaxStudents { get; set; }
         public int NumStudents { get; set; }
+        
+        public enum State
+        {
+            NotStarted, Confirmable, Confirmed, InProgress, Finished
+        }
 
+        public State ExamState { get; set; }
+        
         [JsonIgnore]
         public DateOnly Date => DateOnly.FromDateTime(Time.Date);
         [JsonIgnore]
@@ -26,7 +33,7 @@ namespace LangLang.Model
             LanguageLvl = LanguageLvl.A1;
         }
         
-        public Exam(Language language, LanguageLvl languageLvl, DateTime time, int classroomNumber, int maxStudents, int numStudents=0)
+        public Exam(Language language, LanguageLvl languageLvl, DateTime time, int classroomNumber, State examState, int maxStudents, int numStudents=0)
         {
             Id = "";
             Language = language;
@@ -35,9 +42,10 @@ namespace LangLang.Model
             ClassroomNumber = classroomNumber;
             MaxStudents = maxStudents;
             NumStudents = numStudents;
+            ExamState = examState;
         }
         
-        public Exam(string id, Language language, LanguageLvl languageLvl, DateTime time, int classroomNumber, int maxStudents, int numStudents=0)
+        public Exam(string id, Language language, LanguageLvl languageLvl, DateTime time, int classroomNumber, State examState, int maxStudents, int numStudents=0)
         {
             Id = id;
             Language = language;
@@ -46,6 +54,7 @@ namespace LangLang.Model
             ClassroomNumber = classroomNumber;
             MaxStudents = maxStudents;
             NumStudents = numStudents;
+            ExamState = examState;
         }
         
         public void AddAttendance()
