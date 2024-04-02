@@ -126,7 +126,7 @@ public class ExamService
             {
                 continue;
             }
-            if (exam.NumStudents >= exam.MaxStudents)
+            if (exam.IsFull())
             {
                 continue;
             }
