@@ -29,7 +29,7 @@ namespace LangLang.DAO
 
         }
 
-        public static LanguageDAO getInstance()
+        public static LanguageDAO GetInstance()
         {
             if(instance == null)
             {
@@ -38,7 +38,7 @@ namespace LangLang.DAO
             return instance;
         }
 
-        public Dictionary<string, Language> getAllLanguages()
+        public Dictionary<string, Language> GetAllLanguages()
         {
             return Languages;
         }

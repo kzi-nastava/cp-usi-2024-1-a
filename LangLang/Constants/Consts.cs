@@ -7,6 +7,8 @@ namespace Consts
         public const int LessonDuration = 90;   //minutes
         public const int ExamDuration = 4;  //hours
         public const int ClassroomNumber = 2;
+        
+        public static readonly TimeSpan ConfirmableExamTime = new TimeSpan(7, 0, 0, 0);
 
         public const string StudentFilePath = "../../../Data/Students.json";
         public const string CourseFilePath = "../../../Data/Courses.json";

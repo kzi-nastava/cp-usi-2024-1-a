@@ -16,8 +16,8 @@ namespace LangLang.Util
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
             options.Converters.Add(new TimeOnlyConverter());
+            options.Converters.Add(new DateTimeConverter());
             string jsonString = JsonSerializer.Serialize(objects, options);
-
             try
             {
                 string? directoryPath = Path.GetDirectoryName(path);
@@ -46,6 +46,7 @@ namespace LangLang.Util
         {
             var options = new JsonSerializerOptions();
             options.Converters.Add(new TimeOnlyConverter());
+            options.Converters.Add(new DateTimeConverter());
             Dictionary<string, T>? items;
             try
             {
@@ -83,5 +84,27 @@ namespace LangLang.Util
             }
         }
 
+        private class DateTimeConverter : JsonConverter<DateTime>
+        {
+            public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (reader.TokenType != JsonTokenType.String)
+                {
+                    throw new JsonException("Expected string value.");
+                }
+
+                if (!DateTime.TryParse(reader.GetString(), out DateTime result))
+                {
+                    throw new JsonException("Invalid date format.");
+                }
+
+                return result;
+            }
+
+            public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+            }
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using Consts;
 using LangLang.Model;
 using LangLang.Util;
@@ -16,11 +15,7 @@ public class ExamDAO
     {
         get
         {
-            if (exams == null)
-            {
-                Load();
-            }
-
+            exams ??= JsonUtil.ReadFromFile<Exam>(Constants.ExamFilePath);
             return exams!;
         }
         set => exams = value;
@@ -44,49 +39,44 @@ public class ExamDAO
     {
         return Exams.GetValueOrDefault(id);
     }
+    
+    public List<Exam> GetExamsForIds(List<string> ids)
+    {
+        List<Exam> exams = new();
+        foreach (string id in ids)
+        {
+            if (Exams.ContainsKey(id))
+            {
+                exams.Add(Exams[id]);
+            }
+        }
+        return exams;
+    }
 
-    public void AddExam(Exam exam)
+    public Exam AddExam(Exam exam)
     {
         lastIdDao.IncrementExamId();
         exam.Id = lastIdDao.GetExamId();
         Exams.Add(exam.Id, exam);
-        Save();
+        SaveExams();
+        return exam;
     }
 
-    public void UpdateExam(string id, Exam exam)
+    public Exam? UpdateExam(string id, Exam exam)
     {
-        if (Exams.ContainsKey(id))
-        {
-            Exams[id] = exam;
-        }
-        Save();
+        if (!Exams.ContainsKey(id)) return null;
+        Exams[id] = exam;
+        SaveExams();
+        return exam;
     }
 
     public void DeleteExam(string id)
     {
         Exams.Remove(id);
-        Save();
+        SaveExams();
     }
 
-    private void Load()
-    {
-        try
-        {
-            exams = JsonUtil.ReadFromFile<Exam>(Constants.ExamFilePath);
-        }
-        catch (DirectoryNotFoundException)
-        {
-            Exams = new Dictionary<string, Exam>();
-            Save();
-        }
-        catch (FileNotFoundException)
-        {
-            Exams = new Dictionary<string, Exam>();
-            Save();
-        }
-    }
-
-    private void Save()
+    private void SaveExams()
     {
         JsonUtil.WriteToFile(Exams, Constants.ExamFilePath);
     }
