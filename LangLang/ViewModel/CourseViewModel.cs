@@ -475,7 +475,7 @@ namespace LangLang.ViewModel
         public void LoadLanguages()
         {
             var languages = _languageService.GetAll();
-            foreach(Language language in languages.Values)
+            foreach(Language language in languages)
             {
                 Languages.Add(language.Name);
             }
