@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -272,6 +273,42 @@ namespace LangLang.ViewModel
             }
             return false;
         }
+
+        private string GenerateErrorMessage()
+        {
+            if (Email == null || Password == null || Name == null || Surname == null || PhoneNumber == null || Email == "" || Name == "" || Surname == "" || Password == "" || PhoneNumber == "")
+                return "All the fields are required!";
+
+            try
+            {
+                _ = new MailAddress(Email);
+            }
+            catch
+            {
+                return "Incorrect email!";
+            }
+
+            if (int.TryParse(Name, out _))
+            {
+                return "Name must be all letters!";
+            }
+
+            if (int.TryParse(Surname, out _))
+            {
+                return "Surname must be all letters!";
+            }
+
+            if (!int.TryParse(PhoneNumber, out _))
+            {
+                return "Phone number must be made up of numbers!";
+            }
+            if (Password.Length < 8 || !Password.Any(char.IsDigit) || !Password.Any(char.IsUpper))
+            {
+                return "Password must be at least 8 chars, uppercase and number!";
+            }
+            return "Invalid user data!";
+        }
+
         private void UpdateTutor()
         {
             if (SelectedItem == null)
@@ -280,7 +317,7 @@ namespace LangLang.ViewModel
             bool valid = RegisterService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
             if (!valid)
             {
-                MessageBox.Show("User data not valid!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             Tutor? tutorWithThisEmail = tutorService.GetTutor(Email);
@@ -334,7 +371,7 @@ namespace LangLang.ViewModel
             bool valid = RegisterService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
             if (!valid)
             {
-                MessageBox.Show("User data not valid!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (RegisterService.CheckExistingEmail(Email))

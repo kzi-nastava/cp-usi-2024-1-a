@@ -28,11 +28,6 @@ namespace LangLang.Services
             return false;
         }
 
-        /*
-         Register tutor by director
-         */
-
-
 
 
         public static bool CheckExistingEmail(string email)
