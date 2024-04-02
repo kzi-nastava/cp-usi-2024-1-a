@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:LangLang.ViewModel" 
         d:DataContext="{d:DesignInstance Type=local:TutorTableViewModel}"
         mc:Ignorable="d"
-        Title="Tutor Table" Height="700" Width="800">
+        Title="Tutor Table" Height="700" Width="800"
+        WindowStartupLocation="CenterScreen">
     <Border  Padding="10" >
         <Grid>
             <Grid.ColumnDefinitions>
@@ -17,43 +18,39 @@
                 <RowDefinition/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <Grid Grid.RowSpan="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Vertical" Grid.Row="0">
-                    <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0">Tutor Overview</Label>
-                    <Label FontSize="14" Margin="10,0,0,0" >Filter</Label>
-                    <Grid Margin="5,0,0,0" Width="Auto">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="15*"/>
-                        </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+                <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0">Tutor Overview</Label>
+                <Label FontSize="14" Margin="10,0,0,0" >Filter</Label>
+                <Grid Margin="5,0,0,0" Width="Auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="15*"/>
+                    </Grid.ColumnDefinitions>
 
-                        <StackPanel Orientation="Vertical" Grid.Column="0">
-                            <Label>Language:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguage" SelectedItem="{Binding LanguageFilter}" ItemsSource="{Binding Languages}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="1">
-                            <Label>Language Level:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguageLvl" SelectedItem="{Binding LevelFilter}" ItemsSource="{Binding Levels}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="2">
-                            <Label>Date added min:</Label>
-                            <DatePicker Margin="5,0,0,0" Name="dpFilterDateMin" SelectedDate="{Binding DateAddedMinFilter}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="3">
-                            <Label>Date added max:</Label>
-                            <DatePicker Margin="5,0,0,0" Name="dpFilterDateMax" SelectedDate="{Binding DateAddedMaxFilter}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="4" VerticalAlignment="Bottom">
-                            <Button Command="{Binding ClearFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Center" Margin="0,0,0,2"/>
-                        </StackPanel>
-                    </Grid>
-                    <DataGrid CanUserAddRows="False" 
+                    <StackPanel Orientation="Vertical" Grid.Column="0">
+                        <Label>Language:</Label>
+                        <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguage" SelectedItem="{Binding LanguageFilter}" ItemsSource="{Binding Languages}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Column="1">
+                        <Label>Language Level:</Label>
+                        <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguageLvl" SelectedItem="{Binding LevelFilter}" ItemsSource="{Binding Levels}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Column="2">
+                        <Label>Date added min:</Label>
+                        <DatePicker Margin="5,0,0,0" Name="dpFilterDateMin" SelectedDate="{Binding DateAddedMinFilter}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Column="3">
+                        <Label>Date added max:</Label>
+                        <DatePicker Margin="5,0,0,0" Name="dpFilterDateMax" SelectedDate="{Binding DateAddedMaxFilter}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="4" VerticalAlignment="Bottom">
+                        <Button Command="{Binding ClearFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                    </StackPanel>
+                </Grid>
+                <DataGrid CanUserAddRows="False" 
                       HeadersVisibility = "Column"
                       ItemsSource="{Binding Tutors}" 
                       SelectedItem="{Binding SelectedItem}"
@@ -66,16 +63,16 @@
                       SelectionMode="Single"
                       SelectionChanged="dgTutors_SelectionChanged"
                       >
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Email" Width="1*" Binding="{Binding Email}"/>
-                            <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Surname" Width="1*" Binding="{Binding Surname}"/>
-                            <DataGridTextColumn Header="KnownLanguages" Width="1.6*" Binding="{Binding KnownLanguagesAsString}"/>
-                            <DataGridTextColumn Header="DateAdded" Width="1*" Binding="{Binding DateAdded}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Grid>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Email" Width="1*" Binding="{Binding Email}"/>
+                        <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Surname" Width="1*" Binding="{Binding Surname}"/>
+                        <DataGridTextColumn Header="KnownLanguages" Width="1.6*" Binding="{Binding KnownLanguagesAsString}"/>
+                        <DataGridTextColumn Header="DateAdded" Width="1*" Binding="{Binding DateAdded}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+            <Button Grid.Column="0" Grid.Row="1" Width="70" Content="Go back" HorizontalAlignment="Left" Margin="5" Command="{Binding GoBackCommand}"/>
 
             <StackPanel Grid.Column="1" Grid.Row="0" >
                 <Grid>

@@ -23,6 +23,7 @@ namespace LangLang.ViewModel
         private readonly ItemsControl knownLanguagesHolder;
         private readonly TutorService tutorService = TutorService.GetInstance();
         private readonly LanguageService languageService = new();
+        public RelayCommand GoBackCommand { get; set; }
         public RelayCommand AddKnownLangaugeCommand { get; set; }
         public RelayCommand AddTutorCommand { get; set; }
         public RelayCommand DeleteTutorCommand { get; set; }
@@ -182,11 +183,19 @@ namespace LangLang.ViewModel
             else
                 knownLanguagesHolder.Items.RemoveAt(0);
             LoadGenders();
+            GoBackCommand = new RelayCommand(execute => GoBack());
             AddKnownLangaugeCommand = new RelayCommand(execute => AddKnownLanguage());
             AddTutorCommand = new RelayCommand(execute => AddTutor(), execute => CanAddTutor());
             DeleteTutorCommand = new RelayCommand(execute => DeleteTutor(), execute => CanDeleteTutor());
             UpdateTutorCommand = new RelayCommand(execute => UpdateTutor(), execute => CanUpdateTutor());
             ClearFiltersCommand = new RelayCommand(execute => ClearFilters());
+        }
+
+        private void GoBack()
+        {
+            DirectorWindow directorWindow = new();
+            directorWindow.Show();
+            window.Close();
         }
 
         private void ClearFilters()
