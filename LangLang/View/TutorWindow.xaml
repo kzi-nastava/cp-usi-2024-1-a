@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LangLang.View"
-             xmlns:viewModel="clr-namespace:LangLang.ViewModel"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
-    
+             xmlns:viewModel="clr-namespace:LangLang.ViewModel" xmlns:avalonia="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+        mc:Ignorable="d"
+             Height="770" Width="1030"
+             ResizeMode="NoResize">
+
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModel:ExamViewModel}">
             <local:ExamView></local:ExamView>
@@ -16,36 +17,46 @@
             <local:CourseView></local:CourseView>
         </DataTemplate>
     </Window.Resources>
-    
+
     <Grid>
-        <Grid.RowDefinitions> 
-            <RowDefinition Height = "Auto" />
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height = "*" /> 
-        </Grid.RowDefinitions> 
-        <Grid x:Name = "NavBar"  Margin="0 0 0 5"> 
-            <Grid.ColumnDefinitions> 
-                <ColumnDefinition Width = "*" /> 
-                <ColumnDefinition Width = "*" /> 
-                <ColumnDefinition Width = "*" /> 
-            </Grid.ColumnDefinitions> 
-	
-            <Button Content = "Courses" 
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid x:Name = "NavBar">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width = "200" />
+                <ColumnDefinition Width = "800" />
+            </Grid.ColumnDefinitions>
+            <Grid Background="LightGray">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <avalonia:MaterialIcon Kind="AccountCircle" Width="40" Height="40" Margin="10,0,0,0"/>
+                    <TextBlock Text="{Binding TutorName}" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0" />
+                </StackPanel>
+
+
+                <Button Content = "Courses" 
                     Command = "{Binding NavCommand}"
                     CommandParameter = "courses" 
-                    Grid.Column = "0" />
-				
-            <Button Content = "Exams" 
+                    Grid.Row = "1"
+                     Margin="20,10,20,10"/>
+
+                <Button Content = "Exams" 
                     Command = "{Binding NavCommand}" 
                     CommandParameter = "exams" 
-                    Grid.Column = "2" />
-        </Grid> 
-        
-        <Separator Grid.Row="1"/>
-        
-        <Grid x:Name="MainContent" Grid.Row="2">
-            <ContentControl Content="{Binding CurrentViewModel, UpdateSourceTrigger=PropertyChanged}"/>
+                    Grid.Row = "2" 
+                    Margin="20,10,20,10"/>
+            </Grid>
+
+
+
+            <ContentControl Grid.Column="2" Content="{Binding CurrentViewModel, UpdateSourceTrigger=PropertyChanged}"/>
+
         </Grid>
-        
+
     </Grid>
 </Window>

@@ -36,7 +36,7 @@ namespace LangLang.Model
             Level = LanguageLvl.A1;
             Duration = 0;
             Schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
-            Start = DateTime.Now.ToShortDateString();
+            Start = DateTime.Now.ToString("yyyy-MM-dd");
             Online = false;
             MaxStudents = 0;
             NumStudents = 0;
@@ -57,7 +57,7 @@ namespace LangLang.Model
             Level = level;
             Duration = duration;
             Schedule = schedule;
-            Start = start.ToShortDateString();
+            Start = start.ToString("yyyy-MM-dd");
             Online = online;
             MaxStudents = maxStudents;
             NumStudents = numStudents;
@@ -79,7 +79,7 @@ namespace LangLang.Model
             Level = level;
             Duration = duration;
             Schedule = schedule;
-            Start = start.ToShortDateString();
+            Start = start.ToString("yyyy-MM-dd");
             Online = online;
             MaxStudents = maxStudents;
             NumStudents = numStudents;
