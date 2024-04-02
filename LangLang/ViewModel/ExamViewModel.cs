@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using Consts;
 using LangLang.Model;
@@ -11,8 +12,9 @@ namespace LangLang.ViewModel;
 
 internal class ExamViewModel : ViewModelBase
 {
+    private Tutor tutor;
+    
     private ExamService examService;
-    private LanguageService languageService;
     
     public RelayCommand AddCommand { get; set; }
     public RelayCommand SelectedExamChangedCommand { get; set; }
@@ -38,6 +40,8 @@ internal class ExamViewModel : ViewModelBase
     private Language? filterLanguage;
     private LanguageLvl? filterLanguageLvl;
     private DateTime? filterDate;
+    
+    private Dictionary<Language, List<LanguageLvl>> languageToLvl;
 
     public ObservableCollection<Exam> Exams
     {
@@ -69,7 +73,14 @@ internal class ExamViewModel : ViewModelBase
     public Language? Language
     {
         get => language;
-        set => SetField(ref language, value);
+        set
+        {
+            if (Equals(language, value)) return;
+            language = value;
+            OnPropertyChanged(nameof(language));
+            LanguageLvl = null;
+            LanguageLevels = language == null ? new ObservableCollection<LanguageLvl>() : new ObservableCollection<LanguageLvl>(languageToLvl[language]);
+        }
     }
     public LanguageLvl? LanguageLvl
     {
@@ -129,14 +140,27 @@ internal class ExamViewModel : ViewModelBase
         }
     }
     
-    public ExamViewModel(ExamService examService, LanguageService languageService)
+    public ExamViewModel(Tutor tutor, ExamService examService)
     {
+        this.tutor = tutor;
         this.examService = examService;
-        this.languageService = languageService;
         
         exams = new ObservableCollection<Exam>(LoadExams());
-        languages = new ObservableCollection<Language>(languageService.GetAll());
-        languageLevels = new ObservableCollection<LanguageLvl>(Enum.GetValues<LanguageLvl>());
+        languages = new ObservableCollection<Language>(tutor.KnownLanguages.Select(tuple => tuple.Item1));
+        languageLevels = new ObservableCollection<LanguageLvl>();
+        
+        languageToLvl = new Dictionary<Language, List<LanguageLvl>>();
+        foreach (var knownLanguage in tutor.KnownLanguages)
+        {
+            if (!languageToLvl.ContainsKey(knownLanguage.Item1))
+            {
+                languageToLvl.Add(knownLanguage.Item1, new List<LanguageLvl>{knownLanguage.Item2});
+            }
+            else
+            {
+                languageToLvl[knownLanguage.Item1].Add(knownLanguage.Item2);
+            }
+        }
         
         // TODO: load from TimetableService
         availableTimes = new ObservableCollection<TimeOnly>{TimeOnly.Parse("08:00"), TimeOnly.Parse("12:00"), TimeOnly.Parse("16:00")};
@@ -235,7 +259,7 @@ internal class ExamViewModel : ViewModelBase
     
     private List<Exam> LoadExams()
     {
-        return examService.GetAllExams();
+        return examService.GetExamsByTutor(tutor.Email);
     }
     
     private void ClearFilters()

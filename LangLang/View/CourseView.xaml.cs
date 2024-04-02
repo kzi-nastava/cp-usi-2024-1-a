@@ -7,15 +7,11 @@ using System.Windows.Controls;
 
 namespace LangLang.View
 {
-    public partial class CourseWindow : Window
+    public partial class CourseView : UserControl
     {
-        public CourseWindow()
+        public CourseView()
         {
             InitializeComponent();
-            DataContext = new CourseViewModel();
-           
-
-
         }
         private void cbSchedule_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

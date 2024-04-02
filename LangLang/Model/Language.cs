@@ -29,5 +29,10 @@ namespace LangLang.Model
             Language other = (Language) obj;
             return Code == other.Code;
         }
+        
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Code);
+        }
     }
 }
