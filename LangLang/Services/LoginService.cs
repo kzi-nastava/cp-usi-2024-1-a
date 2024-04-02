@@ -6,6 +6,8 @@ using System.Net.Mail;
 using System.Linq;
 using System.Windows.Controls;
 using LangLang.Model;
+using LangLang.DAO;
+using LangLang.Services;
 
 public class LoginService
 {
@@ -13,6 +15,7 @@ public class LoginService
     private static LoginService instance;
     public bool validUser = false;
     public bool validEmail = false;
+    public Type userType;
 
     private LoginService()
     {
@@ -34,35 +37,66 @@ public class LoginService
         validUser = false;
         validEmail = false;
 
+        LogInDirector(email, password);
+        if (validUser) return;
+        LogInTutor(email, password);
+        if (validUser) return;
         LogInStudent(email, password);
-        //LogInTutor(email, password);
-        //LogInDirector(email, password);
     }
 
 
     private void LogInStudent(string email, string password)
     {
-        StudentDAO sd = StudentDAO.GetInstance();
-        Student student = sd.GetStudent(email);
+        Student student = StudentDAO.GetInstance().GetStudent(email);
 
         if (student != null)
         {
             if(student.Password != password)
-            {
                 validEmail = true;  //email is good but password failed
-            }
             else
             {
                 validUser = true;
 
-                StudentService ss = StudentService.GetInstance();
-                ss.LoggedUser = student;
+                StudentService.GetInstance().LoggedUser = student;
+                userType = typeof(Student);
             }
+        }
+    }
+    private void LogInTutor(string email, string password)
+    {
+        Tutor? tutor = TutorDAO.GetInstance().GetTutor(email);
 
+        if (tutor != null)
+        {
+            if (tutor.Password != password)
+                validEmail = true;  //email is good but password failed
+            else
+            {
+                validUser = true;
+
+                TutorService.GetInstance().LoggedUser = tutor;
+                userType = typeof(Tutor);
+            }
+        }
+    }
+    private void LogInDirector(string email, string password)
+    {
+        Director? director = DirectorDAO.GetInstance().GetDirector(email);
+
+        if (director != null)
+        {
+            if (director.Password != password)
+                validEmail = true;  //email is good but password failed
+            else
+            {
+                validUser = true;
+
+                DirectorService.GetInstance().LoggedUser = director;
+                userType = typeof(Director);
+            }
         }
     }
 
-    
 
 }
 

@@ -30,6 +30,7 @@ public class StudentService
         if (LoggedUser.AttendingCourse != "" || LoggedUser.AttendingExam != "" || LoggedUser.GetAppliedCourses().Count != 0 || LoggedUser.GetAppliedExams().Count != 0)
         {
             //MessageBox.Show($"User is attending a course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             return false;
         }
 

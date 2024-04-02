@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-
 using System.Text.Json.Serialization;
-using System.Windows;
 
 
 namespace LangLang.Util
@@ -22,6 +20,15 @@ namespace LangLang.Util
 
             try
             {
+                string? directoryPath = Path.GetDirectoryName(path);
+                if (!Directory.Exists(directoryPath))
+                {
+                    if (directoryPath == null)
+                    {
+                        throw new ArgumentException("Invalid path");
+                    }
+                    Directory.CreateDirectory(directoryPath);
+                }
                 File.WriteAllText(path, jsonString);
             }
             catch (Exception ex)
@@ -37,14 +44,13 @@ namespace LangLang.Util
          */
         public static Dictionary<string, T> ReadFromFile<T>(string path)
         {
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new TimeOnlyConverter());
             Dictionary<string, T>? items;
             try
             {
-
-                var options = new JsonSerializerOptions();
-                options.Converters.Add(new TimeOnlyConverter());
+                string jsonString = File.ReadAllText(path);
                 items = JsonSerializer.Deserialize<Dictionary<string, T>>(jsonString, options);
-
             }
             catch (FileNotFoundException)
             {
