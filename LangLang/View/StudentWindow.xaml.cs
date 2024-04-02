@@ -50,5 +50,12 @@ namespace LangLang.View
             view.Show();
             this.Close();
         }
+
+        private void Logout(object sender, RoutedEventArgs e)
+        {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
+            this.Close();
+        }
     }
 }

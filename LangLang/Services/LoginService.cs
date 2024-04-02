@@ -37,6 +37,9 @@ public class LoginService
         validUser = false;
         validEmail = false;
 
+        if (email == null || email == "" || password == null || password == "")
+            return;
+
         LogInDirector(email, password);
         if (validUser) return;
         LogInTutor(email, password);
