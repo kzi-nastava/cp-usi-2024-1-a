@@ -15,6 +15,7 @@ namespace LangLang.ViewModel
     {
         private readonly CourseService courseService;
         private readonly LanguageService languageService;
+        private readonly TimetableService timetableService;
         private Tutor loggedInUser;
         public ICommand AddCourseCommand { get; }
         public ICommand DeleteCourseCommand { get; }
@@ -132,6 +133,7 @@ namespace LangLang.ViewModel
             {
                 duration = value;
                 OnPropertyChanged();
+                LoadHours();
             }
         }
         // Schedule day list of selected days
@@ -165,6 +167,7 @@ namespace LangLang.ViewModel
             {
                 start = value;
                 OnPropertyChanged();
+                LoadHours();
             }
         }
 
@@ -344,11 +347,12 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-        public CourseViewModel(Tutor loggedInUser,CourseService courseService, LanguageService languageService)
+        public CourseViewModel(Tutor loggedInUser,CourseService courseService, LanguageService languageService, TimetableService timetableService)
         {
             this.courseService = courseService;
             this.languageService = languageService;
             this.loggedInUser = loggedInUser;
+            this.timetableService = timetableService;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLvl>();
@@ -523,8 +527,13 @@ namespace LangLang.ViewModel
         }
         public void LoadHours()
         {
-            // TODO: load free hours
-            return;
+            // if (Duration == null) return;
+            // var availableLessonTimes = timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(DateTime.Parse(start)), Duration.Value, loggedInUser);
+            // MondayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Monday].Select(t => (TimeOnly?)t));
+            // TuesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Tuesday].Select(t => (TimeOnly?)t));
+            // WednesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Wednesday].Select(t => (TimeOnly?)t));
+            // ThursdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Thursday].Select(t => (TimeOnly?)t));
+            // FridayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Friday].Select(t => (TimeOnly?)t));
         }
         public void RemoveInputs()
         {

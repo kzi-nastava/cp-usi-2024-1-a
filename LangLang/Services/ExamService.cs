@@ -71,7 +71,7 @@ public class ExamService
         exam = examDao.AddExam(exam);
         
         tutor.Exams.Add(exam.Id);
-        tutorDao.UpdateTutor(tutor.Email, tutor);
+        tutorDao.UpdateTutor(tutor);
         return exam;
     }
     

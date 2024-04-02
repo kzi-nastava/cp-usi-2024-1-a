@@ -50,7 +50,7 @@ namespace LangLang.ViewModel
                 if (courseViewModel == null)
                 {
                     CourseService courseService = new CourseService();
-                    courseViewModel = new CourseViewModel(loggedInUser,courseService, LanguageService);
+                    courseViewModel = new CourseViewModel(loggedInUser,courseService, LanguageService, TimetableService);
                 }
         
                 return courseViewModel;

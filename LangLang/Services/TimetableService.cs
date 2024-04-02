@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Media;
 using Consts;
 using LangLang.DAO;
 using LangLang.Model;
@@ -28,6 +29,21 @@ public class TimetableService
         return times;
     }
     
+    public List<TimeOnly> GetAllLessonTimes()
+    {
+        int totalNumber = Convert.ToInt32(Math.Round(TimeSpan.FromDays(1).TotalMinutes / Constants.LessonDuration.TotalMinutes));
+        
+        List<TimeOnly> times = new();
+        TimeOnly time = TimeOnly.MinValue;
+        for (int i=0; i<totalNumber; i++)
+        {
+            times.Add(time);
+            time = time.Add(Constants.LessonDuration);
+        }
+
+        return times;
+    }
+    
     public List<TimeOnly> GetAvailableExamTimes(DateOnly date, Tutor tutor)
     {
         List<TimeOnly> candidateTimes = GetAllExamTimes();
@@ -43,6 +59,36 @@ public class TimetableService
         List<TimeOnly> result = availableTimes.ToList();
         result.Sort();
         return result;
+    }
+
+    public Dictionary<WorkDay, List<TimeOnly>> GetAvailableLessonTimes(DateOnly start, int numOfWeeks, Tutor tutor)
+    {
+        Dictionary<WorkDay, List<TimeOnly>> availableTimes = new();
+        for (int i = 0; i < numOfWeeks * 7; i++)
+        {
+            DateOnly date = start.AddDays(i);
+            if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+            {
+                continue;
+            }
+            List<TimeOnly> candidateTimes = GetAllLessonTimes();
+            Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor);
+            for (int j = 1; j <= Constants.ClassroomsNumber; j++)
+            {
+                var availableForClassroom = CalculateAvailableTimes(candidateTimes, Constants.LessonDuration, takenTimes[j]);
+                if (!availableTimes.ContainsKey((WorkDay)(int)date.DayOfWeek))
+                {
+                    availableTimes.Add((WorkDay)(int)date.DayOfWeek, availableForClassroom);
+                }
+                else
+                {
+                    availableTimes[(WorkDay)(int)date.DayOfWeek] =
+                        Intersection(availableTimes[(WorkDay)(int)date.DayOfWeek], availableForClassroom);
+                }
+            }
+        }
+
+        return availableTimes;
     }
     
     public List<int> GetAvailableClassrooms(DateOnly date, TimeOnly time, TimeSpan duration, Tutor tutor)
@@ -144,5 +190,32 @@ public class TimetableService
         }
         
         return availableTimes;
+    }
+    
+    private List<TimeOnly> Intersection(List<TimeOnly> list1, List<TimeOnly> list2)
+    {
+        list1.Sort();
+        list2.Sort();
+        List<TimeOnly> result = new();
+        int i = 0, j = 0;
+        while (i < list1.Count && j < list2.Count)
+        {
+            if (list1[i] == list2[j])
+            {
+                result.Add(list1[i]);
+                i++;
+                j++;
+            }
+            else if (list1[i] < list2[j])
+            {
+                i++;
+            }
+            else
+            {
+                j++;
+            }
+        }
+
+        return result;
     }
 }
