@@ -25,7 +25,7 @@ namespace LangLang.Services
             courseDAO.AddCourse(course);
         }
 
-        public Course GetCourseById(string id)
+        public Course? GetCourseById(string id)
         {
             return courseDAO.GetCourseById(id);
         }

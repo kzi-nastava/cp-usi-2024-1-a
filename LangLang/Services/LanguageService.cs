@@ -16,7 +16,7 @@ namespace LangLang.Services
         {
             return languageDAO.getAllLanguages();
         }
-        public Language GetLanguageById(string name)
+        public Language? GetLanguageById(string name)
         {
             return languageDAO.GetLanguageById(name);
         }
