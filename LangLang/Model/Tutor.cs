@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 
 namespace LangLang.Model
@@ -14,19 +15,36 @@ namespace LangLang.Model
         public List<Tuple<Language, LanguageLvl>> KnownLanguages { get; set; }
         public List<Course> Courses { get; set; }
         public List<Exam> Exams { get; set; }
+        public DateTime DateAdded { get; set; }
+        
+        public string KnownLanguagesAsString
+        {
+            get
+            {
+                StringBuilder builder = new();
+                foreach (var tuple in KnownLanguages)
+                    builder.AppendLine($"{tuple.Item1.Name} - {tuple.Item2.ToStr()}");
+                return builder.ToString().TrimEnd();
+            }
+        }
 
         public Tutor() : base("", "", "", "", DateTime.Now, Gender.Other, "")
         {
             KnownLanguages = new();
             Courses = new();
             Exams = new();
+            DateAdded = DateTime.Now;
         }
-        public Tutor(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<Course> courses, List<Exam> exams, int[] ratingCounts) : base(email, password, name, surname, birthDate, gender, phoneNumber)
+        public Tutor(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<Course> courses, List<Exam> exams, int[] ratingCounts, DateTime? dateAdded = null) : base(email, password, name, surname, birthDate, gender, phoneNumber)
         {
             KnownLanguages = knownLanguages;
             Courses = courses;
             Exams = exams;
             this.ratingCounts = ratingCounts;
+            if (dateAdded == null)
+                DateAdded = DateTime.Now;
+            else
+                DateAdded = (DateTime)dateAdded;
         }
 
         public double GetAverageRating()

@@ -1,4 +1,5 @@
 ﻿using Consts;
+using LangLang.DAO;
 using LangLang.Model;
 using System;
 using System.Collections.Generic;
@@ -42,12 +43,15 @@ namespace LangLang.Services
             }
 
             StudentDAO sd = StudentDAO.GetInstance();
-            //other daos
+            TutorDAO td = TutorDAO.GetInstance();
+            DirectorDAO dd = DirectorDAO.GetInstance();
 
             if (sd.GetStudent(email) != null)  //or other searches
-            {
                 return true;
-            }
+            if (td.GetTutor(email) != null)  //or other searches
+                return true;
+            if (dd.GetDirector(email) != null)  //or other searches
+                return true;
             return false;
         }
 

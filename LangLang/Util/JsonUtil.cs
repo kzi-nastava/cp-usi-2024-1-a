@@ -37,14 +37,13 @@ namespace LangLang.Util
          */
         public static Dictionary<string, T> ReadFromFile<T>(string path)
         {
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new TimeOnlyConverter());
             Dictionary<string, T>? items;
             try
             {
-
-                var options = new JsonSerializerOptions();
-                options.Converters.Add(new TimeOnlyConverter());
+                string jsonString = File.ReadAllText(path);
                 items = JsonSerializer.Deserialize<Dictionary<string, T>>(jsonString, options);
-
             }
             catch (FileNotFoundException)
             {
