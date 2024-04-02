@@ -1,11 +1,11 @@
-﻿<Window x:Class="LangLang.View.CourseWindow"
+﻿<UserControl x:Class="LangLang.View.CourseView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LangLang.ViewModel"
         mc:Ignorable="d"
-        Title="Course" Height="700" Width="800">
+        Height="700" Width="800">
     <Border  Padding="10" >
         <Grid>
             <Grid.ColumnDefinitions>
@@ -121,7 +121,7 @@
                 <Label>Max Students:</Label>
                 <TextBox Margin="5,0,0,0" Name="tbMaxStudents" IsReadOnly="{Binding IsMaxStudentsDisabled}" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>Number of students:</Label>
-                <TextBox Margin="5,0,0,0" Name="tbStudentsNum" IsEnabled="False" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Margin="5,0,0,0" Name="tbStudentsNum" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>State:</Label>
                 <ComboBox Margin="5,0,0,0" Name="cbState" SelectedItem="{Binding State}" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
 
@@ -135,4 +135,4 @@
             </StackPanel>
         </Grid>
     </Border>
-</Window>
+</UserControl>

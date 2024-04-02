@@ -12,8 +12,8 @@ namespace LangLang.ViewModel
 {
     internal class CourseViewModel : ViewModelBase
     {
-        private readonly CourseService courseService = new();
-        private readonly LanguageService languageService = new();
+        private readonly CourseService courseService;
+        private readonly LanguageService languageService;
         public ICommand AddCourseCommand { get; }
         public ICommand DeleteCourseCommand { get; }
         public ICommand UpdateCourseCommand { get; }
@@ -340,8 +340,10 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-        public CourseViewModel()
+        public CourseViewModel(CourseService courseService, LanguageService languageService)
         {
+            this.courseService = courseService;
+            this.languageService = languageService;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
@@ -473,7 +475,7 @@ namespace LangLang.ViewModel
         public void LoadLanguages()
         {
             var languages = languageService.GetAll();
-            foreach(Language language in languages.Values)
+            foreach(Language language in languages)
             {
                 Languages.Add(language.Name);
             }

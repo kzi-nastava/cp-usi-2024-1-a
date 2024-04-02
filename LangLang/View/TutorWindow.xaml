@@ -1,0 +1,51 @@
+﻿<Window x:Class="LangLang.View.TutorWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LangLang.View"
+             xmlns:viewModel="clr-namespace:LangLang.ViewModel"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModel:ExamViewModel}">
+            <local:ExamView></local:ExamView>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:CourseViewModel}">
+            <local:CourseView></local:CourseView>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions> 
+            <RowDefinition Height = "Auto" />
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height = "*" /> 
+        </Grid.RowDefinitions> 
+        <Grid x:Name = "NavBar"  Margin="0 0 0 5"> 
+            <Grid.ColumnDefinitions> 
+                <ColumnDefinition Width = "*" /> 
+                <ColumnDefinition Width = "*" /> 
+                <ColumnDefinition Width = "*" /> 
+            </Grid.ColumnDefinitions> 
+	
+            <Button Content = "Courses" 
+                    Command = "{Binding NavCommand}"
+                    CommandParameter = "courses" 
+                    Grid.Column = "0" />
+				
+            <Button Content = "Exams" 
+                    Command = "{Binding NavCommand}" 
+                    CommandParameter = "exams" 
+                    Grid.Column = "2" />
+        </Grid> 
+        
+        <Separator Grid.Row="1"/>
+        
+        <Grid x:Name="MainContent" Grid.Row="2">
+            <ContentControl Content="{Binding CurrentViewModel, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        
+    </Grid>
+</Window>
