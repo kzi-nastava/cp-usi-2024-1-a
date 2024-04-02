@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-
 using System.Text.Json.Serialization;
 
 
@@ -19,9 +18,17 @@ namespace LangLang.Util
             options.Converters.Add(new TimeOnlyConverter());
             options.Converters.Add(new DateTimeConverter());
             string jsonString = JsonSerializer.Serialize(objects, options);
-
             try
             {
+                string? directoryPath = Path.GetDirectoryName(path);
+                if (!Directory.Exists(directoryPath))
+                {
+                    if (directoryPath == null)
+                    {
+                        throw new ArgumentException("Invalid path");
+                    }
+                    Directory.CreateDirectory(directoryPath);
+                }
                 File.WriteAllText(path, jsonString);
             }
             catch (Exception ex)
