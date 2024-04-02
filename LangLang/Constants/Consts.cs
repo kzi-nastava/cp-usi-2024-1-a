@@ -34,6 +34,22 @@ namespace Consts
     {
         A1, A2, B1, B2, C1, C2
     }
+    public static class Extensions
+    {
+        public static string ToStr(this LanguageLvl level)
+        {
+            return level switch
+            {
+                LanguageLvl.A1 => "A1",
+                LanguageLvl.A2 => "A2",
+                LanguageLvl.B1 => "B1",
+                LanguageLvl.B2 => "B2",
+                LanguageLvl.C1 => "C1",
+                LanguageLvl.C2 => "C2",
+                _ => "",
+            };
+        }
+    }
 
     public enum CourseState
     {
