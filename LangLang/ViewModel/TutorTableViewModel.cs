@@ -156,7 +156,7 @@ namespace LangLang.ViewModel
                     PhoneNumber = selectedItem.PhoneNumber;
                     BirthDate = selectedItem.BirthDate;
                     DateAdded = selectedItem.DateAdded;
-                    selectedGender = selectedItem.Gender;
+                    SelectedGender = selectedItem.Gender;
                     SwitchKnownLanguages(selectedItem);
                 }
                 selectingTutor = false;
