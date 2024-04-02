@@ -4,11 +4,12 @@ namespace Consts
 {
     public static class Constants
     {
-        public const int LessonDuration = 90;   //minutes
-        public const int ExamDuration = 4;  //hours
-        public const int ClassroomNumber = 2;
+        public const int ClassroomsNumber = 2;
         
-        public static readonly TimeSpan ConfirmableExamTime = new TimeSpan(7, 0, 0, 0);
+        public static readonly TimeSpan ExamDuration = TimeSpan.FromHours(4);
+        public static readonly TimeSpan LessonDuration = TimeSpan.FromMinutes(90);
+        
+        public static readonly TimeSpan ConfirmableExamTime = new(7, 0, 0, 0);
 
         public const string StudentFilePath = "../../../Data/Students.json";
         public const string CourseFilePath = "../../../Data/Courses.json";

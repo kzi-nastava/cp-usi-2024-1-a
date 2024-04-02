@@ -25,6 +25,9 @@ namespace LangLang.ViewModel
             }
         }
         public LanguageService LanguageService => languageService ??= new LanguageService();
+        
+        private TimetableService? timetableService;
+        public TimetableService TimetableService => timetableService ??= new TimetableService();
 
         public ExamViewModel ExamViewModel
         {
@@ -33,7 +36,7 @@ namespace LangLang.ViewModel
                 if (examViewModel == null)
                 {
                     ExamService examService = new ExamService();
-                    examViewModel = new ExamViewModel(loggedInUser, examService);
+                    examViewModel = new ExamViewModel(loggedInUser, examService, TimetableService);
                 }
         
                 return examViewModel;
@@ -47,7 +50,7 @@ namespace LangLang.ViewModel
                 if (courseViewModel == null)
                 {
                     CourseService courseService = new CourseService();
-                    courseViewModel = new CourseViewModel(loggedInUser,courseService, LanguageService);
+                    courseViewModel = new CourseViewModel(loggedInUser,courseService, LanguageService, TimetableService);
                 }
         
                 return courseViewModel;

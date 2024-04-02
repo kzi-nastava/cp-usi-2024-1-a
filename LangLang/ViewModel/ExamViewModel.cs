@@ -15,6 +15,7 @@ internal class ExamViewModel : ViewModelBase
     private Tutor tutor;
     
     private ExamService examService;
+    private TimetableService timetableService;
     
     public RelayCommand AddCommand { get; set; }
     public RelayCommand SelectedExamChangedCommand { get; set; }
@@ -90,7 +91,20 @@ internal class ExamViewModel : ViewModelBase
     public DateTime? ExamDate
     {
         get => examDate;
-        set => SetField(ref examDate, value);
+        set
+        {
+            if (examDate == value) return;
+            examDate = value;
+            OnPropertyChanged(nameof(examDate));
+            ExamTime = null;
+            if (examDate == null)
+            {
+                AvailableTimes = new ObservableCollection<TimeOnly>();
+                return;
+            }
+            var times = timetableService.GetAvailableExamTimes(DateOnly.FromDateTime(examDate.Value), tutor);
+            AvailableTimes = new ObservableCollection<TimeOnly>(times);
+        }
     }
     public TimeOnly? ExamTime
     {
@@ -140,10 +154,11 @@ internal class ExamViewModel : ViewModelBase
         }
     }
     
-    public ExamViewModel(Tutor tutor, ExamService examService)
+    public ExamViewModel(Tutor tutor, ExamService examService, TimetableService timetableService)
     {
         this.tutor = tutor;
         this.examService = examService;
+        this.timetableService = timetableService;
         
         exams = new ObservableCollection<Exam>(LoadExams());
         languages = new ObservableCollection<Language>(tutor.KnownLanguages.Select(tuple => tuple.Item1));
@@ -162,8 +177,7 @@ internal class ExamViewModel : ViewModelBase
             }
         }
         
-        // TODO: load from TimetableService
-        availableTimes = new ObservableCollection<TimeOnly>{TimeOnly.Parse("08:00"), TimeOnly.Parse("12:00"), TimeOnly.Parse("16:00")};
+        availableTimes = new ObservableCollection<TimeOnly>();
         
         AddCommand = new RelayCommand(execute => AddExam(), execute => CanAddExam());
         SelectedExamChangedCommand = new RelayCommand(execute => SelectExam());
@@ -171,13 +185,29 @@ internal class ExamViewModel : ViewModelBase
         DeleteCommand = new RelayCommand(execute => DeleteExam(), execute => CanDeleteExam());
         ClearFiltersCommand = new RelayCommand(execute => ClearFilters(), execute => CanClearFilters());
     }
+
+    private int GetClassroomNumber()
+    {
+        DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
+        if (selectedDate != null && ExamTime != null)
+        {
+            var classrooms = timetableService.GetAvailableClassrooms(selectedDate.Value, ExamTime.Value, Constants.ExamDuration, tutor);
+            if (classrooms.Count > 0)
+            {
+                return classrooms[0];
+            }
+        }
+
+        return -1;
+    }
     
     private void AddExam()
     {
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
+        int classroomNumber = GetClassroomNumber();
         try
         {
-            Exam exam = examService.AddExam(Language, LanguageLvl, selectedDate, ExamTime, MaxStudents);
+            Exam exam = examService.AddExam(tutor, Language, LanguageLvl, selectedDate, ExamTime, classroomNumber, MaxStudents);
             Exams.Add(exam);
             ResetFields();
         }
@@ -218,7 +248,7 @@ internal class ExamViewModel : ViewModelBase
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
         try
         {
-            Exam exam = examService.UpdateExam(selectedExam!.Id, Language, LanguageLvl, selectedDate, ExamTime, MaxStudents);
+            Exam exam = examService.UpdateExam(selectedExam!.Id, Language, LanguageLvl, selectedDate, ExamTime, selectedExam!.ClassroomNumber, MaxStudents);
             Exams[Exams.IndexOf(SelectedExam!)] = exam;
             ResetFields();
         }
