@@ -19,9 +19,14 @@ namespace LangLang.Services
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
             passed &= !(CheckExistingEmail(email));
 
+            if(birthDay == DateTime.MinValue)
+            {
+                return false;
+            }
+
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", null, null));
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", "", null, null, null));
                 return true;
             }
             return false;

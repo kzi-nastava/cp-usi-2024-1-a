@@ -108,7 +108,6 @@ namespace LangLang.ViewModel
                     StudentWindow studentWindow = new StudentWindow();
                     studentWindow.Show();
 		}
-		MessageBox.Show($"Successfully logged in! Welcome : {loggedUser.Name} {loggedUser.Surname}");
                 _window.Close();
             }
         }

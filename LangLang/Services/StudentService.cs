@@ -7,7 +7,7 @@ using LangLang.Services;
 
 public class StudentService
 {
-	StudentDAO studentDAO = StudentDAO.GetInstance();
+    StudentDAO studentDAO = StudentDAO.GetInstance();
     public Student LoggedUser { get; set; }
 
     //Singleton
@@ -27,9 +27,10 @@ public class StudentService
 
     public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
     {
-        if (LoggedUser.AttendingCourse != "")
+        if (LoggedUser.AttendingCourse != "" || LoggedUser.AttendingExam != "" || LoggedUser.GetAppliedCourses().Count != 0 || LoggedUser.GetAppliedExams().Count != 0)
         {
-            MessageBox.Show($"User is attending a course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //MessageBox.Show($"User is attending a course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             return false;
         }
 
