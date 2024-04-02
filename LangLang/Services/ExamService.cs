@@ -94,4 +94,27 @@ public class ExamService
         }
         examDao.DeleteExam(id);
     }
+
+    public List<Exam> FilterExams(List<Exam> exams, Language? language = null, LanguageLvl? languageLvl = null, DateOnly? date = null)
+    {
+        List<Exam> filteredExams = new();
+        foreach (Exam exam in exams)
+        {
+            if (language != null && !Equals(exam.Language, language))
+            {
+                continue;
+            }
+            if (languageLvl != null && exam.LanguageLvl != languageLvl)
+            {
+                continue;
+            }
+            if (date != null && exam.Date != date)
+            {
+                continue;
+            }
+            filteredExams.Add(exam);
+        }
+
+        return filteredExams;
+    }
 }

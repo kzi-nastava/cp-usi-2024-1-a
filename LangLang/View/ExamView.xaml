@@ -48,11 +48,11 @@
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Grid.Column="1">
                             <Label>Language Level:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="CbFilterLanguageLvl" SelectedItem="{Binding LevelFilter}" ItemsSource="{Binding LanguageLevels}"/>
+                            <ComboBox Margin="5,0,0,0" x:Name="CbFilterLanguageLvl" SelectedItem="{Binding FilterLanguageLvl}" ItemsSource="{Binding LanguageLevels}"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Grid.Column="2">
                             <Label>Date:</Label>
-                            <DatePicker Margin="5,0,0,0" Name="DpFilterDate" SelectedDate="{Binding DateFilter}"/>
+                            <DatePicker Margin="5,0,0,0" Name="DpFilterDate" SelectedDate="{Binding FilterDate}"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>

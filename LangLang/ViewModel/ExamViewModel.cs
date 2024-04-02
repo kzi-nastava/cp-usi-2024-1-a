@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Windows;
 using Consts;
 using LangLang.Model;
@@ -35,6 +35,8 @@ internal class ExamViewModel : ViewModelBase
     private string state = string.Empty; // TODO: change after enum definition
     
     private Language? filterLanguage;
+    private LanguageLvl? filterLanguageLvl;
+    private DateTime? filterDate;
 
     public ObservableCollection<Exam> Exams
     {
@@ -102,7 +104,28 @@ internal class ExamViewModel : ViewModelBase
     public Language? FilterLanguage
     {
         get => filterLanguage;
-        set => SetField(ref filterLanguage, value);
+        set {
+            SetField(ref filterLanguage, value);
+            FilterExams();
+        }
+    }
+    
+    public LanguageLvl? FilterLanguageLvl
+    {
+        get => filterLanguageLvl;
+        set {
+            SetField(ref filterLanguageLvl, value);
+            FilterExams();
+        }
+    }
+    
+    public DateTime? FilterDate
+    {
+        get => filterDate;
+        set {
+            SetField(ref filterDate, value);
+            FilterExams();
+        }
     }
     
     public ExamViewModel(ExamService examService, LanguageService languageService)
@@ -110,7 +133,7 @@ internal class ExamViewModel : ViewModelBase
         this.examService = examService;
         this.languageService = languageService;
         
-        exams = new ObservableCollection<Exam>(examService.GetAllExams());
+        exams = new ObservableCollection<Exam>(LoadExams());
         languages = new ObservableCollection<Language>(languageService.GetAll());
         languageLevels = new ObservableCollection<LanguageLvl>(Enum.GetValues<LanguageLvl>());
         
@@ -200,5 +223,16 @@ internal class ExamViewModel : ViewModelBase
     private bool CanDeleteExam()
     {
         return SelectedExam != null;
+    }
+    
+    private void FilterExams()
+    {
+        DateOnly? filterDateOnly = FilterDate != null ? DateOnly.FromDateTime(FilterDate!.Value) : null;
+        Exams = new ObservableCollection<Exam>(examService.FilterExams(LoadExams(), FilterLanguage, FilterLanguageLvl, filterDateOnly));
+    }
+    
+    private List<Exam> LoadExams()
+    {
+        return examService.GetAllExams();
     }
 }
