@@ -117,6 +117,30 @@ public class ExamService
         examDao.DeleteExam(id);
     }
 
+    public List<Exam> GetAvailableExamsForStudent(Student student)
+    {
+        List<Exam> exams = new();
+        foreach (Exam exam in GetAllExams())
+        {
+            if (exam.ExamState != Exam.State.NotStarted)
+            {
+                continue;
+            }
+            if (exam.NumStudents >= exam.MaxStudents)
+            {
+                continue;
+            }
+            if (student.GetAppliedExams().Contains(exam.Id))
+            {
+                continue;
+            }
+            // TODO: Only allow exams for languages with finished courses
+            exams.Add(exam);
+        }
+
+        return exams;
+    }
+
     public List<Exam> FilterExams(List<Exam> exams, Language? language = null, LanguageLvl? languageLvl = null, DateOnly? date = null)
     {
         List<Exam> filteredExams = new();
