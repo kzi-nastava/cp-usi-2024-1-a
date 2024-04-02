@@ -13,6 +13,7 @@
     <Window.Resources>
         <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
         <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
+        <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
     </Window.Resources>
 
 
@@ -70,8 +71,8 @@
                 </DataGrid>
 
                 <!-- Two buttons -->
-                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="EditProfileBtn1" Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                <DockPanel Grid.Row="4">
+                    <Button x:Name="LogoutBtn1" DockPanel.Dock="Left" Content="Logout" Click="Logout" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -80,16 +81,28 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button x:Name="DeleteProfileBtn1" Content="Delete Profile"  Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
+                    <StackPanel DockPanel.Dock="Right" Width="110"></StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="EditProfileBtn1" Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button x:Name="DeleteProfileBtn1" Content="Delete Profile"  Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
             </Grid>
         </TabItem>
 
@@ -167,8 +180,8 @@
 
 
                 <!-- Two buttons -->
-                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="EditProfileBtn"  Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                <DockPanel Grid.Row="4">
+                    <Button x:Name="LogoutBtn" DockPanel.Dock="Left" Content="Logout" Click="Logout" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -177,16 +190,28 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button x:Name="DeleteProfileBtn" Content="Delete Profile" Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
+                    <StackPanel Width="110" DockPanel.Dock="Right"></StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="EditProfileBtn"  Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button x:Name="DeleteProfileBtn" Content="Delete Profile" Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
             </Grid>
         </TabItem>
     </TabControl>

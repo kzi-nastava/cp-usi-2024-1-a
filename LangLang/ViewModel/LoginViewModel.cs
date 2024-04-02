@@ -18,7 +18,7 @@ namespace LangLang.ViewModel
 
         private readonly LoginService _loginService;
 
- 
+
         private readonly Window _window;
 
         public LoginViewModel()
@@ -35,7 +35,7 @@ namespace LangLang.ViewModel
         }
 
 
-     
+
 
         public string Email
         {
@@ -97,6 +97,8 @@ namespace LangLang.ViewModel
                 if (_loginService.userType == typeof(Director))
 		        {
                     loggedUser = DirectorService.GetInstance().LoggedUser;
+                    DirectorWindow directorWindow = new DirectorWindow();
+                    directorWindow.Show();
                 }
 		        else if (_loginService.userType == typeof(Tutor))
                 {
