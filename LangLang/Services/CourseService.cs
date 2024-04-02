@@ -57,7 +57,7 @@ namespace LangLang.Services
         {
             courseDAO.AddCourse(course);
             loggedInUser.Courses.Add(course.Id);
-            tutorDAO.UpdateTutor(loggedInUser.Email, loggedInUser);
+            tutorDAO.UpdateTutor(loggedInUser);
         }
 
         public Course? GetCourseById(string id)
@@ -69,7 +69,7 @@ namespace LangLang.Services
         {
             loggedInUser.Courses.Remove(id);
             courseDAO.DeleteCourse(id);
-            tutorDAO.UpdateTutor(loggedInUser.Email, loggedInUser);
+            tutorDAO.UpdateTutor(loggedInUser);
         }
 
         public void UpdateCourse(Course course)
