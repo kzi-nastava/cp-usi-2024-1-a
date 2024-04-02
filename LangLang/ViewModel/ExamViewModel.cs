@@ -18,6 +18,7 @@ internal class ExamViewModel : ViewModelBase
     public RelayCommand SelectedExamChangedCommand { get; set; }
     public RelayCommand UpdateCommand { get; set; }
     public RelayCommand DeleteCommand { get; set; }
+    public RelayCommand ClearFiltersCommand { get; set; }
 
     private ObservableCollection<Exam> exams;
     private ObservableCollection<Language> languages;
@@ -144,6 +145,7 @@ internal class ExamViewModel : ViewModelBase
         SelectedExamChangedCommand = new RelayCommand(execute => SelectExam());
         UpdateCommand = new RelayCommand(execute => UpdateExam(), execute => CanUpdateExam());
         DeleteCommand = new RelayCommand(execute => DeleteExam(), execute => CanDeleteExam());
+        ClearFiltersCommand = new RelayCommand(execute => ClearFilters(), execute => CanClearFilters());
     }
     
     private void AddExam()
@@ -234,5 +236,17 @@ internal class ExamViewModel : ViewModelBase
     private List<Exam> LoadExams()
     {
         return examService.GetAllExams();
+    }
+    
+    private void ClearFilters()
+    {
+        FilterLanguage = null;
+        FilterLanguageLvl = null;
+        FilterDate = null;
+    }
+    
+    private bool CanClearFilters()
+    {
+        return FilterLanguage != null || FilterLanguageLvl != null || FilterDate != null;
     }
 }
