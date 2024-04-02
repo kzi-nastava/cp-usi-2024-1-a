@@ -54,6 +54,7 @@
                         </StackPanel>
                     </Grid>
                     <DataGrid CanUserAddRows="False" 
+                      HeadersVisibility = "Column"
                       ItemsSource="{Binding Tutors}" 
                       SelectedItem="{Binding SelectedItem}"
                       Margin="10,20,4,10" 
@@ -62,6 +63,7 @@
                       Grid.Column="0" 
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
+                      SelectionMode="Single"
                       SelectionChanged="dgTutors_SelectionChanged"
                       >
                         <DataGrid.Columns>

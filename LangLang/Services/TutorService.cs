@@ -43,5 +43,6 @@ namespace LangLang.Services
         public void DeleteTutor(string email) => tutorDAO.DeleteTutor(email);
 
         public void UpdateTutor(Tutor tutor) => tutorDAO.UpdateTutor(tutor);
+        public void UpdateTutorEmail(Tutor tutor, string newEmail) => tutorDAO.UpdateTutorEmail(tutor, newEmail);
     }
 }

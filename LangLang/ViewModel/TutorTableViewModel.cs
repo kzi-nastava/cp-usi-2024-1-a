@@ -276,10 +276,44 @@ namespace LangLang.ViewModel
         {
             if (SelectedItem == null)
                 return;
+
+            bool valid = RegisterService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
+            if (!valid)
+            {
+                MessageBox.Show("User data not valid!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Tutor? tutorWithThisEmail = tutorService.GetTutor(Email);
+            if (tutorWithThisEmail != null && tutorWithThisEmail != SelectedItem)
+            {
+                MessageBox.Show("Email not avaliable!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (BirthDate == null)
+            {
+                MessageBox.Show("Birth date must be selected!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            List<Tuple<Language, LanguageLvl>> knownLanguagesRightType = new();
+            foreach (var tuple in KnownLanguages)
+                knownLanguagesRightType.Add(new(languageService.GetLanguageById(tuple.Item1), tuple.Item2));
+            Tutor tutor = new Tutor(SelectedItem.Email, Password, Name, Surname, (DateTime)BirthDate, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
+            tutorService.UpdateTutor(tutor);
+            if (Email != SelectedItem.Email)
+            {
+                tutorService.UpdateTutorEmail(tutor, Email);
+            }
+            Tutors.Remove(SelectedItem);
+            Tutors.Add(tutor);
+            RemoveInputs();
         }
         private void DeleteTutor()
         {
-
+            if (SelectedItem == null) 
+                return;
+            tutorService.DeleteTutor(SelectedItem.Email);
+            Tutors.Remove(SelectedItem);
+            RemoveInputs();
         }
         private bool CanDeleteTutor()
         {
@@ -291,8 +325,6 @@ namespace LangLang.ViewModel
         }
         private void AddTutor()
         {
-            var a = KnownLanguages.Count;
-            var b = KnownLanguages.Select(tuple => tuple.Item1).Distinct().Count();
             if (KnownLanguages.Count != KnownLanguages.Select(tuple => tuple.Item1).Distinct().Count())
             {
                 MessageBox.Show("Languages entries must unique!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
