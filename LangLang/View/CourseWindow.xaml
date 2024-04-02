@@ -121,7 +121,7 @@
                 <Label>Max Students:</Label>
                 <TextBox Margin="5,0,0,0" Name="tbMaxStudents" IsReadOnly="{Binding IsMaxStudentsDisabled}" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>Number of students:</Label>
-                <TextBox Margin="5,0,0,0" Name="tbStudentsNum" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Margin="5,0,0,0" Name="tbStudentsNum" IsEnabled="False" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>State:</Label>
                 <ComboBox Margin="5,0,0,0" Name="cbState" SelectedItem="{Binding State}" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
 
