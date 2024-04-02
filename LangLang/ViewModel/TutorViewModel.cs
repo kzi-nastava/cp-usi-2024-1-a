@@ -14,6 +14,16 @@ namespace LangLang.ViewModel
         private CourseViewModel? courseViewModel;
 
         private LanguageService? languageService;
+        private string tutorName = "";
+        public string TutorName
+        {
+            get { return tutorName; }
+            set
+            {
+                tutorName = value;
+                OnPropertyChanged();
+            }
+        }
         public LanguageService LanguageService => languageService ??= new LanguageService();
         
         private TimetableService? timetableService;
@@ -40,7 +50,7 @@ namespace LangLang.ViewModel
                 if (courseViewModel == null)
                 {
                     CourseService courseService = new CourseService();
-                    courseViewModel = new CourseViewModel(courseService, LanguageService);
+                    courseViewModel = new CourseViewModel(loggedInUser,courseService, LanguageService);
                 }
         
                 return courseViewModel;
@@ -59,6 +69,7 @@ namespace LangLang.ViewModel
             this.loggedInUser = loggedInUser;
             currentViewModel = CourseViewModel; // TODO: change to ProfileViewModel
             NavCommand = new RelayCommand(execute => OnNav(execute as string));
+            TutorName = loggedInUser.Name;
         }
 
         private void OnNav(string? destination)

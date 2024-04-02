@@ -5,6 +5,7 @@ using LangLang.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -14,6 +15,7 @@ namespace LangLang.ViewModel
     {
         private readonly CourseService courseService;
         private readonly LanguageService languageService;
+        private Tutor loggedInUser;
         public ICommand AddCourseCommand { get; }
         public ICommand DeleteCourseCommand { get; }
         public ICommand UpdateCourseCommand { get; }
@@ -21,6 +23,7 @@ namespace LangLang.ViewModel
         public ICommand ClearFiltersCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
+        public ObservableCollection<LanguageLvl> LanguageLevels { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<CourseState> States { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
@@ -105,6 +108,7 @@ namespace LangLang.ViewModel
             set
             {
                 languageName = value;
+                LoadLanguageLevels(languageName);
                 OnPropertyChanged();
             }
         }
@@ -340,12 +344,14 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-        public CourseViewModel(CourseService courseService, LanguageService languageService)
+        public CourseViewModel(Tutor loggedInUser,CourseService courseService, LanguageService languageService)
         {
             this.courseService = courseService;
             this.languageService = languageService;
+            this.loggedInUser = loggedInUser;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
+            LanguageLevels = new ObservableCollection<LanguageLvl>();
             Levels = new ObservableCollection<LanguageLvl>();
             States = new ObservableCollection<CourseState>();
             Durations = new ObservableCollection<int?> {null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
@@ -425,7 +431,7 @@ namespace LangLang.ViewModel
             if(SelectedItem != null)
             {
                 string keyToDelete = SelectedItem.Id;
-                courseService.DeleteCourse(keyToDelete);
+                courseService.DeleteCourse(keyToDelete, loggedInUser);
                 Courses.Remove(SelectedItem);
                 RemoveInputs();
             }
@@ -448,8 +454,7 @@ namespace LangLang.ViewModel
                 MessageBox.Show("There was an error saving the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-           
-            courseService.AddCourse(course);
+            courseService.AddCourse(course, loggedInUser);
             Courses.Add(course);
             RemoveInputs();
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -466,7 +471,7 @@ namespace LangLang.ViewModel
         }
         public void LoadCourses()
         {
-            var courses = courseService.GetAll();
+            var courses = courseService.GetCoursesByTutor(loggedInUser);
             foreach(Course course in courses.Values){
                 Courses.Add(course);
             }
@@ -474,19 +479,32 @@ namespace LangLang.ViewModel
         }
         public void LoadLanguages()
         {
-            var languages = languageService.GetAll();
-            foreach(Language language in languages)
-            {
-                Languages.Add(language.Name);
+            foreach(Tuple<Language,LanguageLvl> languageTuple in loggedInUser.KnownLanguages){
+                Languages.Add(languageTuple.Item1.Name);
             }
             Languages.Add("");
 
         }
-        public void LoadLanguageLevels()
+        public void LoadLanguageLevels(string language = "")
         {
-            foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
+            Levels.Clear();
+            LanguageLevels.Clear();
+            if(language == "")
             {
-                Levels.Add(lvl);
+                foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
+                {
+                    Levels.Add(lvl);
+                }
+            }
+            else
+            {
+                foreach (Tuple<Language, LanguageLvl> languageTuple in loggedInUser.KnownLanguages)
+                {
+                    if(languageTuple.Item1.Name == language)
+                    {
+                        LanguageLevels.Add(languageTuple.Item2);
+                    }
+                }
             }
         }
         public void LoadCourseStates()
@@ -527,8 +545,8 @@ namespace LangLang.ViewModel
         public void FilterCourses()
         {
             Courses.Clear();
-            var courses = courseService.GetAll();
-            foreach(Course course in courses.Values)
+            var courses = courseService.GetCoursesByTutor(loggedInUser);
+            foreach (Course course in courses.Values)
             {
                 if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
                 {

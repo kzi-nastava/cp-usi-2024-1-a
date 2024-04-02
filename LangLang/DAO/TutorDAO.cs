@@ -46,11 +46,22 @@ namespace LangLang.DAO
             Save();
         }
 
-        public void UpdateTutor(string email, Tutor tutor)
+        public void UpdateTutor(Tutor tutor)
         {
-            if (Tutors.ContainsKey(email))
+            if (Tutors.ContainsKey(tutor.Email))
             {
-                Tutors[email] = tutor;
+                Tutors[tutor.Email] = tutor;
+                Save();
+            }
+        }
+
+        public void UpdateTutorEmail(Tutor tutor, string newEmail)
+        {
+            if (Tutors.ContainsKey(tutor.Email) && !Tutors.ContainsKey(newEmail))
+            {
+                Tutors.Remove(tutor.Email);
+                tutor.Email = newEmail;
+                Tutors[newEmail] = tutor;
                 Save();
             }
         }
