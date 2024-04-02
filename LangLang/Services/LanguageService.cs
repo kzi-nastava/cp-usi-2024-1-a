@@ -10,13 +10,13 @@ namespace LangLang.Services
 {
     class LanguageService
     {
-        LanguageDAO languageDAO = LanguageDAO.getInstance();
+        LanguageDAO languageDAO = LanguageDAO.GetInstance();
 
-        public Dictionary<string,Language> GetAll()
+        public List<Language> GetAll()
         {
-            return languageDAO.getAllLanguages();
+            return languageDAO.GetAllLanguages().Values.ToList();
         }
-        public Language GetLanguageById(string name)
+        public Language? GetLanguageById(string name)
         {
             return languageDAO.GetLanguageById(name);
         }

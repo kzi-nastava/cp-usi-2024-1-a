@@ -12,7 +12,7 @@ namespace LangLang.View
         public CourseWindow()
         {
             InitializeComponent();
-            DataContext = new CourseViewModel(this);
+            DataContext = new CourseViewModel();
            
 
 

@@ -29,7 +29,7 @@ namespace LangLang.DAO
         private CourseDAO()
         {
         }
-        public static CourseDAO getInstance()
+        public static CourseDAO GetInstance()
         {
             if(instance == null)
             {
@@ -38,7 +38,7 @@ namespace LangLang.DAO
             return instance;
         }
 
-        public Dictionary<string, Course> getAllCourses()
+        public Dictionary<string, Course> GetAllCourses()
         {
             return Courses;
         }
@@ -58,10 +58,30 @@ namespace LangLang.DAO
             {
                 return Courses[id];
             }
-            catch(KeyNotFoundException e)
+            catch(KeyNotFoundException)
             {
+
                 return null;
             }
+        }
+
+        public List<Course> GetCoursesByDate(DateOnly date)
+        {
+            List<Course> courses = new();
+            foreach (Course course in GetAllCourses().Values)
+            {
+                if (
+                    date >= DateOnly.FromDateTime(DateTime.Parse(course.Start)) &&
+                    date <= DateOnly.FromDateTime(DateTime.Parse(course.Start).Add(TimeSpan.FromDays(7*course.Duration))) &&
+                    date.DayOfWeek!=DayOfWeek.Saturday && date.DayOfWeek == DayOfWeek.Sunday && 
+                    course.Schedule.ContainsKey((WorkDay)(int)date.DayOfWeek)
+                    )
+                {
+                    courses.Add(course);
+                }
+            }
+
+            return courses;
         }
 
         public void DeleteCourse(string id)
@@ -82,11 +102,11 @@ namespace LangLang.DAO
             try
             {
                 courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
-            }catch(DirectoryNotFoundException e)
+            }catch(DirectoryNotFoundException)
             {
                 Courses = new Dictionary<string, Course>();
                 Save();
-            }catch(FileNotFoundException e)
+            }catch(FileNotFoundException)
             {
                 Courses = new Dictionary<string, Course>();
                 Save();

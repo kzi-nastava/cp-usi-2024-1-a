@@ -7,10 +7,8 @@ using LangLang.Services;
 
 public class StudentService
 {
-	StudentDAO studentDAO = StudentDAO.GetInstance();
+    StudentDAO studentDAO = StudentDAO.GetInstance();
     public Student LoggedUser { get; set; }
-
-
 
     //Singleton
     private static StudentService instance;
@@ -27,50 +25,55 @@ public class StudentService
         return instance;
     }
 
-    public void UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+    public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
     {
-        if (LoggedUser.AttendingCourse != "")
+        if (LoggedUser.AttendingCourse != "" || LoggedUser.AttendingExam != "" || LoggedUser.GetAppliedCourses().Count != 0 || LoggedUser.GetAppliedExams().Count != 0)
         {
-            MessageBox.Show($"User is attending a course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
+            //MessageBox.Show($"User is attending a course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            return false;
         }
 
-        LoginService loginService = LoginService.GetInstance();
-        bool checkData = RegisterService.CheckUserData(LoggedUser.Email, password, name, surname, phoneNumber);
-        if (checkData)
-        {
-            LoggedUser.Name = name;
-            LoggedUser.Surname = surname;
-            LoggedUser.BirthDate = birthDate;
-            LoggedUser.Gender = gender;
-            LoggedUser.PhoneNumber = phoneNumber;
+        LoggedUser.Name = name;
+        LoggedUser.Surname = surname;
+        LoggedUser.Password = password;
+        LoggedUser.Gender = gender;
+        LoggedUser.BirthDate = birthDate;
+        LoggedUser.Gender = gender;
+        LoggedUser.PhoneNumber = phoneNumber;
 
-            studentDAO.AddStudent(LoggedUser);  //since its a hashmap it will replace it
-        }
-       
+        studentDAO.AddStudent(LoggedUser);  //since its a hashmap it will replace it
+        return true;
     }
 
-    /*
+    
     public void DeleteMyAccount()
     {
-        CourseService cs = CourseService.getInstance();
-        for (string courseID: LoggedUser.GetAppliedCourses)
+        CourseService cs = new();
+        foreach (string courseID in LoggedUser.GetAppliedCourses())
         {
-            cs.removeStudent(LoggedUser.Email, courseID);
+            Course course = cs.GetCourseById(courseID);
+            course.CancelAttendance();
+            cs.UpdateCourse(course);
         }
 
-        cs.removeApplied(LoggedUser.Email, LoggedUser.AttendingCourse);
+        foreach(string examID in LoggedUser.GetAppliedExams())
+        {
+            /**/
+        }
 
 
         studentDAO.DeleteStudent(LoggedUser.Email);
     }
-    */
+    
 
     public void ApplyForCourse(string courseId)
     {
         LoggedUser.AddCourse(courseId);
-        //Alert courses to add me
-        //courseService.addStudent(LoggedUser.Email)
+        CourseService cs = new();
+        Course course = cs.GetCourseById(courseId);
+        course.AddAttendance();
+        cs.UpdateCourse(course);
     }
 
 }

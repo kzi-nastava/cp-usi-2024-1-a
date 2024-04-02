@@ -12,12 +12,12 @@ namespace LangLang.Services
 {
     internal class CourseService
     {
-        CourseDAO courseDAO = CourseDAO.getInstance();
-        LanguageDAO languageDAO = LanguageDAO.getInstance();
+        CourseDAO courseDAO = CourseDAO.GetInstance();
+        LanguageDAO languageDAO = LanguageDAO.GetInstance();
 
         public Dictionary<string,Course> GetAll()
         {
-            return courseDAO.getAllCourses();
+            return courseDAO.GetAllCourses();
         }
 
         public void AddCourse(Course course)
@@ -25,7 +25,7 @@ namespace LangLang.Services
             courseDAO.AddCourse(course);
         }
 
-        public Course GetCourseById(string id)
+        public Course? GetCourseById(string id)
         {
             return courseDAO.GetCourseById(id);
         }

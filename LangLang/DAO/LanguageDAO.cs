@@ -29,7 +29,7 @@ namespace LangLang.DAO
 
         }
 
-        public static LanguageDAO getInstance()
+        public static LanguageDAO GetInstance()
         {
             if(instance == null)
             {
@@ -38,7 +38,7 @@ namespace LangLang.DAO
             return instance;
         }
 
-        public Dictionary<string, Language> getAllLanguages()
+        public Dictionary<string, Language> GetAllLanguages()
         {
             return Languages;
         }
@@ -60,7 +60,7 @@ namespace LangLang.DAO
             try
             {
                 return Languages[name];
-            }catch(KeyNotFoundException e)
+            }catch(KeyNotFoundException)
             {
                 return null;
             }
@@ -71,12 +71,12 @@ namespace LangLang.DAO
             {
                 languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
             }
-            catch (DirectoryNotFoundException e)
+            catch (DirectoryNotFoundException)
             {
                 Languages = new Dictionary<string, Language>();
                 Save();
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 Languages = new Dictionary<string, Language>();
                 Save();
