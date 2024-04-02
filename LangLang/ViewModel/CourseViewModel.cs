@@ -12,9 +12,8 @@ namespace LangLang.ViewModel
 {
     internal class CourseViewModel : ViewModelBase
     {
-        private readonly Window _window;
-        private readonly CourseService _courseService = new();
-        private readonly LanguageService _languageService = new();
+        private readonly CourseService courseService = new();
+        private readonly LanguageService languageService = new();
         public ICommand AddCourseCommand { get; }
         public ICommand DeleteCourseCommand { get; }
         public ICommand UpdateCourseCommand { get; }
@@ -341,9 +340,8 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-        public CourseViewModel(Window window)
+        public CourseViewModel()
         {
-            _window = window;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
@@ -402,7 +400,7 @@ namespace LangLang.ViewModel
             CreateSchedule();
             if(SelectedItem != null)
             {
-                Course? updatedCourse = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+                Course? updatedCourse = courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
                 if(updatedCourse == null)
                 {
                     MessageBox.Show("There was an error updating the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -415,7 +413,7 @@ namespace LangLang.ViewModel
                     Courses.Remove(SelectedItem);
 
                 }
-                _courseService.UpdateCourse(updatedCourse);
+                courseService.UpdateCourse(updatedCourse);
                 Courses.Add(updatedCourse);
                 RemoveInputs();
             }
@@ -425,7 +423,7 @@ namespace LangLang.ViewModel
             if(SelectedItem != null)
             {
                 string keyToDelete = SelectedItem.Id;
-                _courseService.DeleteCourse(keyToDelete);
+                courseService.DeleteCourse(keyToDelete);
                 Courses.Remove(SelectedItem);
                 RemoveInputs();
             }
@@ -441,7 +439,7 @@ namespace LangLang.ViewModel
         private void SaveCourse(object? obj)
         {
             CreateSchedule();
-            Course? course = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+            Course? course = courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
 
             if (course == null)
             {
@@ -449,7 +447,7 @@ namespace LangLang.ViewModel
                 return;
             }
            
-            _courseService.AddCourse(course);
+            courseService.AddCourse(course);
             Courses.Add(course);
             RemoveInputs();
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -466,7 +464,7 @@ namespace LangLang.ViewModel
         }
         public void LoadCourses()
         {
-            var courses = _courseService.GetAll();
+            var courses = courseService.GetAll();
             foreach(Course course in courses.Values){
                 Courses.Add(course);
             }
@@ -474,8 +472,8 @@ namespace LangLang.ViewModel
         }
         public void LoadLanguages()
         {
-            var languages = _languageService.GetAll();
-            foreach(Language language in languages)
+            var languages = languageService.GetAll();
+            foreach(Language language in languages.Values)
             {
                 Languages.Add(language.Name);
             }
@@ -527,7 +525,7 @@ namespace LangLang.ViewModel
         public void FilterCourses()
         {
             Courses.Clear();
-            var courses = _courseService.GetAll();
+            var courses = courseService.GetAll();
             foreach(Course course in courses.Values)
             {
                 if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))

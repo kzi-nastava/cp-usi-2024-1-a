@@ -60,7 +60,7 @@ namespace LangLang.DAO
             try
             {
                 return Languages[name];
-            }catch(KeyNotFoundException e)
+            }catch(KeyNotFoundException)
             {
                 return null;
             }
@@ -71,12 +71,12 @@ namespace LangLang.DAO
             {
                 languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
             }
-            catch (DirectoryNotFoundException e)
+            catch (DirectoryNotFoundException)
             {
                 Languages = new Dictionary<string, Language>();
                 Save();
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 Languages = new Dictionary<string, Language>();
                 Save();

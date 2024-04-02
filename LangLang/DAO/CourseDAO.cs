@@ -58,8 +58,9 @@ namespace LangLang.DAO
             {
                 return Courses[id];
             }
-            catch(KeyNotFoundException e)
+            catch(KeyNotFoundException)
             {
+
                 return null;
             }
         }
@@ -101,11 +102,11 @@ namespace LangLang.DAO
             try
             {
                 courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
-            }catch(DirectoryNotFoundException e)
+            }catch(DirectoryNotFoundException)
             {
                 Courses = new Dictionary<string, Course>();
                 Save();
-            }catch(FileNotFoundException e)
+            }catch(FileNotFoundException)
             {
                 Courses = new Dictionary<string, Course>();
                 Save();
