@@ -31,9 +31,10 @@ public class ExamService
         return examDao.GetExamsForIds(examIds);
     }
 
-    private bool IsExamValid(Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int maxStudents)
+    private bool IsExamValid(Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
     {
-        if(language == null || languageLvl == null || examDate == null || examTime == null || maxStudents <= 0)
+        if (language == null || languageLvl == null || examDate == null || examTime == null || maxStudents <= 0 ||
+            classroomNumber <= 0 || classroomNumber > Constants.ClassroomsNumber)
         {
             return false;
         }
@@ -53,14 +54,12 @@ public class ExamService
         return true;
     }
     
-    public Exam AddExam(Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int maxStudents)
+    public Exam AddExam(Tutor tutor, Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
     {
-        if(!IsExamValid(language, languageLvl, examDate, examTime, maxStudents))
+        if(!IsExamValid(language, languageLvl, examDate, examTime, classroomNumber, maxStudents))
         {
             throw new ArgumentException("Invalid exam data");
         }
-
-        int classroomNumber = 1; // TODO: Update after TimetableService implementation
         
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
         Exam.State examState = Exam.State.NotStarted;
@@ -69,17 +68,19 @@ public class ExamService
             examState = Exam.State.Confirmable;
         }
         Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
-        return examDao.AddExam(exam);
+        exam = examDao.AddExam(exam);
+        
+        tutor.Exams.Add(exam.Id);
+        tutorDao.UpdateTutor(tutor.Email, tutor);
+        return exam;
     }
     
-    public Exam UpdateExam(string id, Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int maxStudents)
+    public Exam UpdateExam(string id, Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
     {
-        if(!IsExamValid(language, languageLvl, examDate, examTime, maxStudents))
+        if(!IsExamValid(language, languageLvl, examDate, examTime, classroomNumber, maxStudents))
         {
             throw new ArgumentException("Invalid exam data");
         }
-
-        int classroomNumber = 1; // TODO: Update after TimetableService implementation
 
         Exam? oldExam = examDao.GetExamById(id);
         if (oldExam == null)

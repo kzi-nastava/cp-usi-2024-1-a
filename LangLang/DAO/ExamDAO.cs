@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Consts;
 using LangLang.Model;
 using LangLang.Util;
@@ -50,6 +51,20 @@ public class ExamDAO
                 exams.Add(Exams[id]);
             }
         }
+        return exams;
+    }
+    
+    public List<Exam> GetExamsByDate(DateOnly date)
+    {
+        List<Exam> exams = new();
+        foreach (Exam exam in GetAllExams().Values)
+        {
+            if (exam.Date == date)
+            {
+                exams.Add(exam);
+            }
+        }
+
         return exams;
     }
 

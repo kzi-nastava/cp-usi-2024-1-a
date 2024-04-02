@@ -15,6 +15,9 @@ namespace LangLang.ViewModel
 
         private LanguageService? languageService;
         public LanguageService LanguageService => languageService ??= new LanguageService();
+        
+        private TimetableService? timetableService;
+        public TimetableService TimetableService => timetableService ??= new TimetableService();
 
         public ExamViewModel ExamViewModel
         {
@@ -23,7 +26,7 @@ namespace LangLang.ViewModel
                 if (examViewModel == null)
                 {
                     ExamService examService = new ExamService();
-                    examViewModel = new ExamViewModel(loggedInUser, examService);
+                    examViewModel = new ExamViewModel(loggedInUser, examService, TimetableService);
                 }
         
                 return examViewModel;
