@@ -572,10 +572,9 @@ namespace LangLang.ViewModel
         }
         public void LoadLanguageLevels(string language = "")
         {
-            Levels.Clear();
-            LanguageLevels.Clear();
             if(language == "")
             {
+                Levels.Clear();
                 foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
                 {
                     Levels.Add(lvl);
@@ -583,6 +582,7 @@ namespace LangLang.ViewModel
             }
             else
             {
+                LanguageLevels.Clear();
                 foreach (Tuple<Language, LanguageLvl> languageTuple in loggedInUser.KnownLanguages)
                 {
                     if(languageTuple.Item1.Name == language)
