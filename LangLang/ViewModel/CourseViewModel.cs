@@ -1,4 +1,5 @@
 ﻿using Consts;
+using LangLang.DAO;
 using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services;
@@ -29,11 +30,59 @@ namespace LangLang.ViewModel
         public ObservableCollection<CourseState> States { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
         public ObservableCollection<WorkDay?> WorkDays { get; set; }
-        public ObservableCollection<TimeOnly?> MondayHours { get; set; }
-        public ObservableCollection<TimeOnly?> TuesdayHours { get; set; }
-        public ObservableCollection<TimeOnly?> WednesdayHours { get; set; }
-        public ObservableCollection<TimeOnly?> ThursdayHours { get; set; }
-        public ObservableCollection<TimeOnly?> FridayHours { get; set; }
+        public ObservableCollection<TimeOnly?> mondayHours;
+        public ObservableCollection<TimeOnly?> MondayHours
+        {
+            get { return mondayHours; }
+            set
+            {
+                mondayHours = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<TimeOnly?> tuesdayHours;
+        public ObservableCollection<TimeOnly?> TuesdayHours
+        {
+            get { return tuesdayHours; }
+            set
+            {
+                tuesdayHours = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<TimeOnly?> wednesdayHours;
+        public ObservableCollection<TimeOnly?> WednesdayHours
+        {
+            get { return wednesdayHours; }
+            set
+            {
+                wednesdayHours = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<TimeOnly?> thursdayHours;
+        public ObservableCollection<TimeOnly?> ThursdayHours
+        {
+            get { return thursdayHours; }
+            set
+            {
+                thursdayHours = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<TimeOnly?> fridayHours;
+        public ObservableCollection<TimeOnly?> FridayHours
+        {
+            get { return fridayHours; }
+            set
+            {
+                fridayHours = value;
+                OnPropertyChanged();
+            }
+        }
 
         private TimeOnly monday;
         public TimeOnly Monday
@@ -464,13 +513,45 @@ namespace LangLang.ViewModel
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
+
+        private int GetClassroomNumber(TimeOnly? time)
+        {
+            if (Start != null && time != null)
+            {
+                var classrooms = timetableService.GetAvailableClassrooms(DateOnly.FromDateTime(DateTime.Parse(Start)), time.Value, Constants.ExamDuration, loggedInUser);
+                if (classrooms.Count > 0)
+                {
+                    return classrooms[0];
+                }
+            }
+
+            return -1;
+        }
         private void CreateSchedule()
         {
             Schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
             foreach(WorkDay workDay in ScheduleDays)
             {
                 // TODO: get the free classroom for now its set to the first classroom
-                Schedule[workDay] = new Tuple<TimeOnly, int>(Monday, 1);
+                if(workDay == WorkDay.Monday)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>(Monday, GetClassroomNumber(Monday));
+                }else if(workDay == WorkDay.Tuesday)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>(Tuesday, GetClassroomNumber(Tuesday));
+                }
+                else if (workDay == WorkDay.Wednesday)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>(Wednesday, GetClassroomNumber(Wednesday));
+                }
+                else if (workDay == WorkDay.Thursday)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>(Thursday, GetClassroomNumber(Thursday));
+                }
+                else if (workDay == WorkDay.Friday)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>(Friday, GetClassroomNumber(Friday));
+                }
             }
         }
         public void LoadCourses()
@@ -506,7 +587,11 @@ namespace LangLang.ViewModel
                 {
                     if(languageTuple.Item1.Name == language)
                     {
-                        LanguageLevels.Add(languageTuple.Item2);
+                        foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
+                        {
+                            if (lvl > languageTuple.Item2) break;
+                            LanguageLevels.Add(lvl);
+                        }
                     }
                 }
             }
@@ -527,13 +612,18 @@ namespace LangLang.ViewModel
         }
         public void LoadHours()
         {
-            // if (Duration == null) return;
-            // var availableLessonTimes = timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(DateTime.Parse(start)), Duration.Value, loggedInUser);
-            // MondayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Monday].Select(t => (TimeOnly?)t));
-            // TuesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Tuesday].Select(t => (TimeOnly?)t));
-            // WednesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Wednesday].Select(t => (TimeOnly?)t));
-            // ThursdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Thursday].Select(t => (TimeOnly?)t));
-            // FridayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Friday].Select(t => (TimeOnly?)t));
+            if (Duration == null) return;
+            var availableLessonTimes = timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(DateTime.Parse(start)), Duration.Value, loggedInUser);
+            MondayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Monday].Select(t => (TimeOnly?)t));
+            MondayHours.Insert(0, null);
+            TuesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Tuesday].Select(t => (TimeOnly?)t));
+            TuesdayHours.Insert(0, null);
+            WednesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Wednesday].Select(t => (TimeOnly?)t));
+            WednesdayHours.Insert(0, null);
+            ThursdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Thursday].Select(t => (TimeOnly?)t));
+            ThursdayHours.Insert(0, null);
+            FridayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Friday].Select(t => (TimeOnly?)t));
+            FridayHours.Insert(0, null);
         }
         public void RemoveInputs()
         {

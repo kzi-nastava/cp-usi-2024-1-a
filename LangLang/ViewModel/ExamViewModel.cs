@@ -26,6 +26,7 @@ internal class ExamViewModel : ViewModelBase
     private ObservableCollection<Exam> exams;
     private ObservableCollection<Language> languages;
     private ObservableCollection<LanguageLvl> languageLevels;
+    private ObservableCollection<LanguageLvl> filterLanguageLevels;
     private ObservableCollection<TimeOnly> availableTimes;
     
     private Exam? selectedExam;
@@ -58,6 +59,11 @@ internal class ExamViewModel : ViewModelBase
     {
         get => languageLevels;
         set => SetField(ref languageLevels, value);
+    }
+    public ObservableCollection<LanguageLvl> FilterLanguageLevels
+    {
+        get => filterLanguageLevels;
+        set => SetField(ref filterLanguageLevels, value);
     }
     public ObservableCollection<TimeOnly> AvailableTimes
     {
@@ -163,18 +169,18 @@ internal class ExamViewModel : ViewModelBase
         exams = new ObservableCollection<Exam>(LoadExams());
         languages = new ObservableCollection<Language>(tutor.KnownLanguages.Select(tuple => tuple.Item1));
         languageLevels = new ObservableCollection<LanguageLvl>();
+        filterLanguageLevels = new ObservableCollection<LanguageLvl>(Enum.GetValues<LanguageLvl>());
         
         languageToLvl = new Dictionary<Language, List<LanguageLvl>>();
         foreach (var knownLanguage in tutor.KnownLanguages)
         {
-            if (!languageToLvl.ContainsKey(knownLanguage.Item1))
+            var levels = new List<LanguageLvl>();
+            foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
             {
-                languageToLvl.Add(knownLanguage.Item1, new List<LanguageLvl>{knownLanguage.Item2});
+                if (lvl > knownLanguage.Item2) break;
+                levels.Add(lvl);
             }
-            else
-            {
-                languageToLvl[knownLanguage.Item1].Add(knownLanguage.Item2);
-            }
+            languageToLvl.Add(knownLanguage.Item1, levels);
         }
         
         availableTimes = new ObservableCollection<TimeOnly>();

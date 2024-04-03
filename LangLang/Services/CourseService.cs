@@ -43,10 +43,6 @@ namespace LangLang.Services
                 {
                     continue;
                 }
-                if (student.GetAppliedCourses().Contains(course.Id))
-                {
-                    continue;
-                }
                 Courses.Add(course);
             }
 

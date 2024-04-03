@@ -18,6 +18,8 @@ namespace LangLang.ViewModel
         private readonly Window _window;
         private readonly CourseService _courseService = new();
         private readonly LanguageService _languageService = new();
+        private readonly StudentService studentService = StudentService.GetInstance();
+        private readonly ExamService examService = new();
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
@@ -94,7 +96,7 @@ namespace LangLang.ViewModel
             }
         }
 
-       
+
         // FILTER VALUES
         private string courseLanguageFilter = "";
         public string CourseLanguageFilter
@@ -218,8 +220,8 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            var courses = _courseService.GetAll();
-            foreach (Course course in courses.Values)
+            var courses = _courseService.GetAvailableCourses(studentService.LoggedUser);
+            foreach (Course course in courses)
             {
                 Courses.Add(course);
             }
@@ -229,8 +231,8 @@ namespace LangLang.ViewModel
         public void LoadExams()
         {
             ExamDAO examDAO = ExamDAO.GetInstance();
-            var examsDictionary = examDAO.GetAllExams();
-            foreach (Exam exam in examsDictionary.Values)
+            var examsDictionary = examService.GetAvailableExamsForStudent(studentService.LoggedUser);
+            foreach (Exam exam in examsDictionary)
             {
                 Exams.Add(exam);
             }

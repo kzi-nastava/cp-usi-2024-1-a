@@ -38,7 +38,7 @@ public class ExamService
         {
             return false;
         }
-        if(languageDao.GetLanguageById(language.Code) == null)
+        if(languageDao.GetLanguageById(language.Name) == null)
         {
             return false;
         }
@@ -128,10 +128,6 @@ public class ExamService
                 continue;
             }
             if (exam.IsFull())
-            {
-                continue;
-            }
-            if (student.GetAppliedExams().Contains(exam.Id))
             {
                 continue;
             }

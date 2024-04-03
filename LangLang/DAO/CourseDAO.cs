@@ -73,8 +73,8 @@ namespace LangLang.DAO
                 if (
                     date >= DateOnly.FromDateTime(DateTime.Parse(course.Start)) &&
                     date <= DateOnly.FromDateTime(DateTime.Parse(course.Start).Add(TimeSpan.FromDays(7*course.Duration))) &&
-                    date.DayOfWeek!=DayOfWeek.Saturday && date.DayOfWeek == DayOfWeek.Sunday && 
-                    course.Schedule.ContainsKey((WorkDay)(int)date.DayOfWeek)
+                    date.DayOfWeek!=DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday && 
+                    course.Schedule.ContainsKey(DayConverter.ToWorkDay(date.DayOfWeek))
                     )
                 {
                     courses.Add(course);

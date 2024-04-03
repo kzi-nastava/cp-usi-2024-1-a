@@ -27,11 +27,9 @@ public class StudentService
 
     public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
     {
-        if (LoggedUser.AttendingCourse != "" || LoggedUser.AttendingExam != "" || LoggedUser.GetAppliedCourses().Count != 0 || LoggedUser.GetAppliedExams().Count != 0)
+        if (LoggedUser.AttendingCourse != "" || LoggedUser.AttendingExam != "")
         {
-            //MessageBox.Show($"User is attending a course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-            return false;
+             return false;
         }
 
         LoggedUser.Name = name;
