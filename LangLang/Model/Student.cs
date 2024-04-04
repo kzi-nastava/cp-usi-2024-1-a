@@ -15,7 +15,7 @@ namespace LangLang.Model
 
 
         //--------------------------Properties
-        public string Qualification { get; set; }
+        public EducationLvl Education { get; set; }
         public uint PenaltyPts { get; set; }
         public string AttendingCourse { get; set; }
         public string AttendingExam {  get; set; }
@@ -25,19 +25,18 @@ namespace LangLang.Model
             PenaltyPts = 0;
             AttendingCourse = "";
             AttendingExam = "";
-            Qualification = "";
             this.coursesApplied = new List<string>();
             this.examsApplied = new List<string>();
             this.notifications = new List<string>();
         }
 
-        public Student(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, string qualification, uint penaltyPts, string attendingExam, string attendingCourse, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
+        public Student(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, string attendingExam, string attendingCourse, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
             : base(email, password, name, surname, birthDate, gender, phoneNumber)
         {
             PenaltyPts = penaltyPts;
             AttendingCourse = attendingCourse;
             AttendingExam = attendingExam;
-            Qualification = qualification;
+            Education = educationLvl;
             this.coursesApplied = coursesApplied;
             this.examsApplied = examsApplied;
             this.notifications = notifications;

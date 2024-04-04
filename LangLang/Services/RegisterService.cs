@@ -13,7 +13,7 @@ namespace LangLang.Services
 {
     public class RegisterService
     {
-        public static bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, string qualification)
+        public static bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, EducationLvl educationLvl)
         {
             StudentDAO sd = StudentDAO.GetInstance();
 
@@ -27,7 +27,7 @@ namespace LangLang.Services
 
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, qualification, 0, "", "", null, null, null));
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", null, null, null));
                 return true;
             }
             return false;
@@ -72,13 +72,13 @@ namespace LangLang.Services
                 passed = false;
             }
 
-            passed &= !(int.TryParse(name, out _));      //checking if it's solely letters
-            passed &= !(int.TryParse(surname, out _));
             passed &= int.TryParse(phoneNumber, out _);  //checking if it's solely numeric
-
+            passed &= !name.Any(char.IsDigit);
+            passed &= !surname.Any(char.IsDigit);
             passed &= password.Length >= 8;               //password must include numbers, an upper character and should be longer than 8
             passed &= password.Any(char.IsDigit);
             passed &= password.Any(char.IsUpper);
+            passed &= phoneNumber.Length >= 6;
             return passed;
         }
 

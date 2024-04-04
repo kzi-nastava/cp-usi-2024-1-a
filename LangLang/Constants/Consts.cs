@@ -60,8 +60,12 @@ namespace Consts
     {
         Monday,Tuesday,Wednesday,Thursday,Friday
     }
+    public enum EducationLvl
+    {
+        ElementarySchool, HighSchool, CollegeDegree, MastersDegree, PhD
+    }
 
 
-    
+
 }
 
