@@ -17,7 +17,6 @@ namespace LangLang.ViewModel
     internal class StudentAccountViewModel : ViewModelBase
     {
         private StudentService studentService = StudentService.GetInstance();
-
         private string _email;
         private string _password;
         private string _name;
@@ -32,25 +31,11 @@ namespace LangLang.ViewModel
         private string _errorMessageSurname;
         private string _errorMessagePhone;
 
-
-        private readonly Window _window;
-
-
         public StudentAccountViewModel()
         {
             ConfirmCommand = new RelayCommand(ConfirmInput);
-        }
-
-
-        private StudentAccountWindow _accountWindow;
-
-        public StudentAccountViewModel(StudentAccountWindow accountWindow)
-        {
-            _accountWindow = accountWindow;
-            ConfirmCommand = new RelayCommand(ConfirmInput);
             SetUserData();
         }
-
 
         private void SetUserData()
         {
@@ -61,7 +46,7 @@ namespace LangLang.ViewModel
             PhoneNumber = user.PhoneNumber;
             Gender = user.Gender;
             Birthday = user.BirthDate;
-            Password = user.Password; // Assuming you don't want to display the password
+            Password = user.Password; 
         }
 
         public string ErrorMessageRequired
@@ -73,7 +58,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(ErrorMessageRequired));
             }
         }
-
 
         public string ErrorMessagePassword
         {
@@ -114,7 +98,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(ErrorMessagePhone));
             }
         }
-
 
         public string Email
         {
@@ -165,7 +148,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(PhoneNumber));
             }
         }
-
         public Gender Gender
         {
             get => _gender;
@@ -185,8 +167,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(Birthday));
             }
         }
-
-
 
         public ICommand ConfirmCommand { get; }
 
@@ -221,36 +201,38 @@ namespace LangLang.ViewModel
                     ErrorMessageRequired = "Student applied for courses, editing profile not allowed";
                     return;
                 }
-
             }
             else {
-                if (birthday == DateTime.MinValue || password == null || name == null || surname == null || phoneNumber == null || name == "" || surname == "" || password == "" || phoneNumber == "")
+                if (AccountFieldsEmpty(birthday, password, name, surname, phoneNumber)) 
                 {
                     ErrorMessageRequired = "All the fields are required";
                     return;
                 }
 
-                if (int.TryParse(name, out _))
+                if (name.Any(char.IsDigit))
                 {
                     ErrorMessageName = "Name must be all letters";
                 }
 
-                if (int.TryParse(surname, out _))
+                if (surname.Any(char.IsDigit))
                 {
                     ErrorMessageSurname = "Surname must be all letters";
                 }
 
-                if (!int.TryParse(phoneNumber, out _))
+                if (!RegisterService.CheckPhoneNumber(phoneNumber))
                 {
                     ErrorMessagePhone = "Must be made up of numbers";
                 }
-                if (password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
+                if (!RegisterService.CheckPassword(password))
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
-
             }
-
         }
+        public static bool AccountFieldsEmpty(DateTime birthday,  string password, string name, string surname, string phoneNumber)
+        {
+            return birthday == DateTime.MinValue || password == null || name == null || surname == null || phoneNumber == null || name == "" || surname == "" || password == "" || phoneNumber == "";
+        }
+
     }
 }

@@ -2,6 +2,7 @@
 using LangLang.DAO;
 using LangLang.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 
@@ -18,7 +19,7 @@ namespace LangLang.Services
 
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", null, null, null));
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
             }
             return passed;
         }
@@ -50,8 +51,7 @@ namespace LangLang.Services
                 return false;
             }
             bool passed = true;
-            passed &= !name.Any(char.IsDigit);
-            passed &= !surname.Any(char.IsDigit);
+            passed &= CheckName(name, surname);
             passed &= CheckPassword(password);
             passed &= CheckPhoneNumber(phoneNumber);
             try
@@ -84,6 +84,11 @@ namespace LangLang.Services
                     return false;
             }
             return phoneNumber.Length >= 6;
+        }
+    
+        public static bool CheckName(string name, string surname)
+        {
+            return !name.Any(char.IsDigit) && !surname.Any(char.IsDigit);
         }
     }
 }

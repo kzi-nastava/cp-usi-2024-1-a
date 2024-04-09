@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Security;
 using System.Windows;
 using System.Windows.Input;
@@ -10,15 +9,12 @@ using LangLang.Services;
 
 namespace LangLang.ViewModel
 {
-    public class LoginViewModel : INotifyPropertyChanged
+    internal class LoginViewModel : ViewModelBase
     {
         private string _email;
         private SecureString _password;
         private string _errorMessage;
-
         private readonly LoginService _loginService;
-
-
         private readonly Window _window;
 
         public LoginViewModel()
@@ -34,16 +30,13 @@ namespace LangLang.ViewModel
             LoginCommand = new RelayCommand(Login);
         }
 
-
-
-
         public string Email
         {
             get => _email;
             set
             {
                 _email = value;
-                OnPropertyChanged(nameof(Email));
+                OnPropertyChanged();
             }
         }
 
@@ -53,7 +46,7 @@ namespace LangLang.ViewModel
             set
             {
                 _password = value;
-                OnPropertyChanged(nameof(Password));
+                OnPropertyChanged();
             }
         }
 
@@ -63,7 +56,7 @@ namespace LangLang.ViewModel
             set
             {
                 _errorMessage = value;
-                OnPropertyChanged(nameof(ErrorMessage));
+                OnPropertyChanged();
             }
         }
 
@@ -72,11 +65,8 @@ namespace LangLang.ViewModel
         private void Login(object parameter)
         {
             ErrorMessage = "";
-
-            // Directly access the Email and Password properties
             string email = Email;
             string password = ConvertToUnsecureString(Password);
-
             _loginService.LogIn(email, password);
 
             //LoginFailed
@@ -119,15 +109,8 @@ namespace LangLang.ViewModel
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         // Helper method to convert SecureString to plain text
-        private string ConvertToUnsecureString(SecureString securePassword)
+        private static string ConvertToUnsecureString(SecureString securePassword)
         {
             if (securePassword == null)
                 return string.Empty;
@@ -136,7 +119,7 @@ namespace LangLang.ViewModel
             try
             {
                 unmanagedString = System.Runtime.InteropServices.Marshal.SecureStringToGlobalAllocUnicode(securePassword);
-                return System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedString);
+                return System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedString)!;
             }
             finally
             {

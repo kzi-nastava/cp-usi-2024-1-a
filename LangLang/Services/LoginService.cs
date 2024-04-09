@@ -1,10 +1,4 @@
-﻿using Consts;
-using System;
-using System.Data;
-using System.Windows;
-using System.Net.Mail;
-using System.Linq;
-using System.Windows.Controls;
+﻿using System;
 using LangLang.Model;
 using LangLang.DAO;
 using LangLang.Services;

@@ -9,7 +9,6 @@
         WindowStartupLocation="CenterScreen"
         Title="StudentWindow" Height="753" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <!-- Set DataContext here -->
     <Window.Resources>
         <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
         <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
@@ -18,27 +17,18 @@
 
 
     <TabControl>
-
-        <!-- Exams Tab -->
         <TabItem Header="Exams">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <!-- Title -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Three words -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Three buttons -->
                     <RowDefinition Height="*"/>
-                    <!-- DataGrid -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Two buttons -->
                 </Grid.RowDefinitions>
 
-                <!-- Title -->
                 <Label Grid.Row="0" Content="Exam overview" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
 
-                <!-- Three words -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,45" Grid.RowSpan="2" Width="489">
                     <TextBlock Text="Language:"  Height="18" Margin="0,0,10,0" Width="109"/>
                     <TextBlock Text="Level:" Margin="0,0,0,0" Width="121"/>
@@ -53,8 +43,6 @@
                     <Button Command="{Binding ClearExamFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="30,10,10,10" Height="25"/>
                 </StackPanel>
 
-
-                <!-- DataGrid -->
                 <DataGrid Grid.Row="3" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
@@ -66,11 +54,9 @@
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Classroom" Binding="{Binding ClassroomNumber}" Width="*" />
                         <DataGridTextColumn Header="Student capacity" Binding="{Binding MaxStudents}" Width="*" />
-
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <!-- Two buttons -->
                 <DockPanel Grid.Row="4">
                     <Button x:Name="LogoutBtn1" DockPanel.Dock="Left" Content="Logout" Click="Logout" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
@@ -111,21 +97,14 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <!-- Title -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Three words -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Three buttons -->
                     <RowDefinition Height="*"/>
-                    <!-- DataGrid -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Two buttons -->
                 </Grid.RowDefinitions>
 
-                <!-- Title -->
                 <Label Grid.Row="0" Content="Course overview" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
 
-                <!-- Three words -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,44" Grid.RowSpan="2" Width="672">
                     <TextBlock Text="Language:" Margin="0,0,65,0"/>
                     <TextBlock Text="Language Level:" Margin="0,0,35,0"/>

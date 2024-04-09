@@ -12,20 +12,16 @@ namespace LangLang.View
             DataContext = new LoginViewModel(this);
         }
 
-
         private void OpenRegister(object sender, RoutedEventArgs e)
         {
             RegisterView view = new RegisterView();
             view.Show();
             this.Close();
-
         }
-
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            var passwordBox = sender as PasswordBox;
-            if (passwordBox != null && DataContext is LoginViewModel viewModel)
+            if (sender is PasswordBox passwordBox && DataContext is LoginViewModel viewModel)
             {
                 viewModel.Password = passwordBox.SecurePassword;
             }

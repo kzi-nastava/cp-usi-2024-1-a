@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Net.Mail;
-using System.Security;
 using System.Windows;
 using System.Windows.Input;
 using Consts;
@@ -23,18 +21,13 @@ namespace LangLang.ViewModel
         private DateTime _birthday;
         private EducationLvl _educationLvl;
 
-
-
         private string _errorMessageRequired;
         private string _errorMessageEmail;
         private string _errorMessagePassword;
         private string _errorMessageName;
         private string _errorMessageSurname;
         private string _errorMessagePhone;
-
-
-        private readonly Window _window;
-
+        public ICommand SignUpCommand { get; }
 
         public RegisterViewModel()
         {
@@ -48,14 +41,6 @@ namespace LangLang.ViewModel
             _registerView = registerView;
             SignUpCommand = new RelayCommand(SignUp);
         }
-
-        /*
-        public RegisterViewModel(Window window)
-        {
-            _window = new Window();
-            SignUpCommand = new RelayCommand(SignUp);
-        }
-        */
 
         public string ErrorMessageRequired
         {
@@ -117,7 +102,6 @@ namespace LangLang.ViewModel
             }
         }
 
-
         public string Email
         {
             get => _email;
@@ -137,7 +121,7 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(Password));
             }
         }
-
+        
         public string Name
         {
             get => _name;
@@ -147,7 +131,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(Name));
             }
         }
-
         public string Surname
         {
             get => _surname;
@@ -187,7 +170,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(EducationLvl));
             }
         }
-
         public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
         public DateTime Birthday
         {
@@ -198,10 +180,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(Birthday));
             }
         }
-
-
-
-        public ICommand SignUpCommand { get; }
 
         private void SignUp(object parameter)
         {
@@ -226,12 +204,11 @@ namespace LangLang.ViewModel
 
             if (!successful)
             {
-                if (birthday == DateTime.MinValue || email == null || password == null || name == null || surname == null || phoneNumber == null || email == "" || name == "" || surname == "" || password == "" || phoneNumber == "")
+                if(StudentAccountViewModel.AccountFieldsEmpty(birthday, password, name, surname, phoneNumber))
                 {
                     ErrorMessageRequired = "All the fields are required";
                     return;
                 }
-
                 try
                 {
                     _ = new MailAddress(email);
@@ -240,27 +217,22 @@ namespace LangLang.ViewModel
                 {
                     ErrorMessageEmail = "Incorrect email";
                 }
-
                 if(name.Any(char.IsDigit))
                 {
                     ErrorMessageName = "Name must be all letters";
                 }
-                
                 if(surname.Any(char.IsDigit))
                 {
                     ErrorMessageSurname = "Surname must be all letters";
                 }
-
-                if(!int.TryParse(phoneNumber, out _) || phoneNumber.Length < 6)
+                if(!RegisterService.CheckPhoneNumber(phoneNumber))
                 {
                     ErrorMessagePhone = "Numerical, 6 or more numbers";
                 }
-                if(password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
+                if(!RegisterService.CheckPassword(password))
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
-                    
-
                 if (email != null && RegisterService.CheckExistingEmail(email))
                 {
                     ErrorMessageEmail = "Email already exists";
@@ -272,11 +244,7 @@ namespace LangLang.ViewModel
                 LoginWindow view = new LoginWindow();
                 view.Show();
                 _registerView.Close();
-
             }
         }
-
-
-
     }
 }
