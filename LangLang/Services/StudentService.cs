@@ -77,6 +77,17 @@ namespace LangLang.Services
             courseService.UpdateCourse(course);
         }
 
+        private static void CancelCourses(Student student)
+        {
+            foreach (string courseID in LoggedUser.GetAppliedCourses())
+            {
+                Course? course = courseService.GetCourseById(courseID);
+                course!.CancelAttendance();
+                courseService.UpdateCourse(course);
+            }
+        }
+
+
     }
 
 }
