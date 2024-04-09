@@ -12,7 +12,7 @@ namespace LangLang.Services
         public Student LoggedUser { get; set; }
 
         //Singleton
-        private static StudentService instance;
+        private static StudentService? instance;
         private StudentService() 
         {
         }
@@ -29,7 +29,6 @@ namespace LangLang.Services
             {
                 return false;
             }
-
             LoggedUser.Name = name;
             LoggedUser.Surname = surname;
             LoggedUser.Password = password;
@@ -50,21 +49,8 @@ namespace LangLang.Services
     
         public void DeleteMyAccount()
         {
-            foreach (string courseID in LoggedUser.GetAppliedCourses())
-            {
-                Course? course = courseService.GetCourseById(courseID);
-                course!.CancelAttendance();
-                courseService.UpdateCourse(course);
-            }
-
-            foreach(string examID in LoggedUser.GetAppliedExams())
-            {
-                Exam? exam = examService.GetExamById(examID);
-                exam?.CancelAttendance();
-                examService.UpdateExam(exam!);
-            }
-
-
+            CancelCourses(LoggedUser);
+            CancelExams(LoggedUser);
             studentDAO.DeleteStudent(LoggedUser.Email);
         }
     
@@ -77,13 +63,24 @@ namespace LangLang.Services
             courseService.UpdateCourse(course);
         }
 
-        private static void CancelCourses(Student student)
+        public void CancelCourses(Student student)
         {
-            foreach (string courseID in LoggedUser.GetAppliedCourses())
+            foreach (string courseID in student.GetAppliedCourses())
             {
                 Course? course = courseService.GetCourseById(courseID);
                 course!.CancelAttendance();
                 courseService.UpdateCourse(course);
+            }
+        }
+
+        private void CancelExams(Student student)
+        {
+            foreach (string examID in LoggedUser.GetAppliedExams())
+            {
+                Exam? exam = examService.GetExamById(examID);
+                exam?.CancelAttendance();
+                //examService.UpdateExam(exam!);
+                //TODO handle exam updating
             }
         }
 

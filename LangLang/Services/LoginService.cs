@@ -12,7 +12,7 @@ using LangLang.Services;
 public class LoginService
 {
     //Singleton
-    private static LoginService instance;
+    private static LoginService? instance;
     public bool validUser = false;
     public bool validEmail = false;
     public Type userType;
@@ -23,11 +23,7 @@ public class LoginService
 
     public static LoginService GetInstance()
     {
-        if (instance == null)
-        {
-            instance = new LoginService();
-        }
-        return instance;
+        return instance ??= new LoginService();
     }
 
 
@@ -50,7 +46,7 @@ public class LoginService
 
     private void LogInStudent(string email, string password)
     {
-        Student student = StudentDAO.GetInstance().GetStudent(email);
+        Student? student = StudentDAO.GetInstance().GetStudent(email);
 
         if (student != null)
         {
