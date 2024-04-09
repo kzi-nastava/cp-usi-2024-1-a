@@ -21,6 +21,7 @@ namespace LangLang.ViewModel
         private string _phoneNumber;
         private Gender _gender;
         private DateTime _birthday;
+        private EducationLvl _educationLvl;
 
 
 
@@ -177,6 +178,15 @@ namespace LangLang.ViewModel
             }
         }
 
+        public EducationLvl EducationLvl
+        {
+            get => _educationLvl;
+            set
+            {
+                _educationLvl = value;
+                OnPropertyChanged(nameof(EducationLvl));
+            }
+        }
 
         public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
         public DateTime Birthday
@@ -210,8 +220,9 @@ namespace LangLang.ViewModel
             string phoneNumber = PhoneNumber;
             Gender gender = Gender;
             DateTime birthday = Birthday;
+            EducationLvl educationLvl = EducationLvl;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, "");
+            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
 
             if (!successful)
             {
@@ -230,19 +241,19 @@ namespace LangLang.ViewModel
                     ErrorMessageEmail = "Incorrect email";
                 }
 
-                if(int.TryParse(name, out _))
+                if(name.Any(char.IsDigit))
                 {
                     ErrorMessageName = "Name must be all letters";
                 }
                 
-                if(int.TryParse(surname, out _))
+                if(surname.Any(char.IsDigit))
                 {
                     ErrorMessageSurname = "Surname must be all letters";
                 }
 
-                if(!int.TryParse(phoneNumber, out _))
+                if(!int.TryParse(phoneNumber, out _) || phoneNumber.Length < 6)
                 {
-                    ErrorMessagePhone = "Must be made up of numbers";
+                    ErrorMessagePhone = "Numerical, 6 or more numbers";
                 }
                 if(password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
                 {
