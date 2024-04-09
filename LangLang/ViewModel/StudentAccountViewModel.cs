@@ -17,29 +17,29 @@ namespace LangLang.ViewModel
     internal class StudentAccountViewModel : ViewModelBase
     {
         private StudentService studentService = StudentService.GetInstance();
-        private string _email;
-        private string _password;
-        private string _name;
-        private string _surname;
-        private string _phoneNumber;
+        private string? _email;
+        private string? _password;
+        private string? _name;
+        private string? _surname;
+        private string? _phoneNumber;
         private Gender _gender;
         private DateTime _birthday;
 
-        private string _errorMessageRequired;
-        private string _errorMessagePassword;
-        private string _errorMessageName;
-        private string _errorMessageSurname;
-        private string _errorMessagePhone;
+        private string? _errorMessageRequired;
+        private string? _errorMessagePassword;
+        private string? _errorMessageName;
+        private string? _errorMessageSurname;
+        private string? _errorMessagePhone;
 
         public StudentAccountViewModel()
         {
-            ConfirmCommand = new RelayCommand(ConfirmInput);
+            ConfirmCommand = new RelayCommand(ConfirmInput!);
             SetUserData();
         }
 
         private void SetUserData()
         {
-            Student user = studentService.LoggedUser;
+            Student user = studentService.LoggedUser!;
             Email = user.Email;
             Name = user.Name;
             Surname = user.Surname;
@@ -51,7 +51,7 @@ namespace LangLang.ViewModel
 
         public string ErrorMessageRequired
         {
-            get => _errorMessageRequired;
+            get => _errorMessageRequired!;
             set
             {
                 _errorMessageRequired = value;
@@ -61,7 +61,7 @@ namespace LangLang.ViewModel
 
         public string ErrorMessagePassword
         {
-            get => _errorMessagePassword;
+            get => _errorMessagePassword!;
             set
             {
                 _errorMessagePassword = value;
@@ -71,7 +71,7 @@ namespace LangLang.ViewModel
 
         public string ErrorMessageName
         {
-            get => _errorMessageName;
+            get => _errorMessageName!;
             set
             {
                 _errorMessageName = value;
@@ -81,7 +81,7 @@ namespace LangLang.ViewModel
 
         public string ErrorMessageSurname
         {
-            get => _errorMessageSurname;
+            get => _errorMessageSurname!;
             set
             {
                 _errorMessageSurname = value;
@@ -91,7 +91,7 @@ namespace LangLang.ViewModel
 
         public string ErrorMessagePhone
         {
-            get => _errorMessagePhone;
+            get => _errorMessagePhone!;
             set
             {
                 _errorMessagePhone = value;
@@ -101,7 +101,7 @@ namespace LangLang.ViewModel
 
         public string Email
         {
-            get => _email;
+            get => _email!;
             set
             {
                 _email = value;
@@ -111,7 +111,7 @@ namespace LangLang.ViewModel
 
         public string Password
         {
-            get => _password;
+            get => _password!;
             set
             {
                 _password = value;
@@ -121,7 +121,7 @@ namespace LangLang.ViewModel
 
         public string Name
         {
-            get => _name;
+            get => _name!;
             set
             {
                 _name = value;
@@ -131,7 +131,7 @@ namespace LangLang.ViewModel
 
         public string Surname
         {
-            get => _surname;
+            get => _surname!;
             set
             {
                 _surname = value;
@@ -141,7 +141,7 @@ namespace LangLang.ViewModel
 
         public string PhoneNumber
         {
-            get => _phoneNumber;
+            get => _phoneNumber!;
             set
             {
                 _phoneNumber = value;
@@ -187,7 +187,7 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = RegisterService.CheckUserData(studentService.LoggedUser.Email, password, name, surname, phoneNumber);
+            bool successful = RegisterService.CheckUserData(studentService.LoggedUser!.Email, password, name, surname, phoneNumber);
 
             if (successful)
             {

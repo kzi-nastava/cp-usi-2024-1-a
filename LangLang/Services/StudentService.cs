@@ -9,7 +9,7 @@ namespace LangLang.Services
         readonly StudentDAO studentDAO = StudentDAO.GetInstance();
         private readonly ExamService examService = new();
         private readonly CourseService courseService = new();
-        public Student LoggedUser { get; set; }
+        public Student? LoggedUser { get; set; }
 
         //Singleton
         private static StudentService? instance;
@@ -25,11 +25,11 @@ namespace LangLang.Services
         //Return if the updating is successfull 
         public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
-            if (AttendingCourse(LoggedUser))
+            if (AttendingCourse(LoggedUser!))
             {
                 return false;
             }
-            LoggedUser.Name = name;
+            LoggedUser!.Name = name;
             LoggedUser.Surname = surname;
             LoggedUser.Password = password;
             LoggedUser.Gender = gender;
@@ -49,15 +49,15 @@ namespace LangLang.Services
     
         public void DeleteMyAccount()
         {
-            CancelCourses(LoggedUser);
-            CancelExams(LoggedUser);
-            studentDAO.DeleteStudent(LoggedUser.Email);
+            CancelCourses(LoggedUser!);
+            CancelExams(LoggedUser!);
+            studentDAO.DeleteStudent(LoggedUser!.Email);
         }
     
 
         public void ApplyForCourse(string courseId)
         {
-            LoggedUser.AddCourse(courseId);
+            LoggedUser!.AddCourse(courseId);
             Course? course = courseService.GetCourseById(courseId);
             course!.AddAttendance();
             courseService.UpdateCourse(course);
@@ -75,7 +75,7 @@ namespace LangLang.Services
 
         private void CancelExams(Student student)
         {
-            foreach (string examID in LoggedUser.GetAppliedExams())
+            foreach (string examID in LoggedUser!.GetAppliedExams())
             {
                 Exam? exam = examService.GetExamById(examID);
                 exam?.CancelAttendance();

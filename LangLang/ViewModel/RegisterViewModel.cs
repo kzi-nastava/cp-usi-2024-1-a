@@ -12,37 +12,38 @@ namespace LangLang.ViewModel
 {
     internal class RegisterViewModel : ViewModelBase
     {
-        private string _email;
-        private string _password;
-        private string _name;
-        private string _surname;
-        private string _phoneNumber;
+        private string? _email;
+        private string? _password;
+        private string? _name;
+        private string? _surname;
+        private string? _phoneNumber;
         private Gender _gender;
         private DateTime _birthday;
         private EducationLvl _educationLvl;
 
-        private string _errorMessageRequired;
-        private string _errorMessageEmail;
-        private string _errorMessagePassword;
-        private string _errorMessageName;
-        private string _errorMessageSurname;
-        private string _errorMessagePhone;
+        private string? _errorMessageRequired;
+        private string? _errorMessageEmail;
+        private string? _errorMessagePassword;
+        private string? _errorMessageName;
+        private string? _errorMessageSurname;
+        private string? _errorMessagePhone;
+
+        private RegisterView? _registerView;
         public ICommand SignUpCommand { get; }
 
         public RegisterViewModel()
         {
-            SignUpCommand = new RelayCommand(SignUp);
+            SignUpCommand = new RelayCommand(SignUp!);
         }
 
-        private RegisterView _registerView;
 
         public RegisterViewModel(RegisterView registerView)
         {
             _registerView = registerView;
-            SignUpCommand = new RelayCommand(SignUp);
+            SignUpCommand = new RelayCommand(SignUp!);
         }
 
-        public string ErrorMessageRequired
+        public string? ErrorMessageRequired
         {
             get => _errorMessageRequired;
             set
@@ -52,7 +53,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string ErrorMessageEmail
+        public string? ErrorMessageEmail
         {
             get => _errorMessageEmail;
             set
@@ -62,7 +63,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string ErrorMessagePassword
+        public string? ErrorMessagePassword
         {
             get => _errorMessagePassword;
             set
@@ -72,7 +73,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string ErrorMessageName
+        public string? ErrorMessageName
         {
             get => _errorMessageName;
             set
@@ -82,7 +83,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string ErrorMessageSurname
+        public string? ErrorMessageSurname
         {
             get => _errorMessageSurname;
             set
@@ -92,7 +93,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string ErrorMessagePhone
+        public string? ErrorMessagePhone
         {
             get => _errorMessagePhone;
             set
@@ -102,7 +103,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string Email
+        public string? Email
         {
             get => _email;
             set
@@ -112,7 +113,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string Password
+        public string? Password
         {
             get => _password;
             set
@@ -122,7 +123,7 @@ namespace LangLang.ViewModel
             }
         }
         
-        public string Name
+        public string? Name
         {
             get => _name;
             set
@@ -131,7 +132,7 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(Name));
             }
         }
-        public string Surname
+        public string? Surname
         {
             get => _surname;
             set
@@ -141,7 +142,7 @@ namespace LangLang.ViewModel
             }
         }
 
-        public string PhoneNumber
+        public string? PhoneNumber
         {
             get => _phoneNumber;
             set
@@ -170,7 +171,7 @@ namespace LangLang.ViewModel
                 OnPropertyChanged(nameof(EducationLvl));
             }
         }
-        public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
+        public string? BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
         public DateTime Birthday
         {
             get => _birthday;
@@ -191,45 +192,45 @@ namespace LangLang.ViewModel
             ErrorMessagePhone = "";
 
             // Directly access the properties
-            string email = Email;
-            string password = Password;
-            string name = Name;
-            string surname = Surname;
-            string phoneNumber = PhoneNumber;
+            string? email = Email;
+            string? password = Password;
+            string? name = Name;
+            string? surname = Surname;
+            string? phoneNumber = PhoneNumber;
             Gender gender = Gender;
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+            bool successful = RegisterService.RegisterStudent(email!, password!, name!, surname!, birthday, gender, phoneNumber!, educationLvl);
 
             if (!successful)
             {
-                if(StudentAccountViewModel.AccountFieldsEmpty(birthday, password, name, surname, phoneNumber))
+                if(StudentAccountViewModel.AccountFieldsEmpty(birthday, password!, name!, surname!, phoneNumber!))
                 {
                     ErrorMessageRequired = "All the fields are required";
                     return;
                 }
                 try
                 {
-                    _ = new MailAddress(email);
+                    _ = new MailAddress(email!);
                 }
                 catch
                 {
                     ErrorMessageEmail = "Incorrect email";
                 }
-                if(name.Any(char.IsDigit))
+                if(name!.Any(char.IsDigit))
                 {
                     ErrorMessageName = "Name must be all letters";
                 }
-                if(surname.Any(char.IsDigit))
+                if(surname!.Any(char.IsDigit))
                 {
                     ErrorMessageSurname = "Surname must be all letters";
                 }
-                if(!RegisterService.CheckPhoneNumber(phoneNumber))
+                if(!RegisterService.CheckPhoneNumber(phoneNumber!))
                 {
                     ErrorMessagePhone = "Numerical, 6 or more numbers";
                 }
-                if(!RegisterService.CheckPassword(password))
+                if(!RegisterService.CheckPassword(password!))
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
@@ -243,7 +244,7 @@ namespace LangLang.ViewModel
                 MessageBox.Show($"Succesfull registration");
                 LoginWindow view = new LoginWindow();
                 view.Show();
-                _registerView.Close();
+                _registerView!.Close();
             }
         }
     }

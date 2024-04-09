@@ -9,7 +9,7 @@ public class LoginService
     private static LoginService? instance;
     public bool validUser = false;
     public bool validEmail = false;
-    public Type userType;
+    public Type? userType;
 
     private LoginService()
     {

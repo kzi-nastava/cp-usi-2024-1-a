@@ -11,28 +11,28 @@ namespace LangLang.ViewModel
 {
     internal class LoginViewModel : ViewModelBase
     {
-        private string _email;
-        private SecureString _password;
-        private string _errorMessage;
+        private string? _email;
+        private SecureString? _password;
+        private string? _errorMessage;
         private readonly LoginService _loginService;
-        private readonly Window _window;
+        private readonly Window? _window;
 
         public LoginViewModel()
         {
             _loginService = LoginService.GetInstance();
-            LoginCommand = new RelayCommand(Login);
+            LoginCommand = new RelayCommand(Login!);
         }
 
         public LoginViewModel(Window window)
         {
             _window = window;
             _loginService = LoginService.GetInstance();
-            LoginCommand = new RelayCommand(Login);
+            LoginCommand = new RelayCommand(Login!);
         }
 
         public string Email
         {
-            get => _email;
+            get => _email!;
             set
             {
                 _email = value;
@@ -42,7 +42,7 @@ namespace LangLang.ViewModel
 
         public SecureString Password
         {
-            get => _password;
+            get => _password!;
             set
             {
                 _password = value;
@@ -52,7 +52,7 @@ namespace LangLang.ViewModel
 
         public string ErrorMessage
         {
-            get => _errorMessage;
+            get => _errorMessage!;
             set
             {
                 _errorMessage = value;
@@ -101,11 +101,11 @@ namespace LangLang.ViewModel
                 }
 		        else
                 {
-		            loggedUser = StudentService.GetInstance().LoggedUser;
+		            loggedUser = StudentService.GetInstance().LoggedUser!;
                     StudentWindow studentWindow = new StudentWindow();
                     studentWindow.Show();
 		        }
-                _window.Close();
+                _window!.Close();
             }
         }
 
