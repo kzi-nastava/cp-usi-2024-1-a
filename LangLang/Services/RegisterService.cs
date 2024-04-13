@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace LangLang.Services
 {
@@ -16,24 +13,16 @@ namespace LangLang.Services
         public static bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, EducationLvl educationLvl)
         {
             StudentDAO sd = StudentDAO.GetInstance();
-
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
             passed &= !(CheckExistingEmail(email));
-
-            if(birthDay == DateTime.MinValue)
-            {
-                return false;
-            }
+            passed &= (birthDay != DateTime.MinValue);
 
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", null, null, null));
-                return true;
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
             }
-            return false;
+            return passed;
         }
-
-
 
         public static bool CheckExistingEmail(string email)
         {
@@ -57,12 +46,14 @@ namespace LangLang.Services
 
         public static bool CheckUserData(string email, string password, string name, string surname, string phoneNumber)
         {
-            if(email == null || password == null || name == null || surname == null || phoneNumber == null)
+            if(FieldsEmpty(email, password, name, surname, phoneNumber))
             {
                 return false;
             }
-
             bool passed = true;
+            passed &= CheckName(name, surname);
+            passed &= CheckPassword(password);
+            passed &= CheckPhoneNumber(phoneNumber);
             try
             {
                 _ = new MailAddress(email);
@@ -71,18 +62,33 @@ namespace LangLang.Services
             {
                 passed = false;
             }
-
-            passed &= int.TryParse(phoneNumber, out _);  //checking if it's solely numeric
-            passed &= !name.Any(char.IsDigit);
-            passed &= !surname.Any(char.IsDigit);
-            passed &= password.Length >= 8;               //password must include numbers, an upper character and should be longer than 8
-            passed &= password.Any(char.IsDigit);
-            passed &= password.Any(char.IsUpper);
-            passed &= phoneNumber.Length >= 6;
             return passed;
         }
 
+        public static bool FieldsEmpty(string email, string password, string name, string surname, string phoneNumber)
+        {
+            return email == null || password == null || name == null || surname == null || phoneNumber == null;
+        }
 
 
+        public static bool CheckPassword(string password)
+        {
+            return password.Length >= 8 && password.Any(char.IsDigit) && password.Any(char.IsUpper);
+        }
+
+        public static bool CheckPhoneNumber(string phoneNumber)
+        {
+            foreach (char c in phoneNumber)
+            {
+                if (c < '0' || c > '9')
+                    return false;
+            }
+            return phoneNumber.Length >= 6;
+        }
+    
+        public static bool CheckName(string name, string surname)
+        {
+            return !name.Any(char.IsDigit) && !surname.Any(char.IsDigit);
+        }
     }
 }
