@@ -2,13 +2,8 @@
 using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services;
-using LangLang.View;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
