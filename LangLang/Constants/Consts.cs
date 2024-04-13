@@ -66,6 +66,15 @@ namespace Consts
     }
 
 
+<<<<<<< HEAD
 
+=======
+    public enum EducationLvl
+    {
+        ElementarySchool, HighSchool, CollegeDegree, MastersDegree, PhD
+    }
+    
+    
+>>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
 }
 

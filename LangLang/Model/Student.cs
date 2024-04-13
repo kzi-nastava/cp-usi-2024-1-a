@@ -1,8 +1,6 @@
 ﻿using Consts;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace LangLang.Model
 {
@@ -12,7 +10,6 @@ namespace LangLang.Model
         private List<string> coursesApplied;    //string is courseId
         private List<string> examsApplied;
         private List<string> notifications;
-
 
         //--------------------------Properties
         public EducationLvl Education { get; set; }

@@ -18,6 +18,11 @@ public class ExamService
         return examDao.GetAllExams().Values.ToList();
     }
 
+    public Exam? GetExamById(string id)
+    {
+        return examDao.GetExamById(id);
+    }
+
     public List<Exam> GetExamsByTutor(string tutorId)
     {
         Tutor? tutor = tutorDao.GetTutor(tutorId);

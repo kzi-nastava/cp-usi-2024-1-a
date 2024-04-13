@@ -1,10 +1,4 @@
-﻿using Consts;
-using System;
-using System.Data;
-using System.Windows;
-using System.Net.Mail;
-using System.Linq;
-using System.Windows.Controls;
+﻿using System;
 using LangLang.Model;
 using LangLang.DAO;
 using LangLang.Services;
@@ -12,10 +6,10 @@ using LangLang.Services;
 public class LoginService
 {
     //Singleton
-    private static LoginService instance;
+    private static LoginService? instance;
     public bool validUser = false;
     public bool validEmail = false;
-    public Type userType;
+    public Type? userType;
 
     private LoginService()
     {
@@ -23,11 +17,7 @@ public class LoginService
 
     public static LoginService GetInstance()
     {
-        if (instance == null)
-        {
-            instance = new LoginService();
-        }
-        return instance;
+        return instance ??= new LoginService();
     }
 
 
@@ -50,7 +40,7 @@ public class LoginService
 
     private void LogInStudent(string email, string password)
     {
-        Student student = StudentDAO.GetInstance().GetStudent(email);
+        Student? student = StudentDAO.GetInstance().GetStudent(email);
 
         if (student != null)
         {

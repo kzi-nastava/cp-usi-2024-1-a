@@ -1,25 +1,21 @@
 ﻿using Consts;
 using System;
-using System.Collections.Generic;
-using System.Windows;
 using LangLang.Model;
-using LangLang.Services;
 
-public class StudentService
+namespace LangLang.Services
 {
-    StudentDAO studentDAO = StudentDAO.GetInstance();
-    public Student LoggedUser { get; set; }
-
-    //Singleton
-    private static StudentService instance;
-    private StudentService()
+    public class StudentService
     {
-    }
+        readonly StudentDAO studentDAO = StudentDAO.GetInstance();
+        private readonly ExamService examService = new();
+        private readonly CourseService courseService = new();
+        public Student? LoggedUser { get; set; }
 
-    public static StudentService GetInstance()
-    {
-        if (instance == null)
+        //Singleton
+        private static StudentService? instance;
+        private StudentService() 
         {
+<<<<<<< HEAD
             instance = new StudentService();
         }
         return instance;
@@ -30,48 +26,78 @@ public class StudentService
         if (LoggedUser.AttendingCourse != "" || LoggedUser.AttendingExam != "")
         {
              return false;
+=======
+>>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
         }
 
-        LoggedUser.Name = name;
-        LoggedUser.Surname = surname;
-        LoggedUser.Password = password;
-        LoggedUser.Gender = gender;
-        LoggedUser.BirthDate = birthDate;
-        LoggedUser.Gender = gender;
-        LoggedUser.PhoneNumber = phoneNumber;
+        public static StudentService GetInstance()
+        {
+            return instance ??= new StudentService();
+        }
 
-        studentDAO.AddStudent(LoggedUser);  //since its a hashmap it will replace it
-        return true;
-    }
+        //Return if the updating is successfull 
+        public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+        {
+            if (AttendingCourse(LoggedUser!))
+            {
+                return false;
+            }
+            LoggedUser!.Name = name;
+            LoggedUser.Surname = surname;
+            LoggedUser.Password = password;
+            LoggedUser.Gender = gender;
+            LoggedUser.BirthDate = birthDate;
+            LoggedUser.Gender = gender;
+            LoggedUser.PhoneNumber = phoneNumber;
+
+            studentDAO.AddStudent(LoggedUser);
+            return true;
+        }
+
+        private static bool AttendingCourse(Student student)
+        {
+            return student.AttendingCourse != "" || student.AttendingExam != "" || student.GetAppliedCourses().Count != 0 || student.GetAppliedExams().Count != 0;
+        }
 
     
-    public void DeleteMyAccount()
-    {
-        CourseService cs = new();
-        foreach (string courseID in LoggedUser.GetAppliedCourses())
+        public void DeleteMyAccount()
         {
-            Course course = cs.GetCourseById(courseID);
-            course.CancelAttendance();
-            cs.UpdateCourse(course);
+            CancelCourses(LoggedUser!);
+            CancelExams(LoggedUser!);
+            studentDAO.DeleteStudent(LoggedUser!.Email);
         }
-
-        foreach(string examID in LoggedUser.GetAppliedExams())
-        {
-            /**/
-        }
-
-
-        studentDAO.DeleteStudent(LoggedUser.Email);
-    }
     
 
-    public void ApplyForCourse(string courseId)
-    {
-        LoggedUser.AddCourse(courseId);
-        CourseService cs = new();
-        Course course = cs.GetCourseById(courseId);
-        course.AddAttendance();
-        cs.UpdateCourse(course);
+        public void ApplyForCourse(string courseId)
+        {
+            LoggedUser!.AddCourse(courseId);
+            Course? course = courseService.GetCourseById(courseId);
+            course!.AddAttendance();
+            courseService.UpdateCourse(course);
+        }
+
+        public void CancelCourses(Student student)
+        {
+            foreach (string courseID in student.GetAppliedCourses())
+            {
+                Course? course = courseService.GetCourseById(courseID);
+                course!.CancelAttendance();
+                courseService.UpdateCourse(course);
+            }
+        }
+
+        private void CancelExams(Student student)
+        {
+            foreach (string examID in LoggedUser!.GetAppliedExams())
+            {
+                Exam? exam = examService.GetExamById(examID);
+                exam?.CancelAttendance();
+                //examService.UpdateExam(exam!);
+                //TODO handle exam updating
+            }
+        }
+
+
     }
 
 }

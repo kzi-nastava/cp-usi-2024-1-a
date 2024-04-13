@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using LangLang.DAO;
@@ -9,7 +7,6 @@ using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services;
 using Consts;
-using System.Xml.Linq;
 
 namespace LangLang.ViewModel
 {

@@ -1,13 +1,21 @@
-﻿using System;
-using Consts;
+﻿using Consts;
 using System.Collections.Generic;
 using LangLang.Model;
 using LangLang.Util;
 
 public class StudentDAO
 {
-    private static StudentDAO instance;
-    Dictionary<string, Student> students;
+    private static StudentDAO? instance;
+    private Dictionary<string, Student>? students;
+
+    private Dictionary<string, Student> Students
+    {
+        get {
+            students ??= JsonUtil.ReadFromFile<Student>(Constants.StudentFilePath);
+            return students!;
+        }
+        set => students = value;
+    }
 
     //Singleton
 	private StudentDAO()
@@ -16,46 +24,35 @@ public class StudentDAO
 
     public static StudentDAO GetInstance()
     {
-        if (instance == null)
-        {
-            instance = new StudentDAO();
-            instance.GetAllStudents();
-        }
-        return instance;
+        return instance ??= new StudentDAO();
     }
 
     public Dictionary<string, Student> GetAllStudents()
 	{
-        if (students == null)
-        {
-            students = JsonUtil.ReadFromFile<Student>(Constants.StudentFilePath);
-        }
-		return students;
+		return Students;
     }
 
-	public Student GetStudent(string email)
+	public Student? GetStudent(string email)
 	{
-        if (students.TryGetValue(email, out Student student))
-        {
-            return student;
-        }
-        else
-        {
-            return null;
-        }
+        return Students.GetValueOrDefault(email);
     }
 
-    public void AddStudent(Student student)
+    public Student AddStudent(Student student)
     {
-        students[student.Email] = student;
-        JsonUtil.WriteToFile(students, Constants.StudentFilePath);
+        students![student.Email] = student;
+        SaveStudents();
+        return student;
     }
 
     public void DeleteStudent(string email)
     {
-        students.Remove(email);
-        JsonUtil.WriteToFile(students, Constants.StudentFilePath);
+        students!.Remove(email);
+        SaveStudents();
     }
 
+    public void SaveStudents()
+    {
+        JsonUtil.WriteToFile(Students, Constants.StudentFilePath);
+    }
 
 }
