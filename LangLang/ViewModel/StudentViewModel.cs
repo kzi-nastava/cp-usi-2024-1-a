@@ -17,12 +17,16 @@ namespace LangLang.ViewModel
         private readonly LanguageService _languageService = new();
         private readonly StudentService studentService = StudentService.GetInstance();
         private readonly ExamService examService = new();
+
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
+        public ICommand ApplyCourseCommand { get; }
+        public ICommand CancelCourseCommand{ get; }
+        public ICommand ApplyExamCommand { get; }
+        public ICommand CancelExamCommand { get; }
+
         public ObservableCollection<Course> Courses { get; set; }
-
         public ObservableCollection<Exam> Exams { get; set; }
-
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
@@ -93,7 +97,6 @@ namespace LangLang.ViewModel
             }
         }
 
-       
         // FILTER VALUES
         private string courseLanguageFilter = "";
         public string CourseLanguageFilter
@@ -187,10 +190,47 @@ namespace LangLang.ViewModel
             LoadLanguages();
             LoadCourses();
             LoadLanguageLevels();
+            //initialize commands
             ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
+            ApplyCourseCommand = new RelayCommand<string>(ApplyCourse);
+            CancelCourseCommand = new RelayCommand<string>(CancelCourse);
+            ApplyExamCommand = new RelayCommand<string>(ApplyExam);
+            CancelExamCommand = new RelayCommand<string>(CancelExam);
+        }
+
+        private void ApplyCourse(string courseId)
+        {
+            if(studentService.AppliedForCourse(studentService.LoggedUser!, courseId))
+            {
+                MessageBox.Show($"You've sent an application for this course", "Invalid");
+            }
+            else
+            {
+                studentService.ApplyForCourse(studentService.LoggedUser!, courseId);
+                MessageBox.Show($"Application sent!", "Success");
+            }
 
         }
+
+
+        private void CancelCourse(string courseId)
+        {
+            MessageBox.Show($"Successful cancel for course {courseId}", "Success");
+        }
+
+
+        private void ApplyExam(string examId)
+        {
+            MessageBox.Show($"Successful apply for exam {examId}", "Success");
+        }
+
+
+        private void CancelExam(string examId)
+        {
+            MessageBox.Show($"Successful cancel for exam {examId}", "Success");
+        }
+
 
         private void ClearCourseFilters(object? obj)
         {
@@ -217,7 +257,7 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            var courses = _courseService.GetAvailableCourses(studentService.LoggedUser);
+            var courses = _courseService.GetAvailableCourses(studentService.LoggedUser!);
             foreach (Course course in courses)
             {
                 Courses.Add(course);
@@ -228,7 +268,7 @@ namespace LangLang.ViewModel
         public void LoadExams()
         {
             ExamDAO examDAO = ExamDAO.GetInstance();
-            var examsDictionary = examService.GetAvailableExamsForStudent(studentService.LoggedUser);
+            var examsDictionary = examService.GetAvailableExamsForStudent(studentService.LoggedUser!);
             foreach (Exam exam in examsDictionary)
             {
                 Exams.Add(exam);

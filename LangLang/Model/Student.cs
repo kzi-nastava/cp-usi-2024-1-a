@@ -65,6 +65,16 @@ namespace LangLang.Model
         }
 
 
+        public void CancelAttendingCourse()
+        {
+            AttendingCourse = "";
+        }
+
+        public void CancelCourseApplication(string courseID)
+        {
+            coursesApplied.Remove(courseID);
+        }
+
         public void AddNotification(string notification)
         {
             notifications.Add(notification);

@@ -14,6 +14,7 @@ namespace LangLang.View
             //initialize datepicker
             datePicker.DisplayDateStart = new DateTime(1924, 1, 1);
             datePicker.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
+            datePicker.SelectedDate = DateTime.Today.AddYears(-16);
         }
 
 

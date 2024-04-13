@@ -7,7 +7,7 @@
         xmlns:consts="clr-namespace:Consts"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="StudentWindow" Height="753" Width="800"
+        Title="StudentWindow" Height="753" Width="1000"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Window.Resources>
         <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
@@ -54,6 +54,36 @@
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Classroom" Binding="{Binding ClassroomNumber}" Width="*" />
                         <DataGridTextColumn Header="Student capacity" Binding="{Binding MaxStudents}" Width="*" />
+                        <DataGridTemplateColumn  Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="ApplyButtonExam" Content="Apply" Command="{Binding ApplyExamCommand}" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+
+                                        <Button x:Name="CancelButtonExam" Content="Cancel" Command="{Binding CancelExamCommand}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+
+
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -93,6 +123,7 @@
         </TabItem>
 
         <!-- Courses Tab -->
+
         <TabItem Header="Courses">
             <Grid>
                 <Grid.RowDefinitions>
@@ -128,14 +159,15 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
-                        <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="*" />
-                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="*" />
+                        <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
+                        <DataGridTextColumn Header="Tutor" Width="*"/>
+                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
                         <DataGridTextColumn Header="Starts" Width="*">
                             <DataGridTextColumn.Binding>
                                 <Binding Path="Start" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
                             </DataGridTextColumn.Binding>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Online" Width="*">
+                        <DataGridTextColumn Header="Online" Width="60">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -150,15 +182,43 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Reading" Binding="{Binding ReadingAvgScore}" Width="*" />
-                        <DataGridTextColumn Header="Writing" Binding="{Binding WritingAvgScore}" Width="*" />
-                        <DataGridTextColumn Header="Listening" Binding="{Binding ListeningAvgScore}" Width="*" />
-                        <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="*" />
+                        <DataGridTextColumn Header="Reading" Binding="{Binding ReadingAvgScore}" Width="60" />
+                        <DataGridTextColumn Header="Writing" Binding="{Binding WritingAvgScore}" Width="60" />
+                        <DataGridTextColumn Header="Listening" Binding="{Binding ListeningAvgScore}" Width="60" />
+                        <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="60" />
+                        <DataGridTemplateColumn  Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="ApplyButtonCourse" Click="ApplyButtonCourse" Content="Apply" Command="{Binding ApplyCourseCommand}" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+
+                                        <Button x:Name="CancelButtonCourse" Click="CancelButtonCourse" Content="Cancel" Command="{Binding CancelCourseCommand}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                     </DataGrid.Columns>
                 </DataGrid>
 
 
-                <!-- Two buttons -->
+
                 <DockPanel Grid.Row="4">
                     <Button x:Name="LogoutBtn" DockPanel.Dock="Left" Content="Logout" Click="Logout" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
