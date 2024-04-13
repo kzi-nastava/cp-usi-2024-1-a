@@ -19,7 +19,12 @@ namespace LangLang.Services
 
             if (passed)
             {
+<<<<<<< HEAD
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", null, null, null));
+                return true;
+=======
                 sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
+>>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
             }
             return passed;
         }
@@ -62,6 +67,17 @@ namespace LangLang.Services
             {
                 passed = false;
             }
+<<<<<<< HEAD
+
+            passed &= int.TryParse(phoneNumber, out _);  //checking if it's solely numeric
+            passed &= !name.Any(char.IsDigit);
+            passed &= !surname.Any(char.IsDigit);
+            passed &= password.Length >= 8;               //password must include numbers, an upper character and should be longer than 8
+            passed &= password.Any(char.IsDigit);
+            passed &= password.Any(char.IsUpper);
+            passed &= phoneNumber.Length >= 6;
+=======
+>>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
             return passed;
         }
 

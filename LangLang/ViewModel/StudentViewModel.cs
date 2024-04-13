@@ -93,7 +93,7 @@ namespace LangLang.ViewModel
             }
         }
 
-       
+
         // FILTER VALUES
         private string courseLanguageFilter = "";
         public string CourseLanguageFilter

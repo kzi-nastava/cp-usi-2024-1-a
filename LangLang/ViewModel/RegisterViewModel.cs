@@ -117,9 +117,20 @@ namespace LangLang.ViewModel
         public EducationLvl EducationLvl
         {
             get => _educationLvl;
+<<<<<<< HEAD
+            set
+            {
+                _educationLvl = value;
+                OnPropertyChanged(nameof(EducationLvl));
+            }
+        }
+
+        public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
+=======
             set => SetField(ref _educationLvl, value);
         }
         public string? BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
+>>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
         public DateTime Birthday
         {
             get => _birthday;
@@ -145,7 +156,11 @@ namespace LangLang.ViewModel
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
+<<<<<<< HEAD
+            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+=======
             bool successful = RegisterService.RegisterStudent(email!, password!, name!, surname!, birthday, gender, phoneNumber!, educationLvl);
+>>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
 
             if (!successful)
             {
@@ -162,6 +177,29 @@ namespace LangLang.ViewModel
                 {
                     ErrorMessageEmail = "Incorrect email";
                 }
+<<<<<<< HEAD
+
+                if (name.Any(char.IsDigit))
+                {
+                    ErrorMessageName = "Name must be all letters";
+                }
+
+                if (surname.Any(char.IsDigit))
+                {
+                    ErrorMessageSurname = "Surname must be all letters";
+                }
+
+                if (!int.TryParse(phoneNumber, out _) || phoneNumber.Length < 6)
+                {
+                    ErrorMessagePhone = "Numerical, 6 or more numbers";
+                }
+                if (password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
+                {
+                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
+                }
+
+
+=======
                 if(name!.Any(char.IsDigit))
                 {
                     ErrorMessageName = "Name must be all letters";
@@ -178,6 +216,7 @@ namespace LangLang.ViewModel
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
+>>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
                 if (email != null && RegisterService.CheckExistingEmail(email))
                 {
                     ErrorMessageEmail = "Email already exists";
