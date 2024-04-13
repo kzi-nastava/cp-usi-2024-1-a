@@ -47,6 +47,15 @@ namespace LangLang.Services
             return student.AttendingCourse != "" || student.AttendingExam != "" || student.GetAppliedCourses().Count != 0 || student.GetAppliedExams().Count != 0;
         }
 
+        public List<Course> GetFinishedCourses(Student student)
+        {
+            List<Course> courseList = new List<Course>();
+            foreach(string courseId in student.GetFinishedCourses()){
+                courseList.Add(courseService.GetCourseById(courseId)!);
+            }
+            return courseList;
+        }
+
         public bool AppliedForCourse(Student student, string courseId)
         {
             List<string> appliedCourses = student.GetAppliedCourses();

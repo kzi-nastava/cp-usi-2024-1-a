@@ -32,7 +32,17 @@ namespace LangLang.View
             }
         }
 
-
+        private void RateTutorButton(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Course course)
+            {
+                string courseId = course.Id;
+                if (DataContext is StudentViewModel viewModel)
+                {
+                    viewModel.RateTutorCommand.Execute(courseId);
+                }
+            }
+        }
 
         private void CancelButtonCourse(object sender, RoutedEventArgs e)
         {

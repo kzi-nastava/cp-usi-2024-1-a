@@ -15,8 +15,8 @@ namespace LangLang.ViewModel
         private readonly Window _window;
         private readonly CourseService _courseService = new();
         private readonly LanguageService _languageService = new();
-        private readonly StudentService studentService = StudentService.GetInstance();
-        private readonly ExamService examService = new();
+        private readonly StudentService _studentService = StudentService.GetInstance();
+        private readonly ExamService _examService = new();
 
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
@@ -24,8 +24,10 @@ namespace LangLang.ViewModel
         public ICommand CancelCourseCommand{ get; }
         public ICommand ApplyExamCommand { get; }
         public ICommand CancelExamCommand { get; }
+        public ICommand RateTutorCommand {  get; }
 
         public ObservableCollection<Course> Courses { get; set; }
+        public ObservableCollection<Course> FinishedCourses { get; set; }
         public ObservableCollection<Exam> Exams { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
@@ -181,6 +183,7 @@ namespace LangLang.ViewModel
         {
             _window = window;
             Courses = new ObservableCollection<Course>();
+            FinishedCourses = new ObservableCollection<Course>();
             Exams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
@@ -189,6 +192,7 @@ namespace LangLang.ViewModel
             LoadExams();
             LoadLanguages();
             LoadCourses();
+            LoadFinishedCourses();
             LoadLanguageLevels();
             //initialize commands
             ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
@@ -197,20 +201,20 @@ namespace LangLang.ViewModel
             CancelCourseCommand = new RelayCommand<string>(CancelCourse);
             ApplyExamCommand = new RelayCommand<string>(ApplyExam);
             CancelExamCommand = new RelayCommand<string>(CancelExam);
+            RateTutorCommand = new RelayCommand<string>(RateTutor);
         }
 
         private void ApplyCourse(string courseId)
         {
-            if(studentService.AppliedForCourse(studentService.LoggedUser!, courseId))
+            if(_studentService.AppliedForCourse(_studentService.LoggedUser!, courseId))
             {
                 MessageBox.Show($"You've sent an application for this course", "Invalid");
             }
             else
             {
-                studentService.ApplyForCourse(studentService.LoggedUser!, courseId);
+                _studentService.ApplyForCourse(_studentService.LoggedUser!, courseId);
                 MessageBox.Show($"Application sent!", "Success");
             }
-
         }
 
 
@@ -231,6 +235,10 @@ namespace LangLang.ViewModel
             MessageBox.Show($"Successful cancel for exam {examId}", "Success");
         }
 
+        private void RateTutor(string courseId)
+        {
+            MessageBox.Show($"Successful rating for course {courseId}", "Success");
+        }
 
         private void ClearCourseFilters(object? obj)
         {
@@ -257,7 +265,7 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            var courses = _courseService.GetAvailableCourses(studentService.LoggedUser!);
+            var courses = _courseService.GetAvailableCourses(_studentService.LoggedUser!);
             foreach (Course course in courses)
             {
                 Courses.Add(course);
@@ -268,10 +276,19 @@ namespace LangLang.ViewModel
         public void LoadExams()
         {
             ExamDAO examDAO = ExamDAO.GetInstance();
-            var examsDictionary = examService.GetAvailableExamsForStudent(studentService.LoggedUser!);
+            var examsDictionary = _examService.GetAvailableExamsForStudent(_studentService.LoggedUser!);
             foreach (Exam exam in examsDictionary)
             {
                 Exams.Add(exam);
+            }
+        }
+
+        public void LoadFinishedCourses()
+        {
+            var studentCourses =  _studentService.GetFinishedCourses(_studentService.LoggedUser!);
+            foreach(Course course in studentCourses)
+            {
+                FinishedCourses.Add(course);
             }
         }
 
