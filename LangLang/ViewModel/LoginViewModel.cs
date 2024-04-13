@@ -33,31 +33,19 @@ namespace LangLang.ViewModel
         public string Email
         {
             get => _email!;
-            set
-            {
-                _email = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _email, value);
         }
 
         public SecureString Password
         {
             get => _password!;
-            set
-            {
-                _password = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _password, value);
         }
 
         public string ErrorMessage
         {
             get => _errorMessage!;
-            set
-            {
-                _errorMessage = value;
-                OnPropertyChanged();
-            }
+            set =>SetField(ref _errorMessage, value);
         }
 
         public ICommand LoginCommand { get; }

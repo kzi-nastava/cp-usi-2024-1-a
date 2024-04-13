@@ -28,7 +28,7 @@ namespace LangLang.ViewModel
         private string? _errorMessageSurname;
         private string? _errorMessagePhone;
 
-        private RegisterView? _registerView;
+        private readonly RegisterView? _registerView;
         public ICommand SignUpCommand { get; }
 
         public RegisterViewModel()
@@ -46,140 +46,84 @@ namespace LangLang.ViewModel
         public string? ErrorMessageRequired
         {
             get => _errorMessageRequired;
-            set
-            {
-                _errorMessageRequired = value;
-                OnPropertyChanged(nameof(ErrorMessageRequired));
-            }
+            set => SetField(ref _errorMessageRequired, value);
         }
 
         public string? ErrorMessageEmail
         {
             get => _errorMessageEmail;
-            set
-            {
-                _errorMessageEmail = value;
-                OnPropertyChanged(nameof(ErrorMessageEmail));
-            }
+            set => SetField(ref _errorMessageEmail, value);
         }
 
         public string? ErrorMessagePassword
         {
             get => _errorMessagePassword;
-            set
-            {
-                _errorMessagePassword = value;
-                OnPropertyChanged(nameof(ErrorMessagePassword));
-            }
+            set => SetField(ref _errorMessagePassword, value);
         }
 
         public string? ErrorMessageName
         {
             get => _errorMessageName;
-            set
-            {
-                _errorMessageName = value;
-                OnPropertyChanged(nameof(ErrorMessageName));
-            }
+            set => SetField(ref _errorMessageName, value);
         }
 
         public string? ErrorMessageSurname
         {
             get => _errorMessageSurname;
-            set
-            {
-                _errorMessageSurname = value;
-                OnPropertyChanged(nameof(ErrorMessageSurname));
-            }
+            set => SetField(ref _errorMessageSurname, value);
         }
 
         public string? ErrorMessagePhone
         {
             get => _errorMessagePhone;
-            set
-            {
-                _errorMessagePhone = value;
-                OnPropertyChanged(nameof(ErrorMessagePhone));
-            }
+            set => SetField(ref _errorMessagePhone, value);
         }
 
         public string? Email
         {
             get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged(nameof(Email));
-            }
+            set => SetField(ref _email, value);
         }
 
         public string? Password
         {
             get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged(nameof(Password));
-            }
+            set => SetField(ref _password, value);
         }
         
         public string? Name
         {
             get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged(nameof(Name));
-            }
+            set => SetField(ref _name, value);
         }
         public string? Surname
         {
             get => _surname;
-            set
-            {
-                _surname = value;
-                OnPropertyChanged(nameof(Surname));
-            }
+            set => SetField(ref _surname, value);
         }
 
         public string? PhoneNumber
         {
             get => _phoneNumber;
-            set
-            {
-                _phoneNumber = value;
-                OnPropertyChanged(nameof(PhoneNumber));
-            }
+            set => SetField(ref _phoneNumber, value);
         }
 
         public Gender Gender
         {
             get => _gender;
-            set
-            {
-                _gender = value;
-                OnPropertyChanged(nameof(Gender));
-            }
+            set => SetField(ref _gender, value);
         }
 
         public EducationLvl EducationLvl
         {
             get => _educationLvl;
-            set
-            {
-                _educationLvl = value;
-                OnPropertyChanged(nameof(EducationLvl));
-            }
+            set => SetField(ref _educationLvl, value);
         }
         public string? BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
         public DateTime Birthday
         {
             get => _birthday;
-            set
-            {
-                _birthday = value;
-                OnPropertyChanged(nameof(Birthday));
-            }
+            set => SetField(ref _birthday, value);
         }
 
         private void SignUp(object parameter)
