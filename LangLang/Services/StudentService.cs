@@ -15,19 +15,6 @@ namespace LangLang.Services
         private static StudentService? instance;
         private StudentService() 
         {
-<<<<<<< HEAD
-            instance = new StudentService();
-        }
-        return instance;
-    }
-
-    public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
-    {
-        if (LoggedUser.AttendingCourse != "" || LoggedUser.AttendingExam != "")
-        {
-             return false;
-=======
->>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
         }
 
         public static StudentService GetInstance()
