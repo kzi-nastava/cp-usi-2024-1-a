@@ -16,6 +16,8 @@ namespace LangLang.ViewModel
         private string? _errorMessage;
         private readonly LoginService _loginService;
         private readonly Window? _window;
+        public ICommand LoginCommand { get; }
+
 
         public LoginViewModel()
         {
@@ -48,7 +50,6 @@ namespace LangLang.ViewModel
             set =>SetField(ref _errorMessage, value);
         }
 
-        public ICommand LoginCommand { get; }
 
         private void Login(object parameter)
         {

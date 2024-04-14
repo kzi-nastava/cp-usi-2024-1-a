@@ -19,6 +19,20 @@ namespace LangLang.View
             StudentAccountWindow view = new StudentAccountWindow();
             view.Show();
         }
+        /*
+        private void CancelAtendingCourseButton(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Course course)
+            {
+                if (DataContext is StudentViewModel viewModel)
+                {
+                    viewModel.CancelAttendingCourseCommand.Execute(course);
+                }
+            }
+        }
+        */
+
+
 
         private void ApplyButtonCourse(object sender, RoutedEventArgs e)
         {
@@ -28,18 +42,6 @@ namespace LangLang.View
                 if (DataContext is StudentViewModel viewModel)
                 {
                     viewModel.ApplyCourseCommand.Execute(courseId);
-                }
-            }
-        }
-
-        private void RateTutorButton(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.DataContext is Course course)
-            {
-                string courseId = course.Id;
-                if (DataContext is StudentViewModel viewModel)
-                {
-                    viewModel.RateTutorCommand.Execute(courseId);
                 }
             }
         }
@@ -68,7 +70,6 @@ namespace LangLang.View
             }
         }
 
-
         private void CancelButtonExam(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is Exam exam)
@@ -81,6 +82,17 @@ namespace LangLang.View
             }
         }
 
+        private void RateTutorButton(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Course course)
+            {
+                string courseId = course.Id;
+                if (DataContext is StudentViewModel viewModel)
+                {
+                    viewModel.RateTutorCommand.Execute(courseId);
+                }
+            }
+        }
 
 
         private void DeleteProfile(object sender, RoutedEventArgs e)
