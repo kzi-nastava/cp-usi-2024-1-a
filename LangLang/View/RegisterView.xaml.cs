@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using LangLang.Services;
+using LangLang.Services.AuthenticationServices;
 using LangLang.ViewModel;
 
 namespace LangLang.View
@@ -9,7 +11,7 @@ namespace LangLang.View
         public RegisterView()
         {
             InitializeComponent();
-            DataContext = new RegisterViewModel(this);
+            DataContext = new RegisterViewModel(this, new RegisterService());
 
             //initialize datepicker
             datePicker.DisplayDateStart = new DateTime(1924, 1, 1);

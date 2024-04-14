@@ -6,6 +6,8 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.UserServices;
 
 namespace LangLang.ViewModel
 {
@@ -26,8 +28,11 @@ namespace LangLang.ViewModel
         private string? _errorMessageSurname;
         private string? _errorMessagePhone;
 
-        public StudentAccountViewModel()
+        private IRegisterService _registerService;
+        
+        public StudentAccountViewModel(IRegisterService registerService)
         {
+            _registerService = registerService;
             ConfirmCommand = new RelayCommand(ConfirmInput!);
             SetUserData();
         }
@@ -134,7 +139,7 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = RegisterService.CheckUserData(studentService.LoggedUser!.Email, password, name, surname, phoneNumber);
+            bool successful = _registerService.CheckUserData(studentService.LoggedUser!.Email, password, name, surname, phoneNumber);
 
             if (successful)
             {
@@ -166,11 +171,11 @@ namespace LangLang.ViewModel
                     ErrorMessageSurname = "Surname must be all letters";
                 }
 
-                if (!RegisterService.CheckPhoneNumber(phoneNumber))
+                if (!_registerService.CheckPhoneNumber(phoneNumber))
                 {
                     ErrorMessagePhone = "Must be made up of numbers";
                 }
-                if (!RegisterService.CheckPassword(password))
+                if (!_registerService.CheckPassword(password))
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }

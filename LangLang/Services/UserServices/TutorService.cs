@@ -1,13 +1,10 @@
-﻿using Consts;
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using LangLang.Model;
+﻿using System.Collections.Generic;
 using LangLang.DAO;
+using LangLang.Model;
 
-namespace LangLang.Services
+namespace LangLang.Services.UserServices
 {
-    public class TutorService
+    public class TutorService : ITutorService
     {
         TutorDAO tutorDAO = TutorDAO.GetInstance();
         public Tutor LoggedUser { get; set; }

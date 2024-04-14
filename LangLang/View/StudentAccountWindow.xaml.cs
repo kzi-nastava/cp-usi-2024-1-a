@@ -1,6 +1,7 @@
 ﻿using LangLang.ViewModel;
 using System;
 using System.Windows;
+using LangLang.Services.AuthenticationServices;
 
 namespace LangLang.View
 {
@@ -9,7 +10,7 @@ namespace LangLang.View
         public StudentAccountWindow()
         {
             InitializeComponent();
-            DataContext = new StudentAccountViewModel();
+            DataContext = new StudentAccountViewModel(new RegisterService());
 
             //initialize datepicker requirements
             datePicker.DisplayDateStart = new DateTime(1924, 1, 1);

@@ -1,10 +1,11 @@
-﻿using Consts;
-using System;
+﻿using System;
+using Consts;
 using LangLang.Model;
+using LangLang.Services.EntityServices;
 
-namespace LangLang.Services
+namespace LangLang.Services.UserServices
 {
-    public class StudentService
+    public class StudentService : IStudentService
     {
         readonly StudentDAO studentDAO = StudentDAO.GetInstance();
         private readonly ExamService examService = new();
@@ -63,7 +64,7 @@ namespace LangLang.Services
             courseService.UpdateCourse(course);
         }
 
-        public void CancelCourses(Student student)
+        private void CancelCourses(Student student)
         {
             foreach (string courseID in student.GetAppliedCourses())
             {

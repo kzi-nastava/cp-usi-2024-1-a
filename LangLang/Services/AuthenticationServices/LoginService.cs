@@ -1,9 +1,11 @@
 ﻿using System;
-using LangLang.Model;
 using LangLang.DAO;
-using LangLang.Services;
+using LangLang.Model;
+using LangLang.Services.UserServices;
 
-public class LoginService
+namespace LangLang.Services.AuthenticationServices;
+
+public class LoginService : ILoginService
 {
     //Singleton
     private static LoginService? instance;
@@ -92,4 +94,3 @@ public class LoginService
 
 
 }
-

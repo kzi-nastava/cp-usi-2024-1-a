@@ -1,17 +1,14 @@
-﻿using LangLang.DAO;
-using LangLang.Model;
-using System.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Xml.Linq;
 using System.Collections.ObjectModel;
-using Consts;
 using System.Linq;
+using Consts;
+using LangLang.DAO;
+using LangLang.Model;
 
-namespace LangLang.Services
+namespace LangLang.Services.EntityServices
 {
-    internal class CourseService
+    internal class CourseService : ICourseService
     {
         CourseDAO courseDAO = CourseDAO.GetInstance();
         LanguageDAO languageDAO = LanguageDAO.GetInstance();

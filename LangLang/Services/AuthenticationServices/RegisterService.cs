@@ -1,16 +1,16 @@
-﻿using Consts;
-using LangLang.DAO;
-using LangLang.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using Consts;
+using LangLang.DAO;
+using LangLang.Model;
 
-namespace LangLang.Services
+namespace LangLang.Services.AuthenticationServices
 {
-    public class RegisterService
+    public class RegisterService : IRegisterService
     {
-        public static bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, EducationLvl educationLvl)
+        public bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, EducationLvl educationLvl)
         {
             StudentDAO sd = StudentDAO.GetInstance();
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
@@ -25,7 +25,7 @@ namespace LangLang.Services
             return passed;
         }
 
-        public static bool CheckExistingEmail(string email)
+        public bool CheckExistingEmail(string email)
         {
             if(email == null)
             {
@@ -45,7 +45,7 @@ namespace LangLang.Services
             return false;
         }
 
-        public static bool CheckUserData(string email, string password, string name, string surname, string phoneNumber)
+        public bool CheckUserData(string email, string password, string name, string surname, string phoneNumber)
         {
             if(FieldsEmpty(email, password, name, surname, phoneNumber))
             {
@@ -66,18 +66,18 @@ namespace LangLang.Services
             return passed;
         }
 
-        public static bool FieldsEmpty(string email, string password, string name, string surname, string phoneNumber)
+        private bool FieldsEmpty(string email, string password, string name, string surname, string phoneNumber)
         {
             return email == null || password == null || name == null || surname == null || phoneNumber == null;
         }
 
 
-        public static bool CheckPassword(string password)
+        public bool CheckPassword(string password)
         {
             return password.Length >= 8 && password.Any(char.IsDigit) && password.Any(char.IsUpper);
         }
 
-        public static bool CheckPhoneNumber(string phoneNumber)
+        public bool CheckPhoneNumber(string phoneNumber)
         {
             foreach (char c in phoneNumber)
             {
@@ -86,8 +86,8 @@ namespace LangLang.Services
             }
             return phoneNumber.Length >= 6;
         }
-    
-        public static bool CheckName(string name, string surname)
+
+        private static bool CheckName(string name, string surname)
         {
             return !name.Any(char.IsDigit) && !surname.Any(char.IsDigit);
         }

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media;
 using Consts;
 using LangLang.DAO;
 using LangLang.Model;
-using TimeOnly = System.TimeOnly;
 using LangLang.Util;
+using TimeOnly = System.TimeOnly;
 
-namespace LangLang.Services;
+namespace LangLang.Services.UtilityServices;
 
-public class TimetableService
+public class TimetableService : ITimetableService
 {
     private CourseDAO courseDao = CourseDAO.GetInstance();
     private ExamDAO examDao = ExamDAO.GetInstance();
@@ -29,8 +28,8 @@ public class TimetableService
 
         return times;
     }
-    
-    public List<TimeOnly> GetAllLessonTimes()
+
+    private List<TimeOnly> GetAllLessonTimes()
     {
         int totalNumber = Convert.ToInt32(Math.Round(TimeSpan.FromDays(1).TotalMinutes / Constants.LessonDuration.TotalMinutes));
         

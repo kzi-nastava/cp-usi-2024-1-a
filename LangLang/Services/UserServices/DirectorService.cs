@@ -1,13 +1,9 @@
-﻿using Consts;
-using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using LangLang.DAO;
 using LangLang.Model;
-using LangLang.DAO;
 
-namespace LangLang.Services
+namespace LangLang.Services.UserServices
 {
-    public class DirectorService
+    public class DirectorService : IDirectorService
     {
         DirectorDAO directorDAO = DirectorDAO.GetInstance();
         public Director LoggedUser { get; set; }

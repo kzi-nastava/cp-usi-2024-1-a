@@ -1,12 +1,9 @@
-﻿using LangLang.DAO;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LangLang.DAO;
 using LangLang.Model;
 
-namespace LangLang.Services
+namespace LangLang.Services.EntityServices
 {
     class LanguageService
     {

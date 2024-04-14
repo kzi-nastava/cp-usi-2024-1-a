@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Consts;
 using LangLang.MVVM;
 using LangLang.Services;
+using LangLang.Services.AuthenticationServices;
 using LangLang.View;
 
 namespace LangLang.ViewModel
@@ -31,15 +32,19 @@ namespace LangLang.ViewModel
         private readonly RegisterView? _registerView;
         public ICommand SignUpCommand { get; }
 
-        public RegisterViewModel()
+        private readonly IRegisterService _registerService;
+        
+        public RegisterViewModel(IRegisterService registerService)
         {
             SignUpCommand = new RelayCommand(SignUp!);
+            _registerService = registerService;
         }
 
 
-        public RegisterViewModel(RegisterView registerView)
+        public RegisterViewModel(RegisterView registerView, IRegisterService registerService)
         {
             _registerView = registerView;
+            _registerService = registerService;
             SignUpCommand = new RelayCommand(SignUp!);
         }
 
@@ -146,7 +151,7 @@ namespace LangLang.ViewModel
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+            bool successful = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
 
 
             if (!successful)
@@ -172,15 +177,15 @@ namespace LangLang.ViewModel
                 {
                     ErrorMessageSurname = "Surname must be all letters";
                 }
-                if(!RegisterService.CheckPhoneNumber(phoneNumber!))
+                if(!_registerService.CheckPhoneNumber(phoneNumber!))
                 {
                     ErrorMessagePhone = "Numerical, 6 or more numbers";
                 }
-                if(!RegisterService.CheckPassword(password!))
+                if(!_registerService.CheckPassword(password!))
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
-                if (email != null && RegisterService.CheckExistingEmail(email))
+                if (email != null && _registerService.CheckExistingEmail(email))
                 {
                     ErrorMessageEmail = "Email already exists";
                 }

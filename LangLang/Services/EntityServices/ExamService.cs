@@ -5,7 +5,7 @@ using Consts;
 using LangLang.DAO;
 using LangLang.Model;
 
-namespace LangLang.Services;
+namespace LangLang.Services.EntityServices;
 
 public class ExamService
 {
