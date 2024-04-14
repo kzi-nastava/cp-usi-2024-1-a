@@ -18,11 +18,12 @@ namespace LangLang.ViewModel
         private readonly LanguageService languageService;
         private readonly TimetableService timetableService;
         private Tutor loggedInUser;
-        public ICommand AddCourseCommand { get; }
-        public ICommand DeleteCourseCommand { get; }
-        public ICommand UpdateCourseCommand { get; }
-        public ICommand ToggleMaxStudentsCommand { get; }
-        public ICommand ClearFiltersCommand { get; }
+        public RelayCommand AddCourseCommand { get; }
+        public RelayCommand DeleteCourseCommand { get; }
+        public RelayCommand UpdateCourseCommand { get; }
+        public RelayCommand ToggleMaxStudentsCommand { get; }
+        public RelayCommand ClearFiltersCommand { get; }
+        public RelayCommand SelectedCourseChangedCommand { get; set; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> LanguageLevels { get; set; }
@@ -30,125 +31,80 @@ namespace LangLang.ViewModel
         public ObservableCollection<CourseState> States { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
         public ObservableCollection<WorkDay?> WorkDays { get; set; }
-        public ObservableCollection<TimeOnly?> mondayHours;
+        public ObservableCollection<TimeOnly?> mondayHours = new ObservableCollection<TimeOnly?>();
         public ObservableCollection<TimeOnly?> MondayHours
         {
-            get { return mondayHours; }
-            set
-            {
-                mondayHours = value;
-                OnPropertyChanged();
-            }
+            get => mondayHours;
+            set => SetField(ref mondayHours, value);
         }
-        public ObservableCollection<TimeOnly?> tuesdayHours;
+        public ObservableCollection<TimeOnly?> tuesdayHours = new ObservableCollection<TimeOnly?>();
         public ObservableCollection<TimeOnly?> TuesdayHours
         {
-            get { return tuesdayHours; }
-            set
-            {
-                tuesdayHours = value;
-                OnPropertyChanged();
-            }
+            get => tuesdayHours;
+            set => SetField(ref tuesdayHours, value);
         }
 
-        public ObservableCollection<TimeOnly?> wednesdayHours;
+        public ObservableCollection<TimeOnly?> wednesdayHours = new ObservableCollection<TimeOnly?>();
         public ObservableCollection<TimeOnly?> WednesdayHours
         {
-            get { return wednesdayHours; }
-            set
-            {
-                wednesdayHours = value;
-                OnPropertyChanged();
-            }
+            get => wednesdayHours;
+            set => SetField(ref wednesdayHours, value);
         }
 
-        public ObservableCollection<TimeOnly?> thursdayHours;
+        public ObservableCollection<TimeOnly?> thursdayHours = new ObservableCollection<TimeOnly?>();
         public ObservableCollection<TimeOnly?> ThursdayHours
         {
-            get { return thursdayHours; }
-            set
-            {
-                thursdayHours = value;
-                OnPropertyChanged();
-            }
+            get => thursdayHours;
+            set => SetField(ref thursdayHours, value);
         }
 
-        public ObservableCollection<TimeOnly?> fridayHours;
+        public ObservableCollection<TimeOnly?> fridayHours = new ObservableCollection<TimeOnly?>();
         public ObservableCollection<TimeOnly?> FridayHours
         {
-            get { return fridayHours; }
-            set
-            {
-                fridayHours = value;
-                OnPropertyChanged();
-            }
+            get => fridayHours;
+            set => SetField(ref fridayHours, value);
         }
 
-        private TimeOnly monday;
-        public TimeOnly Monday
+        private TimeOnly? monday;
+        public TimeOnly? Monday
         {
-            get { return monday; }
-            set
-            {
-                monday = value;
-                OnPropertyChanged();
-            }
-
+            get => monday;
+            set => SetField(ref monday, value);
         }
 
-        private TimeOnly tuesday;
-        public TimeOnly Tuesday
+        private TimeOnly? tuesday;
+        public TimeOnly? Tuesday
         {
-            get { return tuesday; }
-            set
-            {
-                tuesday = value;
-                OnPropertyChanged();
-            }
+            get => tuesday;
+            set => SetField(ref tuesday, value);
         }
 
-        private TimeOnly wednesday;
-        public TimeOnly Wednesday
+        private TimeOnly? wednesday;
+        public TimeOnly? Wednesday
         {
-            get { return wednesday; }
-            set
-            {
-                wednesday = value;
-                OnPropertyChanged();
-            }
+            get => wednesday;
+            set => SetField(ref wednesday, value);
         }
 
-        private TimeOnly thursday;
-        public TimeOnly Thursday
+        private TimeOnly? thursday;
+        public TimeOnly? Thursday
         {
-            get { return thursday; }
-            set
-            {
-                thursday = value;
-                OnPropertyChanged();
-            }
+            get => thursday;
+            set => SetField(ref thursday, value);
         }
 
-        private TimeOnly friday;
-        public TimeOnly Friday
+        private TimeOnly? friday;
+        public TimeOnly? Friday
         {
-            get { return friday; }
-            set
-            {
-                friday = value;
-                OnPropertyChanged();
-            }
+            get => friday;
+            set => SetField(ref friday, value);
         }
 
         private string name = "";
         public string Name
         {
-            get { return name; }
-            set
-            {
-                name = value;
-                OnPropertyChanged();
-            }
+            get => name;
+            set => SetField(ref name, value);
         }
 
         private string languageName = "";
@@ -157,16 +113,15 @@ namespace LangLang.ViewModel
             get { return languageName; }
             set
             {
-                languageName = value;
+                SetField(ref languageName, value);
                 LoadLanguageLevels(languageName);
-                OnPropertyChanged();
             }
         }
 
         private LanguageLvl level;
         public LanguageLvl Level
         {
-            get { return level; }
+            get =>  level;
             set
             {
                 level = value;
@@ -177,11 +132,10 @@ namespace LangLang.ViewModel
         private int? duration;
         public int? Duration
         {
-            get { return duration; }
+            get => duration; 
             set
             {
-                duration = value;
-                OnPropertyChanged();
+                SetField(ref duration, value);
                 LoadHours();
             }
         }
@@ -189,33 +143,24 @@ namespace LangLang.ViewModel
         private ObservableCollection<WorkDay> scheduleDays = new ObservableCollection<WorkDay>();
         public ObservableCollection<WorkDay> ScheduleDays
         {
-            get { return scheduleDays; }
-            set
-            {
-                scheduleDays = value;
-                OnPropertyChanged();
-            }
+            get => scheduleDays;
+            set => SetField(ref scheduleDays, value);
         }
 
         private Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
         public Dictionary<WorkDay, Tuple<TimeOnly, int>> Schedule
         {
-            get { return schedule; }
-            set
-            {
-                schedule = value;
-                OnPropertyChanged();
-            }
+            get => schedule;
+            set => SetField(ref schedule, value);
         }
 
         private string start = "";
         public string Start
         {
-            get { return start; }
-            set
+            get => start;
+            set 
             {
-                start = value;
-                OnPropertyChanged();
+                SetField(ref start, value);
                 LoadHours();
             }
         }
@@ -223,177 +168,99 @@ namespace LangLang.ViewModel
         private bool online;
         public bool Online
         {
-            get { return online; }
-            set
-            {
-                online = value;
-                OnPropertyChanged();
-            }
+            get => online;
+            set => SetField(ref online, value);
         }
 
         private bool isMaxStudentsDisabled;
         public bool IsMaxStudentsDisabled
         {
-            get { return isMaxStudentsDisabled; }
-            set
-            {
-                if(isMaxStudentsDisabled != value)
-                {
-                    isMaxStudentsDisabled = value;
-                    OnPropertyChanged();
-                }
-            }
+            get => isMaxStudentsDisabled;
+            set => SetField(ref isMaxStudentsDisabled, value);
         }
 
         private int maxStudents;
         public int MaxStudents
         {
-            get { return maxStudents; }
-            set
-            {
-                maxStudents = value;
-                OnPropertyChanged();
-            }
+            get => maxStudents;
+            set => SetField(ref maxStudents, value);
         }
         private int numStudents;
         public int NumStudents
         {
-            get { return numStudents; }
-            set
-            {
-                numStudents = value;
-                OnPropertyChanged();
-            }
+            get => numStudents;
+            set => SetField(ref numStudents, value);
         }
 
         private CourseState state;
         public CourseState State
         {
-            get { return state; }
-            set
-            {
-                state = value;
-                OnPropertyChanged();
-            }
+            get => state;
+            set => SetField(ref state, value);
         }
         // FILTER VALUES
         private string languageFilter = "";
         public string LanguageFilter
         {
-            get { return languageFilter; }
+            get => languageFilter; 
             set
             {
-                languageFilter = value;
+                SetField(ref languageFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private LanguageLvl? levelFilter;
         public LanguageLvl? LevelFilter
         {
-            get { return levelFilter; }
+            get => levelFilter; 
             set
             {
-                levelFilter = value;
+                SetField(ref levelFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private DateTime? startFilter;
         public DateTime? StartFilter
         {
-            get { return startFilter; }
+            get => startFilter; 
             set
             {
-                startFilter = value;
+                SetField(ref startFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private bool? onlineFilter;
         public bool? OnlineFilter
         {
-            get { return onlineFilter; }
+            get => onlineFilter; 
             set
             {
-                onlineFilter = value;
+                SetField(ref onlineFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private int durationFilter;
         public int DurationFilter
         {
-            get { return durationFilter; }
+            get => durationFilter;
             set
             {
-                durationFilter = value;
+                SetField(ref durationFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private Course? selectedItem;
         public Course? SelectedItem
         {
-            get { return selectedItem; }
-            set
-            {
-                selectedItem = value;
-                if (selectedItem != null)
-                {
-
-                    Name = selectedItem.Name;
-                    LanguageName = selectedItem.Language.Name;
-                    Level = selectedItem.Level;
-                    Duration = selectedItem.Duration;
-                    Schedule = selectedItem.Schedule;
-                    ScheduleDays = new ObservableCollection<WorkDay>();
-                    foreach(WorkDay workday in Schedule.Keys)
-                    {
-                        ScheduleDays.Add(workday);
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Monday))
-                    {
-                        Monday = Schedule[WorkDay.Monday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Tuesday))
-                    {
-                        Tuesday = Schedule[WorkDay.Tuesday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Wednesday))
-                    {
-                        Wednesday = Schedule[WorkDay.Wednesday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Thursday))
-                    {
-                        Thursday = Schedule[WorkDay.Thursday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Friday))
-                    {
-                        Friday = Schedule[WorkDay.Friday].Item1;
-                    }
-                    Start = selectedItem.Start;
-                    Online = selectedItem.Online;
-                    if (Online)
-                    {
-                        MaxStudents = int.MaxValue;
-                        IsMaxStudentsDisabled = true;
-                    }
-                    else
-                    {
-                        MaxStudents = selectedItem.MaxStudents;
-                        IsMaxStudentsDisabled = false;
-                    }
-                    NumStudents = selectedItem.NumStudents;
-                    State = selectedItem.State;
-
-                }
-                OnPropertyChanged();
+            get => selectedItem;
+            set {
+                SetField(ref selectedItem, value);
+                SelectCourse(value);
             }
         }
         public CourseViewModel(Tutor loggedInUser,CourseService courseService, LanguageService languageService, TimetableService timetableService)
@@ -426,6 +293,60 @@ namespace LangLang.ViewModel
             UpdateCourseCommand = new RelayCommand(UpdateCourse, CanUpdateCourse);
             ToggleMaxStudentsCommand = new RelayCommand(ToggleMaxStudents);
             ClearFiltersCommand = new RelayCommand(ClearFilters);
+            SelectedCourseChangedCommand = new RelayCommand(SelectCourse);
+        }
+
+        private void SelectCourse(object? obj)
+        {
+            if (selectedItem != null)
+            {
+
+                Name = selectedItem.Name;
+                LanguageName = selectedItem.Language.Name;
+                Level = selectedItem.Level;
+                Duration = selectedItem.Duration;
+                Schedule = selectedItem.Schedule;
+                ScheduleDays = new ObservableCollection<WorkDay>();
+                foreach (WorkDay workday in Schedule.Keys)
+                {
+                    ScheduleDays.Add(workday);
+                }
+                if (Schedule.ContainsKey(WorkDay.Monday))
+                {
+                    Monday = Schedule[WorkDay.Monday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Tuesday))
+                {
+                    Tuesday = Schedule[WorkDay.Tuesday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Wednesday))
+                {
+                    Wednesday = Schedule[WorkDay.Wednesday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Thursday))
+                {
+                    Thursday = Schedule[WorkDay.Thursday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Friday))
+                {
+                    Friday = Schedule[WorkDay.Friday].Item1;
+                }
+                Start = selectedItem.Start;
+                Online = selectedItem.Online;
+                if (Online)
+                {
+                    MaxStudents = int.MaxValue;
+                    IsMaxStudentsDisabled = true;
+                }
+                else
+                {
+                    MaxStudents = selectedItem.MaxStudents;
+                    IsMaxStudentsDisabled = false;
+                }
+                NumStudents = selectedItem.NumStudents;
+                State = selectedItem.State;
+
+            }
         }
 
         private void ClearFilters(object? obj)
@@ -532,25 +453,24 @@ namespace LangLang.ViewModel
             Schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
             foreach(WorkDay workDay in ScheduleDays)
             {
-                // TODO: get the free classroom for now its set to the first classroom
-                if(workDay == WorkDay.Monday)
+                if(workDay == WorkDay.Monday && Monday != null)
                 {
-                    Schedule[workDay] = new Tuple<TimeOnly, int>(Monday, GetClassroomNumber(Monday));
-                }else if(workDay == WorkDay.Tuesday)
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Monday, GetClassroomNumber(Monday));
+                }else if(workDay == WorkDay.Tuesday && Tuesday != null)
                 {
-                    Schedule[workDay] = new Tuple<TimeOnly, int>(Tuesday, GetClassroomNumber(Tuesday));
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Tuesday, GetClassroomNumber(Tuesday));
                 }
-                else if (workDay == WorkDay.Wednesday)
+                else if (workDay == WorkDay.Wednesday && Wednesday != null)
                 {
-                    Schedule[workDay] = new Tuple<TimeOnly, int>(Wednesday, GetClassroomNumber(Wednesday));
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Wednesday, GetClassroomNumber(Wednesday));
                 }
-                else if (workDay == WorkDay.Thursday)
+                else if (workDay == WorkDay.Thursday && Thursday != null)
                 {
-                    Schedule[workDay] = new Tuple<TimeOnly, int>(Thursday, GetClassroomNumber(Thursday));
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Thursday, GetClassroomNumber(Thursday));
                 }
-                else if (workDay == WorkDay.Friday)
+                else if (workDay == WorkDay.Friday && Friday != null)
                 {
-                    Schedule[workDay] = new Tuple<TimeOnly, int>(Friday, GetClassroomNumber(Friday));
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Friday, GetClassroomNumber(Friday));
                 }
             }
         }
