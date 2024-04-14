@@ -68,13 +68,10 @@
 
                     <TextBlock Text="Birthday" Grid.Row="4" Margin="337,10,0,20" HorizontalAlignment="Left"/>
                     <DatePicker x:Name="datePicker" HorizontalAlignment="Left" Margin="395,6,0,0" Grid.Row="4" VerticalAlignment="Top" Height="30" Width="208" SelectedDate="{Binding Birthday, Mode=OneWayToSource}" />
-<<<<<<< HEAD
-                    <TextBlock Text="Education Level" Grid.Row="6" Margin="309,0,0,30" HorizontalAlignment="Left"/>
-                    
-=======
 
                     <TextBlock Text="Education Level" Grid.Row="6" Margin="309,0,0,30" HorizontalAlignment="Left"/>
->>>>>>> 162f87ce75176486c7ed25b989692bd6e1af3979
+                    
+
                     <ComboBox x:Name="cmbEducation" Width="208" HorizontalAlignment="Left" Margin="395,1,0,18" Grid.Row="6"
                     SelectedItem="{Binding EducationLvl, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBox.ItemsSource>
