@@ -1,10 +1,11 @@
-﻿<Window x:Class="LangLang.View.RegisterView"
+﻿<mvvm:NavigableWindow x:Class="LangLang.View.RegisterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LangLang.View"
         xmlns:consts="clr-namespace:Consts"
+        xmlns:mvvm="clr-namespace:LangLang.MVVM"
 
         mc:Ignorable="d"
         Title="" Height="400" Width="658"
@@ -99,7 +100,7 @@
                 </Button>
 
                 <TextBlock Text="{Binding ErrorMessageRequired}" HorizontalAlignment="Right" Foreground="Red" Margin="0,2" FontWeight="Bold"/>
-                <Button Content="Log in" Click="OpenLogin" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
+                <Button Content="Log in" Command="{Binding SwitchToLoginCommand}" FontSize="16" Foreground="Black" Background="White" Height="35" Width="250" BorderThickness="0">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -111,4 +112,4 @@
             </StackPanel>
         </Border>
     </Grid>
-</Window>
+</mvvm:NavigableWindow>

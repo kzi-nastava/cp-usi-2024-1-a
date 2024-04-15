@@ -5,13 +5,14 @@ using System.Windows;
 using System.Windows.Input;
 using Consts;
 using LangLang.MVVM;
-using LangLang.Services;
 using LangLang.Services.AuthenticationServices;
-using LangLang.View;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel
 {
-    internal class RegisterViewModel : ViewModelBase
+    public class RegisterViewModel : ViewModelBase, INavigableDataContext
     {
         private string? _email;
         private string? _password;
@@ -28,24 +29,24 @@ namespace LangLang.ViewModel
         private string? _errorMessageName;
         private string? _errorMessageSurname;
         private string? _errorMessagePhone;
-
-        private readonly RegisterView? _registerView;
+        
         public ICommand SignUpCommand { get; }
+        public ICommand SwitchToLoginCommand { get; }
 
         private readonly IRegisterService _registerService;
+        private readonly ILoginService _loginService;
+        private readonly INavigationService _navigationService;
         
-        public RegisterViewModel(IRegisterService registerService)
+        public NavigationStore NavigationStore { get; }
+        
+        public RegisterViewModel(IRegisterService registerService, ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
         {
-            SignUpCommand = new RelayCommand(SignUp!);
             _registerService = registerService;
-        }
-
-
-        public RegisterViewModel(RegisterView registerView, IRegisterService registerService)
-        {
-            _registerView = registerView;
-            _registerService = registerService;
+            _loginService = loginService;
+            _navigationService = navigationService;
+            NavigationStore = navigationStore;
             SignUpCommand = new RelayCommand(SignUp!);
+            SwitchToLoginCommand = new RelayCommand(SwitchToLogin);
         }
 
         public string? ErrorMessageRequired
@@ -193,10 +194,27 @@ namespace LangLang.ViewModel
             else
             {
                 MessageBox.Show($"Succesfull registration");
-                LoginWindow view = new LoginWindow();
-                view.Show();
-                _registerView!.Close();
+                LoginResult loginResult = _loginService.LogIn(email, password);
+                switch (loginResult.UserType)
+                {
+                    case UserType.Director:
+                        _navigationService.Navigate(ViewType.Director);
+                        break;
+                    case UserType.Tutor:
+                        _navigationService.Navigate(ViewType.Tutor);
+                        break;
+                    case UserType.Student:
+                        _navigationService.Navigate(ViewType.Student);
+                        break;
+                    default:
+                        throw new ArgumentException("No available window for current user type");
+                }
             }
+        }
+
+        private void SwitchToLogin(object? parameter)
+        {
+            _navigationService.Navigate(ViewType.Login);
         }
     }
 }

@@ -2,5 +2,7 @@
 
 public interface ILoginService
 {
-    public void LogIn(string email, string password);
+    public LoginResult LogIn(string email, string password);
+
+    public void LogOut();
 }

@@ -5,7 +5,7 @@ using LangLang.Model;
 
 namespace LangLang.Services.EntityServices
 {
-    class LanguageService
+    public class LanguageService : ILanguageService
     {
         LanguageDAO languageDAO = LanguageDAO.GetInstance();
 

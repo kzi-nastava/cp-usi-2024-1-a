@@ -7,7 +7,7 @@ using LangLang.Model;
 
 namespace LangLang.Services.EntityServices;
 
-public class ExamService
+public class ExamService : IExamService
 {
     private readonly ExamDAO examDao = ExamDAO.GetInstance();
     private readonly TutorDAO tutorDao = TutorDAO.GetInstance();

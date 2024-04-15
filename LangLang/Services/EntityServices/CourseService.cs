@@ -8,7 +8,7 @@ using LangLang.Model;
 
 namespace LangLang.Services.EntityServices
 {
-    internal class CourseService : ICourseService
+    public class CourseService : ICourseService
     {
         CourseDAO courseDAO = CourseDAO.GetInstance();
         LanguageDAO languageDAO = LanguageDAO.GetInstance();

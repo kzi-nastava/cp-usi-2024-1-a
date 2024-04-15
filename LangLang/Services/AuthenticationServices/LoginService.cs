@@ -1,96 +1,83 @@
 ﻿using System;
 using LangLang.DAO;
 using LangLang.Model;
-using LangLang.Services.UserServices;
+using LangLang.Stores;
 
 namespace LangLang.Services.AuthenticationServices;
 
 public class LoginService : ILoginService
 {
-    //Singleton
-    private static LoginService? instance;
-    public bool validUser = false;
-    public bool validEmail = false;
-    public Type? userType;
+    private AuthenticationStore _authenticationStore;
 
-    private LoginService()
+    public LoginService(AuthenticationStore authenticationStore)
     {
+        _authenticationStore = authenticationStore;
     }
 
-    public static LoginService GetInstance()
+    public LoginResult LogIn(string? email, string? password)
     {
-        return instance ??= new LoginService();
-    }
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            return new LoginResult(false);
 
-
-    public void LogIn(string email, string password)
-    {
-        //in order to differentiate between non-existing email and just incorrect password
-        validUser = false;
-        validEmail = false;
-
-        if (email == null || email == "" || password == null || password == "")
-            return;
-
-        LogInDirector(email, password);
-        if (validUser) return;
-        LogInTutor(email, password);
-        if (validUser) return;
-        LogInStudent(email, password);
+        LoginResult loginResult = LogInDirector(email, password);
+        if (loginResult.IsValidUser) return loginResult;
+        
+        loginResult = LogInTutor(email, password);
+        if (loginResult.IsValidUser) return loginResult;;
+        
+        return LogInStudent(email, password);
     }
 
 
-    private void LogInStudent(string email, string password)
+    private LoginResult LogInStudent(string email, string password)
     {
         Student? student = StudentDAO.GetInstance().GetStudent(email);
 
         if (student != null)
         {
-            if(student.Password != password)
-                validEmail = true;  //email is good but password failed
-            else
-            {
-                validUser = true;
-
-                StudentService.GetInstance().LoggedUser = student;
-                userType = typeof(Student);
-            }
+            if (student.Password != password)
+                return new LoginResult(false, true);
+            _authenticationStore.CurrentUser = student;
+            _authenticationStore.UserType = UserType.Student;
+            return new LoginResult(true, true, student, UserType.Student);
         }
+
+        return new LoginResult(false);
     }
-    private void LogInTutor(string email, string password)
+    private LoginResult LogInTutor(string email, string password)
     {
         Tutor? tutor = TutorDAO.GetInstance().GetTutor(email);
 
         if (tutor != null)
         {
             if (tutor.Password != password)
-                validEmail = true;  //email is good but password failed
-            else
-            {
-                validUser = true;
-
-                TutorService.GetInstance().LoggedUser = tutor;
-                userType = typeof(Tutor);
-            }
+                return new LoginResult(false, true);
+            _authenticationStore.CurrentUser = tutor;
+            _authenticationStore.UserType = UserType.Tutor;
+            return new LoginResult(true, true, tutor, UserType.Tutor);
         }
+
+        return new LoginResult(false);
     }
-    private void LogInDirector(string email, string password)
+    private LoginResult LogInDirector(string email, string password)
     {
         Director? director = DirectorDAO.GetInstance().GetDirector(email);
 
         if (director != null)
         {
             if (director.Password != password)
-                validEmail = true;  //email is good but password failed
-            else
-            {
-                validUser = true;
-
-                DirectorService.GetInstance().LoggedUser = director;
-                userType = typeof(Director);
-            }
+                return new LoginResult(false, true);
+            _authenticationStore.CurrentUser = director;
+            _authenticationStore.UserType = UserType.Director;
+            return new LoginResult(true, true, director, UserType.Director);
         }
+
+        return new LoginResult(false);
     }
 
-
+    public void LogOut()
+    {
+        _authenticationStore.CurrentUser = null;
+        _authenticationStore.UserType = null;
+    }
 }

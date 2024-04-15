@@ -11,14 +11,15 @@ using System.Windows;
 using System.Windows.Input;
 using LangLang.Services.EntityServices;
 using LangLang.Services.UtilityServices;
+using LangLang.Stores;
 
 namespace LangLang.ViewModel
 {
-    internal class CourseViewModel : ViewModelBase
+    public class CourseViewModel : ViewModelBase
     {
-        private readonly CourseService courseService;
-        private readonly LanguageService languageService;
-        private readonly TimetableService timetableService;
+        private readonly ICourseService courseService;
+        private readonly ILanguageService languageService;
+        private readonly ITimetableService timetableService;
         private Tutor loggedInUser;
         public ICommand AddCourseCommand { get; }
         public ICommand DeleteCourseCommand { get; }
@@ -398,11 +399,13 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-        public CourseViewModel(Tutor loggedInUser,CourseService courseService, LanguageService languageService, TimetableService timetableService)
+        public CourseViewModel(AuthenticationStore authenticationStore, ICourseService courseService, ILanguageService languageService, ITimetableService timetableService)
         {
+            loggedInUser = (Tutor?)authenticationStore.CurrentUser ??
+                           throw new InvalidOperationException(
+                               "Cannot create CourseViewModel without currently logged in tutor");
             this.courseService = courseService;
             this.languageService = languageService;
-            this.loggedInUser = loggedInUser;
             this.timetableService = timetableService;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();

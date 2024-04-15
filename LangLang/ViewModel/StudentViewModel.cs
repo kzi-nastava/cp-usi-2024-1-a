@@ -5,22 +5,27 @@ using System.Windows.Input;
 using LangLang.DAO;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
 using Consts;
+using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
 using LangLang.Services.UserServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel
 {
-    internal class StudentViewModel : ViewModelBase
+    public class StudentViewModel : ViewModelBase, INavigableDataContext
     {
-        private readonly Window _window;
-        private readonly CourseService _courseService = new();
-        private readonly LanguageService _languageService = new();
-        private readonly StudentService studentService = StudentService.GetInstance();
-        private readonly ExamService examService = new();
+        private readonly Student _loggedInUser;
+        private readonly ICourseService _courseService;
+        private readonly ILanguageService _languageService;
+        private readonly IStudentService _studentService;
+        private readonly IExamService _examService;
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
+        public ICommand LogOutCommand { get; }
+        public ICommand DeleteProfileCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
 
         public ObservableCollection<Exam> Exams { get; set; }
@@ -176,9 +181,23 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-        public StudentViewModel(Window window)
+
+        private readonly ILoginService _loginService;
+        private readonly INavigationService _navigationService;
+        public NavigationStore NavigationStore { get; }
+        
+        public StudentViewModel(IStudentService studentService, ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
         {
-            _window = window;
+            _loggedInUser = (Student?)authenticationStore.CurrentUser ??
+                                throw new InvalidOperationException(
+                                    "Cannot create StudentViewModel without currently logged in student");
+            NavigationStore = navigationStore;
+            _courseService = courseService;
+            _languageService = languageService;
+            _examService = examService;
+            _studentService = studentService;
+            _loginService = loginService;
+            _navigationService = navigationService;
             Courses = new ObservableCollection<Course>();
             Exams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
@@ -191,7 +210,8 @@ namespace LangLang.ViewModel
             LoadLanguageLevels();
             ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
-
+            LogOutCommand = new RelayCommand(_ => LogOut());
+            DeleteProfileCommand = new RelayCommand(_ => DeleteProfile());
         }
 
         private void ClearCourseFilters(object? obj)
@@ -219,7 +239,7 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            var courses = _courseService.GetAvailableCourses(studentService.LoggedUser);
+            var courses = _courseService.GetAvailableCourses(_loggedInUser);
             foreach (Course course in courses)
             {
                 Courses.Add(course);
@@ -230,7 +250,7 @@ namespace LangLang.ViewModel
         public void LoadExams()
         {
             ExamDAO examDAO = ExamDAO.GetInstance();
-            var examsDictionary = examService.GetAvailableExamsForStudent(studentService.LoggedUser);
+            var examsDictionary = _examService.GetAvailableExamsForStudent(_loggedInUser);
             foreach (Exam exam in examsDictionary)
             {
                 Exams.Add(exam);
@@ -358,9 +378,17 @@ namespace LangLang.ViewModel
             }
         }
 
+        private void LogOut()
+        {
+            _loginService.LogOut();
+            _navigationService.Navigate(ViewType.Login);
+        }
 
-
-
-
+        private void DeleteProfile()
+        {
+            _studentService.DeleteAccount(_loggedInUser);
+            MessageBox.Show("Your profile has been successfully deleted"); // ?
+            _navigationService.Navigate(ViewType.Login);
+        }
     }
 }

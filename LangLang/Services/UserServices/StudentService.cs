@@ -10,35 +10,23 @@ namespace LangLang.Services.UserServices
         readonly StudentDAO studentDAO = StudentDAO.GetInstance();
         private readonly ExamService examService = new();
         private readonly CourseService courseService = new();
-        public Student? LoggedUser { get; set; }
 
-        //Singleton
-        private static StudentService? instance;
-        private StudentService() 
+        //Return if the updating is successful
+        public bool UpdateStudent(Student student, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
-        }
-
-        public static StudentService GetInstance()
-        {
-            return instance ??= new StudentService();
-        }
-
-        //Return if the updating is successfull 
-        public bool UpdateStudent(string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
-        {
-            if (AttendingCourse(LoggedUser!))
+            if (AttendingCourse(student))
             {
                 return false;
             }
-            LoggedUser!.Name = name;
-            LoggedUser.Surname = surname;
-            LoggedUser.Password = password;
-            LoggedUser.Gender = gender;
-            LoggedUser.BirthDate = birthDate;
-            LoggedUser.Gender = gender;
-            LoggedUser.PhoneNumber = phoneNumber;
+            student.Name = name;
+            student.Surname = surname;
+            student.Password = password;
+            student.Gender = gender;
+            student.BirthDate = birthDate;
+            student.Gender = gender;
+            student.PhoneNumber = phoneNumber;
 
-            studentDAO.AddStudent(LoggedUser);
+            studentDAO.AddStudent(student);
             return true;
         }
 
@@ -48,17 +36,17 @@ namespace LangLang.Services.UserServices
         }
 
     
-        public void DeleteMyAccount()
+        public void DeleteAccount(Student student)
         {
-            CancelCourses(LoggedUser!);
-            CancelExams(LoggedUser!);
-            studentDAO.DeleteStudent(LoggedUser!.Email);
+            CancelCourses(student);
+            CancelExams(student);
+            studentDAO.DeleteStudent(student.Email);
         }
     
 
-        public void ApplyForCourse(string courseId)
+        public void ApplyForCourse(Student student, string courseId)
         {
-            LoggedUser!.AddCourse(courseId);
+            student.AddCourse(courseId);
             Course? course = courseService.GetCourseById(courseId);
             course!.AddAttendance();
             courseService.UpdateCourse(course);
@@ -76,7 +64,7 @@ namespace LangLang.Services.UserServices
 
         private void CancelExams(Student student)
         {
-            foreach (string examID in LoggedUser!.GetAppliedExams())
+            foreach (string examID in student.GetAppliedExams())
             {
                 Exam? exam = examService.GetExamById(examID);
                 exam?.CancelAttendance();
