@@ -57,7 +57,7 @@ namespace LangLang.Model
             Level = level;
             Duration = duration;
             Schedule = schedule;
-            Start = start.ToString("yyyy-MM-dd");
+            Start = start;
             Online = online;
             MaxStudents = maxStudents;
             NumStudents = numStudents;
@@ -79,7 +79,7 @@ namespace LangLang.Model
             Level = level;
             Duration = duration;
             Schedule = schedule;
-            Start = start.ToString("yyyy-MM-dd");
+            Start = start;
             Online = online;
             MaxStudents = maxStudents;
             NumStudents = numStudents;

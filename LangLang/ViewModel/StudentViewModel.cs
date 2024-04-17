@@ -79,8 +79,8 @@ namespace LangLang.ViewModel
             }
         }
 
-        private string start = "";
-        public string Start
+        private DateTime? start;
+        public DateTime? Start
         {
             get { return start; }
             set
@@ -191,7 +191,7 @@ namespace LangLang.ViewModel
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
             Durations = new ObservableCollection<int?> { null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-            Start = DateTime.Now.ToShortDateString();
+            Start = DateTime.Now;
 
             LoadExams();
             LoadLanguages();
@@ -366,7 +366,7 @@ namespace LangLang.ViewModel
             Duration = null;
             Online = false;
             selectedItem = null;
-            Start = DateTime.Now.ToShortDateString();
+            Start = DateTime.Now;
 
 
         }
