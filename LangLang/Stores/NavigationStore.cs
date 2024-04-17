@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using LangLang.MVVM;
 using LangLang.ViewModel.Factories;
 
@@ -14,16 +16,31 @@ public class NavigationStore
         set
         {
             _currentViewModel = value;
-            OnCurrentViewModelChanged();
+            CurrentViewModelChanged?.Invoke();
         }
     }
     
     public ViewType ViewType { get; set; }
 
     public event Action? CurrentViewModelChanged;
+    
 
-    private void OnCurrentViewModelChanged()
+    private readonly Stack<ViewModelBase> _popupStack = new();
+
+    public ViewModelBase? CurrentPopupViewModel => _popupStack.Count > 0 ? _popupStack.Peek() : null;
+
+    public void AddPopup(ViewModelBase viewModel)
     {
-        CurrentViewModelChanged?.Invoke();
+        _popupStack.Push(viewModel);
+        PopupOpened?.Invoke();
     }
+
+    public void ClosePopup()
+    {
+        _popupStack.Pop();
+        PopupClosed?.Invoke();
+    }
+    
+    public event Action? PopupOpened;
+    public event Action? PopupClosed;
 }

@@ -3,6 +3,7 @@ using System.Windows;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
+using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
@@ -44,6 +45,8 @@ namespace LangLang
             services.AddSingleton<ILanguageService, LanguageService>();
             services.AddSingleton<ITimetableService, TimetableService>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IPopupNavigationService, PopupNavigationService>();
+            services.AddSingleton<IClosePopupNavigationService, ClosePopupNavigationService>();
             
             // Stores
             services.AddSingleton<NavigationStore>();
