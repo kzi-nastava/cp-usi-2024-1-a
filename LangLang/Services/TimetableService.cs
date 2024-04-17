@@ -6,6 +6,7 @@ using Consts;
 using LangLang.DAO;
 using LangLang.Model;
 using TimeOnly = System.TimeOnly;
+using LangLang.Util;
 
 namespace LangLang.Services;
 
@@ -73,17 +74,13 @@ public class TimetableService
             }
             List<TimeOnly> candidateTimes = GetAllLessonTimes();
             Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor);
+            WorkDay day = DayConverter.ToWorkDay(date.DayOfWeek);
             for (int j = 1; j <= Constants.ClassroomsNumber; j++)
             {
                 var availableForClassroom = CalculateAvailableTimes(candidateTimes, Constants.LessonDuration, takenTimes[j]);
-                if (!availableTimes.ContainsKey((WorkDay)(int)date.DayOfWeek))
+                if (!availableTimes.TryAdd(day, availableForClassroom))
                 {
-                    availableTimes.Add((WorkDay)(int)date.DayOfWeek, availableForClassroom);
-                }
-                else
-                {
-                    availableTimes[(WorkDay)(int)date.DayOfWeek] =
-                        Intersection(availableTimes[(WorkDay)(int)date.DayOfWeek], availableForClassroom);
+                    availableTimes[day] = Intersection(availableTimes[day], availableForClassroom);
                 }
             }
         }
@@ -144,7 +141,7 @@ public class TimetableService
         foreach (Course course in courses)
         {
             if(course.Online) continue;
-            Tuple<TimeOnly, int> timeAndClassroom = course.Schedule[(WorkDay)(int)date.DayOfWeek];
+            Tuple<TimeOnly, int> timeAndClassroom = course.Schedule[DayConverter.ToWorkDay(date.DayOfWeek)];
             if (tutor.Courses.Contains(course.Id))
             {
                 for (int j = 1; j <= Constants.ClassroomsNumber; j++)

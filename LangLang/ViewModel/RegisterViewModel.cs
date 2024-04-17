@@ -120,6 +120,7 @@ namespace LangLang.ViewModel
             set => SetField(ref _educationLvl, value);
         }
         public string? BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
+
         public DateTime Birthday
         {
             get => _birthday;
@@ -145,7 +146,8 @@ namespace LangLang.ViewModel
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
-            bool successful = RegisterService.RegisterStudent(email!, password!, name!, surname!, birthday, gender, phoneNumber!, educationLvl);
+            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+
 
             if (!successful)
             {
