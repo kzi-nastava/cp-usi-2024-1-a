@@ -4,10 +4,6 @@
              xmlns:local="clr-namespace:LangLang"
              StartupUri="View/LoginWindow.xaml">
     <Application.Resources>
-        <Style TargetType="{x:Type ComboBoxItem}">
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-        </Style>
 
     </Application.Resources>
 </Application>
