@@ -15,7 +15,7 @@ namespace LangLang.Model
         public LanguageLvl Level { get; set; }
         public int Duration { get; set; }
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
-        public string Start { get; set; }
+        public DateTime Start { get; set; }
         public bool Online { get; set; }
         public int MaxStudents { get; set; }
         public int NumStudents { get; set; }
@@ -36,7 +36,7 @@ namespace LangLang.Model
             Level = LanguageLvl.A1;
             Duration = 0;
             Schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
-            Start = DateTime.Now.ToString("yyyy-MM-dd");
+            Start = DateTime.Now;
             Online = false;
             MaxStudents = 0;
             NumStudents = 0;

@@ -14,10 +14,10 @@ namespace LangLang.ViewModel
 {
     internal class CourseViewModel : ViewModelBase
     {
-        private readonly CourseService courseService;
-        private readonly LanguageService languageService;
-        private readonly TimetableService timetableService;
-        private Tutor loggedInUser;
+        private readonly CourseService _courseService;
+        private readonly LanguageService _languageService;
+        private readonly TimetableService _timetableService;
+        private Tutor _loggedInUser;
         public RelayCommand AddCourseCommand { get; }
         public RelayCommand DeleteCourseCommand { get; }
         public RelayCommand UpdateCourseCommand { get; }
@@ -154,8 +154,8 @@ namespace LangLang.ViewModel
             set => SetField(ref schedule, value);
         }
 
-        private string start = "";
-        public string Start
+        private DateTime? start;
+        public DateTime? Start
         {
             get => start;
             set 
@@ -263,12 +263,12 @@ namespace LangLang.ViewModel
                 SelectCourse(value);
             }
         }
-        public CourseViewModel(Tutor loggedInUser,CourseService courseService, LanguageService languageService, TimetableService timetableService)
+        public CourseViewModel(Tutor loggedInUser,CourseService _courseService, LanguageService languageService, TimetableService timetableService)
         {
-            this.courseService = courseService;
-            this.languageService = languageService;
-            this.loggedInUser = loggedInUser;
-            this.timetableService = timetableService;
+            this._courseService = _courseService;
+            this._languageService = languageService;
+            this._loggedInUser = loggedInUser;
+            this._timetableService = timetableService;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLvl>();
@@ -281,7 +281,7 @@ namespace LangLang.ViewModel
             WednesdayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
             ThursdayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
             FridayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
-            Start = DateTime.Now.ToShortDateString();
+            Start = DateTime.Now;
             LoadLanguages();
             LoadCourses();
             LoadLanguageLevels();
@@ -382,7 +382,7 @@ namespace LangLang.ViewModel
             CreateSchedule();
             if(SelectedItem != null)
             {
-                Course? updatedCourse = courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+                Course? updatedCourse = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
                 if(updatedCourse == null)
                 {
                     MessageBox.Show("There was an error updating the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -395,7 +395,7 @@ namespace LangLang.ViewModel
                     Courses.Remove(SelectedItem);
 
                 }
-                courseService.UpdateCourse(updatedCourse);
+                _courseService.UpdateCourse(updatedCourse);
                 Courses.Add(updatedCourse);
                 RemoveInputs();
             }
@@ -405,7 +405,7 @@ namespace LangLang.ViewModel
             if(SelectedItem != null)
             {
                 string keyToDelete = SelectedItem.Id;
-                courseService.DeleteCourse(keyToDelete, loggedInUser);
+                _courseService.DeleteCourse(keyToDelete, _loggedInUser);
                 Courses.Remove(SelectedItem);
                 RemoveInputs();
             }
@@ -421,14 +421,14 @@ namespace LangLang.ViewModel
         private void SaveCourse(object? obj)
         {
             CreateSchedule();
-            Course? course = courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+            Course? course = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
 
             if (course == null)
             {
                 MessageBox.Show("There was an error saving the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            courseService.AddCourse(course, loggedInUser);
+            _courseService.AddCourse(course, _loggedInUser);
             Courses.Add(course);
             RemoveInputs();
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -439,7 +439,7 @@ namespace LangLang.ViewModel
         {
             if (Start != null && time != null)
             {
-                var classrooms = timetableService.GetAvailableClassrooms(DateOnly.FromDateTime(DateTime.Parse(Start)), time.Value, Constants.ExamDuration, loggedInUser);
+                var classrooms = _timetableService.GetAvailableClassrooms(DateOnly.FromDateTime((DateTime)Start), time.Value, Constants.ExamDuration, _loggedInUser);
                 if (classrooms.Count > 0)
                 {
                     return classrooms[0];
@@ -476,7 +476,7 @@ namespace LangLang.ViewModel
         }
         public void LoadCourses()
         {
-            var courses = courseService.GetCoursesByTutor(loggedInUser);
+            var courses = _courseService.GetCoursesByTutor(_loggedInUser);
             foreach(Course course in courses.Values){
                 Courses.Add(course);
             }
@@ -484,7 +484,7 @@ namespace LangLang.ViewModel
         }
         public void LoadLanguages()
         {
-            foreach(Tuple<Language,LanguageLvl> languageTuple in loggedInUser.KnownLanguages){
+            foreach(Tuple<Language,LanguageLvl> languageTuple in _loggedInUser.KnownLanguages){
                 Languages.Add(languageTuple.Item1.Name);
             }
             Languages.Add("");
@@ -503,7 +503,7 @@ namespace LangLang.ViewModel
             else
             {
                 LanguageLevels.Clear();
-                foreach (Tuple<Language, LanguageLvl> languageTuple in loggedInUser.KnownLanguages)
+                foreach (Tuple<Language, LanguageLvl> languageTuple in _loggedInUser.KnownLanguages)
                 {
                     if(languageTuple.Item1.Name == language)
                     {
@@ -533,7 +533,11 @@ namespace LangLang.ViewModel
         public void LoadHours()
         {
             if (Duration == null) return;
-            var availableLessonTimes = timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(DateTime.Parse(start)), Duration.Value, loggedInUser);
+            if(start == null)
+            {
+                return;
+            }
+            var availableLessonTimes = _timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(start.Value), Duration.Value, _loggedInUser);
             MondayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Monday].Select(t => (TimeOnly?)t));
             MondayHours.Insert(0, null);
             TuesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Tuesday].Select(t => (TimeOnly?)t));
@@ -557,19 +561,19 @@ namespace LangLang.ViewModel
             MaxStudents = 0;
             NumStudents = 0;
             State = CourseState.Active;
-            Start = DateTime.Now.ToShortDateString();
+            Start = DateTime.Now;
 
 
         }
         public void FilterCourses()
         {
             Courses.Clear();
-            var courses = courseService.GetCoursesByTutor(loggedInUser);
+            var courses = _courseService.GetCoursesByTutor(_loggedInUser);
             foreach (Course course in courses.Values)
             {
                 if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
                 {
-                    if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter).ToShortDateString()))
+                    if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter)))
                     {
                         if(course.Online == OnlineFilter || OnlineFilter == null)
                         { 
