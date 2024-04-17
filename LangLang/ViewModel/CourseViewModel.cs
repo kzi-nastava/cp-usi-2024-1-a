@@ -1,5 +1,4 @@
 ﻿using Consts;
-using LangLang.DAO;
 using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services;
@@ -8,14 +7,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 
 namespace LangLang.ViewModel
 {
     internal class CourseViewModel : ViewModelBase
     {
         private readonly CourseService _courseService;
-        private readonly LanguageService _languageService;
         private readonly TimetableService _timetableService;
         private Tutor _loggedInUser;
         public RelayCommand AddCourseCommand { get; }
@@ -266,7 +263,6 @@ namespace LangLang.ViewModel
         public CourseViewModel(Tutor loggedInUser,CourseService _courseService, LanguageService languageService, TimetableService timetableService)
         {
             this._courseService = _courseService;
-            this._languageService = languageService;
             this._loggedInUser = loggedInUser;
             this._timetableService = timetableService;
             Courses = new ObservableCollection<Course>();
