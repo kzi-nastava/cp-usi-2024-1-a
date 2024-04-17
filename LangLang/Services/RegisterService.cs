@@ -19,8 +19,7 @@ namespace LangLang.Services
 
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
-
+                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", finishedCourses: new List<string>(),coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
             }
             return passed;
         }

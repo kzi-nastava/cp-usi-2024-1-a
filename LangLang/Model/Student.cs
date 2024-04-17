@@ -7,6 +7,7 @@ namespace LangLang.Model
     public class Student : User
     {
         //---------------------------Languages
+        private List<string> finishedCourses;
         private List<string> coursesApplied;    //string is courseId
         private List<string> examsApplied;
         private List<string> notifications;
@@ -23,11 +24,12 @@ namespace LangLang.Model
             AttendingCourse = "";
             AttendingExam = "";
             this.coursesApplied = new List<string>();
+            this.finishedCourses = new List<string>();
             this.examsApplied = new List<string>();
             this.notifications = new List<string>();
         }
 
-        public Student(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, string attendingExam, string attendingCourse, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
+        public Student(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, string attendingExam, string attendingCourse, List<string> finishedCourses, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
             : base(email, password, name, surname, birthDate, gender, phoneNumber)
         {
             PenaltyPts = penaltyPts;
@@ -35,6 +37,7 @@ namespace LangLang.Model
             AttendingExam = attendingExam;
             Education = educationLvl;
             this.coursesApplied = coursesApplied;
+            this.finishedCourses = finishedCourses;
             this.examsApplied = examsApplied;
             this.notifications = notifications;
         }
@@ -59,11 +62,26 @@ namespace LangLang.Model
             return coursesApplied;
         }
 
+        public List<string> GetFinishedCourses()
+        {
+            return finishedCourses;
+        }
+
         public List<string> GetAppliedExams()
         {
             return examsApplied;
         }
 
+
+        public void CancelAttendingCourse()
+        {
+            AttendingCourse = "";
+        }
+
+        public void CancelCourseApplication(string courseID)
+        {
+            coursesApplied.Remove(courseID);
+        }
 
         public void AddNotification(string notification)
         {
