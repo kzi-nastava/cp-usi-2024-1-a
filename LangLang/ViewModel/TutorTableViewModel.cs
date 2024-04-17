@@ -24,7 +24,7 @@ namespace LangLang.ViewModel
     {
         private readonly TutorTableWindow window;
         private readonly ItemsControl knownLanguagesHolder;
-        private readonly TutorService tutorService = TutorService.GetInstance();
+        private readonly TutorService tutorService = new();
         private readonly LanguageService languageService = new();
         private readonly IRegisterService _registerService;
         public RelayCommand GoBackCommand { get; set; }
@@ -198,8 +198,8 @@ namespace LangLang.ViewModel
 
         private void GoBack()
         {
-            DirectorWindow directorWindow = new();
-            directorWindow.Show();
+            // DirectorWindow directorWindow = new();
+            // directorWindow.Show();
             window.Close();
         }
 
