@@ -61,6 +61,7 @@ namespace LangLang
             services.AddScoped<DirectorViewModel>();
             services.AddScoped<CourseViewModel>();
             services.AddScoped<ExamViewModel>();
+            services.AddScoped<StudentAccountViewModel>();
             
             services.AddScoped<CreateViewModel<LoginViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<LoginViewModel>
@@ -87,6 +88,10 @@ namespace LangLang
             
             services.AddScoped<CreateViewModel<ExamViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<ExamViewModel>
+            );
+            
+            services.AddScoped<CreateViewModel<StudentAccountViewModel>>(
+                serviceProvider => serviceProvider.GetRequiredService<StudentAccountViewModel>
             );
             
             // Window factory

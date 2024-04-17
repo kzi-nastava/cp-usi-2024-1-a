@@ -8,6 +8,7 @@ using LangLang.MVVM;
 using Consts;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
+using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
@@ -26,6 +27,7 @@ namespace LangLang.ViewModel
         public ICommand ClearCourseFiltersCommand { get; }
         public ICommand LogOutCommand { get; }
         public ICommand DeleteProfileCommand { get; }
+        public ICommand OpenStudentProfileCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
 
         public ObservableCollection<Exam> Exams { get; set; }
@@ -184,9 +186,10 @@ namespace LangLang.ViewModel
 
         private readonly ILoginService _loginService;
         private readonly INavigationService _navigationService;
+        private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService, ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
+        public StudentViewModel(IStudentService studentService, ILoginService loginService, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
         {
             _loggedInUser = (Student?)authenticationStore.CurrentUser ??
                                 throw new InvalidOperationException(
@@ -198,6 +201,7 @@ namespace LangLang.ViewModel
             _studentService = studentService;
             _loginService = loginService;
             _navigationService = navigationService;
+            _popupNavigationService = popupNavigationService;
             Courses = new ObservableCollection<Course>();
             Exams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
@@ -212,6 +216,7 @@ namespace LangLang.ViewModel
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
             LogOutCommand = new RelayCommand(_ => LogOut());
             DeleteProfileCommand = new RelayCommand(_ => DeleteProfile());
+            OpenStudentProfileCommand = new RelayCommand(_ => OpenStudentProfile());
         }
 
         private void ClearCourseFilters(object? obj)
@@ -389,6 +394,11 @@ namespace LangLang.ViewModel
             _studentService.DeleteAccount(_loggedInUser);
             MessageBox.Show("Your profile has been successfully deleted"); // ?
             _navigationService.Navigate(ViewType.Login);
+        }
+
+        private void OpenStudentProfile()
+        {
+            _popupNavigationService.Navigate(ViewType.StudentAccount);
         }
     }
 }

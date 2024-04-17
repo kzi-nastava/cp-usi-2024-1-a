@@ -12,6 +12,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<DirectorViewModel> _createDirectorViewModel;
     private readonly CreateViewModel<CourseViewModel> _createCourseViewModel;
     private readonly CreateViewModel<ExamViewModel> _createExamViewModel;
+    private readonly CreateViewModel<StudentAccountViewModel> _createStudentAccountViewModel;
 
     public LangLangViewModelFactory(CreateViewModel<LoginViewModel> createLoginViewModel,
         CreateViewModel<RegisterViewModel> createRegisterViewModel, 
@@ -19,7 +20,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<TutorViewModel> createTutorViewModel,
         CreateViewModel<DirectorViewModel> createDirectorViewModel,
         CreateViewModel<CourseViewModel> createCourseViewModel,
-        CreateViewModel<ExamViewModel> createExamViewModel)
+        CreateViewModel<ExamViewModel> createExamViewModel,
+        CreateViewModel<StudentAccountViewModel> createStudentAccountViewModel)
     {
         _createLoginViewModel = createLoginViewModel;
         _createRegisterViewModel = createRegisterViewModel;
@@ -28,6 +30,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createDirectorViewModel = createDirectorViewModel;
         _createCourseViewModel = createCourseViewModel;
         _createExamViewModel = createExamViewModel;
+        _createStudentAccountViewModel = createStudentAccountViewModel;
     }
 
     public ViewModelBase CreateViewModel(ViewType viewType)
@@ -41,6 +44,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.Director => _createDirectorViewModel(),
             ViewType.Course => _createCourseViewModel(),
             ViewType.Exam => _createExamViewModel(),
+            ViewType.StudentAccount => _createStudentAccountViewModel(),
             _ => throw new ArgumentOutOfRangeException(nameof(viewType), viewType, "No ViewModel exists for the given ViewType: " + viewType)
         };
     }

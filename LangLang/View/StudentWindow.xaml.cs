@@ -15,11 +15,5 @@ namespace LangLang.View
             InitializeComponent();
             DataContext = studentViewModel;
         }
-        
-        private void OpenStudentProfile(object sender, RoutedEventArgs e)
-        {
-            StudentAccountWindow view = new StudentAccountWindow();
-            view.Show();
-        }
     }
 }

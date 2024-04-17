@@ -9,4 +9,5 @@ public enum ViewType
     Director,
     Course,
     Exam,
+    StudentAccount,
 }

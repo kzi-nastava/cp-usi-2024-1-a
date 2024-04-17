@@ -70,7 +70,7 @@
                     </Button>
                     <StackPanel DockPanel.Dock="Right" Width="110"></StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="EditProfileBtn1" Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                        <Button x:Name="EditProfileBtn1" Command="{Binding OpenStudentProfileCommand}" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -172,7 +172,7 @@
                     </Button>
                     <StackPanel Width="110" DockPanel.Dock="Right"></StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="EditProfileBtn"  Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                        <Button x:Name="EditProfileBtn"  Command="{Binding OpenStudentProfileCommand}" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border CornerRadius="10" Background="{TemplateBinding Background}">
