@@ -275,7 +275,7 @@ namespace LangLang.ViewModel
             {
                 if ((course.Language.Name == CourseLanguageFilter || CourseLanguageFilter == "") && (course.Level == CourseLevelFilter || CourseLevelFilter == null))
                 {
-                    if (CourseStartFilter == null || (CourseStartFilter != null && course.Start == ((DateTime)CourseStartFilter).ToShortDateString()))
+                    if (CourseStartFilter == null || (CourseStartFilter != null && course.Start == ((DateTime)CourseStartFilter)))
                     {
                         if (course.Online == CourseOnlineFilter || CourseOnlineFilter == null)
                         {
