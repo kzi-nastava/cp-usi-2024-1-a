@@ -2,6 +2,7 @@
 using System.Windows;
 using LangLang.DAO;
 using LangLang.DAO.JsonDao;
+using LangLang.HostBuilders;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
@@ -14,102 +15,38 @@ using LangLang.View.Factories;
 using LangLang.ViewModel;
 using LangLang.ViewModel.Factories;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace LangLang
 {
     public partial class App : Application
     {
+        private readonly IHost _host = CreateHostBuilder().Build();
+
+        private static IHostBuilder CreateHostBuilder(string[]? args = null)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .AddDao()
+                .AddServices()
+                .AddStores()
+                .AddViewModels()
+                .AddWindows();
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            IServiceProvider serviceProvider = CreateServiceProvider();
-            
-            Window window = new LoginWindow(
-                serviceProvider.GetRequiredService<LoginViewModel>(),
-                serviceProvider.GetRequiredService<ILangLangWindowFactory>()
-                );
+            _host.Start();
+
+            Window window = _host.Services.GetRequiredService<LoginWindow>();
             window.Show();
             
             base.OnStartup(e);
         }
 
-        private IServiceProvider CreateServiceProvider()
+        protected override void OnExit(ExitEventArgs e)
         {
-            IServiceCollection services = new ServiceCollection();
-
-            // DAO
-            services.AddSingleton<ICourseDAO, CourseDAO>();
-            services.AddSingleton<IDirectorDAO, DirectorDAO>();
-            services.AddSingleton<IExamDAO, ExamDAO>();
-            services.AddSingleton<ILanguageDAO, LanguageDAO>();
-            services.AddSingleton<ILastIdDAO, LastIdDAO>();
-            services.AddSingleton<IStudentDAO, StudentDAO>();
-            services.AddSingleton<ITutorDAO, TutorDAO>();
-            
-            // Services
-            services.AddSingleton<ILoginService, LoginService>();
-            services.AddSingleton<IRegisterService, RegisterService>();
-            services.AddSingleton<IStudentService, StudentService>();
-            services.AddSingleton<ICourseService, CourseService>();
-            services.AddSingleton<IExamService, ExamService>();
-            services.AddSingleton<ITutorService, TutorService>();
-            services.AddSingleton<IDirectorService, DirectorService>();
-            services.AddSingleton<ILanguageService, LanguageService>();
-            services.AddSingleton<ITimetableService, TimetableService>();
-            services.AddSingleton<INavigationService, NavigationService>();
-            services.AddSingleton<IPopupNavigationService, PopupNavigationService>();
-            services.AddSingleton<IClosePopupNavigationService, ClosePopupNavigationService>();
-            
-            // Stores
-            services.AddSingleton<NavigationStore>();
-            services.AddSingleton<AuthenticationStore>();
-            
-            // ViewModels
-            services.AddSingleton<ILangLangViewModelFactory, LangLangViewModelFactory>();
-            services.AddScoped<LoginViewModel>();
-            services.AddScoped<RegisterViewModel>();
-            services.AddScoped<StudentViewModel>();
-            services.AddScoped<TutorViewModel>();
-            services.AddScoped<DirectorViewModel>();
-            services.AddScoped<CourseViewModel>();
-            services.AddScoped<ExamViewModel>();
-            services.AddScoped<StudentAccountViewModel>();
-            
-            services.AddScoped<CreateViewModel<LoginViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<LoginViewModel>
-            );
-            
-            services.AddScoped<CreateViewModel<RegisterViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<RegisterViewModel>
-            );
-            
-            services.AddScoped<CreateViewModel<StudentViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<StudentViewModel>
-            );
-            
-            services.AddScoped<CreateViewModel<TutorViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<TutorViewModel>
-            );
-            
-            services.AddScoped<CreateViewModel<DirectorViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<DirectorViewModel>
-            );
-            
-            services.AddScoped<CreateViewModel<CourseViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<CourseViewModel>
-            );
-            
-            services.AddScoped<CreateViewModel<ExamViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<ExamViewModel>
-            );
-            
-            services.AddScoped<CreateViewModel<StudentAccountViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<StudentAccountViewModel>
-            );
-            
-            // Window factory
-            services.AddSingleton<ILangLangWindowFactory, LangLangWindowFactory>();
-
-            return services.BuildServiceProvider();
+            _host.StopAsync();
+            base.OnExit(e);
         }
     }
 }
