@@ -1,19 +1,6 @@
-﻿using System;
-using System.Windows;
-using LangLang.DAO;
-using LangLang.DAO.JsonDao;
+﻿using System.Windows;
 using LangLang.HostBuilders;
-using LangLang.MVVM;
-using LangLang.Services.AuthenticationServices;
-using LangLang.Services.EntityServices;
-using LangLang.Services.NavigationServices;
-using LangLang.Services.UserServices;
-using LangLang.Services.UtilityServices;
-using LangLang.Stores;
 using LangLang.View;
-using LangLang.View.Factories;
-using LangLang.ViewModel;
-using LangLang.ViewModel.Factories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
