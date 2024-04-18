@@ -36,7 +36,7 @@ namespace LangLang.Services.EntityServices
         }
         public List<Course> GetAvailableCourses(Student student)
         {
-            List<Course> Courses = new();
+            List<Course> courses = new();
             foreach (Course course in GetAll().Values.ToList())
             {
                 if (course.State != CourseState.Active)
@@ -47,10 +47,10 @@ namespace LangLang.Services.EntityServices
                 {
                     continue;
                 }
-                Courses.Add(course);
+                courses.Add(course);
             }
 
-            return Courses;
+            return courses;
         }
 
         public void AddCourse(Course course, Tutor loggedInUser)
@@ -77,14 +77,13 @@ namespace LangLang.Services.EntityServices
             _courseDao.UpdateCourse(course);
         }
 
-        public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay,Tuple<TimeOnly,int>> schedule,ObservableCollection<WorkDay> scheduleDays, string start, bool online, int numStudents, CourseState? state, int maxStudents)
+        public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay,Tuple<TimeOnly,int>> schedule,ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, CourseState? state, int maxStudents)
         {
-            DateTime coursedate = DateTime.Parse(start);
-            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0 || start == "" || maxStudents == 0 || level == null || state == null)
+            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0  || maxStudents == 0 || level == null || state == null)
             {
                 return null;
             }
-            if (coursedate < DateTime.Now)
+            if(start == null)
             {
                 return null;
             }
@@ -100,19 +99,16 @@ namespace LangLang.Services.EntityServices
                     maxStudents = int.MaxValue;
                 }
                 return new Course(
-                        name,
-                        language,
-                        (LanguageLvl)level,
-                        (int)duration,
-                        schedule,
-                        coursedate,
-                        online,
-                        numStudents,
-                        (CourseState)state,
-                        maxStudents
-
-
-
+                    name,
+                    language,
+                    (LanguageLvl)level,
+                    (int)duration,
+                    schedule,
+                    (DateTime)start,
+                    online,
+                    numStudents,
+                    (CourseState)state,
+                    maxStudents
                 );
             }
         }

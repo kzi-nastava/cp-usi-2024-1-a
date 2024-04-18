@@ -17,6 +17,6 @@ public interface ICourseService
     public void UpdateCourse(Course course);
 
     public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration,
-        Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays,
-        string start, bool online, int numStudents, CourseState? state, int maxStudents);
+        Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start,
+        bool online, int numStudents, CourseState? state, int maxStudents);
 }
