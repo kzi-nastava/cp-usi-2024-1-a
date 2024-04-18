@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using LangLang.DAO;
 using LangLang.Model;
 using LangLang.MVVM;
 using Consts;
@@ -10,7 +9,6 @@ using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
-using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
@@ -254,7 +252,6 @@ namespace LangLang.ViewModel
 
         public void LoadExams()
         {
-            ExamDAO examDAO = ExamDAO.GetInstance();
             var examsDictionary = _examService.GetAvailableExamsForStudent(_loggedInUser);
             foreach (Exam exam in examsDictionary)
             {
@@ -367,7 +364,7 @@ namespace LangLang.ViewModel
             Exams.Clear();
 
             // Get all exams
-            var exams = ExamDAO.GetInstance().GetAllExams().Values;
+            var exams = _examService.GetAllExams();
 
             // Filter exams based on criteria
             foreach (Exam exam in exams)

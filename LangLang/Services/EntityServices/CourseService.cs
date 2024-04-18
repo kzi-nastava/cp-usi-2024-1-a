@@ -10,20 +10,27 @@ namespace LangLang.Services.EntityServices
 {
     public class CourseService : ICourseService
     {
-        CourseDAO courseDAO = CourseDAO.GetInstance();
-        LanguageDAO languageDAO = LanguageDAO.GetInstance();
-        TutorDAO tutorDAO = TutorDAO.GetInstance();
+        private readonly ICourseDAO _courseDao;
+        private readonly ILanguageDAO _languageDao;
+        private readonly ITutorDAO _tutorDao;
+
+        public CourseService(ICourseDAO courseDao, ILanguageDAO languageDao, ITutorDAO tutorDao)
+        {
+            _courseDao = courseDao;
+            _languageDao = languageDao;
+            _tutorDao = tutorDao;
+        }
 
         public Dictionary<string,Course> GetAll()
         {
-            return courseDAO.GetAllCourses();
+            return _courseDao.GetAllCourses();
         }
         public Dictionary<string, Course> GetCoursesByTutor(Tutor loggedInUser)
         {
             Dictionary<string, Course> courses = new();
             foreach(string courseId in loggedInUser.Courses)
             {
-                courses.Add(courseId, courseDAO.GetCourseById(courseId)!);
+                courses.Add(courseId, _courseDao.GetCourseById(courseId)!);
             }
             return courses;
         }
@@ -48,26 +55,26 @@ namespace LangLang.Services.EntityServices
 
         public void AddCourse(Course course, Tutor loggedInUser)
         {
-            courseDAO.AddCourse(course);
+            _courseDao.AddCourse(course);
             loggedInUser.Courses.Add(course.Id);
-            tutorDAO.UpdateTutor(loggedInUser);
+            _tutorDao.UpdateTutor(loggedInUser);
         }
 
         public Course? GetCourseById(string id)
         {
-            return courseDAO.GetCourseById(id);
+            return _courseDao.GetCourseById(id);
         }
 
         public void DeleteCourse(string id, Tutor loggedInUser)
         {
             loggedInUser.Courses.Remove(id);
-            courseDAO.DeleteCourse(id);
-            tutorDAO.UpdateTutor(loggedInUser);
+            _courseDao.DeleteCourse(id);
+            _tutorDao.UpdateTutor(loggedInUser);
         }
 
         public void UpdateCourse(Course course)
         {
-            courseDAO.UpdateCourse(course);
+            _courseDao.UpdateCourse(course);
         }
 
         public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay,Tuple<TimeOnly,int>> schedule,ObservableCollection<WorkDay> scheduleDays, string start, bool online, int numStudents, CourseState? state, int maxStudents)
@@ -83,7 +90,7 @@ namespace LangLang.Services.EntityServices
             }
             else
             {
-                Language? language = languageDAO.GetLanguageById(languageName);
+                Language? language = _languageDao.GetLanguageById(languageName);
                 if (language == null)
                 {
                     return null;

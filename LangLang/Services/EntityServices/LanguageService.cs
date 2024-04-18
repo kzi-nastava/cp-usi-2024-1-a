@@ -7,15 +7,20 @@ namespace LangLang.Services.EntityServices
 {
     public class LanguageService : ILanguageService
     {
-        LanguageDAO languageDAO = LanguageDAO.GetInstance();
+        private readonly ILanguageDAO _languageDao;
+
+        public LanguageService(ILanguageDAO languageDao)
+        {
+            _languageDao = languageDao;
+        }
 
         public List<Language> GetAll()
         {
-            return languageDAO.GetAllLanguages().Values.ToList();
+            return _languageDao.GetAllLanguages().Values.ToList();
         }
         public Language? GetLanguageById(string name)
         {
-            return languageDAO.GetLanguageById(name);
+            return _languageDao.GetLanguageById(name);
         }
     }
 }

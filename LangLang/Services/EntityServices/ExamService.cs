@@ -9,23 +9,30 @@ namespace LangLang.Services.EntityServices;
 
 public class ExamService : IExamService
 {
-    private readonly ExamDAO examDao = ExamDAO.GetInstance();
-    private readonly TutorDAO tutorDao = TutorDAO.GetInstance();
-    private readonly LanguageDAO languageDao = LanguageDAO.GetInstance();
+    private readonly IExamDAO _examDao;
+    private readonly ITutorDAO _tutorDao;
+    private readonly ILanguageDAO _languageDao;
+
+    public ExamService(IExamDAO examDao, ITutorDAO tutorDao, ILanguageDAO languageDao)
+    {
+        _examDao = examDao;
+        _tutorDao = tutorDao;
+        _languageDao = languageDao;
+    }
 
     public List<Exam> GetAllExams()
     {
-        return examDao.GetAllExams().Values.ToList();
+        return _examDao.GetAllExams().Values.ToList();
     }
 
     public Exam? GetExamById(string id)
     {
-        return examDao.GetExamById(id);
+        return _examDao.GetExamById(id);
     }
 
     public List<Exam> GetExamsByTutor(string tutorId)
     {
-        Tutor? tutor = tutorDao.GetTutor(tutorId);
+        Tutor? tutor = _tutorDao.GetTutor(tutorId);
         if (tutor == null)
         {
             return new List<Exam>();
@@ -33,7 +40,7 @@ public class ExamService : IExamService
 
         List<string> examIds = tutor.Exams;
 
-        return examDao.GetExamsForIds(examIds);
+        return _examDao.GetExamsForIds(examIds);
     }
 
     private bool IsExamValid(Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
@@ -43,7 +50,7 @@ public class ExamService : IExamService
         {
             return false;
         }
-        if(languageDao.GetLanguageById(language.Name) == null)
+        if(_languageDao.GetLanguageById(language.Name) == null)
         {
             return false;
         }
@@ -73,10 +80,10 @@ public class ExamService : IExamService
             examState = Exam.State.Confirmable;
         }
         Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
-        exam = examDao.AddExam(exam);
+        exam = _examDao.AddExam(exam);
         
         tutor.Exams.Add(exam.Id);
-        tutorDao.UpdateTutor(tutor);
+        _tutorDao.UpdateTutor(tutor);
         return exam;
     }
     
@@ -87,7 +94,7 @@ public class ExamService : IExamService
             throw new ArgumentException("Invalid exam data");
         }
 
-        Exam? oldExam = examDao.GetExamById(id);
+        Exam? oldExam = _examDao.GetExamById(id);
         if (oldExam == null)
         {
             throw new ArgumentException("Exam not found");
@@ -106,7 +113,7 @@ public class ExamService : IExamService
         }
         
         Exam? exam = new Exam(id, language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
-        exam = examDao.UpdateExam(id, exam);
+        exam = _examDao.UpdateExam(id, exam);
         if (exam == null)
         {
             throw new ArgumentException("Exam not found");
@@ -116,11 +123,11 @@ public class ExamService : IExamService
     
     public void DeleteExam(string id)
     {
-        if (examDao.GetExamById(id) == null)
+        if (_examDao.GetExamById(id) == null)
         {
             throw new ArgumentException("Exam not found");
         }
-        examDao.DeleteExam(id);
+        _examDao.DeleteExam(id);
     }
 
     public List<Exam> GetAvailableExamsForStudent(Student student)

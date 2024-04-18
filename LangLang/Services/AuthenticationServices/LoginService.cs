@@ -1,5 +1,4 @@
-﻿using System;
-using LangLang.DAO;
+﻿using LangLang.DAO;
 using LangLang.Model;
 using LangLang.Stores;
 
@@ -7,11 +6,17 @@ namespace LangLang.Services.AuthenticationServices;
 
 public class LoginService : ILoginService
 {
-    private AuthenticationStore _authenticationStore;
+    private readonly AuthenticationStore _authenticationStore;
+    private readonly IStudentDAO _studentDao;
+    private readonly ITutorDAO _tutorDao;
+    private readonly IDirectorDAO _directorDao;
 
-    public LoginService(AuthenticationStore authenticationStore)
+    public LoginService(AuthenticationStore authenticationStore, IStudentDAO studentDao, ITutorDAO tutorDao, IDirectorDAO directorDao)
     {
         _authenticationStore = authenticationStore;
+        _studentDao = studentDao;
+        _tutorDao = tutorDao;
+        _directorDao = directorDao;
     }
 
     public LoginResult LogIn(string? email, string? password)
@@ -31,7 +36,7 @@ public class LoginService : ILoginService
 
     private LoginResult LogInStudent(string email, string password)
     {
-        Student? student = StudentDAO.GetInstance().GetStudent(email);
+        Student? student = _studentDao.GetStudent(email);
 
         if (student != null)
         {
@@ -46,7 +51,7 @@ public class LoginService : ILoginService
     }
     private LoginResult LogInTutor(string email, string password)
     {
-        Tutor? tutor = TutorDAO.GetInstance().GetTutor(email);
+        Tutor? tutor = _tutorDao.GetTutor(email);
 
         if (tutor != null)
         {
@@ -61,7 +66,7 @@ public class LoginService : ILoginService
     }
     private LoginResult LogInDirector(string email, string password)
     {
-        Director? director = DirectorDAO.GetInstance().GetDirector(email);
+        Director? director = _directorDao.GetDirector(email);
 
         if (director != null)
         {

@@ -1,18 +1,14 @@
 ﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
 using LangLang.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
@@ -24,8 +20,8 @@ namespace LangLang.ViewModel
     {
         private readonly TutorTableWindow window;
         private readonly ItemsControl knownLanguagesHolder;
-        private readonly TutorService tutorService = new();
-        private readonly LanguageService languageService = new();
+        private readonly TutorService tutorService;
+        private readonly LanguageService languageService;
         private readonly IRegisterService _registerService;
         public RelayCommand GoBackCommand { get; set; }
         public RelayCommand AddKnownLangaugeCommand { get; set; }

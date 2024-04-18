@@ -1,39 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Consts;
 using LangLang.Model;
 using LangLang.Util;
 
-namespace LangLang.DAO
+namespace LangLang.DAO.JsonDao
 {
-    public class LastIdDAO
+    public class LastIdDAO : ILastIdDAO
     {
-        private const String jsonKey = "ids";
-
-        private static LastIdDAO? instance;
-
-        private LastId? lastId;
+        private const String JsonKey = "ids";
+        
+        private LastId? _lastId;
 
         private LastId LastId
         {
             get
             {
-                if (lastId == null)
+                if (_lastId == null)
                 {
                     Load();
                 }
 
-                return lastId!;
+                return _lastId!;
             }
-            set => lastId = value;
-        }
-
-        private LastIdDAO(){}
-
-        public static LastIdDAO GetInstance()
-        {
-            return instance ??= new LastIdDAO();
+            set => _lastId = value;
         }
 
         public String GetCourseId()
@@ -68,13 +58,13 @@ namespace LangLang.DAO
             }
             else
             {
-                LastId = ret[jsonKey];
+                LastId = ret[JsonKey];
             }
         }
 
         private void Save()
         {
-            Dictionary<string, LastId> dict = new Dictionary<string, LastId> { { jsonKey, LastId } };
+            Dictionary<string, LastId> dict = new Dictionary<string, LastId> { { JsonKey, LastId } };
             JsonUtil.WriteToFile(dict, Constants.LastIdFilePath);
         }
     }

@@ -1,41 +1,25 @@
-﻿using Consts;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
+using Consts;
 using LangLang.Model;
 using LangLang.Util;
-using System.IO;
 
-namespace LangLang.DAO
+namespace LangLang.DAO.JsonDao
 {
-    internal class LanguageDAO
+    public class LanguageDAO : ILanguageDAO
     {
-        private static LanguageDAO? instance;
-        private Dictionary<string, Language>? languages;
+        private Dictionary<string, Language>? _languages;
         private Dictionary<string, Language> Languages
         {
             get
             {
-                if(languages == null)
+                if(_languages == null)
                 {
                     Load();
                 } 
-                return languages!;
+                return _languages!;
             }
-            set { languages = value; }
-        }
-
-        private LanguageDAO()
-        {
-
-        }
-
-        public static LanguageDAO GetInstance()
-        {
-            if(instance == null)
-            {
-                instance = new LanguageDAO();
-            }
-            return instance;
+            set { _languages = value; }
         }
 
         public Dictionary<string, Language> GetAllLanguages()
@@ -69,7 +53,7 @@ namespace LangLang.DAO
         private void Load() { 
             try
             {
-                languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
+                _languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
             }
             catch (DirectoryNotFoundException)
             {
@@ -86,10 +70,5 @@ namespace LangLang.DAO
         {
             JsonUtil.WriteToFile<Language>(Languages, Constants.LanguageFilePath);
         }   
-
-
-
-
-
     }
 }

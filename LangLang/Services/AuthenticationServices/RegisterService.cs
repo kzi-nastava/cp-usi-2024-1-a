@@ -10,16 +10,26 @@ namespace LangLang.Services.AuthenticationServices
 {
     public class RegisterService : IRegisterService
     {
+        private readonly IStudentDAO _studentDao;
+        private readonly ITutorDAO _tutorDao;
+        private readonly IDirectorDAO _directorDao;
+
+        public RegisterService(IStudentDAO studentDao, ITutorDAO tutorDao, IDirectorDAO directorDao)
+        {
+            _studentDao = studentDao;
+            _tutorDao = tutorDao;
+            _directorDao = directorDao;
+        }
+
         public bool RegisterStudent(string email, string password, string name, string surname, DateTime birthDay, Gender gender, string phoneNumber, EducationLvl educationLvl)
         {
-            StudentDAO sd = StudentDAO.GetInstance();
             bool passed = CheckUserData(email, password, name, surname, phoneNumber);
             passed &= !(CheckExistingEmail(email));
             passed &= (birthDay != DateTime.MinValue);
 
             if (passed)
             {
-                sd.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
+                _studentDao.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
 
             }
             return passed;
@@ -31,16 +41,12 @@ namespace LangLang.Services.AuthenticationServices
             {
                 return false;
             }
-
-            StudentDAO sd = StudentDAO.GetInstance();
-            TutorDAO td = TutorDAO.GetInstance();
-            DirectorDAO dd = DirectorDAO.GetInstance();
-
-            if (sd.GetStudent(email) != null)  //or other searches
+            
+            if (_studentDao.GetStudent(email) != null)  //or other searches
                 return true;
-            if (td.GetTutor(email) != null)  //or other searches
+            if (_tutorDao.GetTutor(email) != null)  //or other searches
                 return true;
-            if (dd.GetDirector(email) != null)  //or other searches
+            if (_directorDao.GetDirector(email) != null)  //or other searches
                 return true;
             return false;
         }

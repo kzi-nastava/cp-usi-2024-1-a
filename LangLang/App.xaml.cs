@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using LangLang.DAO;
+using LangLang.DAO.JsonDao;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
@@ -34,6 +36,15 @@ namespace LangLang
         {
             IServiceCollection services = new ServiceCollection();
 
+            // DAO
+            services.AddSingleton<ICourseDAO, CourseDAO>();
+            services.AddSingleton<IDirectorDAO, DirectorDAO>();
+            services.AddSingleton<IExamDAO, ExamDAO>();
+            services.AddSingleton<ILanguageDAO, LanguageDAO>();
+            services.AddSingleton<ILastIdDAO, LastIdDAO>();
+            services.AddSingleton<IStudentDAO, StudentDAO>();
+            services.AddSingleton<ITutorDAO, TutorDAO>();
+            
             // Services
             services.AddSingleton<ILoginService, LoginService>();
             services.AddSingleton<IRegisterService, RegisterService>();
@@ -68,7 +79,8 @@ namespace LangLang
             );
             
             services.AddScoped<CreateViewModel<RegisterViewModel>>(
-                serviceProvider => serviceProvider.GetRequiredService<RegisterViewModel>);
+                serviceProvider => serviceProvider.GetRequiredService<RegisterViewModel>
+            );
             
             services.AddScoped<CreateViewModel<StudentViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<StudentViewModel>

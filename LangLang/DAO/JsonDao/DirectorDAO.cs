@@ -1,35 +1,23 @@
-﻿using Consts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Consts;
 using LangLang.Model;
 using LangLang.Util;
-using System.Windows.Navigation;
-using System.IO;
 
-namespace LangLang.DAO
+namespace LangLang.DAO.JsonDao
 {
-    public class DirectorDAO
+    public class DirectorDAO : IDirectorDAO
     {
-        private static DirectorDAO? instance;
-        private Dictionary<string, Director>? directors;
+        private Dictionary<string, Director>? _directors;
         
         private Dictionary<string, Director> Directors
         {
             get
             {
-                if (directors == null)
+                if (_directors == null)
                     Load();
-                return directors!;
+                return _directors!;
             }
-            set => directors = value;
-        }
-
-        private DirectorDAO()
-        {
-        }
-
-        public static DirectorDAO GetInstance()
-        {
-            return instance ??= new DirectorDAO();
+            set => _directors = value;
         }
 
         public Dictionary<string, Director> GetAllDirectors() => Directors;
@@ -51,7 +39,7 @@ namespace LangLang.DAO
         {
             try
             {
-                directors = JsonUtil.ReadFromFile<Director>(Constants.DirectorFilePath);
+                _directors = JsonUtil.ReadFromFile<Director>(Constants.DirectorFilePath);
             }
             catch
             {

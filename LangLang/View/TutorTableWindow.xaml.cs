@@ -18,7 +18,7 @@ namespace LangLang.View
             ItemsControl? knownLanguagesHolder = FindName("knownLanguagesHolder") as ItemsControl;
             if (knownLanguagesHolder == null)
                 throw new Exception("Known languages holder ItemsControl not found");
-            DataContext = new TutorTableViewModel(this, knownLanguagesHolder!, new RegisterService());
+            // DataContext = new TutorTableViewModel(this, knownLanguagesHolder!, new RegisterService()); // ???
             dpBirthDate.DisplayDateStart = new DateTime(1924, 1, 1);
             dpBirthDate.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
         }

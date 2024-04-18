@@ -6,18 +6,24 @@ namespace LangLang.Services.UserServices
 {
     public class TutorService : ITutorService
     {
-        TutorDAO tutorDAO = TutorDAO.GetInstance();
+        private readonly ITutorDAO _tutorDao;
+
+        public TutorService(ITutorDAO tutorDao)
+        {
+            _tutorDao = tutorDao;
+        }
+
         public Tutor LoggedUser { get; set; }
 
-        public Dictionary<string, Tutor> GetAllTutors() => tutorDAO.GetAllTutors();
+        public Dictionary<string, Tutor> GetAllTutors() => _tutorDao.GetAllTutors();
 
-        public void AddTutor(Tutor tutor) => tutorDAO.AddTutor(tutor);
+        public void AddTutor(Tutor tutor) => _tutorDao.AddTutor(tutor);
 
-        public Tutor? GetTutor(string email) => tutorDAO.GetTutor(email);
+        public Tutor? GetTutor(string email) => _tutorDao.GetTutor(email);
 
-        public void DeleteTutor(string email) => tutorDAO.DeleteTutor(email);
+        public void DeleteTutor(string email) => _tutorDao.DeleteTutor(email);
 
-        public void UpdateTutor(Tutor tutor) => tutorDAO.UpdateTutor(tutor);
-        public void UpdateTutorEmail(Tutor tutor, string newEmail) => tutorDAO.UpdateTutorEmail(tutor, newEmail);
+        public void UpdateTutor(Tutor tutor) => _tutorDao.UpdateTutor(tutor);
+        public void UpdateTutorEmail(Tutor tutor, string newEmail) => _tutorDao.UpdateTutorEmail(tutor, newEmail);
     }
 }

@@ -1,41 +1,33 @@
 ﻿using System;
-using Consts;
 using System.Collections.Generic;
+using System.IO;
+using Consts;
 using LangLang.Model;
 using LangLang.Util;
-using System.IO;
 
-namespace LangLang.DAO
+namespace LangLang.DAO.JsonDao
 {
-    internal class CourseDAO
+    public class CourseDAO : ICourseDAO
     {
-        private static CourseDAO? instance;
-        private Dictionary<string, Course>? courses;
+        private Dictionary<string, Course>? _courses;
         private Dictionary<string, Course> Courses
         {
             get { 
-                if(courses == null)
+                if(_courses == null)
                 {
                     Load();
                 } 
-                return courses!;
+                return _courses!;
             }
-            set { courses = value; }
+            set { _courses = value; }
         }
-        
 
-        private static LastIdDAO lastIdDAO = LastIdDAO.GetInstance();
 
-        private CourseDAO()
+        private readonly ILastIdDAO _lastIdDAO;
+
+        public CourseDAO(ILastIdDAO lastIdDao)
         {
-        }
-        public static CourseDAO GetInstance()
-        {
-            if(instance == null)
-            {
-                instance = new CourseDAO();
-            }
-            return instance;
+            _lastIdDAO = lastIdDao;
         }
 
         public Dictionary<string, Course> GetAllCourses()
@@ -45,8 +37,8 @@ namespace LangLang.DAO
 
         public void AddCourse(Course course)
         {
-            string id = lastIdDAO.GetCourseId();
-            lastIdDAO.IncrementCourseId();
+            string id = _lastIdDAO.GetCourseId();
+            _lastIdDAO.IncrementCourseId();
             course.Id = id;
             Courses[id] = course;
             Save(); 
@@ -101,7 +93,7 @@ namespace LangLang.DAO
         {
             try
             {
-                courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
+                _courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
             }catch(DirectoryNotFoundException)
             {
                 Courses = new Dictionary<string, Course>();

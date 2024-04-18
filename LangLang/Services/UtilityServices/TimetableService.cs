@@ -11,8 +11,14 @@ namespace LangLang.Services.UtilityServices;
 
 public class TimetableService : ITimetableService
 {
-    private CourseDAO courseDao = CourseDAO.GetInstance();
-    private ExamDAO examDao = ExamDAO.GetInstance();
+    private readonly ICourseDAO _courseDao;
+    private readonly IExamDAO _examDao;
+
+    public TimetableService(ICourseDAO courseDao, IExamDAO examDao)
+    {
+        _courseDao = courseDao;
+        _examDao = examDao;
+    }
 
     private List<TimeOnly> GetAllExamTimes()
     {
@@ -119,7 +125,7 @@ public class TimetableService : ITimetableService
             takenTimes.Add(i, new List<Tuple<TimeOnly, TimeSpan>>());
         }
         
-        List<Exam> exams = examDao.GetExamsByDate(date);
+        List<Exam> exams = _examDao.GetExamsByDate(date);
         foreach (Exam exam in exams)
         {
             // if the current tutor is busy in one classroom, mark all other classrooms as taken
@@ -136,7 +142,7 @@ public class TimetableService : ITimetableService
             }
         }
 
-        List<Course> courses = courseDao.GetCoursesByDate(date);
+        List<Course> courses = _courseDao.GetCoursesByDate(date);
         foreach (Course course in courses)
         {
             if(course.Online) continue;

@@ -1,36 +1,23 @@
-﻿using Consts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Consts;
 using LangLang.Model;
 using LangLang.Util;
-using System.Windows.Navigation;
-using Microsoft.Win32;
-using System.IO;
 
-namespace LangLang.DAO
+namespace LangLang.DAO.JsonDao
 {
-    public class TutorDAO
+    public class TutorDAO : ITutorDAO
     {
-        private static TutorDAO? instance;
-        private Dictionary<string, Tutor>? tutors;
+        private Dictionary<string, Tutor>? _tutors;
 
         private Dictionary<string, Tutor> Tutors
         {
             get
             {
-                if (tutors == null)
+                if (_tutors == null)
                     Load();
-                return tutors!;
+                return _tutors!;
             }
-            set => tutors = value;
-        }
-
-        private TutorDAO()
-        {
-        }
-
-        public static TutorDAO GetInstance()
-        {
-            return instance ??= new TutorDAO();
+            set => _tutors = value;
         }
 
         public Dictionary<string, Tutor> GetAllTutors() => Tutors;
@@ -78,7 +65,7 @@ namespace LangLang.DAO
         {
             try
             {
-                tutors = JsonUtil.ReadFromFile<Tutor>(Constants.TutorFilePath);
+                _tutors = JsonUtil.ReadFromFile<Tutor>(Constants.TutorFilePath);
             }
             catch
             {

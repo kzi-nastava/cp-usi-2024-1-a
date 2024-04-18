@@ -1,5 +1,6 @@
 ﻿using System;
 using Consts;
+using LangLang.DAO;
 using LangLang.Model;
 using LangLang.Services.EntityServices;
 
@@ -7,9 +8,16 @@ namespace LangLang.Services.UserServices
 {
     public class StudentService : IStudentService
     {
-        readonly StudentDAO studentDAO = StudentDAO.GetInstance();
-        private readonly ExamService examService = new();
-        private readonly CourseService courseService = new();
+        private readonly IStudentDAO _studentDao;
+        private readonly IExamService _examService;
+        private readonly ICourseService _courseService;
+        
+        public StudentService(IStudentDAO studentDao, IExamService examService, ICourseService courseService)
+        {
+            _studentDao = studentDao;
+            _examService = examService;
+            _courseService = courseService;
+        }
 
         //Return if the updating is successful
         public bool UpdateStudent(Student student, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
@@ -26,7 +34,7 @@ namespace LangLang.Services.UserServices
             student.Gender = gender;
             student.PhoneNumber = phoneNumber;
 
-            studentDAO.AddStudent(student);
+            _studentDao.AddStudent(student);
             return true;
         }
 
@@ -40,25 +48,25 @@ namespace LangLang.Services.UserServices
         {
             CancelCourses(student);
             CancelExams(student);
-            studentDAO.DeleteStudent(student.Email);
+            _studentDao.DeleteStudent(student.Email);
         }
     
 
         public void ApplyForCourse(Student student, string courseId)
         {
             student.AddCourse(courseId);
-            Course? course = courseService.GetCourseById(courseId);
+            Course? course = _courseService.GetCourseById(courseId);
             course!.AddAttendance();
-            courseService.UpdateCourse(course);
+            _courseService.UpdateCourse(course);
         }
 
         private void CancelCourses(Student student)
         {
             foreach (string courseID in student.GetAppliedCourses())
             {
-                Course? course = courseService.GetCourseById(courseID);
+                Course? course = _courseService.GetCourseById(courseID);
                 course!.CancelAttendance();
-                courseService.UpdateCourse(course);
+                _courseService.UpdateCourse(course);
             }
         }
 
@@ -66,7 +74,7 @@ namespace LangLang.Services.UserServices
         {
             foreach (string examID in student.GetAppliedExams())
             {
-                Exam? exam = examService.GetExamById(examID);
+                Exam? exam = _examService.GetExamById(examID);
                 exam?.CancelAttendance();
                 //examService.UpdateExam(exam!);
                 //TODO handle exam updating

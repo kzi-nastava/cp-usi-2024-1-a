@@ -4,6 +4,11 @@ namespace LangLang.Services.UserServices
 {
     public class DirectorService : IDirectorService
     {
-        DirectorDAO directorDAO = DirectorDAO.GetInstance();
+        private readonly IDirectorDAO _directorDao;
+
+        public DirectorService(IDirectorDAO directorDao)
+        {
+            _directorDao = directorDao;
+        }
     }
 }

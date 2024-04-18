@@ -4,31 +4,26 @@ using Consts;
 using LangLang.Model;
 using LangLang.Util;
 
-namespace LangLang.DAO;
+namespace LangLang.DAO.JsonDao;
 
-public class ExamDAO
+public class ExamDAO : IExamDAO
 {
-    private static ExamDAO? instance;
-    private Dictionary<string, Exam>? exams;
-    private readonly LastIdDAO lastIdDao = LastIdDAO.GetInstance();
+    private Dictionary<string, Exam>? _exams;
+    private readonly ILastIdDAO _lastIdDao;
 
     private Dictionary<string, Exam> Exams
     {
         get
         {
-            exams ??= JsonUtil.ReadFromFile<Exam>(Constants.ExamFilePath);
-            return exams!;
+            _exams ??= JsonUtil.ReadFromFile<Exam>(Constants.ExamFilePath);
+            return _exams!;
         }
-        set => exams = value;
+        set => _exams = value;
     }
 
-    private ExamDAO()
+    public ExamDAO(ILastIdDAO lastIdDao)
     {
-    }
-
-    public static ExamDAO GetInstance()
-    {
-        return instance ??= new ExamDAO();
+        _lastIdDao = lastIdDao;
     }
 
     public Dictionary<string, Exam> GetAllExams()
@@ -70,8 +65,8 @@ public class ExamDAO
 
     public Exam AddExam(Exam exam)
     {
-        lastIdDao.IncrementExamId();
-        exam.Id = lastIdDao.GetExamId();
+        _lastIdDao.IncrementExamId();
+        exam.Id = _lastIdDao.GetExamId();
         Exams.Add(exam.Id, exam);
         SaveExams();
         return exam;
