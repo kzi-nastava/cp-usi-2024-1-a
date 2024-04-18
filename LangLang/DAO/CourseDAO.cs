@@ -9,18 +9,18 @@ namespace LangLang.DAO
 {
     internal class CourseDAO
     {
-        private static CourseDAO? instance;
-        private Dictionary<string, Course>? courses;
+        private static CourseDAO? _instance;
+        private Dictionary<string, Course>? _courses;
         private Dictionary<string, Course> Courses
         {
             get { 
-                if(courses == null)
+                if(_courses == null)
                 {
                     Load();
                 } 
-                return courses!;
+                return _courses!;
             }
-            set { courses = value; }
+            set { _courses = value; }
         }
         
 
@@ -31,11 +31,11 @@ namespace LangLang.DAO
         }
         public static CourseDAO GetInstance()
         {
-            if(instance == null)
+            if(_instance == null)
             {
-                instance = new CourseDAO();
+                _instance = new CourseDAO();
             }
-            return instance;
+            return _instance;
         }
 
         public Dictionary<string, Course> GetAllCourses()
@@ -71,8 +71,8 @@ namespace LangLang.DAO
             foreach (Course course in GetAllCourses().Values)
             {
                 if (
-                    date >= DateOnly.FromDateTime(DateTime.Parse(course.Start)) &&
-                    date <= DateOnly.FromDateTime(DateTime.Parse(course.Start).Add(TimeSpan.FromDays(7*course.Duration))) &&
+                    date >= DateOnly.FromDateTime(course.Start) &&
+                    date <= DateOnly.FromDateTime(course.Start.Add(TimeSpan.FromDays(7*course.Duration))) &&
                     date.DayOfWeek!=DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday && 
                     course.Schedule.ContainsKey(DayConverter.ToWorkDay(date.DayOfWeek))
                     )
@@ -101,7 +101,7 @@ namespace LangLang.DAO
         {
             try
             {
-                courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
+                _courses = JsonUtil.ReadFromFile<Course>(Constants.CourseFilePath);
             }catch(DirectoryNotFoundException)
             {
                 Courses = new Dictionary<string, Course>();

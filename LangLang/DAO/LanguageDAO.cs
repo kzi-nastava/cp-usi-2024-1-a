@@ -9,19 +9,19 @@ namespace LangLang.DAO
 {
     internal class LanguageDAO
     {
-        private static LanguageDAO? instance;
-        private Dictionary<string, Language>? languages;
+        private static LanguageDAO? _instance;
+        private Dictionary<string, Language>? _languages;
         private Dictionary<string, Language> Languages
         {
             get
             {
-                if(languages == null)
+                if(_languages == null)
                 {
                     Load();
                 } 
-                return languages!;
+                return _languages!;
             }
-            set { languages = value; }
+            set { _languages = value; }
         }
 
         private LanguageDAO()
@@ -31,11 +31,11 @@ namespace LangLang.DAO
 
         public static LanguageDAO GetInstance()
         {
-            if(instance == null)
+            if(_instance == null)
             {
-                instance = new LanguageDAO();
+                _instance = new LanguageDAO();
             }
-            return instance;
+            return _instance;
         }
 
         public Dictionary<string, Language> GetAllLanguages()
@@ -69,7 +69,7 @@ namespace LangLang.DAO
         private void Load() { 
             try
             {
-                languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
+                _languages = JsonUtil.ReadFromFile<Language>(Constants.LanguageFilePath);
             }
             catch (DirectoryNotFoundException)
             {

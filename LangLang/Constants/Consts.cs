@@ -10,6 +10,8 @@ namespace Consts
         public static readonly TimeSpan LessonDuration = TimeSpan.FromMinutes(90);
         
         public static readonly TimeSpan ConfirmableExamTime = new(7, 0, 0, 0);
+        public static readonly string DateFormat = "yyyy-MM-dd";
+
 
         public const string StudentFilePath = "../../../Data/Students.json";
         public const string CourseFilePath = "../../../Data/Courses.json";

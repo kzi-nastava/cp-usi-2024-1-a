@@ -93,17 +93,13 @@ namespace LangLang.Util
                     throw new JsonException("Expected string value.");
                 }
 
-                if (!DateTime.TryParse(reader.GetString(), out DateTime result))
-                {
-                    throw new JsonException("Invalid date format.");
-                }
-
-                return result;
+                Int64 miliseconds = Int64.Parse(reader.GetString() ?? throw new JsonException("Invalid date time format."));
+                return  DateTimeMilisecondsConverter.ToDateTime(miliseconds);
             }
 
             public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
             {
-                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+                writer.WriteStringValue(DateTimeMilisecondsConverter.ToMiliseconds(value).ToString());
             }
         }
     }
