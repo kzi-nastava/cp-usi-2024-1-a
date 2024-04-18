@@ -21,6 +21,9 @@ namespace LangLang.ViewModel
         
         public NavigationStore NavigationStore { get; }
 
+        public ICommand LoginCommand { get; }
+        public ICommand SwitchToRegisterCommand { get; }
+
         public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
         {
             _loginService = loginService;
@@ -47,8 +50,6 @@ namespace LangLang.ViewModel
             get => _errorMessage!;
             set =>SetField(ref _errorMessage, value);
         }
-
-        public ICommand LoginCommand { get; }
         
         private void Login(object parameter)
         {
@@ -87,8 +88,6 @@ namespace LangLang.ViewModel
                 }
             }
         }
-
-        public ICommand SwitchToRegisterCommand { get; }
 
         private void SwitchToRegister(object? parameter)
         {

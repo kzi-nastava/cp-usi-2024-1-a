@@ -29,8 +29,7 @@ namespace LangLang.Services.AuthenticationServices
 
             if (passed)
             {
-                _studentDao.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
-
+                _studentDao.AddStudent(new Student(email, password, name, surname, birthDay, gender, phoneNumber, educationLvl, 0, "", "", finishedCourses: new List<string>(),coursesApplied: new List<string>(), examsApplied: new List<string>(), notifications: new List<string>()));
             }
             return passed;
         }

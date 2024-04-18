@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Consts;
 using LangLang.DAO;
 using LangLang.Model;
@@ -43,14 +44,33 @@ namespace LangLang.Services.UserServices
             return student.AttendingCourse != "" || student.AttendingExam != "" || student.GetAppliedCourses().Count != 0 || student.GetAppliedExams().Count != 0;
         }
 
+        public List<Course> GetFinishedCourses(Student student)
+        {
+            List<Course> courseList = new List<Course>();
+            foreach(string courseId in student.GetFinishedCourses()){
+                courseList.Add(_courseService.GetCourseById(courseId)!);
+            }
+            return courseList;
+        }
+
+        public bool AppliedForCourse(Student student, string courseId)
+        {
+            List<string> appliedCourses = student.GetAppliedCourses();
+            return appliedCourses.Contains(courseId);
+        }
+
+        public bool AppliedForExam(Student student, string examId)
+        {
+            List<string> appliedExams = student.GetAppliedExams();
+            return appliedExams.Contains(examId);
+        }
     
         public void DeleteAccount(Student student)
         {
-            CancelCourses(student);
+            CancelAllCourses(student);
             CancelExams(student);
             _studentDao.DeleteStudent(student.Email);
         }
-    
 
         public void ApplyForCourse(Student student, string courseId)
         {
@@ -60,7 +80,7 @@ namespace LangLang.Services.UserServices
             _courseService.UpdateCourse(course);
         }
 
-        private void CancelCourses(Student student)
+        private void CancelAllCourses(Student student)
         {
             foreach (string courseID in student.GetAppliedCourses())
             {
@@ -69,6 +89,20 @@ namespace LangLang.Services.UserServices
                 _courseService.UpdateCourse(course);
             }
         }
+        
+        public void CancelCourse(Student student)
+        {
+            student.CancelAttendingCourse();
+            Course? course = _courseService.GetCourseById(student.AttendingCourse);
+            course!.CancelAttendance();
+            _courseService.UpdateCourse(course);
+        }
+
+        public void CancelCourseApplication(Student student, string courseID)
+        {
+            student.CancelCourseApplication(courseID);
+        }
+
 
         private void CancelExams(Student student)
         {

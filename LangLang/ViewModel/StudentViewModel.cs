@@ -26,13 +26,20 @@ namespace LangLang.ViewModel
         public ICommand LogOutCommand { get; }
         public ICommand DeleteProfileCommand { get; }
         public ICommand OpenStudentProfileCommand { get; }
+        public ICommand ApplyCourseCommand { get; }
+        public ICommand CancelCourseCommand{ get; }
+        public ICommand ApplyExamCommand { get; }
+        public ICommand CancelExamCommand { get; }
+        public ICommand RateTutorCommand { get; }
+        public ICommand CancelAttendingCourseCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
-
+        public ObservableCollection<Course> FinishedCourses { get; set; }
+        public ObservableCollection<Course> AttendingCourse { get; set; }
         public ObservableCollection<Exam> Exams { get; set; }
-
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
+        //public ObservableCollection<Course> AttendingCourse { get; set; }
 
         private string name = "";
         public string Name
@@ -99,7 +106,6 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-
 
         // FILTER VALUES
         private string courseLanguageFilter = "";
@@ -201,20 +207,79 @@ namespace LangLang.ViewModel
             _navigationService = navigationService;
             _popupNavigationService = popupNavigationService;
             Courses = new ObservableCollection<Course>();
+            FinishedCourses = new ObservableCollection<Course>();
+            AttendingCourse = new ObservableCollection<Course>();
             Exams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
             Durations = new ObservableCollection<int?> { null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
             Start = DateTime.Now.ToShortDateString();
+
             LoadExams();
             LoadLanguages();
             LoadCourses();
+            LoadFinishedCourses();
             LoadLanguageLevels();
+            LoadAttendingCourse();
+
+            //initialize commands
             ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
             LogOutCommand = new RelayCommand(_ => LogOut());
             DeleteProfileCommand = new RelayCommand(_ => DeleteProfile());
             OpenStudentProfileCommand = new RelayCommand(_ => OpenStudentProfile());
+            ApplyCourseCommand = new RelayCommand<string>(ApplyCourse);
+            CancelCourseCommand = new RelayCommand<string>(CancelCourse);
+            ApplyExamCommand = new RelayCommand<string>(ApplyExam);
+            CancelExamCommand = new RelayCommand<string>(CancelExam);
+            RateTutorCommand = new RelayCommand<string>(RateTutor);
+            CancelAttendingCourseCommand = new RelayCommand(CancelAttendingCourse!);
+        }
+
+
+
+        
+        private void CancelAttendingCourse(object parameter)
+        {
+            MessageBox.Show($"cancelled course sent!", "Success");
+            
+        }
+        
+
+        private void ApplyCourse(string courseId)
+        {
+            if(_studentService.AppliedForCourse(_loggedInUser, courseId))
+            {
+                MessageBox.Show($"You've sent an application for this course", "Invalid");
+            }
+            else
+            {
+                _studentService.ApplyForCourse(_loggedInUser, courseId);
+                MessageBox.Show($"Application sent!", "Success");
+            }
+        }
+
+
+        private void CancelCourse(string courseId)
+        {
+            MessageBox.Show($"Successful cancel for course {courseId}", "Success");
+        }
+
+
+        private void ApplyExam(string examId)
+        {
+            MessageBox.Show($"Successful apply for exam {examId}", "Success");
+        }
+
+
+        private void CancelExam(string examId)
+        {
+            MessageBox.Show($"Successful cancel for exam {examId}", "Success");
+        }
+
+        private void RateTutor(string courseId)
+        {
+            MessageBox.Show($"Successful rating for course {courseId}", "Success");
         }
 
         private void ClearCourseFilters(object? obj)
@@ -243,11 +308,41 @@ namespace LangLang.ViewModel
         public void LoadCourses()
         {
             var courses = _courseService.GetAvailableCourses(_loggedInUser);
+            int i = 0;
             foreach (Course course in courses)
             {
                 Courses.Add(course);
+                if(i == 0)
+                {
+                    FinishedCourses.Add(course);
+                    i++;
+                    //AttendingCourse.Add(course);
+                }
             }
 
+        }
+
+        private void LoadAttendingCourse()
+        {
+            int i = 0;
+            foreach (Course cour in Courses)
+            {
+                if (i == 0)
+                {
+                    i++;
+                    AttendingCourse.Add(cour);
+                    break;
+                }
+            }
+
+            /*
+            var attendingCourseId = _studentService.LoggedUser!.AttendingCourse;
+            AttendingCourse = new ObservableCollection<Course>
+            {
+                _courseService.GetCourseById(attendingCourseId)!
+            };
+
+            */
         }
 
         public void LoadExams()
@@ -259,6 +354,14 @@ namespace LangLang.ViewModel
             }
         }
 
+        public void LoadFinishedCourses()
+        {
+            var studentCourses =  _studentService.GetFinishedCourses(_loggedInUser);
+            foreach(Course course in studentCourses)
+            {
+                FinishedCourses.Add(course);
+            }
+        }
 
         public void LoadLanguages()
         {
@@ -312,10 +415,6 @@ namespace LangLang.ViewModel
                 }
             }
         }
-
-
-
-
 
 
         //FILTERING EXAM
