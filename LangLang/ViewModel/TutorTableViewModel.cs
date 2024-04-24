@@ -1,19 +1,18 @@
 ﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
 using LangLang.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.EntityServices;
+using LangLang.Services.UserServices;
 
 namespace LangLang.ViewModel
 {
@@ -21,8 +20,9 @@ namespace LangLang.ViewModel
     {
         private readonly TutorTableWindow window;
         private readonly ItemsControl knownLanguagesHolder;
-        private readonly TutorService tutorService = TutorService.GetInstance();
-        private readonly LanguageService languageService = new();
+        private readonly TutorService tutorService;
+        private readonly LanguageService languageService;
+        private readonly IRegisterService _registerService;
         public RelayCommand GoBackCommand { get; set; }
         public RelayCommand AddKnownLangaugeCommand { get; set; }
         public RelayCommand AddTutorCommand { get; set; }
@@ -167,10 +167,11 @@ namespace LangLang.ViewModel
         }
 
 
-        public TutorTableViewModel(TutorTableWindow window, ItemsControl knownLanguagesHolder)
+        public TutorTableViewModel(TutorTableWindow window, ItemsControl knownLanguagesHolder, IRegisterService registerService)
         {
             this.window = window;
             this.knownLanguagesHolder = knownLanguagesHolder;
+            _registerService = registerService;
             Tutors = new();
             Languages = new();
             Levels = new();
@@ -193,8 +194,8 @@ namespace LangLang.ViewModel
 
         private void GoBack()
         {
-            DirectorWindow directorWindow = new();
-            directorWindow.Show();
+            // DirectorWindow directorWindow = new();
+            // directorWindow.Show();
             window.Close();
         }
 
@@ -323,7 +324,7 @@ namespace LangLang.ViewModel
             if (SelectedItem == null)
                 return;
 
-            bool valid = RegisterService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
+            bool valid = _registerService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
             if (!valid)
             {
                 MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -377,13 +378,13 @@ namespace LangLang.ViewModel
                 return;
             }
 
-            bool valid = RegisterService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
+            bool valid = _registerService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
             if (!valid)
             {
                 MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            if (RegisterService.CheckExistingEmail(Email))
+            if (_registerService.CheckExistingEmail(Email))
             {
                 MessageBox.Show("Email not avaliable!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;

@@ -93,8 +93,8 @@ namespace LangLang.Util
                     throw new JsonException("Expected string value.");
                 }
 
-                Int64 miliseconds = Int64.Parse(reader.GetString() ?? throw new JsonException("Invalid date time format."));
-                return  DateTimeMilisecondsConverter.ToDateTime(miliseconds);
+                Int64 milliseconds = Int64.Parse(reader.GetString() ?? throw new JsonException("Invalid date time format."));
+                return  DateTimeMilisecondsConverter.ToDateTime(milliseconds);
             }
 
             public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)

@@ -1,21 +1,22 @@
-﻿<Window x:Class="LangLang.View.StudentWindow"
+﻿<mvvm:NavigableWindow x:Class="LangLang.View.StudentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LangLang.View"
         xmlns:consts="clr-namespace:Consts"
+        xmlns:mvvm="clr-namespace:LangLang.MVVM"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="StudentWindow" Height="753" Width="1000"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <Window.Resources>
+        
+    <mvvm:NavigableWindow.Resources>
         <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
         <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
         <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
         <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
-    </Window.Resources>
-
+    </mvvm:NavigableWindow.Resources>
 
     <TabControl>
         <!-- Exams Tab -->
@@ -90,7 +91,7 @@
                 </DataGrid>
 
                 <DockPanel Grid.Row="4">
-                    <Button x:Name="LogoutBtn1" DockPanel.Dock="Left" Content="Logout" Click="Logout" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
+                    <Button x:Name="LogoutBtn1" DockPanel.Dock="Left" Content="Logout" Command="{Binding LogOutCommand}" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -101,7 +102,7 @@
                     </Button>
                     <StackPanel DockPanel.Dock="Right" Width="110"></StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="EditProfileBtn1" Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                        <Button x:Name="EditProfileBtn1" Command="{Binding OpenStudentProfileCommand}" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -110,7 +111,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <Button x:Name="DeleteProfileBtn1" Content="Delete Profile"  Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                        <Button x:Name="DeleteProfileBtn1" Content="Delete Profile" Command="{Binding DeleteProfileCommand}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -222,7 +223,7 @@
 
 
                 <DockPanel Grid.Row="4">
-                    <Button x:Name="LogoutBtn" DockPanel.Dock="Left" Content="Logout" Click="Logout" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
+                    <Button x:Name="LogoutBtn" DockPanel.Dock="Left" Content="Logout" Command="{Binding LogOutCommand}" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -233,7 +234,7 @@
                     </Button>
                     <StackPanel Width="110" DockPanel.Dock="Right"></StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="EditProfileBtn"  Click="OpenStudentProfile" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghj}">
+                        <Button x:Name="EditProfileBtn"  Command="{Binding OpenStudentProfileCommand}" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -242,7 +243,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <Button x:Name="DeleteProfileBtn" Content="Delete Profile" Click="DeleteProfile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding ghjl}" Margin="10">
+                        <Button x:Name="DeleteProfileBtn" Content="Delete Profile" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Command="{Binding DeleteProfileCommand}" Margin="10">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -395,4 +396,4 @@
 
 
     </TabControl>
-</Window>
+</mvvm:NavigableWindow>

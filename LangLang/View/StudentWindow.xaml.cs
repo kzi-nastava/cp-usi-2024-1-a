@@ -2,23 +2,22 @@
 using LangLang.Services;
 using LangLang.ViewModel;
 using System.Windows;
+using LangLang.MVVM;
+using LangLang.Services.UserServices;
+using LangLang.View.Factories;
 using System.Windows.Controls;
 
 namespace LangLang.View
 {
-    public partial class StudentWindow : Window
+    public partial class StudentWindow : NavigableWindow
     {
-        public StudentWindow()
+        public StudentWindow(StudentViewModel studentViewModel, ILangLangWindowFactory windowFactory)
+            : base(studentViewModel, windowFactory)
         {
             InitializeComponent();
-            DataContext = new StudentViewModel(this);
+            DataContext = studentViewModel;
         }
-
-        private void OpenStudentProfile(object sender, RoutedEventArgs e)
-        {
-            StudentAccountWindow view = new StudentAccountWindow();
-            view.Show();
-        }
+        
         /*
         private void CancelAtendingCourseButton(object sender, RoutedEventArgs e)
         {
@@ -92,25 +91,6 @@ namespace LangLang.View
                     viewModel.RateTutorCommand.Execute(courseId);
                 }
             }
-        }
-
-
-        private void DeleteProfile(object sender, RoutedEventArgs e)
-        {
-            StudentService studentService = StudentService.GetInstance();
-            studentService.DeleteMyAccount();
-            MessageBox.Show("Your profile has been successfully deleted");
-
-            LoginWindow view = new LoginWindow();
-            view.Show();
-            this.Close();
-        }
-
-        private void Logout(object sender, RoutedEventArgs e)
-        {
-            LoginWindow loginWindow = new LoginWindow();
-            loginWindow.Show();
-            this.Close();
         }
     }
 }

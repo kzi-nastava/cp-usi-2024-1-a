@@ -1,17 +1,22 @@
 ﻿using Consts;
-using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using LangLang.Model;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.UserServices;
+using LangLang.Stores;
 
 namespace LangLang.ViewModel
 {
-    internal class StudentAccountViewModel : ViewModelBase
+    public class StudentAccountViewModel : ViewModelBase, INavigableDataContext
     {
-        private StudentService studentService = StudentService.GetInstance();
+        private readonly IStudentService _studentService;
+        private readonly AuthenticationStore _authenticationStore;
+        public NavigationStore NavigationStore { get; }
+        
         private string? _email;
         private string? _password;
         private string? _name;
@@ -26,15 +31,22 @@ namespace LangLang.ViewModel
         private string? _errorMessageSurname;
         private string? _errorMessagePhone;
 
-        public StudentAccountViewModel()
+        private readonly IRegisterService _registerService;
+        
+        public StudentAccountViewModel(IRegisterService registerService, IStudentService studentService, AuthenticationStore authenticationStore, NavigationStore navigationStore)
         {
+            _registerService = registerService;
+            _studentService = studentService;
+            _authenticationStore = authenticationStore;
+            NavigationStore = navigationStore;
             ConfirmCommand = new RelayCommand(ConfirmInput!);
             SetUserData();
         }
 
         private void SetUserData()
         {
-            Student user = studentService.LoggedUser!;
+            User user = _authenticationStore.CurrentUser ??
+                        throw new InvalidOperationException("Cannot set user data without currently logged in user");
             Email = user.Email;
             Name = user.Name;
             Surname = user.Surname;
@@ -134,11 +146,11 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = RegisterService.CheckUserData(studentService.LoggedUser!.Email, password, name, surname, phoneNumber);
+            bool successful = _registerService.CheckUserData("email", password, name, surname, phoneNumber);
 
             if (successful)
             {
-                bool canEdit = studentService.UpdateStudent(password, name, surname,birthday, gender, phoneNumber);
+                bool canEdit = _studentService.UpdateStudent(null, password, name, surname,birthday, gender, phoneNumber);
                 if (canEdit)
                 {
                     MessageBox.Show($"Succesfull update");
@@ -166,11 +178,11 @@ namespace LangLang.ViewModel
                     ErrorMessageSurname = "Surname must be all letters";
                 }
 
-                if (!RegisterService.CheckPhoneNumber(phoneNumber))
+                if (!_registerService.CheckPhoneNumber(phoneNumber))
                 {
                     ErrorMessagePhone = "Must be made up of numbers";
                 }
-                if (!RegisterService.CheckPassword(password))
+                if (!_registerService.CheckPassword(password))
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
@@ -180,6 +192,5 @@ namespace LangLang.ViewModel
         {
             return birthday == DateTime.MinValue || password == null || name == null || surname == null || phoneNumber == null || name == "" || surname == "" || password == "" || phoneNumber == "";
         }
-
     }
 }

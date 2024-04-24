@@ -1,38 +1,42 @@
 ﻿using LangLang.MVVM;
 using LangLang.View;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel
 {
-    internal class DirectorViewModel
+    public class DirectorViewModel : ViewModelBase, INavigableDataContext
     {
-        private readonly DirectorWindow window;
         public RelayCommand OpenTutorTableCommand { get; set; }
         public RelayCommand LogoutCommand { get; set; }
 
-        public DirectorViewModel(DirectorWindow window)
+        private readonly ILoginService _loginService;
+        private readonly INavigationService _navigationService;
+
+        public NavigationStore NavigationStore { get; }
+
+        public DirectorViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
         {
+            _loginService = loginService;
+            _navigationService = navigationService;
+            NavigationStore = navigationStore;
             OpenTutorTableCommand = new RelayCommand(execute => OpenTutorTable());
             LogoutCommand = new RelayCommand(execute => Logout());
-            this.window = window;   
         }
 
         private void OpenTutorTable()
         {
             TutorTableWindow tutorTable = new TutorTableWindow();
             tutorTable.Show();
-            window.Close();
         }
 
         private void Logout()
         {
-            LoginWindow login = new LoginWindow(); 
-            login.Show();
-            window.Close();
+            _loginService.LogOut();
+            _navigationService.Navigate(ViewType.Login);
         }
     }
 }

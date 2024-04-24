@@ -1,22 +1,18 @@
 ﻿using LangLang.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
+using LangLang.MVVM;
+using LangLang.View.Factories;
 
 namespace LangLang.View
 {
-    public partial class LoginWindow : Window
+    public partial class LoginWindow : NavigableWindow
     {
-        public LoginWindow()
+        public LoginWindow(LoginViewModel loginViewModel, ILangLangWindowFactory windowFactory)
+            : base(loginViewModel, windowFactory)
         {
             InitializeComponent();
-            DataContext = new LoginViewModel(this);
-        }
-
-        private void OpenRegister(object sender, RoutedEventArgs e)
-        {
-            RegisterView view = new RegisterView();
-            view.Show();
-            this.Close();
+            DataContext = loginViewModel;
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)

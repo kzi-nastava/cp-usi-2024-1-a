@@ -7,14 +7,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using LangLang.Services.EntityServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
 
 namespace LangLang.ViewModel
 {
-    internal class CourseViewModel : ViewModelBase
+    public class CourseViewModel : ViewModelBase
     {
-        private readonly CourseService _courseService;
-        private readonly TimetableService _timetableService;
-        private Tutor _loggedInUser;
+        private readonly ICourseService _courseService;
+        private readonly ITimetableService _timetableService;
+        private readonly Tutor _loggedInUser;
         public RelayCommand AddCourseCommand { get; }
         public RelayCommand DeleteCourseCommand { get; }
         public RelayCommand UpdateCourseCommand { get; }
@@ -260,11 +264,13 @@ namespace LangLang.ViewModel
                 SelectCourse(value);
             }
         }
-        public CourseViewModel(Tutor loggedInUser,CourseService _courseService, LanguageService languageService, TimetableService timetableService)
+        public CourseViewModel(AuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService)
         {
-            this._courseService = _courseService;
-            this._loggedInUser = loggedInUser;
-            this._timetableService = timetableService;
+            _loggedInUser = (Tutor?)authenticationStore.CurrentUser ??
+                           throw new InvalidOperationException(
+                               "Cannot create CourseViewModel without currently logged in tutor");
+            _courseService = courseService;
+            _timetableService = timetableService;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLvl>();
