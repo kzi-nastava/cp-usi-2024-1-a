@@ -20,6 +20,7 @@ namespace LangLang.ViewModel
         private readonly ITimetableService _timetableService;
         private readonly INavigationService _navigationService;
         private readonly IPopupNavigationService _popupNavigationService;
+        private readonly CurrentCourseStore _currentCourseStore;
         private readonly Tutor _loggedInUser;
         public RelayCommand OpenCourseInfoCommand { get; }
         public RelayCommand AddCourseCommand { get; }
@@ -267,11 +268,12 @@ namespace LangLang.ViewModel
                 SelectCourse(value);
             }
         }
-        public CourseViewModel(AuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, INavigationService navigationService, IPopupNavigationService popupNavigationService)
+        public CourseViewModel(AuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, INavigationService navigationService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
         {
             _loggedInUser = (Tutor?)authenticationStore.CurrentUser ??
                            throw new InvalidOperationException(
                                "Cannot create CourseViewModel without currently logged in tutor");
+            _currentCourseStore = currentCourseStore;
             _courseService = courseService;
             _navigationService = navigationService;
             _timetableService = timetableService;
@@ -306,6 +308,7 @@ namespace LangLang.ViewModel
 
         private void OpenCourseInfo(object? obj)
         {
+            _currentCourseStore.CurrentCourse = selectedItem;
             _popupNavigationService.Navigate(ViewType.CourseInfo);
         }
 

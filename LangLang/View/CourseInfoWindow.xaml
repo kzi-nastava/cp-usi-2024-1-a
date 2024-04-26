@@ -6,7 +6,38 @@
         xmlns:local="clr-namespace:LangLang.View"
         mc:Ignorable="d"
         Title="CourseInfoViewModel" Height="450" Width="800">
-    <Grid>
-        
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="460"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+            <TextBlock Text="Overview of " FontSize="18">
+            </TextBlock>
+            <TextBlock Text="{Binding CourseName}" FontSize="18"/>
+        </StackPanel>
+        <DataGrid 
+            Grid.Column="0" Grid.Row="1" IsReadOnly="True"
+            AutoGenerateColumns="False"
+            ItemsSource="{Binding StudentsOnCourse}"
+        >
+            
+        </DataGrid>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Accept" Command="{Binding AcceptStudentCommand}" Width="150"/>
+                <Button Content="Deny" Command="{Binding DenyStudentCommand}"  Width="150"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Give penalty point" Command="{Binding GivePenaltyPointCommand}" Width="150"/>
+                <Button Content="Grade Student" Command="{Binding GradeStudentCommand}"  Width="150"/>
+            </StackPanel>
+
+        </StackPanel>
+
     </Grid>
 </mvvm:NavigableWindow>
