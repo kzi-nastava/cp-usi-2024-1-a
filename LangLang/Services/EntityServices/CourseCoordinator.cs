@@ -1,9 +1,4 @@
 ﻿using LangLang.Services.UserServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LangLang.Services.EntityServices
 {
@@ -11,11 +6,13 @@ namespace LangLang.Services.EntityServices
     {
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
+        private readonly ICourseApplicationService _courseApplicationService;
 
-        public CourseCoordinator(ICourseService courseService, IStudentService studentService)
+        public CourseCoordinator(ICourseService courseService, IStudentService studentService, ICourseApplicationService courseApplicationService)
         {
             _courseService = courseService;
             _studentService = studentService;
+            _courseApplicationService = courseApplicationService;
         }
 
 
