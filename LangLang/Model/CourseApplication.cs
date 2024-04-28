@@ -18,6 +18,13 @@
             CourseApplicationState = State.Pending;
 
         }
+        public CourseApplication( string courseId, string studentId, State courseApplicationState)
+        {
+            Id = "";
+            CourseId = courseId;
+            StudentId = studentId;
+            CourseApplicationState = courseApplicationState;
+        }
         public CourseApplication(string id,string courseId, string studentId, State courseApplicationState)
         {
             Id = id;
