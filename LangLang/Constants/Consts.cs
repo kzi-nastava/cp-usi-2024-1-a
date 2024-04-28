@@ -22,6 +22,7 @@ namespace Consts
         public const string DirectorFilePath = "../../../Data/Directors.json";
         public const string LastIdFilePath = "../../../Data/LastId.json";
         public const string CourseApplicationsFilePath = "../../../Data/CourseApplications.json";
+        public const string CourseAttendancesFilePath = "../../../Data/CourseAttendances.json";
     }
 
 

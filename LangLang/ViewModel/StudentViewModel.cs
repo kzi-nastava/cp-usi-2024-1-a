@@ -32,6 +32,7 @@ namespace LangLang.ViewModel
         public ICommand CancelExamCommand { get; }
         public ICommand RateTutorCommand { get; }
         public ICommand CancelAttendingCourseCommand { get; }
+        public ICommand CancelAttendingExamCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<Course> FinishedCourses { get; set; }
         public ObservableCollection<Course> AttendingCourse { get; set; }
@@ -39,7 +40,6 @@ namespace LangLang.ViewModel
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
-        //public ObservableCollection<Course> AttendingCourse { get; set; }
 
         private string name = "";
         public string Name
@@ -234,28 +234,36 @@ namespace LangLang.ViewModel
             CancelExamCommand = new RelayCommand<string>(CancelExam);
             RateTutorCommand = new RelayCommand<string>(RateTutor);
             CancelAttendingCourseCommand = new RelayCommand(CancelAttendingCourse!);
+            CancelAttendingExamCommand = new RelayCommand(CancelAttendingExam!);
+
         }
 
 
 
-        
+
         private void CancelAttendingCourse(object parameter)
         {
             MessageBox.Show($"cancelled course sent!", "Success");
             
         }
-        
+
+        private void CancelAttendingExam(object parameter)
+        {
+            MessageBox.Show($"cancelled exam sent!", "Success");
+
+        }
+
 
         private void ApplyCourse(string courseId)
         {
             if(_studentService.AppliedForCourse(_loggedInUser, courseId))
             {
-                MessageBox.Show($"You've sent an application for this course", "Invalid");
+                MessageBox.Show($"You've sent an application for this course {courseId}", "Invalid");
             }
             else
             {
                 _studentService.ApplyForCourse(_loggedInUser, courseId);
-                MessageBox.Show($"Application sent!", "Success");
+                MessageBox.Show($"Application sent! {courseId}", "Success");
             }
         }
 

@@ -1,32 +1,37 @@
-﻿using Consts;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using Consts;
 using LangLang.Model;
 using LangLang.Util;
 using System.Collections.Generic;
 
 namespace LangLang.DAO.JsonDao;
-public class CourseApplicationDAO : ICourseApplicationDAO
-{
-    private Dictionary<string, CourseApplication>? _courseApplications;
+    public class CourseApplicationDAO : ICourseApplicationDAO
+    {
+        private Dictionary<string, CourseApplication>? _courseApplications;
     private readonly ILastIdDAO _lastIdDAO;
 
-    private Dictionary<string, CourseApplication> CourseApplications
-    {
-        get
+        private Dictionary<string, CourseApplication> CourseApplications
         {
+            get
+            {
             _courseApplications ??= JsonUtil.ReadFromFile<CourseApplication>(Constants.CourseApplicationsFilePath);
             return _courseApplications;
-        }
+                }
         set => _courseApplications = value;
-    }
+            }
+            set { _courseApplications = value; }
+        }
 
     public CourseApplicationDAO(ILastIdDAO lastIdDAO)
-    {
+        {
         _lastIdDAO = lastIdDAO;
-    }
+        }
     public Dictionary<string, CourseApplication> GetAllCourseApplications()
-    {
-        return CourseApplications;
-    }
+        {
+            return CourseApplications;
+        }
     public CourseApplication? GetCourseApplicationById(string id)
     {
         return CourseApplications.GetValueOrDefault(id);
@@ -54,7 +59,7 @@ public class CourseApplicationDAO : ICourseApplicationDAO
             }
         }
         return applications;
-    }
+            }
     public CourseApplication? GetStudentApplicationForCourse(string studentId, string courseId)
     {
         List<CourseApplication> applications = GetCourseApplicationsForStudent(studentId);
@@ -66,26 +71,26 @@ public class CourseApplicationDAO : ICourseApplicationDAO
             }
         }
         return null;
-    }
+            }
     public CourseApplication AddCourseApplication(CourseApplication application)
-    {
+            {
         _lastIdDAO.IncrementCourseApplicationId();
         application.Id = _lastIdDAO.GetCourseApplicationId();
         CourseApplications.Add(application.Id, application);
         SaveCourseApplications();
         return application;
-    }
+            }
     public void DeleteCourseApplication(string id)
     {
         CourseApplications.Remove(id);
         SaveCourseApplications();
-    }
+        }
     public CourseApplication? UpdateCourseApplication(string id, CourseApplication application)
-    {
+        {
         if (!CourseApplications.ContainsKey(id)) return null;
         CourseApplications[id] = application;
         return application;
-    }
+        }
     private void SaveCourseApplications()
     {
         JsonUtil.WriteToFile(CourseApplications, Constants.CourseApplicationsFilePath);
