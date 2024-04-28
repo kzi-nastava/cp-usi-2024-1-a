@@ -26,6 +26,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<IPopupNavigationService, PopupNavigationService>();
             services.AddSingleton<IClosePopupNavigationService, ClosePopupNavigationService>();
+            services.AddSingleton<ICourseCoordinator, CourseCoordinator>();
         });
         
         return host;
