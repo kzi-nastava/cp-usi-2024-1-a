@@ -34,6 +34,17 @@ namespace LangLang.DAO.JsonDao
             LastId.CourseApplicationId++;
             Save();
         }
+
+        public string GetCourseAttendanceId()
+        {
+            return LastId.CourseAttendanceId.ToString();
+        }
+        public void IncrementCourseAttendanceId()
+        {
+            LastId.CourseAttendanceId++;
+            Save();
+        }
+
         public String GetCourseId()
         {
             return LastId.CourseId.ToString();
