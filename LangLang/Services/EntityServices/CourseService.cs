@@ -76,6 +76,26 @@ namespace LangLang.Services.EntityServices
         {
             _courseDao.UpdateCourse(course);
         }
+        public void FinishCourse(string id)
+        {
+            Course? course = GetCourseById(id);
+            if(course == null)
+            {
+                throw new ArgumentException("Course not found");
+            }
+            course.State = CourseState.Finished;
+            UpdateCourse(course);
+        }
+        public void CalculateAverageScores(string id)
+        {
+            Course? course = GetCourseById(id);
+            if (course == null)
+            {
+                throw new ArgumentException("Course not found");
+            }
+            // TODO: think about placing logic for calculating results
+
+        }
 
         public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay,Tuple<TimeOnly,int>> schedule,ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, CourseState? state, int maxStudents)
         {
