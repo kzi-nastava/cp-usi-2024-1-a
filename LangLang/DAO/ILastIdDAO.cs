@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LangLang.Model;
+using System;
 
 namespace LangLang.DAO;
 
@@ -8,4 +9,6 @@ public interface ILastIdDAO
     public void IncrementCourseId();
     public String GetExamId();
     public void IncrementExamId();
+    public string GetCourseApplicationId();
+    public void IncrementCourseApplicationId();
 }
