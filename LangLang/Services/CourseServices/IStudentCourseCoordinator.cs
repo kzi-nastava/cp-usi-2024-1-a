@@ -1,6 +1,6 @@
 ﻿namespace LangLang.Services.CourseServices;
 
-public interface IStudentCoureCoordinator
+public interface IStudentCourseCoordinator
 {
     public void Accept(string applicationId);
     public void CancelAplication(string applicationId);

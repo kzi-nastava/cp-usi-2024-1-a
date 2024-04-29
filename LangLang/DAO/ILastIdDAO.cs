@@ -1,5 +1,4 @@
-﻿using LangLang.Model;
-using System;
+﻿using System;
 
 namespace LangLang.DAO;
 

@@ -1,14 +1,12 @@
 ﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using LangLang.Services.CourseServices;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
-using LangLang.Services.EntityServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 

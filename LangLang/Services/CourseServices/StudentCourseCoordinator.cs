@@ -1,5 +1,6 @@
 ﻿using Consts;
 using LangLang.Model;
+using LangLang.Services.StudentCourseServices;
 using LangLang.Services.UserServices;
 using System;
 using System.Collections.Generic;
@@ -7,20 +8,19 @@ using static LangLang.Model.CourseApplication;
 
 namespace LangLang.Services.CourseServices
 {
-    public class StudentCourseCoordinator : IStudentCoureCoordinator
+    public class StudentCourseCoordinator : IStudentCourseCoordinator
     {
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
         private readonly ICourseApplicationService _courseApplicationService;
         private readonly ICourseAttendanceService _courseAttendanceService;
 
-        public StudentCourseCoordinator(ICourseService courseService, IStudentService studentService, ICourseApplicationService courseApplicationService)
+        public StudentCourseCoordinator(ICourseService courseService,ICourseAttendanceService courseAttendanceService, IStudentService studentService, ICourseApplicationService courseApplicationService)
         {
             _courseService = courseService;
+            _courseAttendanceService = courseAttendanceService;
             _studentService = studentService;
             _courseApplicationService = courseApplicationService;
-
-
         }
 
         public void Accept(string applicationId)
