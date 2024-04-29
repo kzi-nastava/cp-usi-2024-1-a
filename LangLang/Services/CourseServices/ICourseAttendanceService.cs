@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LangLang.Services.StudentCourseServices
+namespace LangLang.Services.CourseServices
 {
     internal class ICourseAttendanceService
     {

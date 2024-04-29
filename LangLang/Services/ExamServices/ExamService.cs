@@ -5,7 +5,7 @@ using Consts;
 using LangLang.DAO;
 using LangLang.Model;
 
-namespace LangLang.Services.EntityServices;
+namespace LangLang.Services.ExamServices;
 
 public class ExamService : IExamService
 {
@@ -50,46 +50,46 @@ public class ExamService : IExamService
         {
             return false;
         }
-        if(_languageDao.GetLanguageById(language.Name) == null)
+        if (_languageDao.GetLanguageById(language.Name) == null)
         {
             return false;
         }
-        if(examDate < DateOnly.FromDateTime(DateTime.Now))
+        if (examDate < DateOnly.FromDateTime(DateTime.Now))
         {
             return false;
         }
-        if(examDate == DateOnly.FromDateTime(DateTime.Now) && examTime < TimeOnly.FromDateTime(DateTime.Now))
+        if (examDate == DateOnly.FromDateTime(DateTime.Now) && examTime < TimeOnly.FromDateTime(DateTime.Now))
         {
             return false;
         }
 
         return true;
     }
-    
+
     public Exam AddExam(Tutor tutor, Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
     {
-        if(!IsExamValid(language, languageLvl, examDate, examTime, classroomNumber, maxStudents))
+        if (!IsExamValid(language, languageLvl, examDate, examTime, classroomNumber, maxStudents))
         {
             throw new ArgumentException("Invalid exam data");
         }
-        
+
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
         Exam.State examState = Exam.State.NotStarted;
-        if(dateTime - Constants.ConfirmableExamTime < DateTime.Now)
+        if (dateTime - Constants.ConfirmableExamTime < DateTime.Now)
         {
             examState = Exam.State.Confirmable;
         }
         Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
         exam = _examDao.AddExam(exam);
-        
+
         tutor.Exams.Add(exam.Id);
         _tutorDao.UpdateTutor(tutor);
         return exam;
     }
-    
+
     public Exam UpdateExam(string id, Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
     {
-        if(!IsExamValid(language, languageLvl, examDate, examTime, classroomNumber, maxStudents))
+        if (!IsExamValid(language, languageLvl, examDate, examTime, classroomNumber, maxStudents))
         {
             throw new ArgumentException("Invalid exam data");
         }
@@ -99,19 +99,19 @@ public class ExamService : IExamService
         {
             throw new ArgumentException("Exam not found");
         }
-        
-        if(oldExam.ExamState != Exam.State.NotStarted && oldExam.ExamState != Exam.State.Confirmable)
+
+        if (oldExam.ExamState != Exam.State.NotStarted && oldExam.ExamState != Exam.State.Confirmable)
         {
             throw new ArgumentException("Exam cannot be updated at this state");
         }
-        
+
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
         Exam.State examState = Exam.State.NotStarted;
-        if(dateTime - Constants.ConfirmableExamTime < DateTime.Now)
+        if (dateTime - Constants.ConfirmableExamTime < DateTime.Now)
         {
             examState = Exam.State.Confirmable;
         }
-        
+
         Exam? exam = new Exam(id, language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
         exam = _examDao.UpdateExam(id, exam);
         if (exam == null)
@@ -120,7 +120,7 @@ public class ExamService : IExamService
         }
         return exam;
     }
-    
+
     public void DeleteExam(string id)
     {
         if (_examDao.GetExamById(id) == null)

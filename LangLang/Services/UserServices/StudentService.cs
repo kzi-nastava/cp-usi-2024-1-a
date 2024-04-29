@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Consts;
 using LangLang.DAO;
 using LangLang.Model;
-using LangLang.Services.EntityServices;
+using LangLang.Services.CourseServices;
+using LangLang.Services.ExamServices;
 
 namespace LangLang.Services.UserServices
 {

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using Consts;
 using LangLang.Model;
 
-namespace LangLang.Services.EntityServices;
+namespace LangLang.Services.CourseServices;
 
 public interface ICourseService
 {

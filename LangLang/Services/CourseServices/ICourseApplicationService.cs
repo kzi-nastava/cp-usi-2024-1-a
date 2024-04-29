@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using static LangLang.Model.CourseApplication;
 
-namespace LangLang.Services.StudentCourseServices;
+namespace LangLang.Services.CourseServices;
 
 public interface ICourseApplicationService
 {

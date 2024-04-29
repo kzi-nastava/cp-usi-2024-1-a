@@ -6,11 +6,13 @@ using LangLang.Model;
 using LangLang.MVVM;
 using Consts;
 using LangLang.Services.AuthenticationServices;
-using LangLang.Services.EntityServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
+using LangLang.Services.CourseServices;
+using LangLang.Services.ExamServices;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.ViewModel
 {

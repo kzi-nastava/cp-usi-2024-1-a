@@ -8,9 +8,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using LangLang.Services.EntityServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
+using LangLang.Services.CourseServices;
 
 namespace LangLang.ViewModel
 {

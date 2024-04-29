@@ -1,5 +1,6 @@
 ﻿using LangLang.Services.AuthenticationServices;
-using LangLang.Services.EntityServices;
+using LangLang.Services.CourseServices;
+using LangLang.Services.ExamServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
@@ -26,7 +27,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<IPopupNavigationService, PopupNavigationService>();
             services.AddSingleton<IClosePopupNavigationService, ClosePopupNavigationService>();
-            services.AddSingleton<ICourseCoordinator, CourseCoordinator>();
+            services.AddSingleton<IStudentCoureCoordinator, StudentCourseCoordinator>();
             services.AddSingleton<ICourseApplicationService, CourseApplicationService>();
         });
         
