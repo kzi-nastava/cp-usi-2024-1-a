@@ -68,9 +68,21 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.DeleteApplication(application.Id);
         }
 
-        public void DropCourse(string courseId)
+        public void DropCourse(string applicationId)
         {
-            throw new NotImplementedException();
+            CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
+            if (application == null)
+            {
+                throw new ArgumentException("No application found");
+            }
+            if (!CanDropCourse(application.CourseId))
+            {
+                throw new ArgumentException("Cannot drop course this early on");
+            }
+            _courseService.CancelAttendance(application.CourseId);
+            _courseApplicationService.ActivateStudentApplications(application.StudentId);
+            _courseAttendanceService.RemoveAttendee(application.StudentId, application.CourseId);
+            //Sent tutor the excuse why student wants to drop out
         }
 
         public void FinishCourse(string courseId, string studentId)
@@ -109,6 +121,20 @@ namespace LangLang.Services.CourseServices
                 return false;
             }
             if (course.Start - Constants.ConfirmableCourseTime < DateTime.Now)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool CanDropCourse(string courseId)
+        {
+            Course? course = _courseService.GetCourseById(courseId);
+            if (course == null)
+            {
+                return false;
+            }
+            if (course.Start + Constants.CancellableCourseTime > DateTime.Now)
             {
                 return false;
             }
