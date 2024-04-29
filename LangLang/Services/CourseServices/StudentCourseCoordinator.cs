@@ -43,8 +43,10 @@ namespace LangLang.Services.CourseServices
         public void ApplyForCourse(string courseId, string studentId)
         {
             // if courseAttendingService.getAttendingCourseForStudent(studentid) != null throw exception
-            CourseApplication application = _courseApplicationService.ApplyForCourse(studentId, courseId);
-
+            if (_courseAttendanceService.GetStudentAttendance(studentId) != null) {
+                throw new ArgumentException("Applicant already enrolled in a class!");
+            }
+            _courseApplicationService.ApplyForCourse(studentId, courseId);
         }
 
         public void CancelAplication(string applicationId)
