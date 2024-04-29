@@ -39,7 +39,7 @@ namespace LangLang.Services.CourseServices
             Course? course = _courseService.GetCourseById(courseId);
             if (course == null) throw new ArgumentException("No existing course.");
             if (course.IsFull()) throw new ArgumentException("The course is full.");
-            CourseApplication application = new CourseApplication(id, studentId, courseId, State.Pending);
+            CourseApplication application = new CourseApplication(studentId, courseId, State.Pending);
             _courseApplicationDAO.AddCourseApplication(application);
             return application;
         }
