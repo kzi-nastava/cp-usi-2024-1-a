@@ -6,7 +6,7 @@ using Consts;
 using LangLang.DAO;
 using LangLang.Model;
 
-namespace LangLang.Services.EntityServices
+namespace LangLang.Services.CourseServices
 {
     public class CourseService : ICourseService
     {
@@ -21,14 +21,14 @@ namespace LangLang.Services.EntityServices
             _tutorDao = tutorDao;
         }
 
-        public Dictionary<string,Course> GetAll()
+        public Dictionary<string, Course> GetAll()
         {
             return _courseDao.GetAllCourses();
         }
         public Dictionary<string, Course> GetCoursesByTutor(Tutor loggedInUser)
         {
             Dictionary<string, Course> courses = new();
-            foreach(string courseId in loggedInUser.Courses)
+            foreach (string courseId in loggedInUser.Courses)
             {
                 courses.Add(courseId, _courseDao.GetCourseById(courseId)!);
             }
@@ -79,7 +79,7 @@ namespace LangLang.Services.EntityServices
         public void FinishCourse(string id)
         {
             Course? course = GetCourseById(id);
-            if(course == null)
+            if (course == null)
             {
                 throw new ArgumentException("Course not found");
             }
@@ -97,13 +97,13 @@ namespace LangLang.Services.EntityServices
 
         }
 
-        public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay,Tuple<TimeOnly,int>> schedule,ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, CourseState? state, int maxStudents)
+        public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, CourseState? state, int maxStudents)
         {
-            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0  || maxStudents == 0 || level == null || state == null)
+            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0 || maxStudents == 0 || level == null || state == null)
             {
                 return null;
             }
-            if(start == null)
+            if (start == null)
             {
                 return null;
             }

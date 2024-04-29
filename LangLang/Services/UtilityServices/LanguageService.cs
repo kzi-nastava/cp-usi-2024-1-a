@@ -3,7 +3,7 @@ using System.Linq;
 using LangLang.DAO;
 using LangLang.Model;
 
-namespace LangLang.Services.EntityServices
+namespace LangLang.Services.UtilityServices
 {
     public class LanguageService : ILanguageService
     {

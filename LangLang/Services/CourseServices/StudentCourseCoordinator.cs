@@ -1,14 +1,13 @@
 ﻿using Consts;
 using LangLang.Model;
-using LangLang.Services.EntityServices;
 using LangLang.Services.UserServices;
 using System;
 using System.Collections.Generic;
 using static LangLang.Model.CourseApplication;
 
-namespace LangLang.Services.StudentCourseServices
+namespace LangLang.Services.CourseServices
 {
-    public class StudentCourseCoordinator:IStudentCoureCoordinator
+    public class StudentCourseCoordinator : IStudentCoureCoordinator
     {
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
@@ -27,7 +26,7 @@ namespace LangLang.Services.StudentCourseServices
         public void Accept(string applicationId)
         {
             CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
-            if(application == null)
+            if (application == null)
             {
                 throw new ArgumentException("No application found");
             }
@@ -65,7 +64,7 @@ namespace LangLang.Services.StudentCourseServices
 
         public void DropCourse(string courseId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void FinishCourse(string courseId, string studentId)
@@ -77,16 +76,16 @@ namespace LangLang.Services.StudentCourseServices
 
         public void GenerateAttendance()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void RemoveAttendee(string courseId, string studentId)
         {
             // TODO: Add courseAttendance.RemoveAttendee method here.
             List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);
-            foreach(CourseApplication application in applications)
+            foreach (CourseApplication application in applications)
             {
-                if(application.CourseApplicationState == State.Accepted)
+                if (application.CourseApplicationState == State.Accepted)
                 {
                     _courseApplicationService.RejectApplication(application.Id);
                 }

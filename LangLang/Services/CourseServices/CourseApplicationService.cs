@@ -1,13 +1,12 @@
 ﻿using Consts;
 using LangLang.DAO;
 using LangLang.Model;
-using LangLang.Services.EntityServices;
 using LangLang.Services.UserServices;
 using System;
 using System.Collections.Generic;
 using static LangLang.Model.CourseApplication;
 
-namespace LangLang.Services.StudentCourseServices
+namespace LangLang.Services.CourseServices
 {
     public class CourseApplicationService : ICourseApplicationService
     {
@@ -29,7 +28,7 @@ namespace LangLang.Services.StudentCourseServices
         public void ActivateStudentApplications(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
-            foreach(CourseApplication application in applications)
+            foreach (CourseApplication application in applications)
             {
                 application.ChangeApplicationState(State.Pending);
             }
@@ -39,10 +38,10 @@ namespace LangLang.Services.StudentCourseServices
         {
             Course? course = _courseService.GetCourseById(courseId);
             if (course == null) throw new ArgumentException("No existing course.");
-            if(course.MaxStudents == course.NumStudents) throw new ArgumentException("The course is full.");
+            if (course.MaxStudents == course.NumStudents) throw new ArgumentException("The course is full.");
             _lastIdDAO.IncrementCourseApplicationId();
             string id = _lastIdDAO.GetCourseApplicationId();
-            CourseApplication application = new CourseApplication(id,studentId, courseId, State.Pending);
+            CourseApplication application = new CourseApplication(id, studentId, courseId, State.Pending);
             _courseApplicationDAO.AddCourseApplication(application);
             return application;
         }
@@ -50,7 +49,7 @@ namespace LangLang.Services.StudentCourseServices
         public CourseApplication ChangeApplicationState(string applicationId, State state)
         {
             CourseApplication? application = _courseApplicationDAO.GetCourseApplicationById(applicationId);
-            if(application == null)
+            if (application == null)
             {
                 throw new ArgumentException("Course application not found");
             }
@@ -84,9 +83,9 @@ namespace LangLang.Services.StudentCourseServices
         public void PauseStudentApplications(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
-            foreach(CourseApplication application in applications)
+            foreach (CourseApplication application in applications)
             {
-                if(application.CourseApplicationState != State.Accepted)
+                if (application.CourseApplicationState != State.Accepted)
                 {
                     application.ChangeApplicationState(State.Paused);
                 }
@@ -101,7 +100,7 @@ namespace LangLang.Services.StudentCourseServices
                 throw new ArgumentException("Course application not found");
             }
             Course? course = _courseService.GetCourseById(application.CourseId);
-            if(course == null)
+            if (course == null)
             {
                 throw new ArgumentException("Cannot find course.");
             }
@@ -128,7 +127,7 @@ namespace LangLang.Services.StudentCourseServices
         public void RemoveStudentApplications(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
-            foreach(CourseApplication application in applications)
+            foreach (CourseApplication application in applications)
             {
                 // NOTE: not sure if i should delete CourseApplication or just change state.
                 //application.ChangeApplicationState(State.Paused);
