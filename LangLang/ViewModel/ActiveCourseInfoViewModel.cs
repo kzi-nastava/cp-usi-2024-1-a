@@ -5,7 +5,7 @@ using System;
 
 namespace LangLang.ViewModel
 {
-    public class CourseInfoViewModel : ViewModelBase, INavigableDataContext
+    public class ActiveCourseInfoViewModel : ViewModelBase, INavigableDataContext
     {
         public NavigationStore NavigationStore { get; }
         private readonly CurrentCourseStore _currentCourseStore;
@@ -35,7 +35,7 @@ namespace LangLang.ViewModel
         }
         //public ObservableCollection<Student> Students { get; set; }
 
-        public CourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore)
+        public ActiveCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore)
         {
             NavigationStore = navigationStore;
             _currentCourseStore = currentCourseStore;

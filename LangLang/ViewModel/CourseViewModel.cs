@@ -309,7 +309,14 @@ namespace LangLang.ViewModel
         private void OpenCourseInfo(object? obj)
         {
             _currentCourseStore.CurrentCourse = selectedItem;
-            _popupNavigationService.Navigate(ViewType.CourseInfo);
+            if(selectedItem?.State == CourseState.Active)
+            {
+                _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
+            }
+            if(selectedItem?.State == CourseState.NotStarted)
+            {
+                _popupNavigationService.Navigate(ViewType.UpcomingCourseInfo);
+            }
         }
 
         private void SelectCourse(object? obj)

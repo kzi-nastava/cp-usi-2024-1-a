@@ -13,7 +13,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<CourseViewModel> _createCourseViewModel;
     private readonly CreateViewModel<ExamViewModel> _createExamViewModel;
     private readonly CreateViewModel<StudentAccountViewModel> _createStudentAccountViewModel;
-    private readonly CreateViewModel<CourseInfoViewModel> _createCourseInfoViewModel;
+    private readonly CreateViewModel<ActiveCourseInfoViewModel> _createActiveCourseInfoViewModel;
+    private readonly CreateViewModel<UpcomingCourseInfoViewModel> _createUpcomingCourseInfoViewModel;
 
     public LangLangViewModelFactory(CreateViewModel<LoginViewModel> createLoginViewModel,
         CreateViewModel<RegisterViewModel> createRegisterViewModel, 
@@ -23,7 +24,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<CourseViewModel> createCourseViewModel,
         CreateViewModel<ExamViewModel> createExamViewModel,
         CreateViewModel<StudentAccountViewModel> createStudentAccountViewModel,
-        CreateViewModel<CourseInfoViewModel> createCourseInfoViewModel
+        CreateViewModel<ActiveCourseInfoViewModel> createActiveCourseInfoViewModel,
+        CreateViewModel<UpcomingCourseInfoViewModel> createUpcomingCourseInfoViewModel
         )
     {
         _createLoginViewModel = createLoginViewModel;
@@ -34,7 +36,9 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createCourseViewModel = createCourseViewModel;
         _createExamViewModel = createExamViewModel;
         _createStudentAccountViewModel = createStudentAccountViewModel;
-        _createCourseInfoViewModel = createCourseInfoViewModel;
+        _createActiveCourseInfoViewModel = createActiveCourseInfoViewModel;
+        _createUpcomingCourseInfoViewModel = createUpcomingCourseInfoViewModel;
+       
     }
 
     public ViewModelBase CreateViewModel(ViewType viewType)
@@ -49,7 +53,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.Course => _createCourseViewModel(),
             ViewType.Exam => _createExamViewModel(),
             ViewType.StudentAccount => _createStudentAccountViewModel(),
-            ViewType.CourseInfo => _createCourseInfoViewModel(),
+            ViewType.ActiveCourseInfo => _createActiveCourseInfoViewModel(),
+            ViewType.UpcomingCourseInfo => _createUpcomingCourseInfoViewModel(),
             _ => throw new ArgumentOutOfRangeException(nameof(viewType), viewType, "No ViewModel exists for the given ViewType: " + viewType)
         };
     }
