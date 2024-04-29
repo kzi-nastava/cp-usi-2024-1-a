@@ -27,9 +27,13 @@ namespace LangLang.Services.UserServices
                 {
                     if (teachingCourseId == courseId) return tutor;
                 }
-
             }
             return null;
+        }
+
+        public void AddRating(Tutor tutor, int rating)
+        {
+            tutor.AddRating(rating);
         }
 
         public void AddTutor(Tutor tutor) => _tutorDao.AddTutor(tutor);

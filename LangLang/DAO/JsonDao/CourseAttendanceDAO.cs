@@ -47,7 +47,7 @@ namespace LangLang.DAO.JsonDao
             }
             return attendances;
         }
-        public List<CourseAttendance> GeCourseAttendancesForStudent(string studentId)
+        public List<CourseAttendance> GetCourseAttendancesForStudent(string studentId)
         {
             List<CourseAttendance> attendances = new();
             foreach (CourseAttendance attendance in GetAllCourseAttendances().Values)
@@ -61,7 +61,7 @@ namespace LangLang.DAO.JsonDao
         }
         public CourseAttendance? GetStudentAttendanceForCourse(string studentId, string courseId)
         {
-            List<CourseAttendance> attendances = GeCourseAttendancesForStudent(studentId);
+            List<CourseAttendance> attendances = GetCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
                 if (attendance.CourseId == courseId)
@@ -71,6 +71,7 @@ namespace LangLang.DAO.JsonDao
             }
             return null;
         }
+
         public CourseAttendance AddCourseAttendance(CourseAttendance attendance)
         {
             _lastIdDAO.IncrementCourseAttendanceId();
