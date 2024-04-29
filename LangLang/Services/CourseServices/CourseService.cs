@@ -21,6 +21,8 @@ namespace LangLang.Services.CourseServices
             _tutorDao = tutorDao;
         }
 
+
+
         public Dictionary<string, Course> GetAll()
         {
             return _courseDao.GetAllCourses();
@@ -96,6 +98,19 @@ namespace LangLang.Services.CourseServices
             // TODO: think about placing logic for calculating results
 
         }
+
+        public void AddAttendance(string courseId)
+        {
+            GetCourseById(courseId)!.AddAttendance();
+        }
+
+        public void CancelAttendance(string courseId)
+        {
+            GetCourseById(courseId)!.CancelAttendance();
+        }
+
+
+
 
         public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, CourseState? state, int maxStudents)
         {

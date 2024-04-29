@@ -58,8 +58,12 @@ namespace LangLang.Services.CourseServices
             {
                 throw new ArgumentException("Cannot accept student at this state");
             }
-            _courseApplicationService.ChangeApplicationState(applicationId, State.Rejected);
-            _courseApplicationService.ActivateStudentApplications(application.StudentId);
+            if (application.CourseApplicationState == State.Accepted)
+            {
+                _courseApplicationService.ActivateStudentApplications(application.StudentId);
+                _courseService.CancelAttendance(application.CourseId);
+            }
+            _courseApplicationService.DeleteApplication(application.Id);
         }
 
         public void DropCourse(string courseId)
