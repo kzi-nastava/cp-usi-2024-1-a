@@ -129,8 +129,6 @@ namespace LangLang.Services.CourseServices
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
             foreach (CourseApplication application in applications)
             {
-                // NOTE: not sure if i should delete CourseApplication or just change state.
-                //application.ChangeApplicationState(State.Paused);
                 DeleteApplication(application.Id);
             }
         }

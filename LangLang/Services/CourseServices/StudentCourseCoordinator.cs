@@ -89,28 +89,38 @@ namespace LangLang.Services.CourseServices
         {
             //_courseService.CalculateAverageScores
             _courseService.FinishCourse(courseId);
+            //student service add language skill
             _courseApplicationService.ActivateStudentApplications(studentId);
         }
 
-        public void GenerateAttendance()
+        public void GenerateAttendance(string courseId)
         {
-            throw new NotImplementedException();
+            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForCourse(courseId);
+            foreach(CourseApplication application in applications)
+            {
+                if(application.CourseApplicationState == State.Accepted)
+                {
+                    bool studentAttendingAnotherCourse = _courseAttendanceService.GetAttendancesForStudent(application.StudentId) != null;
+                    if (!studentAttendingAnotherCourse)
+                    {
+                        _courseAttendanceService.AddAttendance(application.StudentId, application.CourseId);
+                    }
+                }
+            }
         }
 
         public void RemoveAttendee(string courseId, string studentId)
         {
-            // TODO: Add courseAttendance.RemoveAttendee method here.
             List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);
             foreach (CourseApplication application in applications)
             {
                 if (application.CourseApplicationState == State.Accepted)
                 {
-                    _courseApplicationService.RejectApplication(application.Id);
+                    _courseService.CancelAttendance(application.CourseId);
                 }
             }
-
-            Course? course = _courseService.GetCourseById(courseId);
-            course!.CancelAttendance();
+            _courseApplicationService.RemoveStudentApplications(studentId);
+            _courseAttendanceService.RemoveAttendee(studentId, courseId);
         }
 
         public bool CanBeModified(string courseId)

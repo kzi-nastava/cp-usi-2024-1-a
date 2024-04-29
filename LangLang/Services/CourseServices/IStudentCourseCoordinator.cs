@@ -7,7 +7,7 @@ public interface IStudentCourseCoordinator
     public void RemoveAttendee(string courseId, string studentId);
     public void ApplyForCourse(string courseId, string studentId);
     public void FinishCourse(string courseId, string studentId);
-    public void GenerateAttendance();
+    public void GenerateAttendance(string courseId);
     public void DropCourse(string courseId);
 
 }

@@ -13,5 +13,6 @@ public interface ICourseAttendanceService
     public void RemoveAttendee(string studentId, string courseId);
     public void GradeStudent(string studentId, string CourseId, int knowledgeGrade, int activityGrade);
     public void RateTutor(CourseAttendance attendance, int rating);
+
 }
 
