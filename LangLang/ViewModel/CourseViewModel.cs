@@ -1,15 +1,17 @@
 ﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
+using LangLang.Services.CourseServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using LangLang.Services.CourseServices;
 using System.Linq;
 using System.Windows;
-using LangLang.Services.UtilityServices;
-using LangLang.Stores;
-using LangLang.Services.CourseServices;
 
 namespace LangLang.ViewModel
 {

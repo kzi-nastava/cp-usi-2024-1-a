@@ -60,8 +60,7 @@ namespace Consts
 
     public enum CourseState
     {
-        Active, Canceled, Finished
-        //NotStarted, Locked, Started, InProgress, Finished
+        NotStarted, Locked, Active, Canceled, InProgress, FinishedNotGraded, FinishedGraded
     }
     public enum WorkDay
     {
