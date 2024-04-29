@@ -1,16 +1,16 @@
 ﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
+using LangLang.Services.EntityServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
-using LangLang.Services.EntityServices;
-using LangLang.Services.UtilityServices;
-using LangLang.Stores;
 
 namespace LangLang.ViewModel
 {
@@ -18,7 +18,11 @@ namespace LangLang.ViewModel
     {
         private readonly ICourseService _courseService;
         private readonly ITimetableService _timetableService;
+        private readonly INavigationService _navigationService;
+        private readonly IPopupNavigationService _popupNavigationService;
+        private readonly CurrentCourseStore _currentCourseStore;
         private readonly Tutor _loggedInUser;
+        public RelayCommand OpenCourseInfoCommand { get; }
         public RelayCommand AddCourseCommand { get; }
         public RelayCommand DeleteCourseCommand { get; }
         public RelayCommand UpdateCourseCommand { get; }
@@ -264,13 +268,16 @@ namespace LangLang.ViewModel
                 SelectCourse(value);
             }
         }
-        public CourseViewModel(AuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService)
+        public CourseViewModel(AuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, INavigationService navigationService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
         {
             _loggedInUser = (Tutor?)authenticationStore.CurrentUser ??
                            throw new InvalidOperationException(
                                "Cannot create CourseViewModel without currently logged in tutor");
+            _currentCourseStore = currentCourseStore;
             _courseService = courseService;
+            _navigationService = navigationService;
             _timetableService = timetableService;
+            _popupNavigationService = popupNavigationService;
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLvl>();
@@ -290,12 +297,19 @@ namespace LangLang.ViewModel
             LoadCourseStates();
             LoadWorkDays();
             LoadHours();
-            AddCourseCommand = new RelayCommand(SaveCourse, CanSaveCourse);
-            DeleteCourseCommand = new RelayCommand(DeleteCourse, CanDeleteCourse);
-            UpdateCourseCommand = new RelayCommand(UpdateCourse, CanUpdateCourse);
+            AddCourseCommand = new RelayCommand(SaveCourse, canExecute => true);
+            DeleteCourseCommand = new RelayCommand(DeleteCourse, canExecute => SelectedItem != null);
+            UpdateCourseCommand = new RelayCommand(UpdateCourse, canExecute => SelectedItem != null);
             ToggleMaxStudentsCommand = new RelayCommand(ToggleMaxStudents);
             ClearFiltersCommand = new RelayCommand(ClearFilters);
             SelectedCourseChangedCommand = new RelayCommand(SelectCourse);
+            OpenCourseInfoCommand = new RelayCommand(OpenCourseInfo, canExecute => SelectedItem != null);
+        }
+
+        private void OpenCourseInfo(object? obj)
+        {
+            _currentCourseStore.CurrentCourse = selectedItem;
+            _popupNavigationService.Navigate(ViewType.CourseInfo);
         }
 
         private void SelectCourse(object? obj)
@@ -375,10 +389,6 @@ namespace LangLang.ViewModel
                 MaxStudents = 0;
             }
         }
-        private bool CanUpdateCourse(object? arg)
-        {
-            return SelectedItem != null;
-        }
         private void UpdateCourse(object? obj)
         {
             CreateSchedule();
@@ -412,14 +422,6 @@ namespace LangLang.ViewModel
                 RemoveInputs();
             }
         }
-        private bool CanDeleteCourse(object? args)
-        {
-            return SelectedItem != null;
-        }
-        private bool CanSaveCourse(object? arg)
-        {
-            return true;
-        }
         private void SaveCourse(object? obj)
         {
             CreateSchedule();
@@ -436,7 +438,6 @@ namespace LangLang.ViewModel
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
-
         private int GetClassroomNumber(TimeOnly? time)
         {
             if (Start != null && time != null)
