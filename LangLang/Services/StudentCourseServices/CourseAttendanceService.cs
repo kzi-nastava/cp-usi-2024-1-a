@@ -1,14 +1,9 @@
 ﻿using LangLang.DAO;
-using LangLang.DAO.JsonDao;
 using LangLang.Model;
 using LangLang.Services.EntityServices;
 using LangLang.Services.UserServices;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LangLang.Services.StudentCourseServices
 {
@@ -35,7 +30,7 @@ namespace LangLang.Services.StudentCourseServices
             List<CourseAttendance> attendances = _courseAttendanceDAO.GeCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
-                if(attendance.CourseId == courseId && _courseService.GetCourseById(courseId)!.State != Consts.CourseState.Finished)
+                if(attendance.CourseId == courseId && _courseService.GetCourseById(courseId)!.State == Consts.CourseState.Active)
                     _courseAttendanceDAO.DeleteCourseAttendance(attendance.Id);
             }
         }
