@@ -13,15 +13,13 @@ namespace LangLang.Services.StudentCourseServices
         private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
         private readonly ICourseAttendanceDAO _courseAttendanceDAO;
-        private readonly ILastIdDAO _lastIdDAO;
 
-        public CourseAttendanceService(ICourseService courseService, IStudentService studentService, ITutorService tutorService, ICourseAttendanceDAO courseAttendanceDAO, ILastIdDAO lastIdDAO)
+        public CourseAttendanceService(ICourseService courseService, IStudentService studentService, ITutorService tutorService, ICourseAttendanceDAO courseAttendanceDAO)
         {
             _courseService = courseService;
             _studentService = studentService;
             _tutorService = tutorService;
             _courseAttendanceDAO = courseAttendanceDAO;
-            _lastIdDAO = lastIdDAO;
         }
 
         public List<CourseAttendance> GetAttendancesForStudent(string studentId)
@@ -61,9 +59,7 @@ namespace LangLang.Services.StudentCourseServices
 
         public CourseAttendance AddAttendance(string studentId, string courseId)
         {
-            _lastIdDAO.IncrementCourseAttendanceId();
-            string id = _lastIdDAO.GetCourseAttendanceId();
-            CourseAttendance attendance = new CourseAttendance(id, courseId, studentId, false, false);
+            CourseAttendance attendance = new CourseAttendance(courseId, studentId, false, false);
             _courseAttendanceDAO.AddCourseAttendance(attendance);
             return attendance;
         }

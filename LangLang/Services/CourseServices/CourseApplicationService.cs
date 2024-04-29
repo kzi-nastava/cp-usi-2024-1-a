@@ -13,14 +13,12 @@ namespace LangLang.Services.CourseServices
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
         private readonly ICourseApplicationDAO _courseApplicationDAO;
-        private readonly ILastIdDAO _lastIdDAO;
 
-        public CourseApplicationService(ICourseService courseService, IStudentService studentService, ICourseApplicationDAO courseApplicationDAO, ILastIdDAO lastIdDAO)
+        public CourseApplicationService(ICourseService courseService, IStudentService studentService, ICourseApplicationDAO courseApplicationDAO)
         {
             _courseService = courseService;
             _studentService = studentService;
             _courseApplicationDAO = courseApplicationDAO;
-            _lastIdDAO = lastIdDAO;
         }
 
         //after accepting one course all other applications are paused,
@@ -39,9 +37,7 @@ namespace LangLang.Services.CourseServices
             Course? course = _courseService.GetCourseById(courseId);
             if (course == null) throw new ArgumentException("No existing course.");
             if (course.MaxStudents == course.NumStudents) throw new ArgumentException("The course is full.");
-            _lastIdDAO.IncrementCourseApplicationId();
-            string id = _lastIdDAO.GetCourseApplicationId();
-            CourseApplication application = new CourseApplication(id, studentId, courseId, State.Pending);
+            CourseApplication application = new CourseApplication(studentId, courseId, State.Pending);
             _courseApplicationDAO.AddCourseApplication(application);
             return application;
         }
