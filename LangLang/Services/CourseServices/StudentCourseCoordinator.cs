@@ -49,7 +49,7 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.ApplyForCourse(studentId, courseId);
         }
 
-        public void CancelAplication(string applicationId)
+        public void CancelApplication(string applicationId)
         {
             CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
             if (application == null)
@@ -60,12 +60,7 @@ namespace LangLang.Services.CourseServices
             {
                 throw new ArgumentException("Cannot accept student at this state");
             }
-            if (application.CourseApplicationState == State.Accepted)
-            {
-                _courseApplicationService.ActivateStudentApplications(application.StudentId);
-                _courseService.CancelAttendance(application.CourseId);
-            }
-            _courseApplicationService.DeleteApplication(application.Id);
+            _courseApplicationService.CancelApplication(applicationId);
         }
 
         public void DropCourse(string applicationId)

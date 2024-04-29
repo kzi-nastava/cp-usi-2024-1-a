@@ -101,9 +101,20 @@ namespace LangLang.Services.CourseServices
                 throw new ArgumentException("Cannot find course.");
             }
             application.ChangeApplicationState(State.Rejected);
-
-
         }
+
+        public void CancelApplication(string applicationId)
+        {
+            CourseApplication? application = GetCourseApplicationById(applicationId);
+            if (application!.CourseApplicationState == State.Accepted)
+            {
+                ActivateStudentApplications(application.StudentId);
+                _courseService.CancelAttendance(application.CourseId);
+            }
+            DeleteApplication(applicationId);
+        }
+
+
 
         //TODO check where to place this
         //public bool CanBeModified(string courseId)
