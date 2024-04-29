@@ -108,6 +108,15 @@ namespace LangLang.Model
             return NumStudents == MaxStudents;
         }
 
+        public bool CanBeModified()
+        {
+            if (State == CourseState.NotStarted)
+            {
+                return true;
+            }
+            return false;
+        }
+
 
 
 

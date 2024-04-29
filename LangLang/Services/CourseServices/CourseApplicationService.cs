@@ -38,9 +38,7 @@ namespace LangLang.Services.CourseServices
         {
             Course? course = _courseService.GetCourseById(courseId);
             if (course == null) throw new ArgumentException("No existing course.");
-            if (course.MaxStudents == course.NumStudents) throw new ArgumentException("The course is full.");
-            _lastIdDAO.IncrementCourseApplicationId();
-            string id = _lastIdDAO.GetCourseApplicationId();
+            if (course.IsFull()) throw new ArgumentException("The course is full.");
             CourseApplication application = new CourseApplication(id, studentId, courseId, State.Pending);
             _courseApplicationDAO.AddCourseApplication(application);
             return application;
@@ -108,21 +106,6 @@ namespace LangLang.Services.CourseServices
 
 
         }
-
-        //TODO check where to place this
-        //public bool CanBeModified(string courseId)
-        //{
-        //    Course? course = _courseService.GetCourseById(courseId);
-        //    if (course == null)
-        //    {
-        //        return false;
-        //    }
-        //    if (course.Start - Constants.ConfirmableCourseTime < DateTime.Now)
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
 
         public void RemoveStudentApplications(string studentId)
         {

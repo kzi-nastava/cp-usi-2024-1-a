@@ -1,7 +1,7 @@
 ﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services.EntityServices;
+using LangLang.Services.CourseServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
@@ -11,10 +11,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
-using LangLang.Services.UtilityServices;
-using LangLang.Stores;
-using LangLang.Services.CourseServices;
 
 namespace LangLang.ViewModel
 {
