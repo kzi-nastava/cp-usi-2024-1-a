@@ -10,7 +10,7 @@ public abstract class NavigableWindow : Window
     private readonly INavigableDataContext _navigableDataContext;
 
     private bool _isUserClosing = true; // indicates whether the window close is triggered on "X" button of via event
-    
+
     protected NavigableWindow(INavigableDataContext navigableDataContext, IWindowFactory windowFactory)
     {
         _navigableDataContext = navigableDataContext;

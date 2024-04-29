@@ -8,6 +8,7 @@ public enum ViewType
     Tutor,
     Director,
     Course,
+    CourseInfo,
     Exam,
     StudentAccount,
 }
