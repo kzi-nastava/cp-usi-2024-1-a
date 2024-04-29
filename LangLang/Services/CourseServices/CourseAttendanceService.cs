@@ -40,8 +40,15 @@ namespace LangLang.Services.StudentCourseServices
 
         }
 
-        public void RateTutor()
+        public void RateTutor(CourseAttendance attendance)
         {
+            if (!attendance.isRated)
+            {
+                attendance.AddRating();
+                Course course = _courseService.GetCourseById(attendance.CourseId)!;
+                //Tutor tutor = _tutorService.GetTutor(course.TutorId);
+
+            }
 
         }
 
