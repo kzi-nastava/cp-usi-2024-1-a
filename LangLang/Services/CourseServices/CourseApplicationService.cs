@@ -36,7 +36,7 @@ namespace LangLang.Services.CourseServices
         {
             Course? course = _courseService.GetCourseById(courseId);
             if (course == null) throw new ArgumentException("No existing course.");
-            if (course.MaxStudents == course.NumStudents) throw new ArgumentException("The course is full.");
+            if (course.IsFull()) throw new ArgumentException("The course is full.");
             CourseApplication application = new CourseApplication(studentId, courseId, State.Pending);
             _courseApplicationDAO.AddCourseApplication(application);
             return application;
@@ -125,6 +125,10 @@ namespace LangLang.Services.CourseServices
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
             foreach (CourseApplication application in applications)
             {
+                if (application.CourseApplicationState == State.Accepted)
+                {
+                    _courseService.CancelAttendance(application.CourseId);
+                }
                 DeleteApplication(application.Id);
             }
         }

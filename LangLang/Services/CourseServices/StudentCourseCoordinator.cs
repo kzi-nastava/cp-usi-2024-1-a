@@ -112,13 +112,6 @@ namespace LangLang.Services.CourseServices
         public void RemoveAttendee(string courseId, string studentId)
         {
             List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);
-            foreach (CourseApplication application in applications)
-            {
-                if (application.CourseApplicationState == State.Accepted)
-                {
-                    _courseService.CancelAttendance(application.CourseId);
-                }
-            }
             _courseApplicationService.RemoveStudentApplications(studentId);
             _courseAttendanceService.RemoveAttendee(studentId, courseId);
         }
