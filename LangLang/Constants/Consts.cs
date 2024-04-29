@@ -61,6 +61,7 @@ namespace Consts
     public enum CourseState
     {
         Active, Canceled, Finished
+        //NotStarted, Locked, Started, InProgress, Finished
     }
     public enum WorkDay
     {

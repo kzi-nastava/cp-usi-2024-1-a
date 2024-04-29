@@ -17,6 +17,7 @@ namespace LangLang.Model
         public enum State
         {
             NotStarted, Confirmable, Confirmed, InProgress, Finished
+            //NotStarted, Locked, InProgress, Finished
         }
 
         public State ExamState { get; set; }
