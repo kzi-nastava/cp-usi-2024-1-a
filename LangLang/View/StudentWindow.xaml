@@ -491,7 +491,7 @@
                 </Grid.RowDefinitions>
 
                 <Label Grid.Row="0" Content="Applied courses" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
-                <DataGrid Grid.Row="3" ItemsSource="{Binding Courses}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                <DataGrid Grid.Row="3" ItemsSource="{Binding AppliedCourses}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />

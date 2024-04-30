@@ -62,6 +62,20 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.CancelApplication(applicationId);
         }
 
+        public void CancelApplication(string studentId, string courseId)
+        {
+            CourseApplication? application = _courseApplicationService.GetApplication(studentId, courseId);
+            if (application == null)
+            {
+                throw new ArgumentException("No application found");
+            }
+            if (!CanBeModified(application.CourseId))
+            {
+                throw new ArgumentException("Cannot accept student at this state");
+            }
+            _courseApplicationService.CancelApplication(application.Id);
+        }
+
         public void DropCourse(string applicationId)
         {
             CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
@@ -87,6 +101,35 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.ActivateStudentApplications(studentId);
         }
 
+        public List<Course> GetAppliedCoursesStudent(string studentId)
+        {
+            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);
+            List<Course> appliedCourses = new();
+            foreach(CourseApplication application in applications)
+            {
+                appliedCourses.Add(_courseService.GetCourseById(application.CourseId)!);
+            }
+            return appliedCourses;
+        }
+
+        public Course? GetStudentAttendingCourse(string studentId)
+        {
+            CourseAttendance courseAttendance = _courseAttendanceService.GetStudentAttendance(studentId)!;
+            if (courseAttendance == null) return null;
+            return _courseService.GetCourseById(courseAttendance.CourseId);
+        }
+
+        public List<Course> GetFinishedCoursesStudent(string studentId)
+        {
+            List<CourseAttendance> attendances = _courseAttendanceService.GetFinishedCoursesStudent(studentId);
+            List<Course> finishedCourses = new();
+            foreach(CourseAttendance attendance in attendances)
+            {
+                finishedCourses.Add(_courseService.GetCourseById(attendance.CourseId)!);
+            }
+            return finishedCourses;
+        }
+
         public void GenerateAttendance(string courseId)
         {
             List<CourseApplication> applications = _courseApplicationService.GetApplicationsForCourse(courseId);
@@ -103,10 +146,11 @@ namespace LangLang.Services.CourseServices
             }
         }
 
-        public void RemoveAttendee(string courseId, string studentId)
+        public void RemoveAttendee(string studentId)
         {
             _courseApplicationService.RemoveStudentApplications(studentId);
-            _courseAttendanceService.RemoveAttendee(studentId, courseId);
+            Course attendingCourse = GetStudentAttendingCourse(studentId)!;
+            _courseAttendanceService.RemoveAttendee(studentId, attendingCourse.Id);
         }
 
         public bool CanBeModified(string courseId)

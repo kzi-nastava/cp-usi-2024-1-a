@@ -8,6 +8,7 @@ public interface ICourseApplicationService
 {
     public void RemoveStudentApplications(string studentId);
     public CourseApplication ApplyForCourse(string studentId, string courseId);
+    public CourseApplication? GetApplication(string studentId, string courseId);
     public List<CourseApplication> GetApplicationsForStudent(string studentId);
     public List<CourseApplication> GetApplicationsForCourse(string courseId);
     public CourseApplication? GetCourseApplicationById(string id);
