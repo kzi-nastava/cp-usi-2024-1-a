@@ -130,7 +130,7 @@ namespace LangLang.Services.CourseServices
             {
                 return false;
             }
-            if (course.Start + Constants.CancellableCourseTime > DateTime.Now)
+            if(course.State != CourseState.InProgress)
             {
                 return false;
             }
