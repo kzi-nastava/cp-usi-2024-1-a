@@ -33,6 +33,8 @@
                     <RowDefinition Height="90"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
                     <avalonia:MaterialIcon Kind="AccountCircle" Width="40" Height="40" Margin="10,0,0,0"/>
@@ -51,6 +53,11 @@
                     CommandParameter = "exams" 
                     Grid.Row = "2" 
                     Margin="20,10,20,10"/>
+                <Button Content = "Logout" 
+                    Command = "{Binding LogoutCommand}" 
+                    Grid.Row = "5"
+                    Height="35"
+                    Margin="20,430,20,10"/>
             </Grid>
 
 
