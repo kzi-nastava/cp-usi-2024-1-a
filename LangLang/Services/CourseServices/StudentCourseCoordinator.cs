@@ -42,7 +42,6 @@ namespace LangLang.Services.CourseServices
 
         public void ApplyForCourse(string courseId, string studentId)
         {
-            // if courseAttendingService.getAttendingCourseForStudent(studentid) != null throw exception
             if (_courseAttendanceService.GetStudentAttendance(studentId) != null) {
                 throw new ArgumentException("Applicant already enrolled in a class!");
             }
@@ -106,7 +105,6 @@ namespace LangLang.Services.CourseServices
 
         public void RemoveAttendee(string courseId, string studentId)
         {
-            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);
             _courseApplicationService.RemoveStudentApplications(studentId);
             _courseAttendanceService.RemoveAttendee(studentId, courseId);
         }
