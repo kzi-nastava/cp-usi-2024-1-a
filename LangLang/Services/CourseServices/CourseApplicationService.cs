@@ -1,4 +1,4 @@
-﻿using Consts;
+using Consts;
 using LangLang.DAO;
 using LangLang.Model;
 using LangLang.Services.UserServices;
@@ -13,14 +13,12 @@ namespace LangLang.Services.CourseServices
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
         private readonly ICourseApplicationDAO _courseApplicationDAO;
-        private readonly ILastIdDAO _lastIdDAO;
 
-        public CourseApplicationService(ICourseService courseService, IStudentService studentService, ICourseApplicationDAO courseApplicationDAO, ILastIdDAO lastIdDAO)
+        public CourseApplicationService(ICourseService courseService, IStudentService studentService, ICourseApplicationDAO courseApplicationDAO)
         {
             _courseService = courseService;
             _studentService = studentService;
             _courseApplicationDAO = courseApplicationDAO;
-            _lastIdDAO = lastIdDAO;
         }
 
         //after accepting one course all other applications are paused,
@@ -103,17 +101,27 @@ namespace LangLang.Services.CourseServices
                 throw new ArgumentException("Cannot find course.");
             }
             application.ChangeApplicationState(State.Rejected);
-
-
         }
 
+        public void CancelApplication(string applicationId)
+        {
+            CourseApplication? application = GetCourseApplicationById(applicationId);
+            if (application!.CourseApplicationState == State.Accepted)
+            {
+                ActivateStudentApplications(application.StudentId);
+                _courseService.CancelAttendance(application.CourseId);
+            }
+            DeleteApplication(applicationId);
+        }
         public void RemoveStudentApplications(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
             foreach (CourseApplication application in applications)
             {
-                // NOTE: not sure if i should delete CourseApplication or just change state.
-                //application.ChangeApplicationState(State.Paused);
+                if (application.CourseApplicationState == State.Accepted)
+                {
+                    _courseService.CancelAttendance(application.CourseId);
+                }
                 DeleteApplication(application.Id);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using Consts;
 using LangLang.Model;
+using LangLang.Services.StudentCourseServices;
 using LangLang.Services.UserServices;
 using System;
 using System.Collections.Generic;
@@ -7,20 +8,19 @@ using static LangLang.Model.CourseApplication;
 
 namespace LangLang.Services.CourseServices
 {
-    public class StudentCourseCoordinator : IStudentCoureCoordinator
+    public class StudentCourseCoordinator : IStudentCourseCoordinator
     {
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
         private readonly ICourseApplicationService _courseApplicationService;
         private readonly ICourseAttendanceService _courseAttendanceService;
 
-        public StudentCourseCoordinator(ICourseService courseService, IStudentService studentService, ICourseApplicationService courseApplicationService)
+        public StudentCourseCoordinator(ICourseService courseService,ICourseAttendanceService courseAttendanceService, IStudentService studentService, ICourseApplicationService courseApplicationService)
         {
             _courseService = courseService;
+            _courseAttendanceService = courseAttendanceService;
             _studentService = studentService;
             _courseApplicationService = courseApplicationService;
-
-
         }
 
         public void Accept(string applicationId)
@@ -42,12 +42,13 @@ namespace LangLang.Services.CourseServices
 
         public void ApplyForCourse(string courseId, string studentId)
         {
-            // if courseAttendingService.getAttendingCourseForStudent(studentid) != null throw exception
-            CourseApplication application = _courseApplicationService.ApplyForCourse(studentId, courseId);
-
+            if (_courseAttendanceService.GetStudentAttendance(studentId) != null) {
+                throw new ArgumentException("Applicant already enrolled in a class!");
+            }
+            _courseApplicationService.ApplyForCourse(studentId, courseId);
         }
 
-        public void CancelAplication(string applicationId)
+        public void CancelApplication(string applicationId)
         {
             CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
             if (application == null)
@@ -58,41 +59,54 @@ namespace LangLang.Services.CourseServices
             {
                 throw new ArgumentException("Cannot accept student at this state");
             }
-            _courseApplicationService.ChangeApplicationState(applicationId, State.Rejected);
-            _courseApplicationService.ActivateStudentApplications(application.StudentId);
+            _courseApplicationService.CancelApplication(applicationId);
         }
 
-        public void DropCourse(string courseId)
+        public void DropCourse(string applicationId)
         {
-            throw new NotImplementedException();
+            CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
+            if (application == null)
+            {
+                throw new ArgumentException("No application found");
+            }
+            if (!CanDropCourse(application.CourseId))
+            {
+                throw new ArgumentException("Cannot drop course this early on");
+            }
+            _courseService.CancelAttendance(application.CourseId);
+            _courseApplicationService.ActivateStudentApplications(application.StudentId);
+            _courseAttendanceService.RemoveAttendee(application.StudentId, application.CourseId);
+            //Sent tutor the excuse why student wants to drop out
         }
 
         public void FinishCourse(string courseId, string studentId)
         {
             //_courseService.CalculateAverageScores
             _courseService.FinishCourse(courseId);
+            //student service add language skill
             _courseApplicationService.ActivateStudentApplications(studentId);
         }
 
-        public void GenerateAttendance()
+        public void GenerateAttendance(string courseId)
         {
-            throw new NotImplementedException();
+            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForCourse(courseId);
+            foreach(CourseApplication application in applications)
+            {
+                if(application.CourseApplicationState == State.Accepted)
+                {
+                    bool studentAttendingAnotherCourse = _courseAttendanceService.GetAttendancesForStudent(application.StudentId) != null;
+                    if (!studentAttendingAnotherCourse)
+                    {
+                        _courseAttendanceService.AddAttendance(application.StudentId, application.CourseId);
+                    }
+                }
+            }
         }
 
         public void RemoveAttendee(string courseId, string studentId)
         {
-            // TODO: Add courseAttendance.RemoveAttendee method here.
-            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);
-            foreach (CourseApplication application in applications)
-            {
-                if (application.CourseApplicationState == State.Accepted)
-                {
-                    _courseApplicationService.RejectApplication(application.Id);
-                }
-            }
-
-            Course? course = _courseService.GetCourseById(courseId);
-            course!.CancelAttendance();
+            _courseApplicationService.RemoveStudentApplications(studentId);
+            _courseAttendanceService.RemoveAttendee(studentId, courseId);
         }
 
         public bool CanBeModified(string courseId)
@@ -103,6 +117,20 @@ namespace LangLang.Services.CourseServices
                 return false;
             }
             if (course.State != CourseState.NotStarted)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool CanDropCourse(string courseId)
+        {
+            Course? course = _courseService.GetCourseById(courseId);
+            if (course == null)
+            {
+                return false;
+            }
+            if (course.Start + Constants.CancellableCourseTime > DateTime.Now)
             {
                 return false;
             }
