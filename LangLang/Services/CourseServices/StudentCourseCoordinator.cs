@@ -104,6 +104,12 @@ namespace LangLang.Services.CourseServices
         public List<Course> GetAvailableCourses(string studentId)
         {
             List<Course> availableCourses = _courseService.GetAvailableCourses(_studentService.GetStudentById(studentId)!);
+            CourseAttendance studentAttendance = _courseAttendanceService.GetStudentAttendance(studentId)!;
+            if(studentAttendance != null)
+            {
+                availableCourses.Remove(_courseService.GetCourseById(studentAttendance.CourseId)!);
+            }
+
             foreach(Course appliedCourse in GetAppliedCoursesStudent(studentId))
             {
                 if (availableCourses.Contains(appliedCourse))
@@ -152,10 +158,11 @@ namespace LangLang.Services.CourseServices
             {
                 if(application.CourseApplicationState == State.Accepted)
                 {
-                    bool studentAttendingAnotherCourse = _courseAttendanceService.GetAttendancesForStudent(application.StudentId) != null;
+                    bool studentAttendingAnotherCourse = (_courseAttendanceService.GetAttendancesForStudent(application.StudentId)).Count != 0;
                     if (!studentAttendingAnotherCourse)
                     {
                         _courseAttendanceService.AddAttendance(application.StudentId, application.CourseId);
+                        _courseApplicationService.DeleteApplication(application.Id);
                     }
                 }
             }

@@ -325,8 +325,6 @@
                 </DataGrid>
 
 
-
-
                 <DockPanel Grid.Row="4">
                     <Button x:Name="LogoutBtn2" DockPanel.Dock="Left" Content="Logout" Command="{Binding LogOutCommand}" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
@@ -589,8 +587,16 @@
                             <DataGridTemplateColumn  Width="180">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button x:Name="CancelAttendingCourseBtn" Content="Drop course" Command="{Binding DataContext.CancelAttendingCourseCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                                CommandParameter="{Binding Id}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="30" Width="150" BorderThickness="0" Margin="2">
+                                        <Button Content="Drop course"
+                                             FontSize="14"
+                                             Foreground="White"
+                                             Background="{StaticResource RedBtnColor}"
+                                             Height="30"
+                                             Width="150"
+                                             BorderThickness="0"
+                                             Margin="2"
+                                             Command="{Binding DataContext.CancelAttendingCourseCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                             CommandParameter="{Binding Id}">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="{x:Type Button}">
                                                     <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -599,7 +605,6 @@
                                                 </ControlTemplate>
                                             </Button.Template>
                                         </Button>
-
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

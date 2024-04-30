@@ -38,7 +38,7 @@ namespace LangLang.Services.StudentCourseServices
             foreach (CourseAttendance attendance in attendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Consts.CourseState.Active)
+                if (course.State != Consts.CourseState.NotStarted && course.State != Consts.CourseState.FinishedGraded)
                 {
                     return attendance;
                 }
@@ -47,14 +47,15 @@ namespace LangLang.Services.StudentCourseServices
         }
         public List<CourseAttendance> GetFinishedCoursesStudent(string studentId)
         {
-            List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
-            foreach (CourseAttendance attendance in attendances)
+            List<CourseAttendance> allAttendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            List<CourseAttendance> finishedAttendances = new();
+            foreach (CourseAttendance attendance in allAttendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
                 if (course.State == Consts.CourseState.FinishedGraded || course.State == Consts.CourseState.FinishedNotGraded)
-                    attendances.Add(attendance);
+                    finishedAttendances.Add(attendance);
             }
-            return attendances;
+            return finishedAttendances;
         }
 
         public CourseAttendance AddAttendance(string studentId, string courseId)

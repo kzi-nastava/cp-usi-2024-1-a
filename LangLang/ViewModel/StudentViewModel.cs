@@ -249,15 +249,15 @@ namespace LangLang.ViewModel
             ApplyExamCommand = new RelayCommand<string>(ApplyExam);
             CancelExamCommand = new RelayCommand<string>(CancelExam);
             RateTutorCommand = new RelayCommand<string>(RateTutor);
-            CancelAttendingCourseCommand = new RelayCommand(CancelAttendingCourse!);
+            CancelAttendingCourseCommand = new RelayCommand<string>(CancelAttendingCourse!);
             CancelAttendingExamCommand = new RelayCommand(CancelAttendingExam!);
 
         }
 
 
-        private void CancelAttendingCourse(object parameter)
+        private void CancelAttendingCourse(string courseId)
         {
-            MessageBox.Show($"cancelled course sent!", "Success");
+            MessageBox.Show($"cancelled course sent! {courseId}", "Success");
             
         }
 
@@ -270,7 +270,8 @@ namespace LangLang.ViewModel
 
         private void ApplyCourse(string courseId)
         {
-            MessageBox.Show($"Application sent! {courseId}", "Success");
+            Course course = _courseService.GetCourseById(courseId)!;
+            MessageBox.Show($"Application sent! You've successfully applied for {course.Name}!", "Success");
             _courseCoordinator.ApplyForCourse(courseId, _loggedInUser.Email);
 
             Course appliedCourse = _courseService.GetCourseById(courseId)!;
@@ -281,7 +282,8 @@ namespace LangLang.ViewModel
 
         private void CancelCourse(string courseId)
         {
-            MessageBox.Show($"Successful cancel for course {courseId}", "Success");
+            Course course = _courseService.GetCourseById(courseId)!;
+            MessageBox.Show($"Your application for {course.Name} has been cancelled.", "Success");
             _courseCoordinator.CancelApplication(_loggedInUser.Email, courseId);
 
             Course cancelledCourse = _courseService.GetCourseById(courseId)!;
@@ -340,6 +342,8 @@ namespace LangLang.ViewModel
 
         private void LoadAttendingCourse()
         {
+            //this is for testing
+            //_courseCoordinator.GenerateAttendance("30");
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Email)!;
             if(attendingCourse != null)
             {
