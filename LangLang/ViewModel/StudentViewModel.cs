@@ -330,8 +330,9 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            var courses = _courseService.GetAvailableCourses(_loggedInUser);
-            foreach (Course course in courses)
+            //var courses = _courseService.GetAvailableCourses(_loggedInUser);
+            var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Email);
+            foreach (Course course in availableCourses)
             {
                 Courses.Add(course);
             }

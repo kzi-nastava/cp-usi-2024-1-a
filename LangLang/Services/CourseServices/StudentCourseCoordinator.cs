@@ -101,6 +101,21 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.ActivateStudentApplications(studentId);
         }
 
+        public List<Course> GetAvailableCourses(string studentId)
+        {
+            List<Course> availableCourses = _courseService.GetAvailableCourses(_studentService.GetStudentById(studentId)!);
+            foreach(Course appliedCourse in GetAppliedCoursesStudent(studentId))
+            {
+                if (availableCourses.Contains(appliedCourse))
+                {
+                    availableCourses.Remove(appliedCourse);
+                }
+            }
+
+            return availableCourses;
+        }
+
+
         public List<Course> GetAppliedCoursesStudent(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);

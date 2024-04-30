@@ -6,6 +6,7 @@ namespace LangLang.Services.CourseServices;
 public interface IStudentCourseCoordinator
 {
     public void Accept(string applicationId);
+    public List<Course> GetAvailableCourses(string studentId);
     public Course? GetStudentAttendingCourse(string studentId);
     public List<Course> GetFinishedCoursesStudent(string studentId);
     public List<Course> GetAppliedCoursesStudent(string studentId);

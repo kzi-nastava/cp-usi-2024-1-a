@@ -34,6 +34,11 @@ namespace LangLang.Services.UserServices
             _studentDao.DeleteStudent(student.Email);
         }
 
+        public Student? GetStudentById(string studentId)
+        {
+            return _studentDao.GetStudent(studentId);
+        }
+
     }
 
 }
