@@ -30,7 +30,7 @@
 
             <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Right" Foreground="Red" Margin="0,2" FontWeight="Bold"/>
 
-            <Button x:Name="LoginBtn" Content="Login" FontSize="16" Foreground="White" Background="Black" Margin="0,25" Height="35" Width="250" BorderThickness="0" Command="{Binding LoginCommand}">
+            <Button x:Name="LoginBtn" Content="Login" FontSize="16" Foreground="White" Background="Black" Margin="0,25" Height="35" Width="250" BorderThickness="0" Command="{Binding LoginCommand}" IsDefault="True">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border CornerRadius="10" Background="{TemplateBinding Background}">
