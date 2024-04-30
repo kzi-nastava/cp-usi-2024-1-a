@@ -40,7 +40,7 @@ namespace LangLang.Services.CourseServices
             List<Course> courses = new();
             foreach (Course course in GetAll().Values.ToList())
             {
-                if (course.State != CourseState.NotStarted)
+                if (course.State != CourseState.NotStarted && course.State != CourseState.FinishedNotGraded && course.State != CourseState.FinishedGraded)
                 {
                     continue;
                 }
