@@ -19,7 +19,7 @@
 
         }
 
-        public CourseApplication(string courseId, string studentId, State courseApplicationState)
+        public CourseApplication(string studentId, string courseId, State courseApplicationState)
         {
             Id = "";
             CourseId = courseId;
