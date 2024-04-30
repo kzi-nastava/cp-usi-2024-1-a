@@ -51,7 +51,7 @@ namespace LangLang.Services.StudentCourseServices
             foreach (CourseAttendance attendance in attendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Consts.CourseState.Finished)
+                if (course.State == Consts.CourseState.FinishedGraded || course.State == Consts.CourseState.FinishedNotGraded)
                     attendances.Add(attendance);
             }
             return attendances;
