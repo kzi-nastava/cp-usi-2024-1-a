@@ -257,8 +257,18 @@ namespace LangLang.ViewModel
 
         private void CancelAttendingCourse(string courseId)
         {
-            MessageBox.Show($"cancelled course sent! {courseId}", "Success");
-            
+            Course course = _courseService.GetCourseById(courseId)!;
+            try
+            {
+                _courseCoordinator.DropCourse(_loggedInUser.Email);
+                MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
+                AttendingCourse.Remove(course);
+            }
+            catch
+            {
+                MessageBox.Show($"It's too early to drop {course.Name}. Wait before trying again.", "Success");
+
+            }
         }
 
         private void CancelAttendingExam(object parameter)
@@ -270,13 +280,20 @@ namespace LangLang.ViewModel
 
         private void ApplyCourse(string courseId)
         {
-            Course course = _courseService.GetCourseById(courseId)!;
-            MessageBox.Show($"Application sent! You've successfully applied for {course.Name}!", "Success");
-            _courseCoordinator.ApplyForCourse(courseId, _loggedInUser.Email);
+            try
+            {
+                _courseCoordinator.ApplyForCourse(courseId, _loggedInUser.Email);
+                Course course = _courseService.GetCourseById(courseId)!;
+                MessageBox.Show($"Application sent! You've successfully applied for {course.Name}!", "Success");
 
-            Course appliedCourse = _courseService.GetCourseById(courseId)!;
-            Courses.Remove(appliedCourse);
-            AppliedCourses.Add(appliedCourse);
+                Course appliedCourse = _courseService.GetCourseById(courseId)!;
+                Courses.Remove(appliedCourse);
+                AppliedCourses.Add(appliedCourse);
+            }
+            catch
+            {
+                MessageBox.Show($"Can't apply to other courses when already attending {AttendingCourse[0].Name} course!", "Fail");
+            }
         }
 
 
@@ -342,7 +359,6 @@ namespace LangLang.ViewModel
 
         private void LoadAttendingCourse()
         {
-            //this is for testing
             //_courseCoordinator.GenerateAttendance("30");
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Email)!;
             if(attendingCourse != null)

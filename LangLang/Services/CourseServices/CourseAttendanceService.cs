@@ -70,8 +70,14 @@ namespace LangLang.Services.StudentCourseServices
             List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
-                if(attendance.CourseId == courseId && _courseService.GetCourseById(courseId)!.State == Consts.CourseState.Active)
+                if (attendance.CourseId == courseId)
+                {
+                    if(_courseService.GetCourseById(courseId)!.State != Consts.CourseState.NotStarted)
+                    {
+                        _courseService.CancelAttendance(courseId);
+                    }
                     _courseAttendanceDAO.DeleteCourseAttendance(attendance.Id);
+                }
             }
         }
 

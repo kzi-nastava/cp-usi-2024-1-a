@@ -76,20 +76,20 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.CancelApplication(application.Id);
         }
 
-        public void DropCourse(string applicationId)
+        public void DropCourse(string studentId)
         {
-            CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
-            if (application == null)
+            CourseAttendance? attendance = _courseAttendanceService.GetStudentAttendance(studentId);
+            if (attendance == null)
             {
-                throw new ArgumentException("No application found");
+                throw new ArgumentException("No attendance found");
             }
-            if (!CanDropCourse(application.CourseId))
+            if (!CanDropCourse(attendance.CourseId))
             {
                 throw new ArgumentException("Cannot drop course this early on");
             }
-            _courseService.CancelAttendance(application.CourseId);
-            _courseApplicationService.ActivateStudentApplications(application.StudentId);
-            _courseAttendanceService.RemoveAttendee(application.StudentId, application.CourseId);
+            _courseService.CancelAttendance(attendance.CourseId);
+            _courseApplicationService.ActivateStudentApplications(attendance.StudentId);
+            _courseAttendanceService.RemoveAttendee(attendance.StudentId, attendance.CourseId);
             //Sent tutor the excuse why student wants to drop out
         }
 
