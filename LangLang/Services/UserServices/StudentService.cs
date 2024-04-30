@@ -75,7 +75,7 @@ namespace LangLang.Services.UserServices
 
         public void ApplyForCourse(Student student, string courseId)
         {
-            student.AddCourse(courseId);
+            //student.AddCourse(courseId);
             Course? course = _courseService.GetCourseById(courseId);
             course!.AddAttendance();
             _courseService.UpdateCourse(course);
