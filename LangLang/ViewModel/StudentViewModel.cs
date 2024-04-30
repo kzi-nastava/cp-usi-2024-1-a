@@ -350,7 +350,6 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            //var courses = _courseService.GetAvailableCourses(_loggedInUser);
             var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Email);
             foreach (Course course in availableCourses)
             {
@@ -360,6 +359,8 @@ namespace LangLang.ViewModel
 
         private void LoadAttendingCourse()
         {
+            //when trying to test attendance, apply for course
+            //in files change application state to 2 (accepted), then change course state to 4 (In progress so i can drop it)
             //_courseCoordinator.GenerateAttendance("30");
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Email)!;
             if(attendingCourse != null)
