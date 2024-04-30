@@ -12,6 +12,7 @@ public static class AddStoresHostBuilderExtensions
         {
             services.AddSingleton<NavigationStore>();
             services.AddSingleton<AuthenticationStore>();
+            services.AddSingleton<CurrentCourseStore>();
         });
         
         return host;

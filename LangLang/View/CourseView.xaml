@@ -124,7 +124,7 @@
                 <TextBox Margin="5,0,0,0" Name="tbStudentsNum" IsEnabled="False" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>State:</Label>
                 <ComboBox Margin="5,0,0,0" Name="cbState" SelectedItem="{Binding State}" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
-
+                <Button Margin="15,45,5,0" Padding="2,5,2,5" Name="btnViewInfo" Content="View Info" Command="{Binding OpenCourseInfoCommand}"></Button>
 
 
             </StackPanel>

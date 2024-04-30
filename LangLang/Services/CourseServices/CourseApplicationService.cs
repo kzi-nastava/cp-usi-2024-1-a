@@ -1,4 +1,4 @@
-﻿using Consts;
+using Consts;
 using LangLang.DAO;
 using LangLang.Model;
 using LangLang.Services.UserServices;
@@ -113,24 +113,6 @@ namespace LangLang.Services.CourseServices
             }
             DeleteApplication(applicationId);
         }
-
-
-
-        //TODO check where to place this
-        //public bool CanBeModified(string courseId)
-        //{
-        //    Course? course = _courseService.GetCourseById(courseId);
-        //    if (course == null)
-        //    {
-        //        return false;
-        //    }
-        //    if (course.Start - Constants.ConfirmableCourseTime < DateTime.Now)
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
-
         public void RemoveStudentApplications(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);

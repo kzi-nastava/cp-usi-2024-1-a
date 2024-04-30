@@ -22,7 +22,6 @@ namespace LangLang.Services.CourseServices
         }
 
 
-
         public Dictionary<string, Course> GetAll()
         {
             return _courseDao.GetAllCourses();
@@ -85,7 +84,7 @@ namespace LangLang.Services.CourseServices
             {
                 throw new ArgumentException("Course not found");
             }
-            course.State = CourseState.Finished;
+            course.State = CourseState.FinishedNotGraded;
             UpdateCourse(course);
         }
         public void CalculateAverageScores(string id)
@@ -108,8 +107,6 @@ namespace LangLang.Services.CourseServices
         {
             GetCourseById(courseId)!.CancelAttendance();
         }
-
-
 
 
         public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, CourseState? state, int maxStudents)

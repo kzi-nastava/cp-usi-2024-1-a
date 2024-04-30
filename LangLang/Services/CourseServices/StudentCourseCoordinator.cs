@@ -116,7 +116,7 @@ namespace LangLang.Services.CourseServices
             {
                 return false;
             }
-            if (course.Start - Constants.ConfirmableCourseTime < DateTime.Now)
+            if (course.State != CourseState.NotStarted)
             {
                 return false;
             }

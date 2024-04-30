@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Consts;
+﻿using Consts;
 using LangLang.Model;
 using LangLang.Util;
+using System.Collections.Generic;
 
 namespace LangLang.DAO.JsonDao;
-    public class CourseApplicationDAO : ICourseApplicationDAO
-    {
+public class CourseApplicationDAO : ICourseApplicationDAO
+{
         private Dictionary<string, CourseApplication>? _courseApplications;
         private readonly ILastIdDAO _lastIdDAO;
 
@@ -17,10 +15,9 @@ namespace LangLang.DAO.JsonDao;
             {
             _courseApplications ??= JsonUtil.ReadFromFile<CourseApplication>(Constants.CourseApplicationsFilePath);
             return _courseApplications;
-                
-            }set{ 
-                _courseApplications = value; 
-            }
+                }
+        set => _courseApplications = value;
+            
         }
 
     public CourseApplicationDAO(ILastIdDAO lastIdDAO)

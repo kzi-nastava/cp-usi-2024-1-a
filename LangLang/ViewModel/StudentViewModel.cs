@@ -13,6 +13,9 @@ using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
+using LangLang.Services.CourseServices;
+using LangLang.Services.ExamServices;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.ViewModel
 {
