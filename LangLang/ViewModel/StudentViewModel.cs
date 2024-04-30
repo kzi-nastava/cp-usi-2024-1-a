@@ -278,6 +278,7 @@ namespace LangLang.ViewModel
         }
 
 
+
         private void ApplyCourse(string courseId)
         {
             try

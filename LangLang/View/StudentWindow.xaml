@@ -325,6 +325,7 @@
                 </DataGrid>
 
 
+
                 <DockPanel Grid.Row="4">
                     <Button x:Name="LogoutBtn2" DockPanel.Dock="Left" Content="Logout" Command="{Binding LogOutCommand}" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
                         <Button.Template>
@@ -605,6 +606,7 @@
                                                 </ControlTemplate>
                                             </Button.Template>
                                         </Button>
+
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
