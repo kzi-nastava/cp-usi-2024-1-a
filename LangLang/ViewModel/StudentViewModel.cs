@@ -13,8 +13,7 @@ using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
-using System.Collections.Specialized;
-using System.Printing.IndexedProperties;
+
 
 namespace LangLang.ViewModel
 {
@@ -26,6 +25,7 @@ namespace LangLang.ViewModel
         private readonly IStudentService _studentService;
         private readonly IExamService _examService;
         private readonly IStudentCourseCoordinator _courseCoordinator;
+        private readonly IAccountService _accountService;
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
         public ICommand LogOutCommand { get; }
@@ -201,13 +201,14 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
+        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
         {
             _loggedInUser = (Student?)authenticationStore.CurrentUser ??
                                 throw new InvalidOperationException(
                                     "Cannot create StudentViewModel without currently logged in student");
             NavigationStore = navigationStore;
             _courseService = courseService;
+            _accountService = accountService;
             _languageService = languageService;
             _examService = examService;
             _studentService = studentService;
@@ -517,11 +518,7 @@ namespace LangLang.ViewModel
 
         private void DeleteProfile()
         {
-            //Change this!! After accountService is made, currently no courses or exams get deleted
-            //the next three will go to a seperate function in accountService
-            _courseCoordinator.RemoveAttendee(_loggedInUser.Email);
-            //examCoordinator
-            _studentService.DeleteAccount(_loggedInUser);
+            _accountService.DeleteStudent(_loggedInUser.Email);
             MessageBox.Show("Your profile has been successfully deleted");
             _navigationService.Navigate(ViewType.Login);
         }

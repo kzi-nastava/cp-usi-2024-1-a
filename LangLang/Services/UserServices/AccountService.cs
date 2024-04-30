@@ -18,6 +18,7 @@ namespace LangLang.Services.UserServices
 
         public void UpdateStudent(string studentId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
+            //check for exams as well
             if (_studentCourseCoordinator.GetStudentAttendingCourse(studentId) != null)
             {
                 throw new ArgumentException("Student applied for courses, editing profile not allowed");
