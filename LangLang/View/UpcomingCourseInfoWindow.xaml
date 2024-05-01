@@ -5,39 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LangLang.View"
         mc:Ignorable="d"
-        Title="Upcoming course" Height="450" Width="800">
+        Title="Upcoming course" Height="450" Width="550">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="460"/>
+            <ColumnDefinition Width="307"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
-            <TextBlock Text="Overview of " FontSize="18">
-            </TextBlock>
-            <TextBlock Text="{Binding CourseName}" FontSize="18"/>
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Grid.ColumnSpan="2">
+            <Label Content="Overview of" FontWeight="Medium" FontSize="18"/>
+            <Label Content="{Binding CourseName}" FontSize="18" FontWeight="Medium"/>
         </StackPanel>
         <DataGrid 
-            Grid.Column="0" Grid.Row="1" IsReadOnly="True"
-            AutoGenerateColumns="False"
-            ItemsSource="{Binding StudentsOnCourse}"
-        >
-            
+        Grid.Column="0" Grid.Row="1" IsReadOnly="True"
+        AutoGenerateColumns="False"
+        ItemsSource="{Binding Students}"
+        SelectedItem="{Binding SelectedStudent}"
+        CanUserDeleteRows="False" 
+    >
+            <DataGrid.Columns >
+                <DataGridTextColumn  Header="Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}"/>
+            </DataGrid.Columns>
+
+
         </DataGrid>
-        <StackPanel Grid.Column="1" Grid.Row="1">
+        <StackPanel Grid.Column="1" Grid.Row="1" Margin="10,0,0,0">
+            <Label Content="Details" FontSize="16" FontWeight="Medium"/>
             <StackPanel Orientation="Horizontal">
-                <Button Content="Accept" Command="{Binding AcceptStudentCommand}" Width="150"/>
-                <Button Content="Deny" Command="{Binding DenyStudentCommand}"  Width="150"/>
+                <Label Content="Email:"/>
+                <Label Content="{Binding Email}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button Content="Give penalty point" Command="{Binding GivePenaltyPointCommand}" Width="150"/>
-                <Button Content="Grade Student" Command="{Binding GradeStudentCommand}"  Width="150"/>
+                <Label Content="Name:"/>
+                <Label Content="{Binding Name}" />
             </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Surname:"/>
+                <Label Content="{Binding Surname}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Penalty points:"/>
+                <Label Content="{Binding PenaltyPts}" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,20,0,0">
+                <Button Content="Accept" Command="{Binding AcceptStudentCommand}" Width="50" Margin="0,5,0,10"/>
+            </StackPanel>
+            <Label Content="Message:"/>
+            <TextBox Text="{Binding Message}" TextWrapping="Wrap" Height="80" Background="LightGray"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,20,0,0">
+                <Button Content="Deny" Command="{Binding DenyStudentCommand}" Width="50" Margin="0,5,0,10"/>
+            </StackPanel>
+
 
         </StackPanel>
 
-    </Grid>
+
+    </Grid> 
 </mvvm:NavigableWindow>
