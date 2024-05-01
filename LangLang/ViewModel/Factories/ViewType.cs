@@ -10,6 +10,7 @@ public enum ViewType
     Course,
     ActiveCourseInfo,
     UpcomingCourseInfo,
+    FinishedCourseInfo,
     Exam,
     StudentAccount,
 }

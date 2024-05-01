@@ -15,9 +15,10 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<StudentAccountViewModel> _createStudentAccountViewModel;
     private readonly CreateViewModel<ActiveCourseInfoViewModel> _createActiveCourseInfoViewModel;
     private readonly CreateViewModel<UpcomingCourseInfoViewModel> _createUpcomingCourseInfoViewModel;
+    private readonly CreateViewModel<FinishedCourseInfoViewModel> _createFinishedCourseInfoViewModel;
 
     public LangLangViewModelFactory(CreateViewModel<LoginViewModel> createLoginViewModel,
-        CreateViewModel<RegisterViewModel> createRegisterViewModel, 
+        CreateViewModel<RegisterViewModel> createRegisterViewModel,
         CreateViewModel<StudentViewModel> createStudentViewModel,
         CreateViewModel<TutorViewModel> createTutorViewModel,
         CreateViewModel<DirectorViewModel> createDirectorViewModel,
@@ -25,7 +26,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<ExamViewModel> createExamViewModel,
         CreateViewModel<StudentAccountViewModel> createStudentAccountViewModel,
         CreateViewModel<ActiveCourseInfoViewModel> createActiveCourseInfoViewModel,
-        CreateViewModel<UpcomingCourseInfoViewModel> createUpcomingCourseInfoViewModel
+        CreateViewModel<UpcomingCourseInfoViewModel> createUpcomingCourseInfoViewModel,
+        CreateViewModel<FinishedCourseInfoViewModel> createfinishedCourseInfoViewModel
         )
     {
         _createLoginViewModel = createLoginViewModel;
@@ -38,6 +40,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createStudentAccountViewModel = createStudentAccountViewModel;
         _createActiveCourseInfoViewModel = createActiveCourseInfoViewModel;
         _createUpcomingCourseInfoViewModel = createUpcomingCourseInfoViewModel;
+        _createFinishedCourseInfoViewModel = createfinishedCourseInfoViewModel;
        
     }
 
@@ -55,6 +58,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.StudentAccount => _createStudentAccountViewModel(),
             ViewType.ActiveCourseInfo => _createActiveCourseInfoViewModel(),
             ViewType.UpcomingCourseInfo => _createUpcomingCourseInfoViewModel(),
+            ViewType.FinishedCourseInfo => _createFinishedCourseInfoViewModel(),
             _ => throw new ArgumentOutOfRangeException(nameof(viewType), viewType, "No ViewModel exists for the given ViewType: " + viewType)
         };
     }

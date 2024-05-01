@@ -309,13 +309,18 @@ namespace LangLang.ViewModel
         private void OpenCourseInfo(object? obj)
         {
             _currentCourseStore.CurrentCourse = selectedItem;
-            if(selectedItem?.State == CourseState.Active)
+            switch (SelectedItem?.State)
             {
-                _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
-            }
-            if(selectedItem?.State == CourseState.NotStarted)
-            {
+                case CourseState.NotStarted:
                 _popupNavigationService.Navigate(ViewType.UpcomingCourseInfo);
+                    break;
+                case CourseState.Active:
+                _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
+                    break;
+                case CourseState.FinishedNotGraded:
+                    // TODO: Add new window for point 6 tomorrow
+                _popupNavigationService.Navigate(ViewType.FinishedCourseInfo);
+                    break;
             }
         }
 
