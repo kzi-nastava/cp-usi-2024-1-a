@@ -1,11 +1,10 @@
 ﻿using LangLang.DAO;
 using LangLang.Model;
-using LangLang.Services.CourseServices;
 using LangLang.Services.UserServices;
 using System.Collections.Generic;
 
 
-namespace LangLang.Services.StudentCourseServices
+namespace LangLang.Services.CourseServices
 {
     public class CourseAttendanceService : ICourseAttendanceService
     {
@@ -38,7 +37,7 @@ namespace LangLang.Services.StudentCourseServices
             foreach (CourseAttendance attendance in attendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State != Consts.CourseState.NotStarted && course.State != Consts.CourseState.FinishedGraded)
+                if (course.State != Course.CourseState.NotStarted && course.State != Course.CourseState.FinishedGraded)
                 {
                     return attendance;
                 }
@@ -52,7 +51,7 @@ namespace LangLang.Services.StudentCourseServices
             foreach (CourseAttendance attendance in allAttendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Consts.CourseState.FinishedGraded || course.State == Consts.CourseState.FinishedNotGraded)
+                if (course.State == Course.CourseState.FinishedGraded || course.State == Course.CourseState.FinishedNotGraded)
                     finishedAttendances.Add(attendance);
             }
             return finishedAttendances;
@@ -60,7 +59,7 @@ namespace LangLang.Services.StudentCourseServices
 
         public CourseAttendance AddAttendance(string studentId, string courseId)
         {
-            CourseAttendance attendance = new CourseAttendance(courseId, studentId, false, false);
+            CourseAttendance attendance = new CourseAttendance(courseId, studentId, false, false,0, 0);
             _courseAttendanceDAO.AddCourseAttendance(attendance);
             return attendance;
         }
