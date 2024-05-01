@@ -9,6 +9,7 @@ using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
+using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
@@ -193,9 +194,9 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService, ILoginService loginService, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
+        public StudentViewModel(IStudentService studentService, ILoginService loginService, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore)
         {
-            _loggedInUser = (Student?)authenticationStore.CurrentUser ??
+            _loggedInUser = (Student?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
                                     "Cannot create StudentViewModel without currently logged in student");
             NavigationStore = navigationStore;

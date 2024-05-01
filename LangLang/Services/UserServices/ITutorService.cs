@@ -14,6 +14,4 @@ public interface ITutorService
     public void DeleteTutor(string email);
 
     public void UpdateTutor(Tutor tutor);
-
-    public void UpdateTutorEmail(Tutor tutor, string newEmail);
 }

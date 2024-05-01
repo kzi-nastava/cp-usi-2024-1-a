@@ -4,8 +4,12 @@ namespace LangLang.DAO;
 
 public interface ILastIdDAO
 {
-    public String GetCourseId();
+    public string GetCourseId();
     public void IncrementCourseId();
-    public String GetExamId();
+    public string GetExamId();
     public void IncrementExamId();
+    public string GetStudentId();
+    public void IncrementStudentId();
+    public string GetTutorId();
+    public void IncrementTutorId();
 }

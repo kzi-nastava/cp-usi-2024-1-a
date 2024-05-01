@@ -9,7 +9,6 @@ public interface ITutorDAO
     public Tutor? GetTutor(string email);
     public void AddTutor(Tutor tutor);
     public void UpdateTutor(Tutor tutor);
-    public void UpdateTutorEmail(Tutor tutor, string newEmail);
     public bool Exists(string email);
     public void DeleteTutor(string email);
 }

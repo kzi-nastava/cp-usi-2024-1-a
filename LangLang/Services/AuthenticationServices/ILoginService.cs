@@ -1,4 +1,6 @@
-﻿namespace LangLang.Services.AuthenticationServices;
+﻿using LangLang.DTO;
+
+namespace LangLang.Services.AuthenticationServices;
 
 public interface ILoginService
 {

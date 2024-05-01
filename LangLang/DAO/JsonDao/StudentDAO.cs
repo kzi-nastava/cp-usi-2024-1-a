@@ -30,7 +30,7 @@ public class StudentDAO : IStudentDAO
 
     public Student AddStudent(Student student)
     {
-        _students![student.Email] = student;
+        _students![student.Id] = student;
         SaveStudents();
         return student;
     }

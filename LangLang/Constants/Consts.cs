@@ -20,6 +20,8 @@ namespace Consts
         public const string TutorFilePath = "../../../Data/Tutors.json";
         public const string DirectorFilePath = "../../../Data/Directors.json";
         public const string LastIdFilePath = "../../../Data/LastId.json";
+        public const string ProfileFilePath = "../../../Data/Profiles.json";
+        public const string PersonProfileMappingFilePath = "../../../Data/PersonProfile.json";
     }
 
 

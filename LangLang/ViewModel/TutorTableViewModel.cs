@@ -13,6 +13,7 @@ using System.Windows.Media;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.EntityServices;
 using LangLang.Services.UserServices;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.ViewModel
 {
@@ -153,8 +154,8 @@ namespace LangLang.ViewModel
                 {
                     Name = selectedItem.Name;
                     Surname = selectedItem.Surname;
-                    Email = selectedItem.Email;
-                    Password = selectedItem.Password;
+                    // Email = selectedItem.Email;
+                    // Password = selectedItem.Password;
                     PhoneNumber = selectedItem.PhoneNumber;
                     BirthDate = selectedItem.BirthDate;
                     DateAdded = selectedItem.DateAdded;
@@ -344,12 +345,8 @@ namespace LangLang.ViewModel
             List<Tuple<Language, LanguageLvl>> knownLanguagesRightType = new();
             foreach (var tuple in KnownLanguages)
                 knownLanguagesRightType.Add(new(languageService.GetLanguageById(tuple.Item1), tuple.Item2));
-            Tutor tutor = new Tutor(SelectedItem.Email, Password, Name, Surname, (DateTime)BirthDate, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
+            Tutor tutor = new Tutor(Name, Surname, (DateTime)BirthDate, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
             tutorService.UpdateTutor(tutor);
-            if (Email != SelectedItem.Email)
-            {
-                tutorService.UpdateTutorEmail(tutor, Email);
-            }
             Tutors.Remove(SelectedItem);
             Tutors.Add(tutor);
             RemoveInputs();
@@ -358,7 +355,7 @@ namespace LangLang.ViewModel
         {
             if (SelectedItem == null) 
                 return;
-            tutorService.DeleteTutor(SelectedItem.Email);
+            tutorService.DeleteTutor(SelectedItem.Id);
             Tutors.Remove(SelectedItem);
             RemoveInputs();
         }
@@ -397,7 +394,7 @@ namespace LangLang.ViewModel
             List<Tuple<Language, LanguageLvl>> knownLanguagesRightType = new();
             foreach (var tuple in KnownLanguages)
                 knownLanguagesRightType.Add(new(languageService.GetLanguageById(tuple.Item1), tuple.Item2));
-            Tutor tutor = new Tutor(Email, Password, Name, Surname, (DateTime)BirthDate, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
+            Tutor tutor = new Tutor(Name, Surname, (DateTime)BirthDate, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
             tutorService.AddTutor(tutor);
             Tutors.Add(tutor);
             RemoveInputs();

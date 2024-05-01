@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace LangLang.Model
 {
-    public class Student : User
+    public class Student : Person
     {
+        public string Id { get; set; }
+        
         //---------------------------Languages
         private List<string> finishedCourses;
         private List<string> coursesApplied;    //string is courseId
@@ -18,8 +20,9 @@ namespace LangLang.Model
         public string AttendingCourse { get; set; }
         public string AttendingExam {  get; set; }
 
-        public Student() : base("", "", "", "", DateTime.Now, Gender.Other, "")
+        public Student() : base("", "", DateTime.Now, Gender.Other, "")
         {
+            Id = "";
             PenaltyPts = 0;
             AttendingCourse = "";
             AttendingExam = "";
@@ -29,9 +32,24 @@ namespace LangLang.Model
             this.notifications = new List<string>();
         }
 
-        public Student(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, string attendingExam, string attendingCourse, List<string> finishedCourses, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
-            : base(email, password, name, surname, birthDate, gender, phoneNumber)
+        public Student(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, string attendingExam, string attendingCourse, List<string> finishedCourses, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
+            : base(name, surname, birthDate, gender, phoneNumber)
         {
+            Id = "";
+            PenaltyPts = penaltyPts;
+            AttendingCourse = attendingCourse;
+            AttendingExam = attendingExam;
+            Education = educationLvl;
+            this.coursesApplied = coursesApplied;
+            this.finishedCourses = finishedCourses;
+            this.examsApplied = examsApplied;
+            this.notifications = notifications;
+        }
+        
+        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, string attendingExam, string attendingCourse, List<string> finishedCourses, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
+            : base(name, surname, birthDate, gender, phoneNumber)
+        {
+            Id = id;
             PenaltyPts = penaltyPts;
             AttendingCourse = attendingCourse;
             AttendingExam = attendingExam;

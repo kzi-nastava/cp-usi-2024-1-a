@@ -4,6 +4,8 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Input;
 using Consts;
+using LangLang.DTO;
+using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;

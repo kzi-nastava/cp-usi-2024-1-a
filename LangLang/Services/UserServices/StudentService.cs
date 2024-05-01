@@ -29,7 +29,7 @@ namespace LangLang.Services.UserServices
             }
             student.Name = name;
             student.Surname = surname;
-            student.Password = password;
+            // student.Password = password;
             student.Gender = gender;
             student.BirthDate = birthDate;
             student.Gender = gender;
@@ -69,7 +69,7 @@ namespace LangLang.Services.UserServices
         {
             CancelAllCourses(student);
             CancelExams(student);
-            _studentDao.DeleteStudent(student.Email);
+            _studentDao.DeleteStudent(student.Id);
         }
 
         public void ApplyForCourse(Student student, string courseId)

@@ -70,7 +70,7 @@ namespace LangLang.ViewModel
         public RelayCommand NavCommand { get; set; }
 
         public TutorViewModel(
-            AuthenticationStore authenticationStore, ILoginService loginService,
+            IAuthenticationStore authenticationStore, ILoginService loginService,
             INavigationService navigationService, NavigationStore navigationStore,
             ILangLangViewModelFactory viewModelFactory
             )
@@ -79,7 +79,7 @@ namespace LangLang.ViewModel
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             _viewModelFactory = viewModelFactory;
-            loggedInUser = (Tutor?)authenticationStore.CurrentUser ??
+            loggedInUser = (Tutor?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
                                     "Cannot create TutorViewModel without currently logged in tutor");
             currentViewModel = CourseViewModel; // TODO: change to ProfileViewModel

@@ -14,7 +14,7 @@ namespace LangLang.ViewModel
     public class StudentAccountViewModel : ViewModelBase, INavigableDataContext
     {
         private readonly IStudentService _studentService;
-        private readonly AuthenticationStore _authenticationStore;
+        private readonly IAuthenticationStore _authenticationStore;
         public NavigationStore NavigationStore { get; }
         
         private string? _email;
@@ -33,7 +33,7 @@ namespace LangLang.ViewModel
 
         private readonly IRegisterService _registerService;
         
-        public StudentAccountViewModel(IRegisterService registerService, IStudentService studentService, AuthenticationStore authenticationStore, NavigationStore navigationStore)
+        public StudentAccountViewModel(IRegisterService registerService, IStudentService studentService, IAuthenticationStore authenticationStore, NavigationStore navigationStore)
         {
             _registerService = registerService;
             _studentService = studentService;
@@ -45,15 +45,15 @@ namespace LangLang.ViewModel
 
         private void SetUserData()
         {
-            User user = _authenticationStore.CurrentUser ??
+            Person user = _authenticationStore.CurrentUser.Person ??
                         throw new InvalidOperationException("Cannot set user data without currently logged in user");
-            Email = user.Email;
+            // Email = user.Email;
             Name = user.Name;
             Surname = user.Surname;
             PhoneNumber = user.PhoneNumber;
             Gender = user.Gender;
             Birthday = user.BirthDate;
-            Password = user.Password; 
+            // Password = user.Password; 
         }
 
         public string ErrorMessageRequired

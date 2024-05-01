@@ -29,26 +29,15 @@ namespace LangLang.DAO.JsonDao
 
         public void AddTutor(Tutor tutor)
         {
-            Tutors.Add(tutor.Email, tutor);
+            Tutors.Add(tutor.Id, tutor);
             Save();
         }
 
         public void UpdateTutor(Tutor tutor)
         {
-            if (Tutors.ContainsKey(tutor.Email))
+            if (Tutors.ContainsKey(tutor.Id))
             {
-                Tutors[tutor.Email] = tutor;
-                Save();
-            }
-        }
-
-        public void UpdateTutorEmail(Tutor tutor, string newEmail)
-        {
-            if (Tutors.ContainsKey(tutor.Email) && !Tutors.ContainsKey(newEmail))
-            {
-                Tutors.Remove(tutor.Email);
-                tutor.Email = newEmail;
-                Tutors[newEmail] = tutor;
+                Tutors[tutor.Id] = tutor;
                 Save();
             }
         }
