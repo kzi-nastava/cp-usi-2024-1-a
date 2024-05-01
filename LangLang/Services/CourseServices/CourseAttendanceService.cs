@@ -58,7 +58,7 @@ namespace LangLang.Services.CourseServices
 
         public CourseAttendance AddAttendance(string studentId, string courseId)
         {
-            CourseAttendance attendance = new CourseAttendance(courseId, studentId, false, false);
+            CourseAttendance attendance = new CourseAttendance(courseId, studentId, false, false,0, 0);
             _courseAttendanceDAO.AddCourseAttendance(attendance);
             return attendance;
         }
