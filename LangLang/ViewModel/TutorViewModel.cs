@@ -13,7 +13,6 @@ namespace LangLang.ViewModel
         private ExamViewModel? examViewModel;
         private CourseViewModel? courseViewModel;
 
-        private LanguageService? languageService;
         private string tutorName = "";
         public string TutorName
         {
@@ -24,6 +23,7 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
+        private LanguageService? languageService;
         public LanguageService LanguageService => languageService ??= new LanguageService();
         
         private TimetableService? timetableService;

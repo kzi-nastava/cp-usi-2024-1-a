@@ -61,7 +61,6 @@
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
                       SelectionMode="Single"
-                      SelectionChanged="dgTutors_SelectionChanged"
                       >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Email" Width="1*" Binding="{Binding Email}"/>
@@ -127,9 +126,9 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="20"/>
                         </Grid.ColumnDefinitions>
-                        <ComboBox Margin="0,0,0,0" Grid.Column="0" x:Name="cbLanguages0" SelectionChanged="cbLanguages_SelectionChanged" ItemsSource="{Binding Languages}" SelectedIndex="0"/>
-                        <ComboBox Margin="5,0,0,0" Grid.Column="1" x:Name="cbLevels0" ItemsSource="{Binding Levels}" SelectionChanged="cbLevel_SelectionChanged" SelectedIndex="0"/>
-                        <Button Margin="3,0,0,3" Grid.Column="2" Background="#00000000" BorderThickness="0" FontSize="10"  Content="╳" Click="DeleteKnownLanguage_Click"></Button>
+                        <ComboBox Margin="0,0,0,0" Grid.Column="0" x:Name="cbLanguages0" SelectionChanged="LanguageSelectionChanged" ItemsSource="{Binding Languages}" SelectedIndex="0"/>
+                        <ComboBox Margin="5,0,0,0" Grid.Column="1" x:Name="cbLevels0" ItemsSource="{Binding Levels}" SelectionChanged="LevelSelectionChanged" SelectedIndex="0"/>
+                        <Button Margin="3,0,0,3" Grid.Column="2" Background="#00000000" BorderThickness="0" FontSize="10"  Content="╳" Click="DeleteKnownLanguageClicked"></Button>
                     </Grid>
                     <Button Margin="0,5,0,0" Background="#eeffee" Command="{Binding AddKnownLangaugeCommand}">+</Button>
                 </ItemsControl>
