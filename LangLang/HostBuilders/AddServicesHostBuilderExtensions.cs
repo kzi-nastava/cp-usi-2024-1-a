@@ -33,6 +33,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IAccountService, AccountService>();
             services.AddSingleton<IProfileService, ProfileService>();
             services.AddSingleton<IUserProfileMapper, UserProfileMapper>();
+            services.AddSingleton<INotificationService, NotificationService>();
         });
         
         return host;
