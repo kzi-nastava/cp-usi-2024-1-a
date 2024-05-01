@@ -57,11 +57,6 @@ namespace Consts
             };
         }
     }
-
-    public enum CourseState
-    {
-        NotStarted, Locked, Active, Canceled, InProgress, FinishedNotGraded, FinishedGraded
-    }
     public enum WorkDay
     {
         Monday,Tuesday,Wednesday,Thursday,Friday
