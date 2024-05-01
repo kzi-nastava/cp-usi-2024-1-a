@@ -60,20 +60,34 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.CancelApplication(applicationId);
         }
 
-        public void DropCourse(string applicationId)
+        public void CancelApplication(string studentId, string courseId)
         {
-            CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
+            CourseApplication? application = _courseApplicationService.GetApplication(studentId, courseId);
             if (application == null)
             {
                 throw new ArgumentException("No application found");
             }
-            if (!CanDropCourse(application.CourseId))
+            if (!CanBeModified(application.CourseId))
+            {
+                throw new ArgumentException("Cannot accept student at this state");
+            }
+            _courseApplicationService.CancelApplication(application.Id);
+        }
+
+        public void DropCourse(string studentId)
+        {
+            CourseAttendance? attendance = _courseAttendanceService.GetStudentAttendance(studentId);
+            if (attendance == null)
+            {
+                throw new ArgumentException("No attendance found");
+            }
+            if (!CanDropCourse(attendance.CourseId))
             {
                 throw new ArgumentException("Cannot drop course this early on");
             }
-            _courseService.CancelAttendance(application.CourseId);
-            _courseApplicationService.ActivateStudentApplications(application.StudentId);
-            _courseAttendanceService.RemoveAttendee(application.StudentId, application.CourseId);
+            _courseService.CancelAttendance(attendance.CourseId);
+            _courseApplicationService.ActivateStudentApplications(attendance.StudentId);
+            _courseAttendanceService.RemoveAttendee(attendance.StudentId, attendance.CourseId);
             //Sent tutor the excuse why student wants to drop out
         }
 
@@ -85,6 +99,56 @@ namespace LangLang.Services.CourseServices
             _courseApplicationService.ActivateStudentApplications(studentId);
         }
 
+        public List<Course> GetAvailableCourses(string studentId)
+        {
+            List<Course> availableCourses = _courseService.GetAvailableCourses(_studentService.GetStudentById(studentId)!);
+            CourseAttendance studentAttendance = _courseAttendanceService.GetStudentAttendance(studentId)!;
+            if(studentAttendance != null)
+            {
+                availableCourses.Remove(_courseService.GetCourseById(studentAttendance.CourseId)!);
+            }
+
+            foreach(Course appliedCourse in GetAppliedCoursesStudent(studentId))
+            {
+                if (availableCourses.Contains(appliedCourse))
+                {
+                    availableCourses.Remove(appliedCourse);
+                }
+            }
+
+            return availableCourses;
+        }
+
+
+        public List<Course> GetAppliedCoursesStudent(string studentId)
+        {
+            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForStudent(studentId);
+            List<Course> appliedCourses = new();
+            foreach(CourseApplication application in applications)
+            {
+                appliedCourses.Add(_courseService.GetCourseById(application.CourseId)!);
+            }
+            return appliedCourses;
+        }
+
+        public Course? GetStudentAttendingCourse(string studentId)
+        {
+            CourseAttendance courseAttendance = _courseAttendanceService.GetStudentAttendance(studentId)!;
+            if (courseAttendance == null) return null;
+            return _courseService.GetCourseById(courseAttendance.CourseId);
+        }
+
+        public List<Course> GetFinishedCoursesStudent(string studentId)
+        {
+            List<CourseAttendance> attendances = _courseAttendanceService.GetFinishedCoursesStudent(studentId);
+            List<Course> finishedCourses = new();
+            foreach(CourseAttendance attendance in attendances)
+            {
+                finishedCourses.Add(_courseService.GetCourseById(attendance.CourseId)!);
+            }
+            return finishedCourses;
+        }
+
         public void GenerateAttendance(string courseId)
         {
             List<CourseApplication> applications = _courseApplicationService.GetApplicationsForCourse(courseId);
@@ -92,19 +156,21 @@ namespace LangLang.Services.CourseServices
             {
                 if(application.CourseApplicationState == State.Accepted)
                 {
-                    bool studentAttendingAnotherCourse = _courseAttendanceService.GetAttendancesForStudent(application.StudentId) != null;
+                    bool studentAttendingAnotherCourse = (_courseAttendanceService.GetAttendancesForStudent(application.StudentId)).Count != 0;
                     if (!studentAttendingAnotherCourse)
                     {
                         _courseAttendanceService.AddAttendance(application.StudentId, application.CourseId);
+                        _courseApplicationService.DeleteApplication(application.Id);
                     }
                 }
             }
         }
 
-        public void RemoveAttendee(string courseId, string studentId)
+        public void RemoveAttendee(string studentId)
         {
             _courseApplicationService.RemoveStudentApplications(studentId);
-            _courseAttendanceService.RemoveAttendee(studentId, courseId);
+            Course attendingCourse = GetStudentAttendingCourse(studentId)!;
+            _courseAttendanceService.RemoveAttendee(studentId, attendingCourse.Id);
         }
 
         public bool CanBeModified(string courseId)

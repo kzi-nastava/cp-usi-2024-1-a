@@ -37,7 +37,7 @@ namespace LangLang.Services.CourseServices
             foreach (CourseAttendance attendance in attendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Course.CourseState.Active)
+                if (course.State != Consts.CourseState.NotStarted && course.State != Consts.CourseState.FinishedGraded)
                 {
                     return attendance;
                 }
@@ -46,14 +46,15 @@ namespace LangLang.Services.CourseServices
         }
         public List<CourseAttendance> GetFinishedCoursesStudent(string studentId)
         {
-            List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
-            foreach (CourseAttendance attendance in attendances)
+            List<CourseAttendance> allAttendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            List<CourseAttendance> finishedAttendances = new();
+            foreach (CourseAttendance attendance in allAttendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Course.CourseState.FinishedGraded || course.State == Course.CourseState.FinishedNotGraded)
-                    attendances.Add(attendance);
+                if (course.State == Consts.CourseState.FinishedGraded || course.State == Consts.CourseState.FinishedNotGraded)
+                    finishedAttendances.Add(attendance);
             }
-            return attendances;
+            return finishedAttendances;
         }
 
         public CourseAttendance AddAttendance(string studentId, string courseId)
@@ -68,8 +69,14 @@ namespace LangLang.Services.CourseServices
             List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
-                if(attendance.CourseId == courseId && _courseService.GetCourseById(courseId)!.State == Course.CourseState.Active)
+                if (attendance.CourseId == courseId)
+                {
+                    if(_courseService.GetCourseById(courseId)!.State != Consts.CourseState.NotStarted)
+                    {
+                        _courseService.CancelAttendance(courseId);
+                    }
                     _courseAttendanceDAO.DeleteCourseAttendance(attendance.Id);
+                }
             }
         }
 

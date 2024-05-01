@@ -76,6 +76,19 @@ namespace LangLang.Services.CourseServices
             return _courseApplicationDAO.GetCourseApplicationById(id);
         }
 
+        public CourseApplication? GetApplication(string studentId, string courseId)
+        {
+            List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
+            foreach (CourseApplication application in applications)
+            {
+                if (application.CourseId == courseId)
+                {
+                    return application;
+                }
+            }
+            return null;
+        }
+
         public void PauseStudentApplications(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
