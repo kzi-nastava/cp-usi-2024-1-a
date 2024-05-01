@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace LangLang.Services.StudentCourseServices;
+namespace LangLang.Services.CourseServices;
 public interface ICourseAttendanceService
 {
     public List<CourseAttendance> GetAttendancesForStudent(string studentId);

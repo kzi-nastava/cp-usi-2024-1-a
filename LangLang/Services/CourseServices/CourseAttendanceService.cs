@@ -1,11 +1,10 @@
 ﻿using LangLang.DAO;
 using LangLang.Model;
-using LangLang.Services.CourseServices;
 using LangLang.Services.UserServices;
 using System.Collections.Generic;
 
 
-namespace LangLang.Services.StudentCourseServices
+namespace LangLang.Services.CourseServices
 {
     public class CourseAttendanceService : ICourseAttendanceService
     {
