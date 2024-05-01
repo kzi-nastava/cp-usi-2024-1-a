@@ -28,6 +28,9 @@ public class LoginService : ILoginService
         
         if (profile.Password != password)
             return new LoginResult(false, true);
+
+        if (!profile.IsActive)
+            return new LoginResult(false, true);
         
         _authenticationStore.CurrentUserProfile = profile;
         _authenticationStore.UserType = _userProfileMapper.GetPerson(profile).UserType;
