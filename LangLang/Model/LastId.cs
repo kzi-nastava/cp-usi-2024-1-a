@@ -1,4 +1,5 @@
-﻿namespace LangLang.Model
+﻿
+namespace LangLang.Model
 {
     internal class LastId
     {
@@ -6,6 +7,8 @@
         public int ExamId { get; set; }
         public int StudentId { get; set; }
         public int TutorId { get; set; }
+        public int CourseApplicationId { get; set; }
+        public int CourseAttendanceId {  get; set; }
 
         public LastId()
         {
@@ -13,13 +16,20 @@
             ExamId = 0;
             StudentId = 0;
             TutorId = 0;
+            CourseApplicationId = 0;
+            CourseAttendanceId = 0;
         }
-        public LastId(int courseId, int examId, int studentId, int tutorId)
+
+        public LastId(int courseId, int examId, int studentId, int tutorId, int courseApplicationId, int courseAttendanceId)
         {
             CourseId = courseId;
             ExamId = examId;
             StudentId = studentId;
             TutorId = tutorId;
+            CourseApplicationId = 0;
+            CourseAttendanceId = 0;
+            CourseApplicationId = courseApplicationId;
+            CourseAttendanceId = courseAttendanceId;
         }
     }
 }

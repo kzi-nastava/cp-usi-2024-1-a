@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using LangLang.Services.AuthenticationServices;
-using LangLang.Services.EntityServices;
+using LangLang.Services.UtilityServices;
 using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
 

@@ -89,7 +89,7 @@
 
 
                 </Grid>
-                <Button x:Name="SignUpBtn" Content="Sign up" FontSize="16" Foreground="White" Background="Black" Height="35" Width="250" BorderThickness="0" Command="{Binding SignUpCommand}">
+                <Button x:Name="SignUpBtn" Content="Sign up" FontSize="16" Foreground="White" Background="Black" Height="35" Width="250" BorderThickness="0" Command="{Binding SignUpCommand}" IsDefault="True">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border CornerRadius="10" Background="{TemplateBinding Background}">

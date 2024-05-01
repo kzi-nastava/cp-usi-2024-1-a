@@ -6,8 +6,7 @@ using System.Windows;
 using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
-using LangLang.Services.EntityServices;
+using LangLang.Services.ExamServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 

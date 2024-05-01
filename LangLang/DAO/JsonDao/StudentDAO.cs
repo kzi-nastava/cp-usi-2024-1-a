@@ -23,9 +23,9 @@ public class StudentDAO : IStudentDAO
         return Students;
     }
 
-    public Student? GetStudent(string email)
+    public Student? GetStudent(string id)
     {
-        return Students.GetValueOrDefault(email);
+        return Students.GetValueOrDefault(id);
     }
 
     public Student AddStudent(Student student)
@@ -35,9 +35,9 @@ public class StudentDAO : IStudentDAO
         return student;
     }
 
-    public void DeleteStudent(string email)
+    public void DeleteStudent(string id)
     {
-        _students!.Remove(email);
+        _students!.Remove(id);
         SaveStudents();
     }
 

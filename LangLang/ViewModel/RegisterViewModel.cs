@@ -9,7 +9,6 @@ using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;
-using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
@@ -155,7 +154,7 @@ namespace LangLang.ViewModel
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
-            bool successful = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+            bool successful = _registerService.RegisterStudent(email!, password!, name!, surname!, birthday, gender, phoneNumber!, educationLvl);
 
 
             if (!successful)
@@ -197,7 +196,7 @@ namespace LangLang.ViewModel
             else
             {
                 MessageBox.Show($"Succesfull registration");
-                LoginResult loginResult = _loginService.LogIn(email, password);
+                LoginResult loginResult = _loginService.LogIn(email!, password!);
                 switch (loginResult.UserType)
                 {
                     case UserType.Director:

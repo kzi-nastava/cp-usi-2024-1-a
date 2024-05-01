@@ -18,6 +18,8 @@ public static class AddDaoHostBuilderExtensions
             services.AddSingleton<ILastIdDAO, LastIdDAO>();
             services.AddSingleton<IStudentDAO, StudentDAO>();
             services.AddSingleton<ITutorDAO, TutorDAO>();
+            services.AddSingleton<ICourseApplicationDAO, CourseApplicationDAO>();
+            services.AddSingleton<ICourseAttendanceDAO, CourseAttendanceDAO>();
         });
         
         return host;
