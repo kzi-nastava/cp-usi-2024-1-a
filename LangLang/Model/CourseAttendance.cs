@@ -14,37 +14,37 @@ namespace LangLang.Model
 
         public bool isRated;
 
-        public bool isGrated;
+        public bool isGraded;
 
         public CourseAttendance() {
             Id = "";
             CourseId = "";
             StudentId = "";
             isRated = false;
-            isGrated = false;
+            isGraded = false;
         }
 
-        public CourseAttendance(string courseId, string studentId, bool isRated, bool isGrated)
+        public CourseAttendance(string courseId, string studentId, bool isRated, bool isGraded)
         {
             Id = "";
             CourseId = courseId;
             StudentId = studentId;
             this.isRated = isRated;
-            this.isGrated = isGrated;
+            this.isGraded = isGraded;
         }
 
-        public CourseAttendance(string id, string courseId, string studentId, bool isRated, bool isGrated)
+        public CourseAttendance(string id, string courseId, string studentId, bool isRated, bool isGraded)
         {
             Id = id;
             CourseId = courseId;
             StudentId = studentId;
             this.isRated = isRated;
-            this.isGrated = isGrated;
+            this.isGraded = isGraded;
         }
 
         public void AddGrade()
         {
-            isGrated = true;
+            isGraded = true;
         }
 
         public void AddRating()
