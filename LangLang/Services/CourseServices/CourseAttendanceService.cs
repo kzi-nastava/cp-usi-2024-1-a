@@ -71,7 +71,7 @@ namespace LangLang.Services.CourseServices
             {
                 if (attendance.CourseId == courseId)
                 {
-                    if(_courseService.GetCourseById(courseId)!.State != Consts.CourseState.NotStarted)
+                    if(_courseService.GetCourseById(courseId)!.State != Course.CourseState.NotStarted)
                     {
                         _courseService.CancelAttendance(courseId);
                     }
