@@ -1,11 +1,10 @@
 ﻿using LangLang.DAO;
 using LangLang.Model;
-using LangLang.Services.CourseServices;
 using LangLang.Services.UserServices;
 using System.Collections.Generic;
 
 
-namespace LangLang.Services.StudentCourseServices
+namespace LangLang.Services.CourseServices
 {
     public class CourseAttendanceService : ICourseAttendanceService
     {
@@ -60,7 +59,7 @@ namespace LangLang.Services.StudentCourseServices
 
         public CourseAttendance AddAttendance(string studentId, string courseId)
         {
-            CourseAttendance attendance = new CourseAttendance(courseId, studentId, false, false);
+            CourseAttendance attendance = new CourseAttendance(courseId, studentId, false, false,0, 0);
             _courseAttendanceDAO.AddCourseAttendance(attendance);
             return attendance;
         }

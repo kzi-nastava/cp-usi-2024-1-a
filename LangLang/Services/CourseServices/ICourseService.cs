@@ -23,5 +23,5 @@ public interface ICourseService
 
     public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration,
         Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start,
-        bool online, int numStudents, CourseState? state, int maxStudents);
+        bool online, int numStudents, Course.CourseState? state, int maxStudents);
 }

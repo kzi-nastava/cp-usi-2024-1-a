@@ -13,8 +13,6 @@ using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
-using System.Collections.Specialized;
-using System.Printing.IndexedProperties;
 
 namespace LangLang.ViewModel
 {
