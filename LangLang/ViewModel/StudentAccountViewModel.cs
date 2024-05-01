@@ -150,7 +150,7 @@ namespace LangLang.ViewModel
 
             if (successful)
             {
-                bool canEdit = _studentService.UpdateStudent(null, password, name, surname,birthday, gender, phoneNumber);
+                bool canEdit = _studentService.UpdateStudent(null!, password, name, surname,birthday, gender, phoneNumber);
                 if (canEdit)
                 {
                     MessageBox.Show($"Succesfull update");

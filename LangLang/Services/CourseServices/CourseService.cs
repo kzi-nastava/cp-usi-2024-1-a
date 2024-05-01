@@ -6,7 +6,7 @@ using Consts;
 using LangLang.DAO;
 using LangLang.Model;
 
-namespace LangLang.Services.EntityServices
+namespace LangLang.Services.CourseServices
 {
     public class CourseService : ICourseService
     {
@@ -21,14 +21,15 @@ namespace LangLang.Services.EntityServices
             _tutorDao = tutorDao;
         }
 
-        public Dictionary<string,Course> GetAll()
+
+        public Dictionary<string, Course> GetAll()
         {
             return _courseDao.GetAllCourses();
         }
         public Dictionary<string, Course> GetCoursesByTutor(Tutor loggedInUser)
         {
             Dictionary<string, Course> courses = new();
-            foreach(string courseId in loggedInUser.Courses)
+            foreach (string courseId in loggedInUser.Courses)
             {
                 courses.Add(courseId, _courseDao.GetCourseById(courseId)!);
             }
@@ -39,7 +40,7 @@ namespace LangLang.Services.EntityServices
             List<Course> courses = new();
             foreach (Course course in GetAll().Values.ToList())
             {
-                if (course.State != CourseState.Active)
+                if (course.State != Course.CourseState.NotStarted)
                 {
                     continue;
                 }
@@ -76,14 +77,45 @@ namespace LangLang.Services.EntityServices
         {
             _courseDao.UpdateCourse(course);
         }
-
-        public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay,Tuple<TimeOnly,int>> schedule,ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, CourseState? state, int maxStudents)
+        public void FinishCourse(string id)
         {
-            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0  || maxStudents == 0 || level == null || state == null)
+            Course? course = GetCourseById(id);
+            if (course == null)
+            {
+                throw new ArgumentException("Course not found");
+            }
+            course.State = Course.CourseState.FinishedNotGraded;
+            UpdateCourse(course);
+        }
+        public void CalculateAverageScores(string id)
+        {
+            Course? course = GetCourseById(id);
+            if (course == null)
+            {
+                throw new ArgumentException("Course not found");
+            }
+            // TODO: think about placing logic for calculating results
+
+        }
+
+        public void AddAttendance(string courseId)
+        {
+            GetCourseById(courseId)!.AddAttendance();
+        }
+
+        public void CancelAttendance(string courseId)
+        {
+            GetCourseById(courseId)!.CancelAttendance();
+        }
+
+
+        public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, Course.CourseState? state, int maxStudents)
+        {
+            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0 || maxStudents == 0 || level == null || state == null)
             {
                 return null;
             }
-            if(start == null)
+            if (start == null)
             {
                 return null;
             }
@@ -107,7 +139,7 @@ namespace LangLang.Services.EntityServices
                     (DateTime)start,
                     online,
                     numStudents,
-                    (CourseState)state,
+                    (Course.CourseState)state,
                     maxStudents
                 );
             }

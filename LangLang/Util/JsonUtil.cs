@@ -75,7 +75,7 @@ namespace LangLang.Util
                     throw new JsonException();
                 }
 
-                return TimeOnly.Parse(reader.GetString());
+                return TimeOnly.Parse(reader.GetString()!);
             }
 
             public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)

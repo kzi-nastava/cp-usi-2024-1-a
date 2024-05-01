@@ -25,6 +25,25 @@ namespace LangLang.DAO.JsonDao
             }
             set => _lastId = value;
         }
+        public string GetCourseApplicationId()
+        {
+            return LastId.CourseApplicationId.ToString();
+        }
+        public void IncrementCourseApplicationId()
+        {
+            LastId.CourseApplicationId++;
+            Save();
+        }
+
+        public string GetCourseAttendanceId()
+        {
+            return LastId.CourseAttendanceId.ToString();
+        }
+        public void IncrementCourseAttendanceId()
+        {
+            LastId.CourseAttendanceId++;
+            Save();
+        }
 
         public String GetCourseId()
         {
