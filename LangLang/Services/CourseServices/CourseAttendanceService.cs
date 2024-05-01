@@ -38,7 +38,7 @@ namespace LangLang.Services.StudentCourseServices
             foreach (CourseAttendance attendance in attendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Consts.CourseState.Active)
+                if (course.State == Course.CourseState.Active)
                 {
                     return attendance;
                 }
@@ -51,7 +51,7 @@ namespace LangLang.Services.StudentCourseServices
             foreach (CourseAttendance attendance in attendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Consts.CourseState.FinishedGraded || course.State == Consts.CourseState.FinishedNotGraded)
+                if (course.State == Course.CourseState.FinishedGraded || course.State == Course.CourseState.FinishedNotGraded)
                     attendances.Add(attendance);
             }
             return attendances;
@@ -69,7 +69,7 @@ namespace LangLang.Services.StudentCourseServices
             List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
-                if(attendance.CourseId == courseId && _courseService.GetCourseById(courseId)!.State == Consts.CourseState.Active)
+                if(attendance.CourseId == courseId && _courseService.GetCourseById(courseId)!.State == Course.CourseState.Active)
                     _courseAttendanceDAO.DeleteCourseAttendance(attendance.Id);
             }
         }

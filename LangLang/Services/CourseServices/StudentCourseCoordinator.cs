@@ -116,7 +116,7 @@ namespace LangLang.Services.CourseServices
             {
                 return false;
             }
-            if (course.State != CourseState.NotStarted)
+            if (course.State != Course.CourseState.NotStarted)
             {
                 return false;
             }
@@ -130,7 +130,7 @@ namespace LangLang.Services.CourseServices
             {
                 return false;
             }
-            if(course.State != CourseState.InProgress)
+            if(course.State != Course.CourseState.InProgress)
             {
                 return false;
             }

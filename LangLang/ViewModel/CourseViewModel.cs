@@ -9,7 +9,6 @@ using LangLang.ViewModel.Factories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using LangLang.Services.CourseServices;
 using System.Linq;
 using System.Windows;
 
@@ -34,7 +33,7 @@ namespace LangLang.ViewModel
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> LanguageLevels { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
-        public ObservableCollection<CourseState> States { get; set; }
+        public ObservableCollection<Course.CourseState> States { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
         public ObservableCollection<WorkDay?> WorkDays { get; set; }
         public ObservableCollection<TimeOnly?> mondayHours = new ObservableCollection<TimeOnly?>();
@@ -198,8 +197,8 @@ namespace LangLang.ViewModel
             set => SetField(ref numStudents, value);
         }
 
-        private CourseState state;
-        public CourseState State
+        private Course.CourseState state;
+        public Course.CourseState State
         {
             get => state;
             set => SetField(ref state, value);
@@ -283,7 +282,7 @@ namespace LangLang.ViewModel
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLvl>();
             Levels = new ObservableCollection<LanguageLvl>();
-            States = new ObservableCollection<CourseState>();
+            States = new ObservableCollection<Course.CourseState>();
             Durations = new ObservableCollection<int?> {null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
             WorkDays = new ObservableCollection<WorkDay?>();
             MondayHours = new ObservableCollection<TimeOnly?> {null, new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00) };
@@ -522,7 +521,7 @@ namespace LangLang.ViewModel
         }
         public void LoadCourseStates()
         {
-            foreach (CourseState state in Enum.GetValues(typeof(CourseState)))
+            foreach (Course.CourseState state in Enum.GetValues(typeof(Course.CourseState)))
             {
                 States.Add(state);
             }
@@ -564,7 +563,7 @@ namespace LangLang.ViewModel
             selectedItem = null;
             MaxStudents = 0;
             NumStudents = 0;
-            State = CourseState.Active;
+            State = Course.CourseState.Active;
             Start = DateTime.Now;
 
 
