@@ -19,7 +19,6 @@ namespace LangLang.ViewModel
         public RelayCommand AcceptStudentCommand { get; }
         public RelayCommand DenyStudentCommand { get; }
         public RelayCommand GivePenaltyPointCommand { get; }
-        public RelayCommand GradeStudentCommand { get; }
 
         private string courseName = "";
         private string name = "";
