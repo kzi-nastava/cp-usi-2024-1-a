@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using static LangLang.Model.Course;
 
 namespace LangLang.ViewModel
 {
@@ -318,7 +319,6 @@ namespace LangLang.ViewModel
                 _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
                     break;
                 case CourseState.FinishedNotGraded:
-                    // TODO: Add new window for point 6 tomorrow
                 _popupNavigationService.Navigate(ViewType.FinishedCourseInfo);
                     break;
             }
