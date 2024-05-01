@@ -1,19 +1,32 @@
 ﻿using Consts;
 using LangLang.Services.CourseServices;
 using System;
+using System.Collections.Generic;
+using LangLang.DAO;
+using LangLang.DTO;
+using LangLang.Model;
+using LangLang.Services.AuthenticationServices;
 
 
 namespace LangLang.Services.UserServices
 {
     public class AccountService : IAccountService
     {
+        private readonly IProfileService _profileService;
         private readonly IStudentService _studentService;
+        private readonly ITutorService _tutorService;
         private readonly IStudentCourseCoordinator _studentCourseCoordinator;
+        private readonly IPersonProfileMappingDAO _personProfileMappingDao;
+        private readonly IUserProfileMapper _userProfileMapper;
 
-        public AccountService(IStudentService studentService, IStudentCourseCoordinator studentCourseCoordinator) 
+        public AccountService(IProfileService profileService, IStudentService studentService, ITutorService tutorService, IStudentCourseCoordinator studentCourseCoordinator, IPersonProfileMappingDAO personProfileMappingDao, IUserProfileMapper userProfileMapper)
         {
+            _profileService = profileService;
             _studentService = studentService;
+            _tutorService = tutorService;
             _studentCourseCoordinator = studentCourseCoordinator;
+            _personProfileMappingDao = personProfileMappingDao;
+            _userProfileMapper = userProfileMapper;
         }
 
         public void UpdateStudent(string studentId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
@@ -23,7 +36,13 @@ namespace LangLang.Services.UserServices
             {
                 throw new ArgumentException("Student applied for courses, editing profile not allowed");
             }
-            _studentService.UpdateStudent(_studentService.GetStudentById(studentId)!, password, name, surname, birthDate, gender, phoneNumber);
+
+            Student student = _studentService.GetStudentById(studentId)!;
+            _studentService.UpdateStudent(student, name, surname, birthDate, gender, phoneNumber);
+
+            Profile profile = _userProfileMapper.GetProfile(new UserDto(student, UserType.Student))
+                              ?? throw new InvalidOperationException("No profile associated with student.");
+            _profileService.UpdatePassword(profile, password);
         }
 
         public void DeleteStudent(string studentId)
@@ -31,6 +50,53 @@ namespace LangLang.Services.UserServices
             _studentCourseCoordinator.RemoveAttendee(studentId);
             //exam coordinator
             _studentService.DeleteAccount(_studentService.GetStudentById(studentId)!);
+        }
+
+        public void RegisterStudent(RegisterStudentDto registerDto)
+        {
+            var profile = _profileService.AddProfile(new Profile(
+                registerDto.Email,
+                registerDto.Password
+            ));
+            var student = _studentService.AddStudent(new Student(
+                registerDto.Name,
+                registerDto.Surname,
+                registerDto.BirthDay,
+                registerDto.Gender,
+                registerDto.PhoneNumber,
+                registerDto.EducationLvl,
+                0
+            ));
+            _personProfileMappingDao.AddMapping(new PersonProfileMapping(
+                profile.Email,
+                UserType.Student,
+                student.Id
+            ));
+        }
+
+        public void RegisterTutor(RegisterTutorDto registerDto)
+        {
+            var profile = _profileService.AddProfile(new Profile(
+                registerDto.Email,
+                registerDto.Password
+            ));
+            var tutor = _tutorService.AddTutor(new Tutor(
+                registerDto.Name,
+                registerDto.Surname,
+                registerDto.BirthDay,
+                registerDto.Gender,
+                registerDto.PhoneNumber,
+                registerDto.KnownLanguages,
+                new List<string>(),
+                new List<string>(),
+                new int[5],
+                registerDto.DateAdded
+            ));
+            _personProfileMappingDao.AddMapping(new PersonProfileMapping(
+                profile.Email,
+                UserType.Tutor,
+                tutor.Id
+            ));
         }
     }
 }

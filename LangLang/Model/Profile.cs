@@ -6,6 +6,12 @@ public class Profile
     public string Password { get; set; }
     public bool IsActive { get; set; }
 
+    public Profile()
+    {
+        Email = "";
+        Password = "";
+    }
+    
     public Profile(string email, string password)
     {
         Email = email;

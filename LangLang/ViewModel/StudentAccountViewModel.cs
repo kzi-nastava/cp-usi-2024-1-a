@@ -32,6 +32,8 @@ namespace LangLang.ViewModel
         private string? _errorMessagePhone;
 
         private readonly IRegisterService _registerService;
+
+        private Student user = null!;
         
         public StudentAccountViewModel(IAccountService accountService,IRegisterService registerService, IAuthenticationStore authenticationStore, NavigationStore navigationStore)
         {
@@ -45,15 +47,17 @@ namespace LangLang.ViewModel
 
         private void SetUserData()
         {
-            Person user = _authenticationStore.CurrentUser.Person ??
+            Profile profile = _authenticationStore.CurrentUserProfile ?? 
+                              throw new InvalidOperationException("Cannot set user data without currently logged in user");
+            user = (Student?)_authenticationStore.CurrentUser.Person ??
                         throw new InvalidOperationException("Cannot set user data without currently logged in user");
-            // Email = user.Email;
+            Email = profile.Email;
             Name = user.Name;
             Surname = user.Surname;
             PhoneNumber = user.PhoneNumber;
             Gender = user.Gender;
             Birthday = user.BirthDate;
-            // Password = user.Password; 
+            Password = profile.Password; 
         }
 
         public string ErrorMessageRequired
@@ -152,7 +156,7 @@ namespace LangLang.ViewModel
             {
                 try
                 {
-                    _accountService.UpdateStudent(email, password, name, surname, birthday, gender, phoneNumber);
+                    _accountService.UpdateStudent(user.Id, password, name, surname, birthday, gender, phoneNumber);
                     MessageBox.Show($"Succesfull update");
                 }
                 catch {

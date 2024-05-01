@@ -7,7 +7,14 @@ namespace LangLang.DAO.JsonDao
 {
     public class TutorDAO : ITutorDAO
     {
+        private ILastIdDAO _lastIdDao;
+        
         private Dictionary<string, Tutor>? _tutors;
+
+        public TutorDAO(ILastIdDAO lastIdDao)
+        {
+            _lastIdDao = lastIdDao;
+        }
 
         private Dictionary<string, Tutor> Tutors
         {
@@ -27,10 +34,13 @@ namespace LangLang.DAO.JsonDao
             return Tutors.GetValueOrDefault(email);
         }
 
-        public void AddTutor(Tutor tutor)
+        public Tutor AddTutor(Tutor tutor)
         {
+            _lastIdDao.IncrementTutorId();
+            tutor.Id = _lastIdDao.GetTutorId();
             Tutors.Add(tutor.Id, tutor);
             Save();
+            return tutor;
         }
 
         public void UpdateTutor(Tutor tutor)

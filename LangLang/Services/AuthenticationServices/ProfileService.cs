@@ -1,4 +1,5 @@
-﻿using LangLang.DAO;
+﻿using System;
+using LangLang.DAO;
 using LangLang.Model;
 
 namespace LangLang.Services.AuthenticationServices;
@@ -14,7 +15,7 @@ public class ProfileService : IProfileService
     
     public Profile? GetProfile(string email) => _profileDao.GetProfile(email);
     
-    public bool IsEmailTaken(string email) => GetProfile(email) == null;
+    public bool IsEmailTaken(string email) => GetProfile(email) != null;
 
     public Profile AddProfile(Profile profile) => _profileDao.AddProfile(profile);
 
@@ -22,5 +23,13 @@ public class ProfileService : IProfileService
     {
         profile.IsActive = false;
         _profileDao.UpdateProfile(profile.Email, profile);
+    }
+
+    public Profile UpdatePassword(Profile profile, string password)
+    {
+        profile.Password = password;
+        profile = _profileDao.UpdateProfile(profile.Email, profile)
+                  ?? throw new ArgumentException("No profile with the given id.");
+        return profile;
     }
 }

@@ -7,7 +7,7 @@ public interface ITutorService
 {
     public Dictionary<string, Tutor> GetAllTutors();
 
-    public void AddTutor(Tutor tutor);
+    public Tutor AddTutor(Tutor tutor);
 
     public Tutor? GetTutor(string email);
 

@@ -10,6 +10,7 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using LangLang.DTO;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Services.UserServices;
@@ -24,6 +25,7 @@ namespace LangLang.ViewModel
         private readonly TutorService tutorService;
         private readonly LanguageService languageService;
         private readonly IRegisterService _registerService;
+        private readonly IAccountService _accountService;
         public RelayCommand GoBackCommand { get; set; }
         public RelayCommand AddKnownLangaugeCommand { get; set; }
         public RelayCommand AddTutorCommand { get; set; }
@@ -168,11 +170,12 @@ namespace LangLang.ViewModel
         }
 
 
-        public TutorTableViewModel(TutorTableWindow window, ItemsControl knownLanguagesHolder, IRegisterService registerService)
+        public TutorTableViewModel(TutorTableWindow window, ItemsControl knownLanguagesHolder, IRegisterService registerService, IAccountService accountService)
         {
             this.window = window;
             this.knownLanguagesHolder = knownLanguagesHolder;
             _registerService = registerService;
+            _accountService = accountService;
             Tutors = new();
             Languages = new();
             Levels = new();
@@ -381,7 +384,7 @@ namespace LangLang.ViewModel
                 MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            if (_registerService.CheckExistingEmail(Email))
+            if (_registerService.IsEmailTaken(Email))
             {
                 MessageBox.Show("Email not avaliable!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -395,7 +398,20 @@ namespace LangLang.ViewModel
             foreach (var tuple in KnownLanguages)
                 knownLanguagesRightType.Add(new(languageService.GetLanguageById(tuple.Item1), tuple.Item2));
             Tutor tutor = new Tutor(Name, Surname, (DateTime)BirthDate, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
-            tutorService.AddTutor(tutor);
+            
+            
+            _accountService.RegisterTutor(new RegisterTutorDto(
+                Email,
+                Password,
+                Name,
+                Surname,
+                (DateTime)BirthDate,
+                SelectedGender,
+                PhoneNumber,
+                knownLanguagesRightType,
+                DateAdded!.Value
+                ));
+            
             Tutors.Add(tutor);
             RemoveInputs();
             MessageBox.Show("The tutor is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);

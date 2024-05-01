@@ -7,8 +7,15 @@ namespace LangLang.DAO.JsonDao;
 
 public class StudentDAO : IStudentDAO
 {
-    private Dictionary<string, Student>? _students;
+    private ILastIdDAO _lastIdDao;
 
+    public StudentDAO(ILastIdDAO lastIdDao)
+    {
+        _lastIdDao = lastIdDao;
+    }
+
+    private Dictionary<string, Student>? _students;
+    
     private Dictionary<string, Student> Students
     {
         get {
@@ -30,14 +37,23 @@ public class StudentDAO : IStudentDAO
 
     public Student AddStudent(Student student)
     {
-        _students![student.Id] = student;
+        _lastIdDao.IncrementStudentId();
+        student.Id = _lastIdDao.GetStudentId();
+        Students[student.Id] = student;
+        SaveStudents();
+        return student;
+    }
+
+    public Student UpdateStudent(Student student)
+    {
+        Students[student.Id] = student;
         SaveStudents();
         return student;
     }
 
     public void DeleteStudent(string id)
     {
-        _students!.Remove(id);
+        Students.Remove(id);
         SaveStudents();
     }
 

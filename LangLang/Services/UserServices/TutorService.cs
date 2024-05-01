@@ -34,7 +34,7 @@ namespace LangLang.Services.UserServices
             tutor.AddRating(rating);
         }
 
-        public void AddTutor(Tutor tutor) => _tutorDao.AddTutor(tutor);
+        public Tutor AddTutor(Tutor tutor) => _tutorDao.AddTutor(tutor);
 
         public Tutor? GetTutor(string email) => _tutorDao.GetTutor(email);
 
