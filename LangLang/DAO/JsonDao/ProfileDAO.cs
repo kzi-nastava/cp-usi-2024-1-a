@@ -24,7 +24,7 @@ public class ProfileDAO : IProfileDAO
         return Profiles;
     }
 
-    public Profile? GetProfileById(string email)
+    public Profile? GetProfile(string email)
     {
         return Profiles.GetValueOrDefault(email);
     }

@@ -14,14 +14,14 @@ public class UserProfileMapper : IUserProfileMapper, IObserver<PersonProfileMapp
     private readonly Dictionary<string, string> tutorToProfile = new();
     private readonly Dictionary<string, string> directorToProfile = new();
 
-    private readonly IProfileDAO _profileDao;
+    private readonly IProfileService _profileService;
     private readonly IStudentDAO _studentDao;
     private readonly ITutorDAO _tutorDao;
     private readonly IDirectorDAO _directorDao;
 
-    public UserProfileMapper(IPersonProfileMappingDAO personProfileMappingDao, IProfileDAO profileDao, IStudentDAO studentDao, ITutorDAO tutorDao, IDirectorDAO directorDao)
+    public UserProfileMapper(IPersonProfileMappingDAO personProfileMappingDao, IProfileService profileService, IStudentDAO studentDao, ITutorDAO tutorDao, IDirectorDAO directorDao)
     {
-        _profileDao = profileDao;
+        _profileService = profileService;
         _studentDao = studentDao;
         _tutorDao = tutorDao;
         _directorDao = directorDao;
@@ -71,7 +71,7 @@ public class UserProfileMapper : IUserProfileMapper, IObserver<PersonProfileMapp
             _ => throw new ArgumentException("User type not supported.")
         };
 
-        return email == null ? null : _profileDao.GetProfileById(email);
+        return email == null ? null : _profileService.GetProfile(email);
     }
 
     public void OnCompleted()

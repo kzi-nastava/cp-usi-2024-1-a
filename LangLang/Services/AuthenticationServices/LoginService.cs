@@ -1,5 +1,4 @@
-﻿using LangLang.DAO;
-using LangLang.DTO;
+﻿using LangLang.DTO;
 using LangLang.Model;
 using LangLang.Stores;
 
@@ -8,13 +7,13 @@ namespace LangLang.Services.AuthenticationServices;
 public class LoginService : ILoginService
 {
     private readonly IAuthenticationStore _authenticationStore;
-    private readonly IProfileDAO _profileDao;
+    private readonly IProfileService _profileService;
     private readonly IUserProfileMapper _userProfileMapper;
 
-    public LoginService(IAuthenticationStore authenticationStore, IProfileDAO profileDao, IUserProfileMapper userProfileMapper)
+    public LoginService(IAuthenticationStore authenticationStore, IProfileService profileService, IUserProfileMapper userProfileMapper)
     {
         _authenticationStore = authenticationStore;
-        _profileDao = profileDao;
+        _profileService = profileService;
         _userProfileMapper = userProfileMapper;
     }
 
@@ -23,7 +22,7 @@ public class LoginService : ILoginService
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             return new LoginResult(false);
 
-        Profile? profile = _profileDao.GetProfileById(email);
+        Profile? profile = _profileService.GetProfile(email);
 
         if (profile == null) return new LoginResult(false);
         
