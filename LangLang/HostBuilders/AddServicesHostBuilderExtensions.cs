@@ -30,6 +30,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<ICourseAttendanceService, CourseAttendanceService>();
             services.AddSingleton<ICourseApplicationService, CourseApplicationService>();
             services.AddSingleton<IStudentCourseCoordinator, StudentCourseCoordinator>();
+            services.AddSingleton<IAccountService, AccountService>();
         });
         
         return host;

@@ -13,7 +13,7 @@ namespace LangLang.ViewModel
 {
     public class StudentAccountViewModel : ViewModelBase, INavigableDataContext
     {
-        private readonly IStudentService _studentService;
+        private readonly IAccountService _accountService;
         private readonly AuthenticationStore _authenticationStore;
         public NavigationStore NavigationStore { get; }
         
@@ -33,10 +33,10 @@ namespace LangLang.ViewModel
 
         private readonly IRegisterService _registerService;
         
-        public StudentAccountViewModel(IRegisterService registerService, IStudentService studentService, AuthenticationStore authenticationStore, NavigationStore navigationStore)
+        public StudentAccountViewModel(IAccountService accountService,IRegisterService registerService, AuthenticationStore authenticationStore, NavigationStore navigationStore)
         {
+            _accountService = accountService;
             _registerService = registerService;
-            _studentService = studentService;
             _authenticationStore = authenticationStore;
             NavigationStore = navigationStore;
             ConfirmCommand = new RelayCommand(ConfirmInput!);
@@ -146,17 +146,16 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = _registerService.CheckUserData("email", password, name, surname, phoneNumber);
+            bool successful = _registerService.CheckUserData(email, password, name, surname, phoneNumber);
 
             if (successful)
             {
-                bool canEdit = _studentService.UpdateStudent(null!, password, name, surname,birthday, gender, phoneNumber);
-                if (canEdit)
+                try
                 {
+                    _accountService.UpdateStudent(email, password, name, surname, birthday, gender, phoneNumber);
                     MessageBox.Show($"Succesfull update");
                 }
-                else
-                {
+                catch {
                     ErrorMessageRequired = "Student applied for courses, editing profile not allowed";
                     return;
                 }

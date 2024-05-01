@@ -14,6 +14,7 @@ using LangLang.Services.UserServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
+
 namespace LangLang.ViewModel
 {
     public class StudentViewModel : ViewModelBase, INavigableDataContext
@@ -24,6 +25,7 @@ namespace LangLang.ViewModel
         private readonly IStudentService _studentService;
         private readonly IExamService _examService;
         private readonly IStudentCourseCoordinator _courseCoordinator;
+        private readonly IAccountService _accountService;
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
         public ICommand LogOutCommand { get; }
@@ -199,13 +201,14 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
+        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
         {
             _loggedInUser = (Student?)authenticationStore.CurrentUser ??
                                 throw new InvalidOperationException(
                                     "Cannot create StudentViewModel without currently logged in student");
             NavigationStore = navigationStore;
             _courseService = courseService;
+            _accountService = accountService;
             _languageService = languageService;
             _examService = examService;
             _studentService = studentService;
@@ -348,7 +351,6 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            //var courses = _courseService.GetAvailableCourses(_loggedInUser);
             var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Email);
             foreach (Course course in availableCourses)
             {
@@ -358,6 +360,8 @@ namespace LangLang.ViewModel
 
         private void LoadAttendingCourse()
         {
+            //when trying to test attendance, apply for course
+            //in files change application state to 2 (accepted), then change course state to 4 (In progress so i can drop it)
             //_courseCoordinator.GenerateAttendance("30");
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Email)!;
             if(attendingCourse != null)
@@ -514,11 +518,7 @@ namespace LangLang.ViewModel
 
         private void DeleteProfile()
         {
-            //Change this!! After accountService is made, currently no courses or exams get deleted
-            //the next three will go to a seperate function in accountService
-            _courseCoordinator.RemoveAttendee(_loggedInUser.Email);
-            //examCoordinator
-            _studentService.DeleteAccount(_loggedInUser);
+            _accountService.DeleteStudent(_loggedInUser.Email);
             MessageBox.Show("Your profile has been successfully deleted");
             _navigationService.Navigate(ViewType.Login);
         }

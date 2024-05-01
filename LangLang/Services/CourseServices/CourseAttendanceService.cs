@@ -37,7 +37,7 @@ namespace LangLang.Services.CourseServices
             foreach (CourseAttendance attendance in attendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State != Consts.CourseState.NotStarted && course.State != Consts.CourseState.FinishedGraded)
+                if (course.State != Course.CourseState.NotStarted && course.State != Course.CourseState.FinishedGraded)
                 {
                     return attendance;
                 }
@@ -51,7 +51,7 @@ namespace LangLang.Services.CourseServices
             foreach (CourseAttendance attendance in allAttendances)
             {
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Consts.CourseState.FinishedGraded || course.State == Consts.CourseState.FinishedNotGraded)
+                if (course.State == Course.CourseState.FinishedGraded || course.State == Course.CourseState.FinishedNotGraded)
                     finishedAttendances.Add(attendance);
             }
             return finishedAttendances;
