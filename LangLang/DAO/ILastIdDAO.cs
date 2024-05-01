@@ -8,4 +8,8 @@ public interface ILastIdDAO
     public void IncrementCourseId();
     public String GetExamId();
     public void IncrementExamId();
+    public string GetCourseAttendanceId();
+    public void IncrementCourseAttendanceId();
+    public string GetCourseApplicationId();
+    public void IncrementCourseApplicationId();
 }

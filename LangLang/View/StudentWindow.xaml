@@ -46,6 +46,7 @@
                     <Button Command="{Binding ClearExamFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="30,10,10,10" Height="25"/>
                 </StackPanel>
 
+                <!--Exam table with button-->
                 <DataGrid Grid.Row="3" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
@@ -57,36 +58,30 @@
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Classroom" Binding="{Binding ClassroomNumber}" Width="*" />
                         <DataGridTextColumn Header="Student capacity" Binding="{Binding MaxStudents}" Width="*" />
-                        <DataGridTemplateColumn  Width="180">
+                        <DataGridTemplateColumn  Width="90">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button x:Name="ApplyButtonExam" Content="Apply" Command="{Binding ApplyExamCommand}" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="{x:Type Button}">
-                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-
-                                        <Button x:Name="CancelButtonExam" Content="Cancel" Command="{Binding CancelExamCommand}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="{x:Type Button}">
-                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                    </StackPanel>
+                                    <Button Content="Apply"
+                                        FontSize="14"
+                                        Foreground="White"
+                                        Background="{StaticResource BlueBtnColor}"
+                                        Height="25"
+                                        Width="80"
+                                        BorderThickness="0"
+                                        Margin="2"
+                                        Command="{Binding DataContext.ApplyExamCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding Id}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
-
-
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -125,8 +120,8 @@
             </Grid>
         </TabItem>
 
-        <!-- Courses Tab -->
 
+        <!-- Courses Tab -->
         <TabItem Header="Courses">
             <Grid>
                 <Grid.RowDefinitions>
@@ -189,30 +184,27 @@
                         <DataGridTextColumn Header="Writing" Binding="{Binding WritingAvgScore}" Width="60" />
                         <DataGridTextColumn Header="Listening" Binding="{Binding ListeningAvgScore}" Width="60" />
                         <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="60" />
-                        <DataGridTemplateColumn  Width="180">
+                        <DataGridTemplateColumn  Width="90">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button x:Name="ApplyButtonCourse" Click="ApplyButtonCourse" Content="Apply" Command="{Binding ApplyCourseCommand}" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="{x:Type Button}">
-                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-
-                                        <Button x:Name="CancelButtonCourse" Click="CancelButtonCourse" Content="Cancel" Command="{Binding CancelCourseCommand}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="25" Width="80" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="{x:Type Button}">
-                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                    </StackPanel>
+                                    <Button Content="Apply"
+                                    FontSize="14"
+                                    Foreground="White"
+                                    Background="{StaticResource BlueBtnColor}"
+                                    Height="25"
+                                    Width="80"
+                                    BorderThickness="0"
+                                    Margin="2"
+                                    Command="{Binding DataContext.ApplyCourseCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    CommandParameter="{Binding Id}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -257,8 +249,9 @@
             </Grid>
         </TabItem>
     
-        <!--My courses Tab -->
-        <TabItem Header="My Courses">
+ 
+        <!--Course history Tab -->
+        <TabItem Header="Course history">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -303,15 +296,26 @@
                         <DataGridTemplateColumn  Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button x:Name="RateTutorButton"  Content="Rate tutor" Click="RateTutorButton" Command="{Binding RateTutorCommand}" FontSize="14" Foreground="White" Background="{StaticResource YellowBtnColor}" Height="25" Width="90" BorderThickness="0" CommandParameter="{Binding}" Margin="2">
+                                    <Button Content="Rate tutor"
+                                        FontSize="14"
+                                        Foreground="White"
+                                        Background="{StaticResource YellowBtnColor}"
+                                        Height="25"
+                                        Width="80"
+                                        BorderThickness="0"
+                                        Margin="2"
+                                        Command="{Binding DataContext.RateTutorCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding Id}"> <!--We will need to be passing tutor id, but its currently not an attribute-->
                                         <Button.Template>
                                             <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border CornerRadius="5" Background="{TemplateBinding Background}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
                                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
+
+
 
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -321,10 +325,97 @@
                 </DataGrid>
 
 
-                <!--Attending course -->
-                
+
                 <DockPanel Grid.Row="4">
-                    <Label Content="Attending course" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0" DockPanel.Dock="Top"/>
+                    <Button x:Name="LogoutBtn2" DockPanel.Dock="Left" Content="Logout" Command="{Binding LogOutCommand}" FontSize="14" Foreground="White" Background="{StaticResource GrayBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <StackPanel DockPanel.Dock="Right" Width="110"></StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="EditProfileBtn2" Command="{Binding OpenStudentProfileCommand}" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button x:Name="DeleteProfileBtn2" Content="Delete Profile" Command="{Binding DeleteProfileCommand}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+        </TabItem>
+
+
+        <!-- Exam history Tab -->
+        <TabItem Header="Exam history">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Content="Finished exams" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
+
+                <DataGrid Grid.Row="3" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
+                        <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}" Width="*" />
+                        <DataGridTextColumn Header="Time" Width="*">
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="Time" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Classroom" Binding="{Binding ClassroomNumber}" Width="*" />
+                        <DataGridTextColumn Header="Student capacity" Binding="{Binding MaxStudents}" Width="*" />
+                        <DataGridTemplateColumn  Width="90">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Rate tutor"
+                                        FontSize="14"
+                                        Foreground="White"
+                                        Background="{StaticResource YellowBtnColor}"
+                                        Height="25"
+                                        Width="80"
+                                        BorderThickness="0"
+                                        Margin="2"
+                                        Command="{Binding DataContext.RateTutorCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding Id}">  <!--We will need to be passing tutor id, but its currently not an attribute-->
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!--Known languages -->
+                <DockPanel Grid.Row="4">
+                    <Label Content="Known Languages" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0" DockPanel.Dock="Top"/>
                     <DataGrid ItemsSource="{Binding AttendingCourse}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10,10,10,103" Height="61">
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
@@ -383,16 +474,251 @@
 
                 </DockPanel>
 
-                
+            </Grid>
+        </TabItem>
+
+
+        <!--My courses Tab -->
+        <TabItem Header="My Courses">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Content="Applied courses" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
+                <DataGrid Grid.Row="3" ItemsSource="{Binding AppliedCourses}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                        <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
+                        <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
+                        <DataGridTextColumn Header="Tutor" Width="*"/>
+                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
+                        <DataGridTextColumn Header="Starts" Width="*">
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="Start" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Online" Width="60">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Online}" Value="True">
+                                            <Setter Property="Text" Value="Yes"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Online}" Value="False">
+                                            <Setter Property="Text" Value="No"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Reading" Binding="{Binding ReadingAvgScore}" Width="60" />
+                        <DataGridTextColumn Header="Writing" Binding="{Binding WritingAvgScore}" Width="60" />
+                        <DataGridTextColumn Header="Listening" Binding="{Binding ListeningAvgScore}" Width="60" />
+                        <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="60" />
+                        <DataGridTemplateColumn  Width="90">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Cancel"
+                                    FontSize="14"
+                                    Foreground="White"
+                                    Background="{StaticResource RedBtnColor}"
+                                    Height="25"
+                                    Width="80"
+                                    BorderThickness="0"
+                                    Margin="2"
+                                    Command="{Binding DataContext.CancelCourseCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    CommandParameter="{Binding Id}">        
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!--Attending course -->
+
+                <DockPanel Grid.Row="4">
+                    <Label Content="Attending course" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0" DockPanel.Dock="Top"/>
+                    <DataGrid ItemsSource="{Binding AttendingCourse}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10,10,10,103" Height="61">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Height" Value="40"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
+                            <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
+                            <DataGridTextColumn Header="Tutor" Width="*"/>
+                            <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
+                            <DataGridTextColumn Header="Starts" Width="*">
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="Start" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Online" Width="60">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Online}" Value="True">
+                                                <Setter Property="Text" Value="Yes"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Online}" Value="False">
+                                                <Setter Property="Text" Value="No"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn  Width="180">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Drop course"
+                                             FontSize="14"
+                                             Foreground="White"
+                                             Background="{StaticResource RedBtnColor}"
+                                             Height="30"
+                                             Width="150"
+                                             BorderThickness="0"
+                                             Margin="2"
+                                             Command="{Binding DataContext.CancelAttendingCourseCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                             CommandParameter="{Binding Id}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Grid>
+        </TabItem>
+
+
+        <!-- My exams Tab -->
+        <TabItem Header="My exams">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Content="Applied exams" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
+
+
+                <!--Exam table with button-->
+                <DataGrid Grid.Row="3" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
+                        <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}" Width="*" />
+                        <DataGridTextColumn Header="Time" Width="*">
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="Time" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Classroom" Binding="{Binding ClassroomNumber}" Width="*" />
+                        <DataGridTextColumn Header="Student capacity" Binding="{Binding MaxStudents}" Width="*" />
+                        <DataGridTemplateColumn  Width="90">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Cancel"
+                                        FontSize="14"
+                                        Foreground="White"
+                                        Background="{StaticResource RedBtnColor}"
+                                        Height="25"
+                                        Width="80"
+                                        BorderThickness="0"
+                                        Margin="2"
+                                        Command="{Binding DataContext.CancelExamCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding Id}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!--Attending exam -->
+                <DockPanel Grid.Row="4">
+                    <Label Content="Attending exam" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0" DockPanel.Dock="Top"/>
+                    <DataGrid ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10,10,10,103" Height="61">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Height" Value="40"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
+                            <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}" Width="*" />
+                            <DataGridTextColumn Header="Time" Width="*">
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="Time" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Classroom" Binding="{Binding ClassroomNumber}" Width="*" />
+                            <DataGridTextColumn Header="Student capacity" Binding="{Binding MaxStudents}" Width="*" />
+                            <DataGridTemplateColumn  Width="180">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button x:Name="CancelAttendingExamBtn" Content="Drop exam" Command="{Binding DataContext.CancelAttendingExamCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                                CommandParameter="{Binding Id}" FontSize="14" Foreground="White" Background="{StaticResource RedBtnColor}" Height="30" Width="150" BorderThickness="0" Margin="2">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+
+                        </DataGrid.Columns>
+
+                    </DataGrid>
 
 
 
-
+                </DockPanel>
 
 
             </Grid>
         </TabItem>
-
 
 
     </TabControl>

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using Consts;
 using LangLang.Model;
 
-namespace LangLang.Services.EntityServices;
+namespace LangLang.Services.ExamServices;
 
 public interface IExamService
 {
     public List<Exam> GetAllExams();
-    
+
     public Exam? GetExamById(string id);
-    
+
     public List<Exam> GetExamsByTutor(string tutorId);
-    
+
     public Exam AddExam(Tutor tutor, Language? language, LanguageLvl? languageLvl, DateOnly? examDate,
         TimeOnly? examTime, int classroomNumber, int maxStudents);
 

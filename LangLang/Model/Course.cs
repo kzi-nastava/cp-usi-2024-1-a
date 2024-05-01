@@ -19,6 +19,11 @@ namespace LangLang.Model
         public bool Online { get; set; }
         public int MaxStudents { get; set; }
         public int NumStudents { get; set; }
+        public enum CourseState
+        {
+            NotStarted, Locked, Active, Canceled, InProgress, FinishedNotGraded, FinishedGraded
+        }
+
         public CourseState State { get; set; }
         public int NumPenaltyPts { get; set; }
         public int NumStudentsPassed { get; set; }
@@ -106,6 +111,15 @@ namespace LangLang.Model
         public bool IsFull()
         {
             return NumStudents == MaxStudents;
+        }
+
+        public bool CanBeModified()
+        {
+            if (State == CourseState.NotStarted)
+            {
+                return true;
+            }
+            return false;
         }
 
 

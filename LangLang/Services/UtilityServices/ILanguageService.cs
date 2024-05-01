@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using LangLang.Model;
 
-namespace LangLang.Services.EntityServices;
+namespace LangLang.Services.UtilityServices;
 
 public interface ILanguageService
 {
