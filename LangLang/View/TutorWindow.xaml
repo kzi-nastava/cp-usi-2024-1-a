@@ -33,6 +33,7 @@
                     <RowDefinition Height="90"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
                     <avalonia:MaterialIcon Kind="AccountCircle" Width="40" Height="40" Margin="10,0,0,0"/>
@@ -51,6 +52,11 @@
                     CommandParameter = "exams" 
                     Grid.Row = "2" 
                     Margin="20,10,20,10"/>
+                
+                <Button Content = "Notifications" 
+                        Command = "{Binding NotificationsCommand}"
+                        Grid.Row = "3" 
+                        Margin="20,10,20,10"/>
             </Grid>
 
 
