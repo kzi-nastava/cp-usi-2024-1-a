@@ -14,6 +14,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<ExamViewModel> _createExamViewModel;
     private readonly CreateViewModel<StudentAccountViewModel> _createStudentAccountViewModel;
     private readonly CreateViewModel<CourseInfoViewModel> _createCourseInfoViewModel;
+    private readonly CreateViewModel<NotificationViewModel> _createNotificationViewModel;
 
     public LangLangViewModelFactory(CreateViewModel<LoginViewModel> createLoginViewModel,
         CreateViewModel<RegisterViewModel> createRegisterViewModel, 
@@ -23,8 +24,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<CourseViewModel> createCourseViewModel,
         CreateViewModel<ExamViewModel> createExamViewModel,
         CreateViewModel<StudentAccountViewModel> createStudentAccountViewModel,
-        CreateViewModel<CourseInfoViewModel> createCourseInfoViewModel
-        )
+        CreateViewModel<CourseInfoViewModel> createCourseInfoViewModel, 
+        CreateViewModel<NotificationViewModel> createNotificationViewModel)
     {
         _createLoginViewModel = createLoginViewModel;
         _createRegisterViewModel = createRegisterViewModel;
@@ -35,6 +36,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createExamViewModel = createExamViewModel;
         _createStudentAccountViewModel = createStudentAccountViewModel;
         _createCourseInfoViewModel = createCourseInfoViewModel;
+        _createNotificationViewModel = createNotificationViewModel;
     }
 
     public ViewModelBase CreateViewModel(ViewType viewType)
@@ -50,6 +52,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.Exam => _createExamViewModel(),
             ViewType.StudentAccount => _createStudentAccountViewModel(),
             ViewType.CourseInfo => _createCourseInfoViewModel(),
+            ViewType.Notifications => _createNotificationViewModel(),
             _ => throw new ArgumentOutOfRangeException(nameof(viewType), viewType, "No ViewModel exists for the given ViewType: " + viewType)
         };
     }

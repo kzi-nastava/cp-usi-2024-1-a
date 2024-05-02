@@ -11,4 +11,5 @@ public enum ViewType
     CourseInfo,
     Exam,
     StudentAccount,
+    Notifications,
 }
