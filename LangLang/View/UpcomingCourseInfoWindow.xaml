@@ -5,7 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LangLang.View"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Upcoming course" Height="450" Width="550">
+        <mvvm:NavigableWindow.Resources>
+            <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
+            <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
+            <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
+            <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
+        </mvvm:NavigableWindow.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
@@ -27,8 +34,8 @@
         CanUserDeleteRows="False" 
     >
             <DataGrid.Columns >
-                <DataGridTextColumn  Header="Name" Binding="{Binding Name}"/>
-                <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}"/>
+                <DataGridTextColumn  Header="Name" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}" Width="*"/>
             </DataGrid.Columns>
 
 
@@ -52,12 +59,49 @@
                 <Label Content="{Binding PenaltyPts}" />
             </StackPanel>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,20,0,0">
-                <Button Content="Accept" Command="{Binding AcceptStudentCommand}" Width="50" Margin="0,5,0,10"/>
+                <Button Content="Accept"
+                        FontSize="12"
+                        Foreground="White"
+                        Background="{StaticResource BlueBtnColor}"
+                        Height="25"
+                        Width="80"
+                        BorderThickness="0"
+                        Margin="2"
+                        Command="{Binding AcceptStudentCommand}"
+                        >
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
             <Label Content="Message:"/>
-            <TextBox Text="{Binding Message}" TextWrapping="Wrap" Height="80" Background="LightGray"/>
+            <Border CornerRadius="15" Background="LightGray">
+                <TextBox Text="{Binding Message}" TextWrapping="Wrap" MinHeight="80" VerticalScrollBarVisibility="Auto" 
+                         Background="Transparent" BorderThickness="0" Padding="10" MaxLength="55"/>
+            </Border>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,20,0,0">
-                <Button Content="Deny" Command="{Binding DenyStudentCommand}" Width="50" Margin="0,5,0,10"/>
+                <Button Content="Deny"
+                        FontSize="12"
+                        Foreground="White"
+                        Background="{StaticResource RedBtnColor}"
+                        Height="25"
+                        Width="80"
+                        BorderThickness="0"
+                        Margin="2"
+                        Command="{Binding DenyStudentCommand}"
+                        >
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
 
 

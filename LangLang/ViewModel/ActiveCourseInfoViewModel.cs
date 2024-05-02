@@ -138,6 +138,7 @@ namespace LangLang.ViewModel
 
         private void GivePenaltyPoint(object? obj)
         {
+            string email = (string)obj!;
             MessageBox.Show("Penalty point added.");
         }
 
