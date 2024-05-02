@@ -3,6 +3,7 @@ using System.Windows;
 using LangLang.MVVM;
 using LangLang.ViewModel;
 
+
 namespace LangLang.View.Factories;
 
 public class LangLangWindowFactory : ILangLangWindowFactory
@@ -17,8 +18,11 @@ public class LangLangWindowFactory : ILangLangWindowFactory
             TutorViewModel tutorViewModel => new TutorWindow(tutorViewModel, this),
             DirectorViewModel directorViewModel => new DirectorWindow(directorViewModel, this),
             StudentAccountViewModel studentAccountViewModel => new StudentAccountWindow(studentAccountViewModel, this),
-            CourseInfoViewModel courseInfoViewModel => new CourseInfoWindow(courseInfoViewModel, this),
             NotificationViewModel notificationViewModel => new NotificationWindow(notificationViewModel, this),
+            ActiveCourseInfoViewModel activeCourseInfoViewModel => new ActiveCourseInfoWindow(activeCourseInfoViewModel, this),
+            UpcomingCourseInfoViewModel upcomingCourseInfoViewModel => new UpcomingCourseInfoWindow(upcomingCourseInfoViewModel,this),
+            FinishedCourseInfoViewModel finishedCourseInfoViewModel => new FinishedCourseInfoWindow(finishedCourseInfoViewModel, this),
+
             _ => throw new ArgumentOutOfRangeException(nameof(viewModel), viewModel,
                 "No Window exists for the given ViewModel: " + viewModel.GetType())
         };

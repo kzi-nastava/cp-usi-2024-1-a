@@ -13,19 +13,24 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<CourseViewModel> _createCourseViewModel;
     private readonly CreateViewModel<ExamViewModel> _createExamViewModel;
     private readonly CreateViewModel<StudentAccountViewModel> _createStudentAccountViewModel;
-    private readonly CreateViewModel<CourseInfoViewModel> _createCourseInfoViewModel;
     private readonly CreateViewModel<NotificationViewModel> _createNotificationViewModel;
+    private readonly CreateViewModel<ActiveCourseInfoViewModel> _createActiveCourseInfoViewModel;
+    private readonly CreateViewModel<UpcomingCourseInfoViewModel> _createUpcomingCourseInfoViewModel;
+    private readonly CreateViewModel<FinishedCourseInfoViewModel> _createFinishedCourseInfoViewModel;
 
     public LangLangViewModelFactory(CreateViewModel<LoginViewModel> createLoginViewModel,
-        CreateViewModel<RegisterViewModel> createRegisterViewModel, 
+        CreateViewModel<RegisterViewModel> createRegisterViewModel,
         CreateViewModel<StudentViewModel> createStudentViewModel,
         CreateViewModel<TutorViewModel> createTutorViewModel,
         CreateViewModel<DirectorViewModel> createDirectorViewModel,
         CreateViewModel<CourseViewModel> createCourseViewModel,
         CreateViewModel<ExamViewModel> createExamViewModel,
         CreateViewModel<StudentAccountViewModel> createStudentAccountViewModel,
-        CreateViewModel<CourseInfoViewModel> createCourseInfoViewModel, 
-        CreateViewModel<NotificationViewModel> createNotificationViewModel)
+        CreateViewModel<NotificationViewModel> createNotificationViewModel,
+        CreateViewModel<ActiveCourseInfoViewModel> createActiveCourseInfoViewModel,
+        CreateViewModel<UpcomingCourseInfoViewModel> createUpcomingCourseInfoViewModel,
+        CreateViewModel<FinishedCourseInfoViewModel> createfinishedCourseInfoViewModel
+        )
     {
         _createLoginViewModel = createLoginViewModel;
         _createRegisterViewModel = createRegisterViewModel;
@@ -35,8 +40,11 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createCourseViewModel = createCourseViewModel;
         _createExamViewModel = createExamViewModel;
         _createStudentAccountViewModel = createStudentAccountViewModel;
-        _createCourseInfoViewModel = createCourseInfoViewModel;
         _createNotificationViewModel = createNotificationViewModel;
+        _createActiveCourseInfoViewModel = createActiveCourseInfoViewModel;
+        _createUpcomingCourseInfoViewModel = createUpcomingCourseInfoViewModel;
+        _createFinishedCourseInfoViewModel = createfinishedCourseInfoViewModel;
+       
     }
 
     public ViewModelBase CreateViewModel(ViewType viewType)
@@ -51,8 +59,10 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.Course => _createCourseViewModel(),
             ViewType.Exam => _createExamViewModel(),
             ViewType.StudentAccount => _createStudentAccountViewModel(),
-            ViewType.CourseInfo => _createCourseInfoViewModel(),
             ViewType.Notifications => _createNotificationViewModel(),
+            ViewType.ActiveCourseInfo => _createActiveCourseInfoViewModel(),
+            ViewType.UpcomingCourseInfo => _createUpcomingCourseInfoViewModel(),
+            ViewType.FinishedCourseInfo => _createFinishedCourseInfoViewModel(),
             _ => throw new ArgumentOutOfRangeException(nameof(viewType), viewType, "No ViewModel exists for the given ViewType: " + viewType)
         };
     }

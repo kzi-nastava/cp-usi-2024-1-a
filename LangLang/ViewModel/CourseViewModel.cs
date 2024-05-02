@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using static LangLang.Model.Course;
 
 namespace LangLang.ViewModel
 {
@@ -309,7 +310,18 @@ namespace LangLang.ViewModel
         private void OpenCourseInfo(object? obj)
         {
             _currentCourseStore.CurrentCourse = selectedItem;
-            _popupNavigationService.Navigate(ViewType.CourseInfo);
+            switch (SelectedItem?.State)
+            {
+                case CourseState.NotStarted:
+                _popupNavigationService.Navigate(ViewType.UpcomingCourseInfo);
+                    break;
+                case CourseState.Active:
+                _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
+                    break;
+                case CourseState.FinishedNotGraded:
+                _popupNavigationService.Navigate(ViewType.FinishedCourseInfo);
+                    break;
+            }
         }
 
         private void SelectCourse(object? obj)

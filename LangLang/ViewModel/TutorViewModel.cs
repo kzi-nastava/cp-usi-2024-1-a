@@ -3,7 +3,6 @@ using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;
-using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
@@ -17,8 +16,10 @@ namespace LangLang.ViewModel
 
         private ExamViewModel? examViewModel;
         private CourseViewModel? courseViewModel;
+        private LoginViewModel? loginViewModel;
 
         private ILoginService _loginService;
+        private INavigationService _navigationService;
         private IPopupNavigationService _popupNavigationService;
 
         private ILangLangViewModelFactory _viewModelFactory;
@@ -48,6 +49,18 @@ namespace LangLang.ViewModel
                 return examViewModel;
             }
         }
+        private LoginViewModel LoginViewModel
+        {
+            get
+            {
+                if (loginViewModel == null)
+                {
+                    loginViewModel = (LoginViewModel)_viewModelFactory.CreateViewModel(ViewType.Login);
+                }
+
+                return loginViewModel;
+            }
+        }
 
         private CourseViewModel CourseViewModel
         {
@@ -69,14 +82,16 @@ namespace LangLang.ViewModel
         }
         public RelayCommand NavCommand { get; set; }
         public RelayCommand NotificationsCommand { get; }
+        public RelayCommand LogoutCommand { get; set; }
 
         public TutorViewModel(
             IAuthenticationStore authenticationStore, ILoginService loginService,
-            IPopupNavigationService popupNavigationService, NavigationStore navigationStore,
-            ILangLangViewModelFactory viewModelFactory
+            INavigationService navigationService, IPopupNavigationService popupNavigationService,
+            NavigationStore navigationStore, ILangLangViewModelFactory viewModelFactory
             )
         {
             _loginService = loginService;
+            _navigationService = navigationService;
             _popupNavigationService = popupNavigationService;
             NavigationStore = navigationStore;
             _viewModelFactory = viewModelFactory;
@@ -86,7 +101,14 @@ namespace LangLang.ViewModel
             currentViewModel = CourseViewModel; // TODO: change to ProfileViewModel
             NavCommand = new RelayCommand(execute => OnNav(execute as string));
             NotificationsCommand = new RelayCommand(_ => OpenNotificationWindow());
+            LogoutCommand = new RelayCommand(execute => Logout());
             TutorName = loggedInUser.Name;
+        }
+
+        private void Logout()
+        {
+            _loginService.LogOut();
+            _navigationService.Navigate(ViewType.Login);
         }
 
         private void OnNav(string? destination)
