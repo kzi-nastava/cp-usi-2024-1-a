@@ -21,7 +21,9 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddScoped<CourseViewModel>();
             services.AddScoped<ExamViewModel>();
             services.AddTransient<StudentAccountViewModel>();
-            services.AddTransient<CourseInfoViewModel>();
+            services.AddTransient<ActiveCourseInfoViewModel>();
+            services.AddTransient<UpcomingCourseInfoViewModel>();
+            services.AddTransient<FinishedCourseInfoViewModel>();
             
             services.AddScoped<CreateViewModel<LoginViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<LoginViewModel>
@@ -54,8 +56,14 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddScoped<CreateViewModel<StudentAccountViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<StudentAccountViewModel>
             );
-            services.AddScoped<CreateViewModel<CourseInfoViewModel>>(
-                servicesProvider => servicesProvider.GetRequiredService<CourseInfoViewModel>
+            services.AddScoped<CreateViewModel<ActiveCourseInfoViewModel>>(
+                servicesProvider => servicesProvider.GetRequiredService<ActiveCourseInfoViewModel>
+            );
+            services.AddScoped<CreateViewModel<UpcomingCourseInfoViewModel>>(
+                servicesProvider => servicesProvider.GetRequiredService<UpcomingCourseInfoViewModel>
+            );
+            services.AddScoped<CreateViewModel<FinishedCourseInfoViewModel>>(
+                servicesProvider => servicesProvider.GetRequiredService<FinishedCourseInfoViewModel>
             );
         });
         

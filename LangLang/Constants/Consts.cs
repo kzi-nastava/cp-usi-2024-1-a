@@ -57,7 +57,6 @@ namespace Consts
             };
         }
     }
-
     public enum WorkDay
     {
         Monday,Tuesday,Wednesday,Thursday,Friday
