@@ -67,6 +67,28 @@ namespace LangLang.DAO.JsonDao
             Save();
         }
 
+        public string GetStudentId()
+        {
+            return LastId.StudentId.ToString();
+        }
+
+        public void IncrementStudentId()
+        {
+            LastId.StudentId++;
+            Save();
+        }
+
+        public string GetTutorId()
+        {
+            return LastId.TutorId.ToString();
+        }
+
+        public void IncrementTutorId()
+        {
+            LastId.TutorId++;
+            Save();
+        }
+
         private void Load()
         {
             Dictionary<string, LastId> ret = JsonUtil.ReadFromFile<LastId>(Constants.LastIdFilePath);

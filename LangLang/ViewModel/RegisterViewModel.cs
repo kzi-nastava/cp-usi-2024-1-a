@@ -4,6 +4,8 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Input;
 using Consts;
+using LangLang.DTO;
+using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;
@@ -152,12 +154,12 @@ namespace LangLang.ViewModel
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
-            bool successful = _registerService.RegisterStudent(email!, password!, name!, surname!, birthday, gender, phoneNumber!, educationLvl);
+            bool successful = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
 
 
             if (!successful)
             {
-                if(StudentAccountViewModel.AccountFieldsEmpty(birthday, password!, name!, surname!, phoneNumber!))
+                if(StudentAccountViewModel.AccountFieldsEmpty(birthday, password, name, surname, phoneNumber))
                 {
                     ErrorMessageRequired = "All the fields are required";
                     return;
@@ -186,7 +188,7 @@ namespace LangLang.ViewModel
                 {
                     ErrorMessagePassword = "At least 8 chars, uppercase and number ";
                 }
-                if (email != null && _registerService.CheckExistingEmail(email))
+                if (email != null && _registerService.IsEmailTaken(email))
                 {
                     ErrorMessageEmail = "Email already exists";
                 }

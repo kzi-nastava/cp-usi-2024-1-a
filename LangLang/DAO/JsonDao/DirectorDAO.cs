@@ -22,9 +22,9 @@ namespace LangLang.DAO.JsonDao
 
         public Dictionary<string, Director> GetAllDirectors() => Directors;
 
-        public Director? GetDirector(string email)
+        public Director? GetDirector(string id)
         {
-            return Directors.GetValueOrDefault(email);
+            return Directors.GetValueOrDefault(id);
         }
         public void UpdateDirector(string id, Director director)
         {

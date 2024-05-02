@@ -1,4 +1,4 @@
-﻿using LangLang.DAO;
+﻿using LangLang.DTO;
 using LangLang.Model;
 using LangLang.Stores;
 
@@ -6,17 +6,15 @@ namespace LangLang.Services.AuthenticationServices;
 
 public class LoginService : ILoginService
 {
-    private readonly AuthenticationStore _authenticationStore;
-    private readonly IStudentDAO _studentDao;
-    private readonly ITutorDAO _tutorDao;
-    private readonly IDirectorDAO _directorDao;
+    private readonly IAuthenticationStore _authenticationStore;
+    private readonly IProfileService _profileService;
+    private readonly IUserProfileMapper _userProfileMapper;
 
-    public LoginService(AuthenticationStore authenticationStore, IStudentDAO studentDao, ITutorDAO tutorDao, IDirectorDAO directorDao)
+    public LoginService(IAuthenticationStore authenticationStore, IProfileService profileService, IUserProfileMapper userProfileMapper)
     {
         _authenticationStore = authenticationStore;
-        _studentDao = studentDao;
-        _tutorDao = tutorDao;
-        _directorDao = directorDao;
+        _profileService = profileService;
+        _userProfileMapper = userProfileMapper;
     }
 
     public LoginResult LogIn(string? email, string? password)
@@ -24,65 +22,24 @@ public class LoginService : ILoginService
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             return new LoginResult(false);
 
-        LoginResult loginResult = LogInDirector(email, password);
-        if (loginResult.IsValidUser) return loginResult;
+        Profile? profile = _profileService.GetProfile(email);
+
+        if (profile == null) return new LoginResult(false);
         
-        loginResult = LogInTutor(email, password);
-        if (loginResult.IsValidUser) return loginResult;;
+        if (profile.Password != password)
+            return new LoginResult(false, true);
+
+        if (!profile.IsActive)
+            return new LoginResult(false, true);
         
-        return LogInStudent(email, password);
-    }
-
-
-    private LoginResult LogInStudent(string email, string password)
-    {
-        Student? student = _studentDao.GetStudent(email);
-
-        if (student != null)
-        {
-            if (student.Password != password)
-                return new LoginResult(false, true);
-            _authenticationStore.CurrentUser = student;
-            _authenticationStore.UserType = UserType.Student;
-            return new LoginResult(true, true, student, UserType.Student);
-        }
-
-        return new LoginResult(false);
-    }
-    private LoginResult LogInTutor(string email, string password)
-    {
-        Tutor? tutor = _tutorDao.GetTutor(email);
-
-        if (tutor != null)
-        {
-            if (tutor.Password != password)
-                return new LoginResult(false, true);
-            _authenticationStore.CurrentUser = tutor;
-            _authenticationStore.UserType = UserType.Tutor;
-            return new LoginResult(true, true, tutor, UserType.Tutor);
-        }
-
-        return new LoginResult(false);
-    }
-    private LoginResult LogInDirector(string email, string password)
-    {
-        Director? director = _directorDao.GetDirector(email);
-
-        if (director != null)
-        {
-            if (director.Password != password)
-                return new LoginResult(false, true);
-            _authenticationStore.CurrentUser = director;
-            _authenticationStore.UserType = UserType.Director;
-            return new LoginResult(true, true, director, UserType.Director);
-        }
-
-        return new LoginResult(false);
+        _authenticationStore.CurrentUserProfile = profile;
+        _authenticationStore.UserType = _userProfileMapper.GetPerson(profile).UserType;
+        return new LoginResult(true, true, profile, UserType.Student);
     }
 
     public void LogOut()
     {
-        _authenticationStore.CurrentUser = null;
+        _authenticationStore.CurrentUserProfile = null;
         _authenticationStore.UserType = null;
     }
 }

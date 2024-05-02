@@ -162,9 +162,9 @@ public class ExamViewModel : ViewModelBase
         }
     }
     
-    public ExamViewModel(AuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService)
+    public ExamViewModel(IAuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService)
     {
-        _tutor = (Tutor?)authenticationStore.CurrentUser ??
+        _tutor = (Tutor?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
                                     "Cannot create ExamViewModel without currently logged in tutor");
         _examService = examService;
@@ -299,7 +299,7 @@ public class ExamViewModel : ViewModelBase
     
     private List<Exam> LoadExams()
     {
-        return _examService.GetExamsByTutor(_tutor.Email);
+        return _examService.GetExamsByTutor(_tutor.Id);
     }
     
     private void ClearFilters()

@@ -269,9 +269,9 @@ namespace LangLang.ViewModel
                 SelectCourse(value);
             }
         }
-        public CourseViewModel(AuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, INavigationService navigationService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
+        public CourseViewModel(IAuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, INavigationService navigationService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
         {
-            _loggedInUser = (Tutor?)authenticationStore.CurrentUser ??
+            _loggedInUser = (Tutor?)authenticationStore.CurrentUser.Person ??
                            throw new InvalidOperationException(
                                "Cannot create CourseViewModel without currently logged in tutor");
             _currentCourseStore = currentCourseStore;

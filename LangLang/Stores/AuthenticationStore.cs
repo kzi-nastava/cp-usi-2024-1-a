@@ -1,13 +1,23 @@
-﻿using LangLang.Model;
+﻿using LangLang.DTO;
+using LangLang.Model;
 using LangLang.Services.AuthenticationServices;
 
 namespace LangLang.Stores;
 
-public class AuthenticationStore
+public class AuthenticationStore : IAuthenticationStore
 {
-    public User? CurrentUser { get; set; }
+    public Profile? CurrentUserProfile { get; set; }
 
-    public bool IsLoggedIn => CurrentUser != null;
+    public bool IsLoggedIn => CurrentUserProfile != null;
     
     public UserType? UserType { get; set; }
+
+    public UserDto CurrentUser => CurrentUserProfile != null ? userProfileMapper.GetPerson(CurrentUserProfile) : new UserDto(null, null);
+
+    private readonly IUserProfileMapper userProfileMapper;
+
+    public AuthenticationStore(IUserProfileMapper userProfileMapper)
+    {
+        this.userProfileMapper = userProfileMapper;
+    }
 }

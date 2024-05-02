@@ -11,6 +11,7 @@ using LangLang.Services.ExamServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
+using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
@@ -201,9 +202,9 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, AuthenticationStore authenticationStore)
+        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore)
         {
-            _loggedInUser = (Student?)authenticationStore.CurrentUser ??
+            _loggedInUser = (Student?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
                                     "Cannot create StudentViewModel without currently logged in student");
             NavigationStore = navigationStore;
@@ -261,7 +262,7 @@ namespace LangLang.ViewModel
             Course course = _courseService.GetCourseById(courseId)!;
             try
             {
-                _courseCoordinator.DropCourse(_loggedInUser.Email);
+                _courseCoordinator.DropCourse(_loggedInUser.Id);
                 MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
                 AttendingCourse.Remove(course);
             }
@@ -284,7 +285,7 @@ namespace LangLang.ViewModel
         {
             try
             {
-                _courseCoordinator.ApplyForCourse(courseId, _loggedInUser.Email);
+                _courseCoordinator.ApplyForCourse(courseId, _loggedInUser.Id);
                 Course course = _courseService.GetCourseById(courseId)!;
                 MessageBox.Show($"Application sent! You've successfully applied for {course.Name}!", "Success");
 
@@ -303,7 +304,7 @@ namespace LangLang.ViewModel
         {
             Course course = _courseService.GetCourseById(courseId)!;
             MessageBox.Show($"Your application for {course.Name} has been cancelled.", "Success");
-            _courseCoordinator.CancelApplication(_loggedInUser.Email, courseId);
+            _courseCoordinator.CancelApplication(_loggedInUser.Id, courseId);
 
             Course cancelledCourse = _courseService.GetCourseById(courseId)!;
             Courses.Add(cancelledCourse);
@@ -351,7 +352,7 @@ namespace LangLang.ViewModel
 
         public void LoadCourses()
         {
-            var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Email);
+            var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Id);
             foreach (Course course in availableCourses)
             {
                 Courses.Add(course);
@@ -363,7 +364,7 @@ namespace LangLang.ViewModel
             //when trying to test attendance, apply for course
             //in files change application state to 2 (accepted), then change course state to 4 (In progress so i can drop it)
             //_courseCoordinator.GenerateAttendance("30");
-            Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Email)!;
+            Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Id)!;
             if(attendingCourse != null)
             {
                 AttendingCourse.Add(attendingCourse);
@@ -372,7 +373,7 @@ namespace LangLang.ViewModel
 
         private void LoadAppliedCourses()
         {
-            foreach (Course course in _courseCoordinator.GetAppliedCoursesStudent(_loggedInUser.Email))
+            foreach (Course course in _courseCoordinator.GetAppliedCoursesStudent(_loggedInUser.Id))
             {
                 AppliedCourses.Add(course);
             }
@@ -380,7 +381,7 @@ namespace LangLang.ViewModel
 
         private void LoadFinishedCourses()
         {
-            var finishedCourses = _courseCoordinator.GetFinishedCoursesStudent(_loggedInUser.Email);
+            var finishedCourses = _courseCoordinator.GetFinishedCoursesStudent(_loggedInUser.Id);
             foreach (Course course in finishedCourses)
             {
                 FinishedCourses.Add(course);
@@ -518,7 +519,7 @@ namespace LangLang.ViewModel
 
         private void DeleteProfile()
         {
-            _accountService.DeleteStudent(_loggedInUser.Email);
+            _accountService.DeleteStudent(_loggedInUser.Id);
             MessageBox.Show("Your profile has been successfully deleted");
             _navigationService.Navigate(ViewType.Login);
         }

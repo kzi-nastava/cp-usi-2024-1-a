@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Security;
 using System.Windows.Input;
+using LangLang.DTO;
+using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;

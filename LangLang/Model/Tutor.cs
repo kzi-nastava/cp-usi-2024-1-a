@@ -7,8 +7,10 @@ using System.Windows.Controls;
 
 namespace LangLang.Model
 {
-    public class Tutor : User
+    public class Tutor : Person
     {
+        public string Id { get; set; }
+        
         /// <summary> Hold counts for 1 to 5 rating. </summary>
         private int[] ratingCounts = new int[5];
 
@@ -28,16 +30,30 @@ namespace LangLang.Model
             }
         }
 
-        public Tutor() : base("", "", "", "", DateTime.Now, Gender.Other, "")
+        public Tutor() : base("", "", DateTime.Now, Gender.Other, "")
         {
+            Id = "";
             KnownLanguages = new();
             Courses = new();
             Exams = new();
             DateAdded = DateTime.Now;
         }
 		
-        public Tutor(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<string> courses, List<string> exams, int[] ratingCounts, DateTime? dateAdded = null) : base(email, password, name, surname, birthDate, gender, phoneNumber)
+        public Tutor(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<string> courses, List<string> exams, int[] ratingCounts, DateTime? dateAdded = null) : base(name, surname, birthDate, gender, phoneNumber)
         {
+            Id = "";
+            KnownLanguages = knownLanguages;
+            Courses = courses;
+            Exams = exams;
+            this.ratingCounts = ratingCounts;
+            if (dateAdded == null)
+                DateAdded = DateTime.Now;
+            else
+                DateAdded = (DateTime)dateAdded;
+        }
+        public Tutor(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, List<string> courses, List<string> exams, int[] ratingCounts, DateTime? dateAdded = null) : base(name, surname, birthDate, gender, phoneNumber)
+        {
+            Id = id;
             KnownLanguages = knownLanguages;
             Courses = courses;
             Exams = exams;
