@@ -57,6 +57,16 @@
                         Foreground="White" Background="{StaticResource BlueBtnColor}"
                         BorderThickness="0"
                         >
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ReadStatus}" Value="Unread">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="5" Background="{TemplateBinding Background}">

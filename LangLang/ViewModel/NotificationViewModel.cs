@@ -69,6 +69,8 @@ public class NotificationViewModel : ViewModelBase, INavigableDataContext
             _notificationService.MarkAsRead(notification);
             if (UnreadOnly)
                 Notifications.Remove(notification);
+            else
+                OnPropertyChanged(nameof(Notifications));
         }
         catch (ArgumentException e)
         {

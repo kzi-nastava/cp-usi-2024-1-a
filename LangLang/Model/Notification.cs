@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace LangLang.Model;
 
-public class Notification
+public class Notification : INotifyPropertyChanged
 {
     public string Id { get; set; }
     public string? SenderId { get; set; }
@@ -14,7 +16,19 @@ public class Notification
     {
         Unread, Read
     }
-    public Status ReadStatus { get; set; }
+
+    private Status _readStatus;
+
+    public Status ReadStatus
+    {
+        get => _readStatus;
+        set
+        {
+            if (_readStatus == value) return;
+            _readStatus = value;
+            OnPropertyChanged();
+        }
+    }
 
     public Notification()
     {
@@ -40,5 +54,12 @@ public class Notification
         ReceiverId = receiverId;
         Message = message;
         DateTime = dateTime;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
