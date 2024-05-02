@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using LangLang.Model;
 
-namespace LangLang.Services.UtilityServices;
+namespace LangLang.Services.NotificationServices;
 
 public interface INotificationService
 {

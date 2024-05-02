@@ -4,7 +4,7 @@ using LangLang.DAO;
 using LangLang.Model;
 using ArgumentException = System.ArgumentException;
 
-namespace LangLang.Services.UtilityServices;
+namespace LangLang.Services.NotificationServices;
 
 public class NotificationService : INotificationService
 {

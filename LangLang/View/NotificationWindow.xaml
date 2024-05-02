@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mvvm="clr-namespace:LangLang.MVVM"
-        xmlns:model="clr-namespace:LangLang.Model"
+        xmlns:display="clr-namespace:LangLang.Model.Display"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Title="NotificationWindow" Height="540" Width="400">
@@ -13,7 +13,7 @@
         <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
         <SolidColorBrush x:Key="PanelBgColor" Color="#ccffff" />
         
-        <DataTemplate DataType="{x:Type model:Notification}">
+        <DataTemplate DataType="{x:Type display:NotificationDisplay}">
             <Border Background="{StaticResource PanelBgColor}" CornerRadius="10" Margin="5">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -27,13 +27,13 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock
-                        Text="{Binding SenderId}"
+                        Text="{Binding SenderName}"
                         Margin="2"
                         Grid.Row="0"
                         Grid.Column="0"
                         />
                     <TextBlock 
-                        Text="{Binding Message}" TextWrapping="Wrap" 
+                        Text="{Binding Notification.Message}" TextWrapping="Wrap" 
                         TextAlignment="Center" FontWeight="Bold" FontSize="14"
                         Margin="5"
                         Grid.Row="1"
@@ -41,7 +41,7 @@
                         Grid.ColumnSpan="3"
                         />
                     <TextBlock
-                        Text="{Binding DateTime}"
+                        Text="{Binding Notification.DateTime}"
                         HorizontalAlignment="Right"
                         Margin="4"
                         Grid.Row="2"
@@ -61,7 +61,7 @@
                             <Style TargetType="Button">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ReadStatus}" Value="Unread">
+                                    <DataTrigger Binding="{Binding Notification.ReadStatus}" Value="Unread">
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </DataTrigger>
                                 </Style.Triggers>
