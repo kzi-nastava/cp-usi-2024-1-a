@@ -29,13 +29,13 @@ public class NotificationDAO : INotificationDAO
     
     public List<Notification> GetNotifications(Profile profile)
     {
-        return Notifications.Values.Where(notification => notification.Receiver.Email == profile.Email).ToList();
+        return Notifications.Values.Where(notification => notification.ReceiverId == profile.Email).ToList();
     }
 
     public List<Notification> GetUnreadNotifications(Profile profile)
     {
         return Notifications.Values.Where(
-            notification => notification.Receiver.Email == profile.Email &&
+            notification => notification.ReceiverId == profile.Email &&
                             notification.ReadStatus == Notification.Status.Unread
         ).ToList();
     }

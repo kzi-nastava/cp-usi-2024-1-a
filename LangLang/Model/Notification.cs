@@ -5,8 +5,8 @@ namespace LangLang.Model;
 public class Notification
 {
     public string Id { get; set; }
-    public Profile? Sender { get; set; }
-    public Profile Receiver { get; set; }
+    public string? SenderId { get; set; }
+    public string ReceiverId { get; set; }
     public string Message { get; set; }
     public DateTime DateTime { get; set; }
 
@@ -19,24 +19,25 @@ public class Notification
     public Notification()
     {
         Id = "";
-        Receiver = new Profile();
+        SenderId = "";
+        ReceiverId = "";
         Message = "";
     }
 
-    public Notification(Profile? sender, Profile receiver, string message, DateTime dateTime)
+    public Notification(string? senderId, string receiverId, string message, DateTime dateTime)
     {
         Id = "";
-        Sender = sender;
-        Receiver = receiver;
+        SenderId = senderId;
+        ReceiverId = receiverId;
         Message = message;
         DateTime = dateTime;
     }
 
-    public Notification(string id, Profile? sender, Profile receiver, string message, DateTime dateTime)
+    public Notification(string id, string? senderId, string receiverId, string message, DateTime dateTime)
     {
         Id = id;
-        Sender = sender;
-        Receiver = receiver;
+        SenderId = senderId;
+        ReceiverId = receiverId;
         Message = message;
         DateTime = dateTime;
     }

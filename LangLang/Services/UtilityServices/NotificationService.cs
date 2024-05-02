@@ -17,13 +17,13 @@ public class NotificationService : INotificationService
 
     public List<Notification> GetNotifications(Profile profile) => _notificationDao.GetNotifications(profile);
 
-    public List<Notification> GetUnreadNotifications(Profile profile) => _notificationDao.GetNotifications(profile);
+    public List<Notification> GetUnreadNotifications(Profile profile) => _notificationDao.GetUnreadNotifications(profile);
 
     public Notification AddNotification(string message, Profile receiver, Profile? sender = null)
     {
         message = message.Trim();
         if (message == "") throw new ArgumentException("Message cannot be empty.");
-        return _notificationDao.AddNotification(new Notification(sender, receiver, message, DateTime.Now));
+        return _notificationDao.AddNotification(new Notification(sender?.Email, receiver.Email, message, DateTime.Now));
     }
 
     public Notification MarkAsRead(Notification notification)
