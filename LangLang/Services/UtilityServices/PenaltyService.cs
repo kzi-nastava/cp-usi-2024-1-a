@@ -1,4 +1,5 @@
-﻿using LangLang.Model;
+﻿using System;
+using LangLang.Model;
 using LangLang.Services.UserServices;
 using Consts;
 using LangLang.DTO;
@@ -31,6 +32,14 @@ public class PenaltyService : IPenaltyService
         }
     }
 
+    public void RemovePenaltyPoints()
+    {
+        foreach (var student in _studentService.GetAllStudents())
+        {
+            _studentService.RemovePenaltyPoint(student);
+        }
+    }
+    
     private void SendNotification(Student student, Person? sender, uint numPoints)
     {
         var studentProfile = _userProfileMapper.GetProfile(new UserDto(student, UserType.Student));
