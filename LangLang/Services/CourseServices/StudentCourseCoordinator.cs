@@ -119,6 +119,16 @@ namespace LangLang.Services.CourseServices
             return availableCourses;
         }
 
+        public List<Student> GetAppliedStudentsCourse(string courseId)
+        {
+            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForCourse(courseId);
+            List<Student> appliedStudents = new();
+            foreach (CourseApplication application in applications)
+            {
+                appliedStudents.Add(_studentService.GetStudentById(application.StudentId)!);
+            }
+            return appliedStudents;
+        }
 
         public List<Course> GetAppliedCoursesStudent(string studentId)
         {
