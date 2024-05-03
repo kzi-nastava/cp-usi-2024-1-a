@@ -1,5 +1,9 @@
-﻿using LangLang.Model;
+﻿using LangLang.DTO;
+using LangLang.Model;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.NotificationServices;
 using LangLang.Services.UserServices;
+using LangLang.Stores;
 using System;
 using System.Collections.Generic;
 using static LangLang.Model.CourseApplication;
@@ -12,18 +16,26 @@ namespace LangLang.Services.CourseServices
         private readonly IStudentService _studentService;
         private readonly ICourseApplicationService _courseApplicationService;
         private readonly ICourseAttendanceService _courseAttendanceService;
+        private readonly IUserProfileMapper _userProfileMapper;
+        private readonly INotificationService _notificationService;
+        private readonly IAuthenticationStore _authenticationStore;
 
-        public StudentCourseCoordinator(ICourseService courseService,ICourseAttendanceService courseAttendanceService, IStudentService studentService, ICourseApplicationService courseApplicationService)
+        public StudentCourseCoordinator(ICourseService courseService,ICourseAttendanceService courseAttendanceService,
+            IStudentService studentService, ICourseApplicationService courseApplicationService, IUserProfileMapper userProfileMapper,
+            INotificationService notificationService, IAuthenticationStore authenticationStore)
         {
             _courseService = courseService;
+            _authenticationStore = authenticationStore;
+            _userProfileMapper = userProfileMapper;
             _courseAttendanceService = courseAttendanceService;
             _studentService = studentService;
             _courseApplicationService = courseApplicationService;
+            _notificationService = notificationService;
         }
 
-        public void Accept(string applicationId)
+        public void Accept(string studentId, string courseId)
         {
-            CourseApplication? application = _courseApplicationService.GetCourseApplicationById(applicationId);
+            CourseApplication? application = _courseApplicationService.GetApplication(studentId, courseId);
             if (application == null)
             {
                 throw new ArgumentException("No application found");
@@ -32,8 +44,9 @@ namespace LangLang.Services.CourseServices
             {
                 throw new ArgumentException("Cannot accept student at this state");
             }
-            _courseApplicationService.ChangeApplicationState(application.Id, State.Accepted);
             _courseApplicationService.PauseStudentApplications(application.StudentId);
+            _courseAttendanceService.AddAttendance(application.StudentId, application.CourseId);
+            _courseApplicationService.DeleteApplication(application.Id);
             Course? course = _courseService.GetCourseById(application.CourseId);
             course!.AddAttendance();
         }
@@ -72,6 +85,22 @@ namespace LangLang.Services.CourseServices
                 throw new ArgumentException("Cannot accept student at this state");
             }
             _courseApplicationService.CancelApplication(application.Id);
+        }
+        public void SendNotification(string message, string receiverId)
+        {
+            if (message != null)
+            {
+
+                Profile? receiver = _userProfileMapper.GetProfile(new UserDto(_studentService.GetStudentById(receiverId), UserType.Student));
+                Profile? sender = _userProfileMapper.GetProfile(new UserDto(_authenticationStore.CurrentUser.Person, _authenticationStore.CurrentUser.UserType));
+                
+                if (receiver == null)
+                {
+                    throw new ArgumentException("No receiver found");
+                }
+                _notificationService.AddNotification(message, receiver, sender);
+            }
+            
         }
 
         public void DropCourse(string studentId)
@@ -128,6 +157,17 @@ namespace LangLang.Services.CourseServices
                 appliedStudents.Add(_studentService.GetStudentById(application.StudentId)!);
             }
             return appliedStudents;
+        }
+
+        public List<Student> GetAttendanceStudentsCourse(string courseId)
+        {
+            List<CourseAttendance> attendances = _courseAttendanceService.GetAttendancesForCourse(courseId);
+            List<Student> attendanceStudents = new();
+            foreach (CourseAttendance attendance in attendances)
+            {
+                attendanceStudents.Add(_studentService.GetStudentById(attendance.StudentId)!);
+            }
+            return attendanceStudents;
         }
 
         public List<Course> GetAppliedCoursesStudent(string studentId)
