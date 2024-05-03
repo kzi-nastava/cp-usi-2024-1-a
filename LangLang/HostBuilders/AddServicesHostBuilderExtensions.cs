@@ -37,6 +37,8 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IPenaltyService, PenaltyService>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<INotificationInfoService, NotificationInfoService>();
+            services.AddSingleton<IExamApplicationService, ExamApplicationService>();
+            services.AddSingleton<IExamCoordinator, ExamCoordinator>();
         });
         
         return host;

@@ -26,6 +26,7 @@ namespace LangLang.ViewModel
         private readonly IExamService _examService;
         private readonly IStudentCourseCoordinator _courseCoordinator;
         private readonly IAccountService _accountService;
+        private readonly IExamCoordinator _examCoordinator;
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
         public ICommand LogOutCommand { get; }
@@ -202,7 +203,7 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore)
+        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator)
         {
             _loggedInUser = (Student?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
@@ -212,6 +213,7 @@ namespace LangLang.ViewModel
             _accountService = accountService;
             _languageService = languageService;
             _examService = examService;
+            _examCoordinator = examCoordinator;
             _studentService = studentService;
             _loginService = loginService;
             _courseCoordinator = courseCoordinator;
@@ -248,7 +250,7 @@ namespace LangLang.ViewModel
             OpenStudentProfileCommand = new RelayCommand(_ => OpenStudentProfile());
             ApplyCourseCommand = new RelayCommand<string>(ApplyCourse);
             CancelCourseCommand = new RelayCommand<string>(CancelCourse);
-            ApplyExamCommand = new RelayCommand<string>(ApplyExam);
+            ApplyExamCommand = new RelayCommand<Exam>(ApplyExam);
             CancelExamCommand = new RelayCommand<string>(CancelExam);
             RateTutorCommand = new RelayCommand<string>(RateTutor);
             CancelAttendingCourseCommand = new RelayCommand<string>(CancelAttendingCourse!);
@@ -312,9 +314,13 @@ namespace LangLang.ViewModel
         }
 
 
-        private void ApplyExam(string examId)
+        private void ApplyExam(Exam exam)
         {
-            MessageBox.Show($"Successful apply for exam {examId}", "Success");
+            var application = _examCoordinator.ApplyForExam(_loggedInUser, exam);
+            if (application == null)
+                MessageBox.Show("Failed to apply for exam");
+            else
+                MessageBox.Show($"Successful apply for exam {exam.Id}", "Success");
         }
 
 
