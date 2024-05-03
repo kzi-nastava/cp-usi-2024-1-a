@@ -88,6 +88,17 @@ namespace LangLang.DAO.JsonDao
             LastId.TutorId++;
             Save();
         }
+        
+        public string GetNotificationId()
+        {
+            return LastId.NotificationId.ToString();
+        }
+
+        public void IncrementNotificationId()
+        {
+            LastId.NotificationId++;
+            Save();
+        }
 
         private void Load()
         {

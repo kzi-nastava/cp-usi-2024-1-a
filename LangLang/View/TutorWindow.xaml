@@ -53,6 +53,12 @@
                     CommandParameter = "exams" 
                     Grid.Row = "2" 
                     Margin="20,10,20,10"/>
+                
+                <Button Content = "Notifications" 
+                        Command = "{Binding NotificationsCommand}"
+                        Grid.Row = "3" 
+                        Margin="20,10,20,10"/>
+                        
                 <Button Content = "Logout" 
                     Command = "{Binding LogoutCommand}" 
                     Grid.Row = "5"

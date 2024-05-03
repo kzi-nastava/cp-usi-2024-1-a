@@ -22,6 +22,7 @@ public static class AddDaoHostBuilderExtensions
             services.AddSingleton<ICourseAttendanceDAO, CourseAttendanceDAO>();
             services.AddSingleton<IProfileDAO, ProfileDAO>();
             services.AddSingleton<IPersonProfileMappingDAO, PersonProfileMappingDAO>();
+            services.AddSingleton<INotificationDAO, NotificationDAO>();
         });
         
         return host;

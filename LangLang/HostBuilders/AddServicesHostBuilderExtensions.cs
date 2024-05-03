@@ -4,6 +4,7 @@ using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Services.CourseServices;
 using LangLang.Services.ExamServices;
+using LangLang.Services.NotificationServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -33,6 +34,8 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IAccountService, AccountService>();
             services.AddSingleton<IProfileService, ProfileService>();
             services.AddSingleton<IUserProfileMapper, UserProfileMapper>();
+            services.AddSingleton<INotificationService, NotificationService>();
+            services.AddSingleton<INotificationInfoService, NotificationInfoService>();
         });
         
         return host;

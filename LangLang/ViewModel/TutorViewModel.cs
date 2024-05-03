@@ -3,7 +3,6 @@ using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;
-using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
@@ -21,6 +20,7 @@ namespace LangLang.ViewModel
 
         private ILoginService _loginService;
         private INavigationService _navigationService;
+        private IPopupNavigationService _popupNavigationService;
 
         private ILangLangViewModelFactory _viewModelFactory;
         
@@ -81,16 +81,18 @@ namespace LangLang.ViewModel
             private set => SetField(ref currentViewModel, value);
         }
         public RelayCommand NavCommand { get; set; }
+        public RelayCommand NotificationsCommand { get; }
         public RelayCommand LogoutCommand { get; set; }
 
         public TutorViewModel(
             IAuthenticationStore authenticationStore, ILoginService loginService,
-            INavigationService navigationService, NavigationStore navigationStore,
-            ILangLangViewModelFactory viewModelFactory
+            INavigationService navigationService, IPopupNavigationService popupNavigationService,
+            NavigationStore navigationStore, ILangLangViewModelFactory viewModelFactory
             )
         {
             _loginService = loginService;
             _navigationService = navigationService;
+            _popupNavigationService = popupNavigationService;
             NavigationStore = navigationStore;
             _viewModelFactory = viewModelFactory;
             loggedInUser = (Tutor?)authenticationStore.CurrentUser.Person ??
@@ -98,6 +100,7 @@ namespace LangLang.ViewModel
                                     "Cannot create TutorViewModel without currently logged in tutor");
             currentViewModel = CourseViewModel; // TODO: change to ProfileViewModel
             NavCommand = new RelayCommand(execute => OnNav(execute as string));
+            NotificationsCommand = new RelayCommand(_ => OpenNotificationWindow());
             LogoutCommand = new RelayCommand(execute => Logout());
             TutorName = loggedInUser.Name;
         }
@@ -116,6 +119,11 @@ namespace LangLang.ViewModel
                 "exams" => ExamViewModel,
                 _ => CurrentViewModel
             };
+        }
+        
+        private void OpenNotificationWindow()
+        {
+            _popupNavigationService.Navigate(ViewType.Notifications);
         }
     }
 }
