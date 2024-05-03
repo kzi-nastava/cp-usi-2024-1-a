@@ -4,6 +4,7 @@ using LangLang.Services.UserServices;
 using Consts;
 using LangLang.DTO;
 using LangLang.Services.AuthenticationServices;
+using LangLang.Services.NotificationServices;
 
 namespace LangLang.Services.UtilityServices;
 
@@ -12,12 +13,14 @@ public class PenaltyService : IPenaltyService
     private readonly IStudentService _studentService;
     private readonly IAccountService _accountService;
     private readonly IUserProfileMapper _userProfileMapper;
+    private readonly INotificationService _notificationService;
 
-    public PenaltyService(IStudentService studentService, IAccountService accountService, IUserProfileMapper userProfileMapper)
+    public PenaltyService(IStudentService studentService, IAccountService accountService, IUserProfileMapper userProfileMapper, INotificationService notificationService)
     {
         _studentService = studentService;
         _accountService = accountService;
         _userProfileMapper = userProfileMapper;
+        _notificationService = notificationService;
     }
 
     public void AddPenaltyPoint(Student student, Person? sender = null)
@@ -49,6 +52,6 @@ public class PenaltyService : IPenaltyService
         
         var message = $"You have been given one penalty point and now have a total of {numPoints} penalty points.";
         
-        // TODO: _notificationService.AddNotification(message, studentProfile, senderProfile);
+        _notificationService.AddNotification(message, studentProfile, senderProfile);
     }
 }
