@@ -9,7 +9,8 @@ namespace Consts
         public static readonly TimeSpan ExamDuration = TimeSpan.FromHours(4);
         public static readonly TimeSpan LessonDuration = TimeSpan.FromMinutes(90);
         
-        public static readonly TimeSpan ConfirmableExamTime = new(7, 0, 0, 0);
+        public static readonly TimeSpan LockedExamTime = new(14, 0, 0, 0);
+        public static readonly TimeSpan ConfirmedExamTime = new(7, 0, 0, 0);
         public static readonly TimeSpan ConfirmableCourseTime = new(7, 0, 0, 0);
         public static readonly TimeSpan CancellableCourseTime = new(7, 0, 0, 0);
         public static readonly string DateFormat = "yyyy-MM-dd";

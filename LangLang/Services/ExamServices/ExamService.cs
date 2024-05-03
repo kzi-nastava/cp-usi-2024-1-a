@@ -22,12 +22,19 @@ public class ExamService : IExamService
 
     public List<Exam> GetAllExams()
     {
-        return _examDao.GetAllExams().Values.ToList();
+        var exams = _examDao.GetAllExams().Values.ToList();
+        return UpdateExamStates(exams);
     }
 
     public Exam? GetExamById(string id)
     {
-        return _examDao.GetExamById(id);
+        var exam = _examDao.GetExamById(id);
+        if (exam != null)
+        {
+            exam = UpdateExamStateBasedOnDateTime(exam);
+            _examDao.UpdateExam(exam.Id, exam);
+        }
+        return exam;
     }
 
     public List<Exam> GetExamsByTutor(string tutorId)
@@ -39,8 +46,7 @@ public class ExamService : IExamService
         }
 
         List<string> examIds = tutor.Exams;
-
-        return _examDao.GetExamsForIds(examIds);
+        return UpdateExamStates(_examDao.GetExamsForIds(examIds));
     }
 
     private bool IsExamValid(Language? language, LanguageLvl? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
@@ -54,11 +60,7 @@ public class ExamService : IExamService
         {
             return false;
         }
-        if (examDate < DateOnly.FromDateTime(DateTime.Now))
-        {
-            return false;
-        }
-        if (examDate == DateOnly.FromDateTime(DateTime.Now) && examTime < TimeOnly.FromDateTime(DateTime.Now))
+        if (examDate.Value.ToDateTime(examTime.Value).Subtract(Constants.LockedExamTime) < DateTime.Now)
         {
             return false;
         }
@@ -74,12 +76,7 @@ public class ExamService : IExamService
         }
 
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
-        Exam.State examState = Exam.State.NotStarted;
-        if (dateTime - Constants.ConfirmableExamTime < DateTime.Now)
-        {
-            examState = Exam.State.Confirmable;
-        }
-        Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
+        Exam exam = new Exam(language!, languageLvl!.Value, dateTime, classroomNumber, Exam.State.NotStarted, maxStudents);
         exam = _examDao.AddExam(exam);
 
         tutor.Exams.Add(exam.Id);
@@ -100,19 +97,21 @@ public class ExamService : IExamService
             throw new ArgumentException("Exam not found");
         }
 
-        if (oldExam.ExamState != Exam.State.NotStarted && oldExam.ExamState != Exam.State.Confirmable)
+        if (oldExam.ExamState != Exam.State.NotStarted)
         {
             throw new ArgumentException("Exam cannot be updated at this state");
         }
 
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
         Exam.State examState = Exam.State.NotStarted;
-        if (dateTime - Constants.ConfirmableExamTime < DateTime.Now)
+        if (dateTime - Constants.LockedExamTime < DateTime.Now)
         {
-            examState = Exam.State.Confirmable;
+            examState = Exam.State.Locked;
         }
 
         Exam? exam = new Exam(id, language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
+        exam = UpdateExamStateBasedOnDateTime(exam);
+        
         exam = _examDao.UpdateExam(id, exam);
         if (exam == null)
         {
@@ -171,5 +170,34 @@ public class ExamService : IExamService
         }
 
         return filteredExams;
+    }
+
+    private List<Exam> UpdateExamStates(IEnumerable<Exam> exams)
+    {
+        var updatedExams = exams.Select(UpdateExamStateBasedOnDateTime).ToList();
+        updatedExams.ForEach(exam => _examDao.UpdateExam(exam.Id, exam));
+        return updatedExams;
+    }
+    
+    private Exam UpdateExamStateBasedOnDateTime(Exam exam)
+    {
+        if (exam.ExamState is Exam.State.Canceled or Exam.State.Graded or Exam.State.Reported)
+            return exam;
+        exam.ExamState = GetExamStateBasedOnDateTime(exam.Time, exam.Date, exam.TimeOfDay);
+        return exam;
+    }
+
+    private static Exam.State GetExamStateBasedOnDateTime(DateTime dateTime, DateOnly examDate, TimeOnly examTime)
+    {
+        DateTime examDateTime = examDate.ToDateTime(examTime);
+        if (dateTime < examDateTime.Subtract(Constants.LockedExamTime))
+            return Exam.State.NotStarted;
+        if (dateTime < examDateTime.Subtract(Constants.ConfirmedExamTime))
+            return Exam.State.Locked;
+        if (dateTime < examDateTime)
+            return Exam.State.Confirmed;
+        if (dateTime < examDateTime.Add(Constants.ExamDuration))
+            return Exam.State.InProgress;
+        return Exam.State.Finished;
     }
 }
