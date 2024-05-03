@@ -34,7 +34,7 @@ public class LoginService : ILoginService
         
         _authenticationStore.CurrentUserProfile = profile;
         _authenticationStore.UserType = _userProfileMapper.GetPerson(profile).UserType;
-        return new LoginResult(true, true, profile, UserType.Student);
+        return new LoginResult(true, true, profile, _authenticationStore.UserType);
     }
 
     public void LogOut()
