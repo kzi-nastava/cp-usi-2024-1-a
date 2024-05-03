@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
+﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using Consts;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.CourseServices;
 using LangLang.Services.ExamServices;
-using LangLang.Services.UtilityServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
 
 
 namespace LangLang.ViewModel

@@ -1,6 +1,8 @@
 ﻿using LangLang.DAO;
+using LangLang.DTO;
 using LangLang.Model;
 using LangLang.MVVM;
+using LangLang.Services.AuthenticationServices;
 using LangLang.Stores;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +15,8 @@ namespace LangLang.ViewModel
         public NavigationStore NavigationStore { get; }
 
         private readonly CurrentCourseStore _currentCourseStore;
+
+        private readonly IUserProfileMapper _userProfileMapper;
 
         private readonly IStudentDAO _studentDAO;
         public RelayCommand AcceptStudentCommand { get; }
@@ -74,9 +78,10 @@ namespace LangLang.ViewModel
 
         public ObservableCollection<Student> Students { get; set; }
 
-        public UpcomingCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO)
+        public UpcomingCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
         {
             NavigationStore = navigationStore;
+            _userProfileMapper = userProfileMapper;
             _currentCourseStore = currentCourseStore;
             _studentDAO = studentDAO;
             Students = new ObservableCollection<Student>(LoadStudents());
@@ -97,9 +102,12 @@ namespace LangLang.ViewModel
         private void SelectStudent()
         {
             if (SelectedStudent == null) return;
+            Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent, UserType.Student));
+            if (profile == null) return;
+            Email = profile.Email;
+
             Name = SelectedStudent.Name;
             Surname = SelectedStudent.Surname;
-            Email = SelectedStudent.Email;
             PenaltyPts = SelectedStudent.PenaltyPts;
 
         }

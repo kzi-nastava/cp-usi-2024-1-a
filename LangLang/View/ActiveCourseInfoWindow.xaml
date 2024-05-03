@@ -36,10 +36,9 @@
             CanUserDeleteRows="False" 
         >
             <DataGrid.Columns >
-                <DataGridTextColumn  Header="Name" Binding="{Binding Name}"/>
-                <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}"/>
-                <DataGridTextColumn  Header="Email" Binding="{Binding Email}"/>
-                <DataGridTextColumn  Header="Penalty Pts" Binding="{Binding PenaltyPts}"/>
+                <DataGridTextColumn  Header="Name" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}" Width="*"/>
+                <DataGridTextColumn  Header="Penalty Pts" Binding="{Binding PenaltyPts}" Width="*"/>
                 <DataGridTemplateColumn  Width="90">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

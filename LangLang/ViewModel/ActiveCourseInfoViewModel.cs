@@ -1,7 +1,9 @@
 ﻿using LangLang.DAO;
 using LangLang.DAO.JsonDao;
+using LangLang.DTO;
 using LangLang.Model;
 using LangLang.MVVM;
+using LangLang.Services.AuthenticationServices;
 using LangLang.Stores;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,7 @@ namespace LangLang.ViewModel
         public NavigationStore NavigationStore { get; }
         private readonly CurrentCourseStore _currentCourseStore;
         private readonly IStudentDAO _studentDAO;
+        private readonly IUserProfileMapper _userProfileMapper;
         public RelayCommand AcceptStudentCommand { get; }
         public RelayCommand DenyStudentCommand { get; }
         public RelayCommand GivePenaltyPointCommand { get; }
@@ -94,10 +97,11 @@ namespace LangLang.ViewModel
 
         public ObservableCollection<Student> Students { get; set; }
 
-        public ActiveCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO)
+        public ActiveCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
         {
             NavigationStore = navigationStore;
             _currentCourseStore = currentCourseStore;
+            _userProfileMapper = userProfileMapper;
             _studentDAO = studentDAO;
             Students = new ObservableCollection<Student>(LoadStudents());
             CourseName = _currentCourseStore.CurrentCourse!.Name;
@@ -118,9 +122,11 @@ namespace LangLang.ViewModel
         private void SelectStudent()
         {
             if (SelectedStudent == null) return;
+            Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent, UserType.Student));
+            if (profile == null) return;
             Name = SelectedStudent.Name;
             Surname = SelectedStudent.Surname;
-            Email = SelectedStudent.Email;
+            Email = profile.Email;
             PenaltyPts = SelectedStudent.PenaltyPts;
 
         }
