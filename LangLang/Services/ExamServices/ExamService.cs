@@ -183,7 +183,7 @@ public class ExamService : IExamService
     {
         if (exam.ExamState is Exam.State.Canceled or Exam.State.Graded or Exam.State.Reported)
             return exam;
-        exam.ExamState = GetExamStateBasedOnDateTime(exam.Time, exam.Date, exam.TimeOfDay);
+        exam.ExamState = GetExamStateBasedOnDateTime(DateTime.Now, exam.Date, exam.TimeOfDay);
         return exam;
     }
 
