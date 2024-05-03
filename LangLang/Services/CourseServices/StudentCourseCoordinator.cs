@@ -169,7 +169,8 @@ namespace LangLang.Services.CourseServices
         public void RemoveAttendee(string studentId)
         {
             _courseApplicationService.RemoveStudentApplications(studentId);
-            Course attendingCourse = GetStudentAttendingCourse(studentId)!;
+            var attendingCourse = GetStudentAttendingCourse(studentId);
+            if (attendingCourse == null) return;
             _courseAttendanceService.RemoveAttendee(studentId, attendingCourse.Id);
         }
 
