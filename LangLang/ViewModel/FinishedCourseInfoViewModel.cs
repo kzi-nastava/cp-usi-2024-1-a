@@ -1,6 +1,8 @@
 ﻿using LangLang.DAO;
+using LangLang.DTO;
 using LangLang.Model;
 using LangLang.MVVM;
+using LangLang.Services.AuthenticationServices;
 using LangLang.Stores;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,8 @@ namespace LangLang.ViewModel;
     private readonly CurrentCourseStore _currentCourseStore;
 
     private readonly IStudentDAO _studentDAO;
+
+    private readonly IUserProfileMapper _userProfileMapper;
     public RelayCommand GradeStudentCommand { get; }
 
     private string courseName = "";
@@ -113,11 +117,12 @@ namespace LangLang.ViewModel;
     {
         get => grades;
     }
-    public FinishedCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO)
+    public FinishedCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
     {
         NavigationStore = navigationStore;
         _currentCourseStore = currentCourseStore;
         _studentDAO = studentDAO;
+        _userProfileMapper = userProfileMapper;
         Students = new ObservableCollection<Student>(LoadStudents());
         CourseName = _currentCourseStore.CurrentCourse!.Name;
         GradeStudentCommand = new RelayCommand(GradeStudent, canExecute => SelectedStudent != null);
@@ -147,9 +152,11 @@ namespace LangLang.ViewModel;
     private void SelectStudent()
     {
         if (SelectedStudent == null) return;
+        Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent, UserType.Student));
+        if (profile == null) return;
         Name = SelectedStudent.Name;
         Surname = SelectedStudent.Surname;
-        Email = SelectedStudent.Email;
+        Email = profile.Email;
         PenaltyPts = SelectedStudent.PenaltyPts;
 
     }
