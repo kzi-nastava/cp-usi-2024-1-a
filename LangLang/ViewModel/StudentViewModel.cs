@@ -38,6 +38,7 @@ namespace LangLang.ViewModel
         public ICommand RateTutorCommand { get; }
         public ICommand CancelAttendingCourseCommand { get; }
         public ICommand CancelAttendingExamCommand { get; }
+        public ICommand OpenNotificationWindowCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<Course> FinishedCourses { get; set; }
         public ObservableCollection<Course> AppliedCourses { get; set; }
@@ -252,7 +253,7 @@ namespace LangLang.ViewModel
             RateTutorCommand = new RelayCommand<string>(RateTutor);
             CancelAttendingCourseCommand = new RelayCommand<string>(CancelAttendingCourse!);
             CancelAttendingExamCommand = new RelayCommand(CancelAttendingExam!);
-
+            OpenNotificationWindowCommand = new RelayCommand(_ => OpenNotificationWindow());
         }
 
 
@@ -526,6 +527,11 @@ namespace LangLang.ViewModel
         private void OpenStudentProfile()
         {
             _popupNavigationService.Navigate(ViewType.StudentAccount);
+        }
+
+        private void OpenNotificationWindow()
+        {
+            _popupNavigationService.Navigate(ViewType.Notifications);
         }
     }
 }
