@@ -35,6 +35,7 @@ namespace LangLang.ViewModel
         private string email = "";
         private string message = "";
         private uint penaltyPts;
+        private ObservableCollection<Student> attendees = new ObservableCollection<Student>();
         public string Name
         {
             get => name;
@@ -84,7 +85,14 @@ namespace LangLang.ViewModel
         }
 
         public ObservableCollection<Student> Students { get; set; }
-        public ObservableCollection<Student> Attendees { get; set; }
+        public ObservableCollection<Student> Attendees
+        {
+            get => attendees;
+            set
+            {
+                SetField(ref attendees, value);
+            }
+        }
 
         public UpcomingCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, 
             IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IStudentCourseCoordinator studentCourseCoordinator)
@@ -154,6 +162,11 @@ namespace LangLang.ViewModel
 
 
             _studentCourseCoordinator.SendNotification(AcceptMessage, SelectedStudent!.Id);
+
+            Students.Clear();
+            Students = new ObservableCollection<Student>(LoadStudents());
+            Attendees.Clear();
+            Attendees = new ObservableCollection<Student>(LoadAttendees());
 
             SelectedStudent = null;
 
