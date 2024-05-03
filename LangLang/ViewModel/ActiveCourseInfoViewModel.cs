@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.ViewModel
 {
@@ -19,6 +20,7 @@ namespace LangLang.ViewModel
         private readonly CurrentCourseStore _currentCourseStore;
         private readonly IStudentDAO _studentDAO;
         private readonly IUserProfileMapper _userProfileMapper;
+        private readonly IPenaltyService _penaltyService;
         public RelayCommand AcceptStudentCommand { get; }
         public RelayCommand DenyStudentCommand { get; }
         public RelayCommand GivePenaltyPointCommand { get; }
@@ -97,11 +99,12 @@ namespace LangLang.ViewModel
 
         public ObservableCollection<Student> Students { get; set; }
 
-        public ActiveCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
+        public ActiveCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IPenaltyService penaltyService)
         {
             NavigationStore = navigationStore;
             _currentCourseStore = currentCourseStore;
             _userProfileMapper = userProfileMapper;
+            _penaltyService = penaltyService;
             _studentDAO = studentDAO;
             Students = new ObservableCollection<Student>(LoadStudents());
             CourseName = _currentCourseStore.CurrentCourse!.Name;
@@ -145,7 +148,7 @@ namespace LangLang.ViewModel
         private void GivePenaltyPoint(object? obj)
         {
             string email = (string)obj!;
-            MessageBox.Show("Penalty point added.");
+            _penaltyService.AddPenaltyPoint(selectedStudent!);
         }
 
         private void DenyStudent(object? obj)

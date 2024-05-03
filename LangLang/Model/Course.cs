@@ -25,7 +25,6 @@ namespace LangLang.Model
         }
 
         public CourseState State { get; set; }
-        public int NumPenaltyPts { get; set; }
         public int NumStudentsPassed { get; set; }
         public double ReadingAvgScore { get; set; }
         public double WritingAvgScore { get; set; }
@@ -47,7 +46,6 @@ namespace LangLang.Model
             NumStudents = 0;
             State = CourseState.Canceled;
             //set default values for attributes for reports
-            NumPenaltyPts = 0;
             NumStudentsPassed = 0;
             ReadingAvgScore = 0;
             WritingAvgScore = 0;
@@ -68,7 +66,6 @@ namespace LangLang.Model
             NumStudents = numStudents;
             State = state;
             //set default values for attributes for reports
-            NumPenaltyPts = 0;
             NumStudentsPassed = 0;
             ReadingAvgScore = 0;
             WritingAvgScore = 0;
@@ -90,7 +87,6 @@ namespace LangLang.Model
             NumStudents = numStudents;
             State = state;
             //set default values for attributes for reports
-            NumPenaltyPts = 0;
             NumStudentsPassed = 0;
             ReadingAvgScore = 0;
             WritingAvgScore = 0;

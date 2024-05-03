@@ -518,7 +518,7 @@ namespace LangLang.ViewModel
 
         private void DeleteProfile()
         {
-            _accountService.DeleteStudent(_loggedInUser.Id);
+            _accountService.DeleteStudent(_loggedInUser);
             MessageBox.Show("Your profile has been successfully deleted");
             _navigationService.Navigate(ViewType.Login);
         }

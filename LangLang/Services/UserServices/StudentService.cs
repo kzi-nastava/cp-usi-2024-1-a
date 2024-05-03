@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Consts;
 using LangLang.DAO;
 using LangLang.Model;
@@ -42,6 +44,21 @@ namespace LangLang.Services.UserServices
         {
             return _studentDao.AddStudent(student);
         }
+
+        public uint AddPenaltyPoint(Student student)
+        {
+            student.PenaltyPts++;
+            _studentDao.UpdateStudent(student);
+            return student.PenaltyPts;
+        }
+
+        public void RemovePenaltyPoint(Student student)
+        {
+            student.RemovePenaltyPts();
+            _studentDao.UpdateStudent(student);
+        }
+
+        public List<Student> GetAllStudents() => _studentDao.GetAllStudents().Values.ToList();
     }
 
 }

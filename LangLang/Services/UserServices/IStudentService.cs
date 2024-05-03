@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Consts;
 using LangLang.Model;
 
@@ -11,4 +13,7 @@ public interface IStudentService
     public void DeleteAccount(Student student);
     public Student? GetStudentById(string studentId);
     public Student AddStudent(Student student);
+    uint AddPenaltyPoint(Student student);
+    void RemovePenaltyPoint(Student student);
+    List<Student> GetAllStudents();
 }
