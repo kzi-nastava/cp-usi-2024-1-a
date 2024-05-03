@@ -49,11 +49,8 @@ namespace LangLang.Services.CourseServices
             {
                 throw new ArgumentException("Course application not found");
             }
-            //if (!CanBeModified(application.CourseId))
-            //{
-            //    throw new ArgumentException("Course application state cannot be changed at this state.");
-            //}
             application.ChangeApplicationState(state);
+            _courseApplicationDAO.UpdateCourseApplication(applicationId, application);
             return application;
         }
         public void DeleteApplication(string applicationId)
@@ -97,6 +94,7 @@ namespace LangLang.Services.CourseServices
                 if (application.CourseApplicationState != State.Accepted)
                 {
                     application.ChangeApplicationState(State.Paused);
+                    _courseApplicationDAO.UpdateCourseApplication(application.Id, application);
                 }
             }
         }
