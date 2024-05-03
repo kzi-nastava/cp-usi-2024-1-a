@@ -11,13 +11,13 @@ namespace LangLang.Model
         public EducationLvl Education { get; set; }
         public uint PenaltyPts { get; set; }
         
-        public Dictionary<Language, LanguageLvl> KnownLanguages { get; }
+        public Dictionary<string, LanguageLvl> KnownLanguages { get; }
 
         public Student() : base("", "", DateTime.Now, Gender.Other, "")
         {
             Id = "";
             PenaltyPts = 0;
-            KnownLanguages = new Dictionary<Language, LanguageLvl>();
+            KnownLanguages = new Dictionary<string, LanguageLvl>();
         }
 
         public Student(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts)
@@ -26,10 +26,10 @@ namespace LangLang.Model
             Id = "";
             PenaltyPts = penaltyPts;
             Education = educationLvl;
-            KnownLanguages = new Dictionary<Language, LanguageLvl>();
+            KnownLanguages = new Dictionary<string, LanguageLvl>();
         }
         
-        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, Dictionary<Language, LanguageLvl> knownLanguages)
+        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, Dictionary<string, LanguageLvl> knownLanguages)
             : base(name, surname, birthDate, gender, phoneNumber)
         {
             Id = id;
@@ -45,7 +45,7 @@ namespace LangLang.Model
 
         public void AddKnownLanguage(Language language, LanguageLvl languageLvl)
         {
-            KnownLanguages[language] = languageLvl;
+            KnownLanguages[language.Name] = languageLvl;
         }
     }
 }
