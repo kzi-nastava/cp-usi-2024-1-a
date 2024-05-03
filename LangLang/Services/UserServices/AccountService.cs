@@ -45,11 +45,23 @@ namespace LangLang.Services.UserServices
             _profileService.UpdatePassword(profile, password);
         }
 
-        public void DeleteStudent(string studentId)
+        public void DeleteStudent(Student student)
         {
-            _studentCourseCoordinator.RemoveAttendee(studentId);
+            _studentCourseCoordinator.RemoveAttendee(student.Id);
             //exam coordinator
-            _studentService.DeleteAccount(_studentService.GetStudentById(studentId)!);
+            _studentService.DeleteAccount(student);
+            var profile = _userProfileMapper.GetProfile(new UserDto(student, UserType.Student));
+            if(profile != null)
+                _profileService.DeleteProfile(profile.Email);
+        }
+
+        public void DeactivateStudentAccount(Student student)
+        {
+            _studentCourseCoordinator.RemoveAttendee(student.Id);
+            // TODO: Remove from exams
+            var profile = _userProfileMapper.GetProfile(new UserDto(student, UserType.Student));
+            if(profile != null)
+                _profileService.DeactivateProfile(profile);
         }
 
         public void RegisterStudent(RegisterStudentDto registerDto)

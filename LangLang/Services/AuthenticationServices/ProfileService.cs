@@ -32,4 +32,6 @@ public class ProfileService : IProfileService
                   ?? throw new ArgumentException("No profile with the given id.");
         return profile;
     }
+
+    public void DeleteProfile(string email) => _profileDao.DeleteProfile(email);
 }

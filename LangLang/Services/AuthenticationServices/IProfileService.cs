@@ -9,4 +9,5 @@ public interface IProfileService
     public Profile AddProfile(Profile profile);
     public void DeactivateProfile(Profile profile);
     public Profile UpdatePassword(Profile profile, string password);
+    public void DeleteProfile(string email);
 }

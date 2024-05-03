@@ -11,4 +11,5 @@ public interface IStudentService
     public void DeleteAccount(Student student);
     public Student? GetStudentById(string studentId);
     public Student AddStudent(Student student);
+    uint AddPenaltyPoint(Student student);
 }
