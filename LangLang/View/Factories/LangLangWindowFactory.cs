@@ -18,6 +18,7 @@ public class LangLangWindowFactory : ILangLangWindowFactory
             TutorViewModel tutorViewModel => new TutorWindow(tutorViewModel, this),
             DirectorViewModel directorViewModel => new DirectorWindow(directorViewModel, this),
             StudentAccountViewModel studentAccountViewModel => new StudentAccountWindow(studentAccountViewModel, this),
+            NotificationViewModel notificationViewModel => new NotificationWindow(notificationViewModel, this),
             ActiveCourseInfoViewModel activeCourseInfoViewModel => new ActiveCourseInfoWindow(activeCourseInfoViewModel, this),
             UpcomingCourseInfoViewModel upcomingCourseInfoViewModel => new UpcomingCourseInfoWindow(upcomingCourseInfoViewModel,this),
             FinishedCourseInfoViewModel finishedCourseInfoViewModel => new FinishedCourseInfoWindow(finishedCourseInfoViewModel, this),

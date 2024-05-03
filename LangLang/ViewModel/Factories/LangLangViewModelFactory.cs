@@ -13,6 +13,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<CourseViewModel> _createCourseViewModel;
     private readonly CreateViewModel<ExamViewModel> _createExamViewModel;
     private readonly CreateViewModel<StudentAccountViewModel> _createStudentAccountViewModel;
+    private readonly CreateViewModel<NotificationViewModel> _createNotificationViewModel;
     private readonly CreateViewModel<ActiveCourseInfoViewModel> _createActiveCourseInfoViewModel;
     private readonly CreateViewModel<UpcomingCourseInfoViewModel> _createUpcomingCourseInfoViewModel;
     private readonly CreateViewModel<FinishedCourseInfoViewModel> _createFinishedCourseInfoViewModel;
@@ -25,6 +26,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<CourseViewModel> createCourseViewModel,
         CreateViewModel<ExamViewModel> createExamViewModel,
         CreateViewModel<StudentAccountViewModel> createStudentAccountViewModel,
+        CreateViewModel<NotificationViewModel> createNotificationViewModel,
         CreateViewModel<ActiveCourseInfoViewModel> createActiveCourseInfoViewModel,
         CreateViewModel<UpcomingCourseInfoViewModel> createUpcomingCourseInfoViewModel,
         CreateViewModel<FinishedCourseInfoViewModel> createfinishedCourseInfoViewModel
@@ -38,6 +40,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createCourseViewModel = createCourseViewModel;
         _createExamViewModel = createExamViewModel;
         _createStudentAccountViewModel = createStudentAccountViewModel;
+        _createNotificationViewModel = createNotificationViewModel;
         _createActiveCourseInfoViewModel = createActiveCourseInfoViewModel;
         _createUpcomingCourseInfoViewModel = createUpcomingCourseInfoViewModel;
         _createFinishedCourseInfoViewModel = createfinishedCourseInfoViewModel;
@@ -56,6 +59,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.Course => _createCourseViewModel(),
             ViewType.Exam => _createExamViewModel(),
             ViewType.StudentAccount => _createStudentAccountViewModel(),
+            ViewType.Notifications => _createNotificationViewModel(),
             ViewType.ActiveCourseInfo => _createActiveCourseInfoViewModel(),
             ViewType.UpcomingCourseInfo => _createUpcomingCourseInfoViewModel(),
             ViewType.FinishedCourseInfo => _createFinishedCourseInfoViewModel(),
