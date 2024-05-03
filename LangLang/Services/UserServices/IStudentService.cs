@@ -16,4 +16,5 @@ public interface IStudentService
     uint AddPenaltyPoint(Student student);
     void RemovePenaltyPoint(Student student);
     List<Student> GetAllStudents();
+    public void AddLanguageSkill(Student student, Language language, LanguageLvl languageLvl);
 }

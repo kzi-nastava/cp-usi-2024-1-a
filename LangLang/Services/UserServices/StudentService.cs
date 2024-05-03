@@ -59,6 +59,12 @@ namespace LangLang.Services.UserServices
         }
 
         public List<Student> GetAllStudents() => _studentDao.GetAllStudents().Values.ToList();
+        
+        public void AddLanguageSkill(Student student, Language language, LanguageLvl languageLvl)
+        {
+            student.AddKnownLanguage(language, languageLvl);
+            _studentDao.UpdateStudent(student);
+        }
     }
 
 }
