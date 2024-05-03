@@ -29,6 +29,7 @@ namespace Consts
         public const string CourseApplicationsFilePath = "../../../Data/CourseApplications.json";
         public const string CourseAttendancesFilePath = "../../../Data/CourseAttendances.json";
         public const string NotificationFilePath = "../../../Data/Notifications.json";
+        public const string ExamApplicationFilePath = "../../../Data/ExamApplications.json";
     }
 
 

@@ -99,6 +99,17 @@ namespace LangLang.DAO.JsonDao
             LastId.NotificationId++;
             Save();
         }
+        
+        public string GetExamApplicationId()
+        {
+            return LastId.ExamApplicationId.ToString();
+        }
+
+        public void IncrementExamApplicationId()
+        {
+            LastId.ExamApplicationId++;
+            Save();
+        }
 
         private void Load()
         {
