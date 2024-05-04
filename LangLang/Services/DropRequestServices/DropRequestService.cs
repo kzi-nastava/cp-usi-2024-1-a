@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LangLang.Services.CourseServices;
+namespace LangLang.Services.DropRequestServices;
 
 public class DropRequestService : IDropRequestService
 {
@@ -24,9 +24,9 @@ public class DropRequestService : IDropRequestService
         return dropRequest;
     }
 
-    public DropRequest AddDropRequest(string courseId, Profile sender, Profile receiver)
+    public DropRequest AddDropRequest(string courseId, Profile sender, string message)
     {
-        return _dropRequestDao.AddDropRequest(new DropRequest(sender.Email, courseId, receiver.Email));
+        return _dropRequestDao.AddDropRequest(new DropRequest(sender.Email, courseId, message));
     }
 
     public DropRequest Deny(DropRequest dropRequest)
@@ -36,13 +36,8 @@ public class DropRequestService : IDropRequestService
         return dropRequest;
     }
 
-    public List<DropRequest> GetDropRequests(Profile profile)
+    public List<DropRequest> GetDropRequests(string courseId)
     {
-        return _dropRequestDao.GetDropRequests(profile);
-    }
-
-    public List<DropRequest> GetDropRequestsCourse(Profile profile, string courseId)
-    {
-        return _dropRequestDao.GetDropRequestsCourse(profile, courseId);
+        return _dropRequestDao.GetDropRequests(courseId);
     }
 }

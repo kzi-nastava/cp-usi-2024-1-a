@@ -7,6 +7,7 @@ using LangLang.Services.ExamServices;
 using LangLang.Services.NotificationServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using LangLang.Services.DropRequestServices;
 
 namespace LangLang.HostBuilders;
 
@@ -39,6 +40,8 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<INotificationInfoService, NotificationInfoService>();
             services.AddSingleton<IExamApplicationService, ExamApplicationService>();
             services.AddSingleton<IExamCoordinator, ExamCoordinator>();
+            services.AddSingleton<IDropRequestService, DropRequestService>();
+            services.AddSingleton<IDropRequestInfoService, DropRequestInfoService>();
         });
         
         return host;

@@ -1,6 +1,7 @@
 ﻿using LangLang.DTO;
 using LangLang.Model;
 using LangLang.Services.AuthenticationServices;
+using LangLang.Services.DropRequestServices;
 using LangLang.Services.NotificationServices;
 using LangLang.Services.UserServices;
 using LangLang.Stores;
@@ -19,10 +20,11 @@ namespace LangLang.Services.CourseServices
         private readonly IUserProfileMapper _userProfileMapper;
         private readonly INotificationService _notificationService;
         private readonly IAuthenticationStore _authenticationStore;
+        private readonly IDropRequestService _dropRequestService;
 
         public StudentCourseCoordinator(ICourseService courseService,ICourseAttendanceService courseAttendanceService,
             IStudentService studentService, ICourseApplicationService courseApplicationService, IUserProfileMapper userProfileMapper,
-            INotificationService notificationService, IAuthenticationStore authenticationStore)
+            INotificationService notificationService, IAuthenticationStore authenticationStore, IDropRequestService dropRequestService)
         {
             _courseService = courseService;
             _authenticationStore = authenticationStore;
@@ -31,6 +33,7 @@ namespace LangLang.Services.CourseServices
             _studentService = studentService;
             _courseApplicationService = courseApplicationService;
             _notificationService = notificationService;
+            _dropRequestService = dropRequestService;
         }
 
         public void Accept(string studentId, string courseId)
@@ -103,7 +106,7 @@ namespace LangLang.Services.CourseServices
             
         }
 
-        public void DropCourse(string studentId)
+        public void DropCourse(string studentId, string message)
         {
             CourseAttendance? attendance = _courseAttendanceService.GetStudentAttendance(studentId);
             if (attendance == null)
@@ -117,6 +120,7 @@ namespace LangLang.Services.CourseServices
             _courseService.CancelAttendance(attendance.CourseId);
             _courseApplicationService.ActivateStudentApplications(attendance.StudentId);
             _courseAttendanceService.RemoveAttendee(attendance.StudentId, attendance.CourseId);
+            _dropRequestService.AddDropRequest(attendance.CourseId, _authenticationStore.CurrentUserProfile!, message);
             //Sent tutor the excuse why student wants to drop out
         }
 
