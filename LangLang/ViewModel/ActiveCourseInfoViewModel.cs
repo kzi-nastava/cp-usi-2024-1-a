@@ -207,11 +207,19 @@ namespace LangLang.ViewModel
                 MessageBox.Show("Select drop request first!", "Error");
                 return;
             }
-            _dropRequestService.Deny(SelectedDropRequestDisplay!.DropRequest);
+            _studentCourseCoordinator.DenyDropRequest(SelectedDropRequestDisplay!.DropRequest);
 
             UserDto student = _userProfileMapper.GetPerson(_profileService.GetProfile(SelectedDropRequestDisplay.DropRequest.SenderId)!);
+
             
             _penaltyService.AddPenaltyPoint((Student)student.Person!);
+
+            DropRequests.Clear();
+            DropRequests = new ObservableCollection<DropRequestDisplay>(LoadDropRequests());
+
+            Sender = "";
+            DropMessage = "";
+
             MessageBox.Show("Drop request is denied successfully", "Success");
 
         }
@@ -223,7 +231,14 @@ namespace LangLang.ViewModel
                 MessageBox.Show("Select drop request first!", "Error");
                 return;
             }
-            _dropRequestService.Accept(SelectedDropRequestDisplay!.DropRequest);
+            _studentCourseCoordinator.AcceptDropRequest(SelectedDropRequestDisplay!.DropRequest);
+
+            DropRequests.Clear();
+            DropRequests = new ObservableCollection<DropRequestDisplay>(LoadDropRequests());
+
+            Sender = "";
+            DropMessage = "";
+
             MessageBox.Show("Drop request is accepted successfully", "Success");
         }
     }
