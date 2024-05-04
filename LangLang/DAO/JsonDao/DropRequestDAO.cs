@@ -54,4 +54,17 @@ public class DropRequestDAO : IDropRequestDAO
     {
         JsonUtil.WriteToFile(DropRequests, Constants.DropRequestFilePath);
     }
+
+    public List<DropRequest> GetInReviewDropRequests(string courseId)
+    {
+        List<DropRequest> dropRequests = new();
+        foreach (DropRequest dropRequest in DropRequests.Values)
+        {
+            if (dropRequest.CourseId == courseId && dropRequest.DropRequestStatus == DropRequest.Status.InReview)
+            {
+                dropRequests.Add(dropRequest);
+            }
+        }
+        return dropRequests;
+    }
 }
