@@ -92,7 +92,7 @@ namespace LangLang.Services.CourseServices
             {
 
                 Profile? receiver = _userProfileMapper.GetProfile(new UserDto(_studentService.GetStudentById(receiverId), UserType.Student));
-                Profile? sender = _userProfileMapper.GetProfile(new UserDto(_authenticationStore.CurrentUser.Person, _authenticationStore.CurrentUser.UserType));
+                Profile? sender = _authenticationStore.CurrentUserProfile;
                 
                 if (receiver == null)
                 {
