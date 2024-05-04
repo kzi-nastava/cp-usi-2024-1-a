@@ -95,7 +95,15 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <StackPanel DockPanel.Dock="Right" Width="110"></StackPanel>
+                    <Button x:Name="NotificationsBtn" DockPanel.Dock="Right" Content="Notifications" Command="{Binding OpenNotificationWindowCommand}" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0" Margin="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button x:Name="EditProfileBtn1" Command="{Binding OpenStudentProfileCommand}" Content="Edit Profile" FontSize="14" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="110" BorderThickness="0">
                             <Button.Template>
