@@ -1,19 +1,17 @@
 ﻿using LangLang.DAO;
-using LangLang.DAO.JsonDao;
 using LangLang.DTO;
 using LangLang.Model;
+using LangLang.Model.Display;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
+using LangLang.Services.CourseServices;
+using LangLang.Services.DropRequestServices;
+using LangLang.Services.UtilityServices;
 using LangLang.Stores;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using LangLang.Services.UtilityServices;
-using LangLang.Services.CourseServices;
-using LangLang.Services.DropRequestServices;
-using LangLang.Model.Display;
 
 namespace LangLang.ViewModel
 {
@@ -28,6 +26,7 @@ namespace LangLang.ViewModel
         private readonly IStudentCourseCoordinator _studentCourseCoordinator;
         private readonly IDropRequestService _dropRequestService;
         private readonly IDropRequestInfoService _dropRequestInfoService;
+        private readonly IProfileService _profileService;
         public RelayCommand AcceptStudentCommand { get; }
         public RelayCommand DenyStudentCommand { get; }
         public RelayCommand GivePenaltyPointCommand { get; }
@@ -138,10 +137,12 @@ namespace LangLang.ViewModel
             CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, 
             IUserProfileMapper userProfileMapper, IPenaltyService penaltyService,
             IStudentCourseCoordinator studentCourseCoordinator, IDropRequestService dropRequestService,
-            IAuthenticationStore authenticationStore, IDropRequestInfoService dropRequestInfoService)
+            IAuthenticationStore authenticationStore, IDropRequestInfoService dropRequestInfoService,
+            IProfileService profileService)
         {
             AuthenticationStore = authenticationStore;
             NavigationStore = navigationStore;
+            _profileService = profileService;
             _dropRequestInfoService = dropRequestInfoService;
             _studentCourseCoordinator = studentCourseCoordinator;
             _currentCourseStore = currentCourseStore;
@@ -159,15 +160,13 @@ namespace LangLang.ViewModel
 
         private List<DropRequestDisplay> LoadDropRequests()
         {
-            var dropRequests = _dropRequestService.GetDropRequests(_currentCourseStore.CurrentCourse!.Id);
+            var dropRequests = _dropRequestService.GetInReviewDropRequests(_currentCourseStore.CurrentCourse!.Id);
 
             var senderNames = _dropRequestInfoService.GetSenderNames(dropRequests);
-            var dropRequestDisplay = new List<DropRequestDisplay>(dropRequests
-            .Select(dropRequest => new DropRequestDisplay(senderNames[dropRequest.Id], dropRequest)));
 
-            //DropRequestsPreview = new ObservableCollection<string>(dropRequests
-            //    .Select(dropRequest => senderNames[dropRequest.Id]));
-            return dropRequestDisplay;
+            return new List<DropRequestDisplay>(dropRequests
+                        .Select(dropRequest => new DropRequestDisplay(senderNames[dropRequest.Id], dropRequest)));
+
         }
 
         private List<Student> LoadStudents()
@@ -195,7 +194,6 @@ namespace LangLang.ViewModel
         }
         private void GivePenaltyPoint(object? obj)
         {
-            string email = (string)obj!;
             _penaltyService.AddPenaltyPoint(SelectedStudent!);
             MessageBox.Show("Penalty point added.", "Success");
             Students.Clear();
@@ -204,12 +202,29 @@ namespace LangLang.ViewModel
 
         private void DenyStudent(object? obj)
         {
-            throw new NotImplementedException();
+            if(SelectedDropRequestDisplay == null)
+            {
+                MessageBox.Show("Select drop request first!", "Error");
+                return;
+            }
+            _dropRequestService.Deny(SelectedDropRequestDisplay!.DropRequest);
+
+            UserDto student = _userProfileMapper.GetPerson(_profileService.GetProfile(SelectedDropRequestDisplay.DropRequest.SenderId)!);
+            
+            _penaltyService.AddPenaltyPoint((Student)student.Person!);
+            MessageBox.Show("Drop request is denied successfully", "Success");
+
         }
 
         private void AcceptStudent(object? obj)
         {
-            throw new NotImplementedException();
+            if (SelectedDropRequestDisplay == null)
+            {
+                MessageBox.Show("Select drop request first!", "Error");
+                return;
+            }
+            _dropRequestService.Accept(SelectedDropRequestDisplay!.DropRequest);
+            MessageBox.Show("Drop request is accepted successfully", "Success");
         }
     }
 }

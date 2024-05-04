@@ -40,4 +40,9 @@ public class DropRequestService : IDropRequestService
     {
         return _dropRequestDao.GetDropRequests(courseId);
     }
+
+    public List<DropRequest> GetInReviewDropRequests(string courseId)
+    {
+        return _dropRequestDao.GetInReviewDropRequests(courseId);
+    }
 }
