@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LangLang.Model;
 
 public class DropRequest : INotifyPropertyChanged
 {
     public string Id { get; set; }
-    public string StudentId { get; set; }
+    public string SenderId { get; set; }
     public string CourseId { get; set; }
-    public string TutorId { get; set; }
+    public string ReceiverId { get; set; }
     public enum Status
     {
-        Accepted, Denied
+        Accepted, Denied, InReview
     }
     private Status _dropRequestStatus;
     public Status DropRequestStatus
@@ -33,23 +28,26 @@ public class DropRequest : INotifyPropertyChanged
     public DropRequest()
     {
         Id = "";
-        StudentId = "";
+        SenderId = "";
         CourseId = "";
-        TutorId = "";
+        ReceiverId = "";
+        DropRequestStatus = Status.InReview;
     }
     public DropRequest(string studentId, string courseId, string tutorId)
     {
         Id = "";
-        StudentId = studentId;
+        SenderId = studentId;
         CourseId = courseId;
-        TutorId = tutorId;
+        ReceiverId = tutorId;
+        DropRequestStatus = Status.InReview;
     }
     public DropRequest(string id, string studentId, string courseId, string tutorId)
     {
         Id = id;
-        StudentId = studentId;
+        SenderId = studentId;
         CourseId = courseId;
-        TutorId = tutorId;
+        ReceiverId = tutorId;
+        DropRequestStatus = Status.InReview;
     }
 
 
