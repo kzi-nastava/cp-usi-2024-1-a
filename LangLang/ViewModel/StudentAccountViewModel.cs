@@ -8,6 +8,7 @@ using LangLang.Model;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.UserServices;
 using LangLang.Stores;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.ViewModel
 {
@@ -31,14 +32,14 @@ namespace LangLang.ViewModel
         private string? _errorMessageSurname;
         private string? _errorMessagePhone;
 
-        private readonly IRegisterService _registerService;
+        private readonly IUserValidator _userValidator;
 
         private Student user = null!;
         
-        public StudentAccountViewModel(IAccountService accountService,IRegisterService registerService, IAuthenticationStore authenticationStore, NavigationStore navigationStore)
+        public StudentAccountViewModel(IAccountService accountService,IUserValidator userValidator, IAuthenticationStore authenticationStore, NavigationStore navigationStore)
         {
             _accountService = accountService;
-            _registerService = registerService;
+            _userValidator = userValidator;
             _authenticationStore = authenticationStore;
             NavigationStore = navigationStore;
             ConfirmCommand = new RelayCommand(ConfirmInput!);
@@ -150,9 +151,9 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = _registerService.CheckUserData(email, password, name, surname, phoneNumber);
+            ValidationError error = _userValidator.CheckUserData(email, password, name, surname, phoneNumber, birthday);
 
-            if (successful)
+            if (error == ValidationError.None)
             {
                 try
                 {
@@ -165,35 +166,17 @@ namespace LangLang.ViewModel
                 }
             }
             else {
-                if (AccountFieldsEmpty(birthday, password, name, surname, phoneNumber)) 
+                if (error.HasFlag(ValidationError.FieldsEmpty)) 
                 {
-                    ErrorMessageRequired = "All the fields are required";
+                    ErrorMessageRequired = ValidationError.FieldsEmpty.GetMessage();
                     return;
                 }
 
-                if (name.Any(char.IsDigit))
-                {
-                    ErrorMessageName = "Name must be all letters";
-                }
-
-                if (surname.Any(char.IsDigit))
-                {
-                    ErrorMessageSurname = "Surname must be all letters";
-                }
-
-                if (!_registerService.CheckPhoneNumber(phoneNumber))
-                {
-                    ErrorMessagePhone = "Must be made up of numbers";
-                }
-                if (!_registerService.CheckPassword(password))
-                {
-                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
-                }
+                ErrorMessageName     = error.GetMessageIfFlag(ValidationError.NameInvalid);
+                ErrorMessageSurname  = error.GetMessageIfFlag(ValidationError.SurnameInvalid);
+                ErrorMessagePhone    = error.GetMessageIfFlag(ValidationError.PhoneInvalid);
+                ErrorMessagePassword = error.GetMessageIfFlag(ValidationError.PasswordInvalid);
             }
-        }
-        public static bool AccountFieldsEmpty(DateTime birthday,  string password, string name, string surname, string phoneNumber)
-        {
-            return birthday == DateTime.MinValue || password == null || name == null || surname == null || phoneNumber == null || name == "" || surname == "" || password == "" || phoneNumber == "";
         }
     }
 }

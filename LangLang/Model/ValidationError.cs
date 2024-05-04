@@ -26,7 +26,7 @@ public static class ValidationErrorExtensions
         List<string> result = new();
         foreach (ValidationError flag in Enum.GetValues(typeof(ValidationError)))
         {
-            if (!flag)
+            if (flag == ValidationError.None)
                 continue;
             if (error.HasFlag(flag))
                 result.Add(flag.GetMessage());
@@ -56,4 +56,6 @@ public static class ValidationErrorExtensions
             => "Email unavailable",
         _ => "User data invalid"
     };
+    public static string GetMessageIfFlag(this ValidationError error, ValidationError flag)
+        => error.HasFlag(flag) ? flag.GetMessage() : ""; 
 }

@@ -47,6 +47,7 @@ public class UserValidator : IUserValidator
 
     private bool FieldsEmpty(string? email, string? password, string? name, string? surname, string? phoneNumber, DateTime? birthDate)
         => email == null || password == null || name == null || surname == null || phoneNumber == null 
+        || email == ""   || password == ""   || name == ""   || surname == ""   || phoneNumber == ""
         || birthDate == null || birthDate == DateTime.MinValue;
 
     private ValidationError CheckPassword(string password)
