@@ -29,10 +29,8 @@ namespace LangLang.ViewModel;
     private string message = "";
     private uint penaltyPts;
     private ObservableCollection<uint> grades = new ObservableCollection<uint> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    private uint readingScore;
-    private uint writingScore;
-    private uint listeningScore;
-    private uint speakingScore;
+    private uint activityScore;
+    private uint knowledgeScore;
     public string Name
     {
         get => name;
@@ -61,36 +59,20 @@ namespace LangLang.ViewModel;
             SetField(ref courseName, value);
         }
     }
-    public uint ReadingScore
+    public uint ActivityScore
     {
-        get => readingScore;
+        get => activityScore;
         set
         {
-            SetField(ref readingScore, value);
+            SetField(ref activityScore, value);
         }
     }
-    public uint WritingScore
+    public uint KnowledgeScore
     {
-        get => writingScore;
+        get => knowledgeScore;
         set
         {
-            SetField(ref writingScore, value);
-        }
-    }
-    public uint ListeningScore
-    {
-        get => listeningScore;
-        set
-        {
-            SetField(ref listeningScore, value);
-        }
-    }
-    public uint SpeakingScore
-    {
-        get => speakingScore;
-        set
-        {
-            SetField(ref speakingScore, value);
+            SetField(ref knowledgeScore, value);
         }
     }
     public string Message
@@ -130,14 +112,14 @@ namespace LangLang.ViewModel;
 
     private void GradeStudent(object? obj)
     {
-        if (ReadingScore == 0 || WritingScore == 0 || ListeningScore == 0 || SpeakingScore == 0)
+        if (ActivityScore == 0 || KnowledgeScore == 0)
         {
             MessageBox.Show("Fill all grade fields!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
-        MessageBox.Show($"Student {SelectedStudent!.Name} graded successfully with: reading {ReadingScore}, writing {WritingScore}, listening {ListeningScore} and " +
-            $" speaking {SpeakingScore} score", "Success", MessageBoxButton.OK);
+        MessageBox.Show($"Student {SelectedStudent!.Name} graded successfully with: activity {ActivityScore}, knowledge {KnowledgeScore} " +
+            $"score", "Success", MessageBoxButton.OK);
     }
 
     private List<Student> LoadStudents()
