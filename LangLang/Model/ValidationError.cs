@@ -56,6 +56,9 @@ public static class ValidationErrorExtensions
             => "Email unavailable",
         _ => "User data invalid"
     };
+    /// <summary>
+    ///     Returns flag message if error has that flag, empty string otherwise.
+    /// </summary>
     public static string GetMessageIfFlag(this ValidationError error, ValidationError flag)
         => error.HasFlag(flag) ? flag.GetMessage() : ""; 
 }
