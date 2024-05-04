@@ -20,4 +20,6 @@ public interface ILastIdDAO
     public void IncrementNotificationId();
     public string GetDropRequestId();
     public void IncrementDropRequstId();
+    public string GetExamApplicationId();
+    public void IncrementExamApplicationId();
 }

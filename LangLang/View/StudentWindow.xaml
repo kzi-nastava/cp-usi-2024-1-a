@@ -47,7 +47,7 @@
                 </StackPanel>
 
                 <!--Exam table with button-->
-                <DataGrid Grid.Row="3" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                <DataGrid Grid.Row="3" ItemsSource="{Binding AvailableExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}" Width="*" />
@@ -70,7 +70,7 @@
                                         BorderThickness="0"
                                         Margin="2"
                                         Command="{Binding DataContext.ApplyExamCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                        CommandParameter="{Binding Id}">
+                                        CommandParameter="{Binding  }">
                                         <Button.Template>
                                             <ControlTemplate TargetType="{x:Type Button}">
                                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -383,7 +383,7 @@
 
                 <Label Grid.Row="0" Content="Finished exams" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
 
-                <DataGrid Grid.Row="3" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                <DataGrid Grid.Row="3" ItemsSource="{Binding AvailableExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}" Width="*" />
@@ -640,7 +640,7 @@
 
 
                 <!--Exam table with button-->
-                <DataGrid Grid.Row="3" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                <DataGrid Grid.Row="3" ItemsSource="{Binding AppliedExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}" Width="*" />
@@ -663,7 +663,7 @@
                                         BorderThickness="0"
                                         Margin="2"
                                         Command="{Binding DataContext.CancelExamCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                        CommandParameter="{Binding Id}">
+                                        CommandParameter="{Binding }">
                                         <Button.Template>
                                             <ControlTemplate TargetType="{x:Type Button}">
                                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -681,7 +681,7 @@
                 <!--Attending exam -->
                 <DockPanel Grid.Row="4">
                     <Label Content="Attending exam" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0" DockPanel.Dock="Top"/>
-                    <DataGrid ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10,10,10,103" Height="61">
+                    <DataGrid ItemsSource="{Binding AttendingExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10,10,10,103" Height="61">
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
                                 <Setter Property="Height" Value="40"/>

@@ -59,7 +59,7 @@
                     </Grid>
                 </StackPanel>
                 <DataGrid Grid.Row="1" CanUserAddRows="False" 
-                      ItemsSource="{Binding Exams}" 
+                      ItemsSource="{Binding AvailableExams}" 
                       SelectedItem="{Binding SelectedExam}"
                       Margin="10,20,10,10" 
                       x:Name="DgCourses" 

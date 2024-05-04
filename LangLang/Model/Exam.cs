@@ -13,11 +13,6 @@ namespace LangLang.Model
         public int ClassroomNumber { get; set; }
         public int MaxStudents { get; set; }
         public int NumStudents { get; set; }
-        
-        public enum State
-        {
-            NotStarted, Confirmable, Confirmed, InProgress, Finished
-        }
 
         public State ExamState { get; set; }
         
@@ -70,6 +65,49 @@ namespace LangLang.Model
         public bool IsFull()
         {
             return NumStudents == MaxStudents;
+        }
+        
+        public enum State
+        {
+            /// <summary>
+            /// Created, not started, without modification limitations.
+            /// </summary>
+            NotStarted,
+
+            /// <summary>
+            /// Will not be realized.
+            /// </summary>
+            Canceled,
+
+            /// <summary>
+            /// Cannot be modified, but students can apply and/or be accepted/rejected.
+            /// </summary>
+            Locked,
+
+            /// <summary>
+            /// Cannot be modified, students cannot apply/be accepted/be rejected.
+            /// </summary>
+            Confirmed,
+
+            /// <summary>
+            /// Students can be kicked out.
+            /// </summary>
+            InProgress,
+
+            /// <summary>
+            /// Finished, not yet graded.
+            /// </summary>
+            Finished,
+
+            /// <summary>
+            /// Finished, graded, reports not yet sent to students.
+            /// </summary>
+            Graded,
+
+            /// <summary>
+            /// Finished, graded, grade reports sent, nothing can be modified.
+            /// </summary>
+            Reported
         }
     }
 }

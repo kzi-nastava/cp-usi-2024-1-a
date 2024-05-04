@@ -26,6 +26,8 @@ namespace LangLang.ViewModel
         private readonly IExamService _examService;
         private readonly IStudentCourseCoordinator _courseCoordinator;
         private readonly IAccountService _accountService;
+        private readonly IExamCoordinator _examCoordinator;
+        private readonly IExamApplicationService _examApplicationService;
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
         public ICommand LogOutCommand { get; }
@@ -43,9 +45,10 @@ namespace LangLang.ViewModel
         public ObservableCollection<Course> FinishedCourses { get; set; }
         public ObservableCollection<Course> AppliedCourses { get; set; }
         public ObservableCollection<Course> AttendingCourse { get; set; }
-        public ObservableCollection<Exam> Exams { get; set; }
+        public ObservableCollection<Exam> AvailableExams { get; set; }
+        public ObservableCollection<Exam> AppliedExams { get; set; }
         public ObservableCollection<Exam> FinishedExams { get; set; }
-        public ObservableCollection<Exam> AttendingExam { get; set; }
+        public ObservableCollection<Exam> AttendingExams { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
@@ -202,7 +205,7 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore)
+        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
         {
             _loggedInUser = (Student?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
@@ -212,6 +215,8 @@ namespace LangLang.ViewModel
             _accountService = accountService;
             _languageService = languageService;
             _examService = examService;
+            _examCoordinator = examCoordinator;
+            _examApplicationService = examApplicationService;
             _studentService = studentService;
             _loginService = loginService;
             _courseCoordinator = courseCoordinator;
@@ -222,16 +227,18 @@ namespace LangLang.ViewModel
             FinishedCourses = new ObservableCollection<Course>();
             AttendingCourse = new ObservableCollection<Course>(); 
             AppliedCourses = new ObservableCollection<Course>();
-            Exams = new ObservableCollection<Exam>();
-            AttendingExam = new ObservableCollection<Exam>();
+            AvailableExams = new ObservableCollection<Exam>();
+            AppliedExams = new ObservableCollection<Exam>();
+            AttendingExams = new ObservableCollection<Exam>();
             FinishedExams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
             Durations = new ObservableCollection<int?> { null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
             Start = DateTime.Now;
 
-            LoadExams();
-            //LoadAttendingExam();
+            LoadAvailableExams();
+            LoadAppliedExams();
+            LoadAttendingExams();
             //LoadFinishedExams();
             LoadLanguages();
             LoadCourses();
@@ -248,8 +255,8 @@ namespace LangLang.ViewModel
             OpenStudentProfileCommand = new RelayCommand(_ => OpenStudentProfile());
             ApplyCourseCommand = new RelayCommand<string>(ApplyCourse);
             CancelCourseCommand = new RelayCommand<string>(CancelCourse);
-            ApplyExamCommand = new RelayCommand<string>(ApplyExam);
-            CancelExamCommand = new RelayCommand<string>(CancelExam);
+            ApplyExamCommand = new RelayCommand<Exam>(ApplyExam);
+            CancelExamCommand = new RelayCommand<Exam>(CancelExam);
             RateTutorCommand = new RelayCommand<string>(RateTutor);
             CancelAttendingCourseCommand = new RelayCommand<string>(CancelAttendingCourse!);
             CancelAttendingExamCommand = new RelayCommand(CancelAttendingExam!);
@@ -312,15 +319,41 @@ namespace LangLang.ViewModel
         }
 
 
-        private void ApplyExam(string examId)
+        private void ApplyExam(Exam exam)
         {
-            MessageBox.Show($"Successful apply for exam {examId}", "Success");
+            try
+            {
+                _examCoordinator.ApplyForExam(_loggedInUser, exam);
+                MessageBox.Show($"Successful apply for exam.", "Success");
+                LoadAvailableExams();
+                LoadAppliedExams();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Failed to apply for exam: {e.Message}", "Error");
+            }
         }
 
 
-        private void CancelExam(string examId)
+        private void CancelExam(Exam exam)
         {
-            MessageBox.Show($"Successful cancel for exam {examId}", "Success");
+            var examApplication = _examApplicationService.GetExamApplication(_loggedInUser.Id, exam.Id);
+            if (examApplication == null)
+            {
+                MessageBox.Show($"No exam application to cancel.", "Error");
+                return;
+            }
+            try
+            {
+                _examApplicationService.CancelApplication(examApplication);
+                MessageBox.Show($"Successfully canceled exam application.", "Success");
+                LoadAvailableExams();
+                LoadAppliedExams();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Failed to cancel exam application: {e.Message}", "Error");
+            }
         }
 
         private void RateTutor(string courseId)
@@ -345,8 +378,8 @@ namespace LangLang.ViewModel
             ExamLanguageFilter = "";
             ExamLevelFilter = null;
             ExamStartFilter = null;
-            Exams.Clear();
-            LoadExams();
+            AvailableExams.Clear();
+            LoadAvailableExams();
             OnPropertyChanged();
         }
 
@@ -388,13 +421,28 @@ namespace LangLang.ViewModel
             }
         }
 
-        public void LoadExams()
+        private void LoadAvailableExams()
         {
-            var examsDictionary = _examService.GetAvailableExamsForStudent(_loggedInUser);
-            foreach (Exam exam in examsDictionary)
+            AvailableExams.Clear();
+            foreach (var exam in _examCoordinator.GetAvailableExams(_loggedInUser))
             {
-                Exams.Add(exam);
+                AvailableExams.Add(exam);
             }
+        }
+        
+        private void LoadAppliedExams()
+        {
+            AppliedExams.Clear();
+            foreach (var exam in _examCoordinator.GetAppliedExams(_loggedInUser))
+            {
+                AppliedExams.Add(exam);
+            }
+        }
+        
+        private void LoadAttendingExams()
+        {
+            var exam = _examCoordinator.GetAttendingExam(_loggedInUser);
+            AttendingExams = exam == null ? new ObservableCollection<Exam>() : new ObservableCollection<Exam>{exam};
         }
 
         public void LoadLanguages()
@@ -492,7 +540,7 @@ namespace LangLang.ViewModel
         public void FilterExams()
         {
             // Clear existing exams from the list
-            Exams.Clear();
+            AvailableExams.Clear();
 
             // Get all exams
             var exams = _examService.GetAllExams();
@@ -505,7 +553,7 @@ namespace LangLang.ViewModel
                 {
                     if (ExamStartFilter == null || (ExamStartFilter != null && exam.Time.Date == ExamStartFilter.Value.Date))
                     {
-                        Exams.Add(exam);
+                        AvailableExams.Add(exam);
                     }
                 }
             }
