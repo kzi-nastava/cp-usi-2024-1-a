@@ -8,7 +8,7 @@ public class DropRequest : INotifyPropertyChanged
     public string Id { get; set; }
     public string SenderId { get; set; }
     public string CourseId { get; set; }
-    public string ReceiverId { get; set; }
+    public string Message { get; set; }
     public enum Status
     {
         Accepted, Denied, InReview
@@ -30,24 +30,24 @@ public class DropRequest : INotifyPropertyChanged
         Id = "";
         SenderId = "";
         CourseId = "";
-        ReceiverId = "";
         DropRequestStatus = Status.InReview;
+        Message = "";
     }
-    public DropRequest(string studentId, string courseId, string tutorId)
+    public DropRequest(string studentId, string courseId, string message)
     {
         Id = "";
         SenderId = studentId;
         CourseId = courseId;
-        ReceiverId = tutorId;
         DropRequestStatus = Status.InReview;
+        Message = message;
     }
-    public DropRequest(string id, string studentId, string courseId, string tutorId)
+    public DropRequest(string id, string studentId, string courseId, string message)
     {
         Id = id;
         SenderId = studentId;
         CourseId = courseId;
-        ReceiverId = tutorId;
         DropRequestStatus = Status.InReview;
+        Message = message;
     }
 
 
