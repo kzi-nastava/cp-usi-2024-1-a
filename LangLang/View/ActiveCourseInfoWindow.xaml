@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:display="clr-namespace:LangLang.Model.Display"
         xmlns:local="clr-namespace:LangLang.View"
         mc:Ignorable="d"
         Title="Active course" Height="450" Width="800"
@@ -13,6 +14,28 @@
         <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
         <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
         <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
+        <DataTemplate DataType="{x:Type display:DropRequestDisplay}" >
+            <Border  CornerRadius="10" Margin="5">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                    Text="{Binding Sender}"
+                    Margin="2"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    />
+                </Grid>
+            </Border>
+        </DataTemplate>
     </mvvm:NavigableWindow.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -72,12 +95,10 @@
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Grid.ColumnSpan="2" Grid.Column="1">
             <Label Content="Drop requests" FontWeight="Medium" FontSize="18"/>
         </StackPanel>
+
         <ListBox Grid.Column="1" Grid.Row="1" Margin="0,5,0,0"
                  ItemsSource="{Binding DropRequests}"
-                 SelectedItem="{Binding SelectedDropRequest}">
-            <ListBoxItem Content="Milan"/>
-            <ListBoxItem Content="Aleksandar"/>
-            <ListBoxItem Content="Andjela"/>
+                 SelectedItem="{Binding SelectedDropRequestDisplay}">
 
         </ListBox>
         <StackPanel Grid.Column="3" Grid.Row="1" Margin="10,10,0,0">

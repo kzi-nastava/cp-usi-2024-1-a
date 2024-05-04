@@ -12,119 +12,162 @@ using System.Linq;
 using System.Windows;
 using LangLang.Services.UtilityServices;
 using LangLang.Services.CourseServices;
+using LangLang.Services.DropRequestServices;
+using LangLang.Model.Display;
 
 namespace LangLang.ViewModel
 {
     public class ActiveCourseInfoViewModel : ViewModelBase, INavigableDataContext
     {
         public NavigationStore NavigationStore { get; }
+        public IAuthenticationStore AuthenticationStore { get; }
         private readonly CurrentCourseStore _currentCourseStore;
         private readonly IStudentDAO _studentDAO;
         private readonly IUserProfileMapper _userProfileMapper;
         private readonly IPenaltyService _penaltyService;
         private readonly IStudentCourseCoordinator _studentCourseCoordinator;
+        private readonly IDropRequestService _dropRequestService;
+        private readonly IDropRequestInfoService _dropRequestInfoService;
         public RelayCommand AcceptStudentCommand { get; }
         public RelayCommand DenyStudentCommand { get; }
         public RelayCommand GivePenaltyPointCommand { get; }
 
-        private string courseName = "";
-        private string name = "";
-        private string surname = "";
-        private string email = "";
-        private uint penaltyPts;
-        private string sender = "";
-        private string dropMessage = "";
-        private ObservableCollection<Student> students = new ObservableCollection<Student>();
+        private string _courseName = "";
+        private string _name = "";
+        private string _surname = "";
+        private string _email = "";
+        private uint _penaltyPts;
+        private string _sender = "";
+        private string _dropMessage = "";
+        private ObservableCollection<Student> _students = new ObservableCollection<Student>();
+        private ObservableCollection<DropRequestDisplay> _dropRequests = new ObservableCollection<DropRequestDisplay>();
+        private ObservableCollection<string> _dropRequestsPreview = new ObservableCollection<string>();
         public string Name
         {
-            get => name;
-            set => SetField(ref name, value);
+            get => _name;
+            set => SetField(ref _name, value);
         }
         public string Surname
         {
-            get => surname;
-            set => SetField(ref surname, value);
+            get => _surname;
+            set => SetField(ref _surname, value);
         }
         public string Email
         {
-            get => email;
-            set => SetField(ref email, value);
+            get => _email;
+            set => SetField(ref _email, value);
         }
         public uint PenaltyPts
         {
-            get => penaltyPts;
-            set => SetField(ref penaltyPts, value);
+            get => _penaltyPts;
+            set => SetField(ref _penaltyPts, value);
         }
         public string CourseName
         {
-            get => courseName;
+            get => _courseName;
             set
             {
-                SetField(ref courseName, value);
+                SetField(ref _courseName, value);
             }
         }
         public string Sender
         {
-            get => sender;
+            get => _sender;
             set
             {
-                SetField(ref sender, value);
+                SetField(ref _sender, value);
             }
         }
         public string DropMessage
         {
-            get => dropMessage;
+            get => _dropMessage;
             set
             {
-                SetField(ref dropMessage, value);
+                SetField(ref _dropMessage, value);
             }
         }
-        private string? selectedDropRequest;
-        public string? SelectedDropRequest
+
+        private DropRequestDisplay? _selectedDropRequestDisplay;
+        public DropRequestDisplay? SelectedDropRequestDisplay
         {
-            get => selectedDropRequest;
+            get => _selectedDropRequestDisplay;
             set
             {
-                SetField(ref selectedDropRequest, value);
+                SetField(ref _selectedDropRequestDisplay, value);
                 SelectDropRequest();
             }
         }
-        private Student? selectedStudent;
+
+        private Student? _selectedStudent;
         public Student? SelectedStudent
         {
-            get => selectedStudent;
+            get => _selectedStudent;
             set
             {
-                SetField(ref selectedStudent, value);
+                SetField(ref _selectedStudent, value);
                 SelectStudent();
             }
         }
 
         public ObservableCollection<Student> Students
         {
-            get => students;
+            get => _students;
             set
             {
-                SetField(ref students, value);
+                SetField(ref _students, value);
+            }
+        }
+        public ObservableCollection<DropRequestDisplay> DropRequests
+        {
+            get => _dropRequests;
+            set
+            {
+                SetField(ref _dropRequests, value);
+            }
+        }
+        public ObservableCollection<string> DropRequestsPreview
+        {
+            get => _dropRequestsPreview;
+            set
+            {
+                SetField(ref _dropRequestsPreview, value);
             }
         }
 
         public ActiveCourseInfoViewModel(NavigationStore navigationStore, 
             CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, 
             IUserProfileMapper userProfileMapper, IPenaltyService penaltyService,
-            IStudentCourseCoordinator studentCourseCoordinator)
+            IStudentCourseCoordinator studentCourseCoordinator, IDropRequestService dropRequestService,
+            IAuthenticationStore authenticationStore, IDropRequestInfoService dropRequestInfoService)
         {
+            AuthenticationStore = authenticationStore;
             NavigationStore = navigationStore;
+            _dropRequestInfoService = dropRequestInfoService;
             _studentCourseCoordinator = studentCourseCoordinator;
             _currentCourseStore = currentCourseStore;
             _userProfileMapper = userProfileMapper;
             _penaltyService = penaltyService;
+            _dropRequestService = dropRequestService;
             _studentDAO = studentDAO;
             Students = new ObservableCollection<Student>(LoadStudents());
+            DropRequests = new ObservableCollection<DropRequestDisplay>(LoadDropRequests());
             CourseName = _currentCourseStore.CurrentCourse!.Name;
-            AcceptStudentCommand = new RelayCommand(AcceptStudent, canExecute => SelectedDropRequest != null);
-            DenyStudentCommand = new RelayCommand(DenyStudent, canExecute => SelectedDropRequest != null);
+            AcceptStudentCommand = new RelayCommand(AcceptStudent, canExecute => SelectedDropRequestDisplay != null);
+            DenyStudentCommand = new RelayCommand(DenyStudent, canExecute => SelectedDropRequestDisplay != null);
             GivePenaltyPointCommand = new RelayCommand(GivePenaltyPoint, canExecute => SelectedStudent != null);
+        }
+
+        private List<DropRequestDisplay> LoadDropRequests()
+        {
+            var dropRequests = _dropRequestService.GetDropRequests(_currentCourseStore.CurrentCourse!.Id);
+
+            var senderNames = _dropRequestInfoService.GetSenderNames(dropRequests);
+            var dropRequestDisplay = new List<DropRequestDisplay>(dropRequests
+            .Select(dropRequest => new DropRequestDisplay(senderNames[dropRequest.Id], dropRequest)));
+
+            //DropRequestsPreview = new ObservableCollection<string>(dropRequests
+            //    .Select(dropRequest => senderNames[dropRequest.Id]));
+            return dropRequestDisplay;
         }
 
         private List<Student> LoadStudents()
@@ -134,7 +177,7 @@ namespace LangLang.ViewModel
         private void SelectStudent()
         {
             if (SelectedStudent == null) return;
-            Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent, UserType.Student));
+            Profile? profile = _userProfileMapper.GetProfile(new UserDto(SelectedStudent, UserType.Student));
             if (profile == null) return;
             Name = SelectedStudent.Name;
             Surname = SelectedStudent.Surname;
@@ -144,15 +187,16 @@ namespace LangLang.ViewModel
         }
         private void SelectDropRequest()
         {
-            if (SelectDropRequest == null) return;
-            Sender = "proba";
-            DropMessage = "molim te nemoj da mi das penal";
+            if (SelectedDropRequestDisplay == null) return;
+
+            Sender = SelectedDropRequestDisplay!.Sender;
+            DropMessage = SelectedDropRequestDisplay!.DropRequest.Message;
 
         }
         private void GivePenaltyPoint(object? obj)
         {
             string email = (string)obj!;
-            _penaltyService.AddPenaltyPoint(selectedStudent!);
+            _penaltyService.AddPenaltyPoint(SelectedStudent!);
             MessageBox.Show("Penalty point added.", "Success");
             Students.Clear();
             Students = new ObservableCollection<Student>(LoadStudents());
