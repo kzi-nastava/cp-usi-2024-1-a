@@ -17,12 +17,12 @@ public class UserValidator : IUserValidator
         _profileService = profileService;
     }
 
-    public ValidationError EmailTaken(string email)
+    public ValidationError EmailTaken(string? email)
     {
-        if (_profileService.IsEmailTaken(email))
-            return ValidationError.EmailUnavailable;
-        else
+        if (email == null || email == "" || !_profileService.IsEmailTaken(email))
             return ValidationError.None;
+        else
+            return ValidationError.EmailUnavailable;
     }
 
     public ValidationError CheckUserData(string? email, string? password, string? name, string? surname, string? phoneNumber, DateTime? birthDay)

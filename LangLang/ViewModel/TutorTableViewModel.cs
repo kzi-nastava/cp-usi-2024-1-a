@@ -328,7 +328,7 @@ namespace LangLang.ViewModel
             if (SelectedItem == null)
                 return;
 
-            bool valid = _registerService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
+            bool valid = true;// _registerService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
             if (!valid)
             {
                 MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -378,17 +378,17 @@ namespace LangLang.ViewModel
                 return;
             }
 
-            bool valid = _registerService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
+            bool valid = true;//_registerService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
             if (!valid)
             {
                 MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            if (_registerService.IsEmailTaken(Email))
+            /*if (_registerService.IsEmailTaken(Email))
             {
                 MessageBox.Show("Email not avaliable!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
-            }
+            }*/
             if (BirthDate == null)
             {
                 MessageBox.Show("Birth date must be selected!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);

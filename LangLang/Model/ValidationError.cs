@@ -49,7 +49,7 @@ public static class ValidationErrorExtensions
         { } when error.HasFlag(ValidationError.PhoneInvalid)
             => "Phone must be numerical, at least 6 long",
         { } when error.HasFlag(ValidationError.PasswordInvalid)
-            => "Password must contain at least 8 chars, uppercase and number",
+            => "Password must be 8+ chars with uppercase and num",
         { } when error.HasFlag(ValidationError.EmailInvalid)
             => "Email invalid",
         { } when error.HasFlag(ValidationError.EmailUnavailable)
