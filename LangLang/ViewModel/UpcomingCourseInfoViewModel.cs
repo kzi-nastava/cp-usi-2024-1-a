@@ -3,7 +3,10 @@ using LangLang.DTO;
 using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
+using LangLang.Services.CourseServices;
+using LangLang.Services.NotificationServices;
 using LangLang.Stores;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -16,7 +19,11 @@ namespace LangLang.ViewModel
 
         private readonly CurrentCourseStore _currentCourseStore;
 
+        private readonly string AcceptMessage = "Application accepted!";
+
         private readonly IUserProfileMapper _userProfileMapper;
+
+        private readonly IStudentCourseCoordinator _studentCourseCoordinator;
 
         private readonly IStudentDAO _studentDAO;
         public RelayCommand AcceptStudentCommand { get; }
@@ -28,6 +35,7 @@ namespace LangLang.ViewModel
         private string email = "";
         private string message = "";
         private uint penaltyPts;
+        private ObservableCollection<Student> attendees = new ObservableCollection<Student>();
         public string Name
         {
             get => name;
@@ -77,27 +85,38 @@ namespace LangLang.ViewModel
         }
 
         public ObservableCollection<Student> Students { get; set; }
+        public ObservableCollection<Student> Attendees
+        {
+            get => attendees;
+            set
+            {
+                SetField(ref attendees, value);
+            }
+        }
 
-        public UpcomingCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
+        public UpcomingCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, 
+            IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IStudentCourseCoordinator studentCourseCoordinator)
         {
             NavigationStore = navigationStore;
+            _studentCourseCoordinator = studentCourseCoordinator;
             _userProfileMapper = userProfileMapper;
             _currentCourseStore = currentCourseStore;
             _studentDAO = studentDAO;
             Students = new ObservableCollection<Student>(LoadStudents());
+            Attendees = new ObservableCollection<Student>(LoadAttendees());
             CourseName = _currentCourseStore.CurrentCourse!.Name;
             AcceptStudentCommand = new RelayCommand(AcceptStudent, canExecute => SelectedStudent != null);
             DenyStudentCommand = new RelayCommand(DenyStudent, canExecute => SelectedStudent != null);
         }
 
+        private List<Student> LoadAttendees()
+        {
+            return _studentCourseCoordinator.GetAttendanceStudentsCourse(_currentCourseStore.CurrentCourse!.Id);
+        }
+
         private List<Student> LoadStudents()
         {
-            List<Student> students = new List<Student>();
-            foreach (Student student in _studentDAO.GetAllStudents().Values)
-            {
-                students.Add(student);
-            }
-            return students;
+            return _studentCourseCoordinator.GetAppliedStudentsCourse(_currentCourseStore.CurrentCourse!.Id);
         }
         private void SelectStudent()
         {
@@ -114,15 +133,43 @@ namespace LangLang.ViewModel
 
         private void DenyStudent(object? obj)
         {
-            // TODO: call course coordinator to reject student
-            // TODO: refresh the list
+            if (Message == "")
+            {
+                MessageBox.Show("You need to create deny message!", "Error");
+                return;
+            }
+            _studentCourseCoordinator.CancelApplication(SelectedStudent!.Id, _currentCourseStore.CurrentCourse!.Id);
+            _studentCourseCoordinator.SendNotification(Message, SelectedStudent!.Id);
+
+
+            Students.Clear();
+            Students = new ObservableCollection<Student>(LoadStudents());
+
+            SelectedStudent = null;
+
             MessageBox.Show("Student is denied!", "Success");
         }
 
         private void AcceptStudent(object? obj)
         {
-            // TODO: call course coordinator to transform course application to course attendandce
-            // TODO: change course number
+            if(_currentCourseStore.CurrentCourse!.IsFull())
+            {
+                // Maybe reject an application
+                MessageBox.Show("Course is full.", "Error");
+                return;
+            }
+            _studentCourseCoordinator.Accept(SelectedStudent!.Id, _currentCourseStore.CurrentCourse!.Id);
+
+
+            _studentCourseCoordinator.SendNotification(AcceptMessage, SelectedStudent!.Id);
+
+            Students.Clear();
+            Students = new ObservableCollection<Student>(LoadStudents());
+            Attendees.Clear();
+            Attendees = new ObservableCollection<Student>(LoadAttendees());
+
+            SelectedStudent = null;
+
             MessageBox.Show("Student is accepted.", "Success");
         }
     }

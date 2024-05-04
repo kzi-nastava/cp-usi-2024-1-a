@@ -15,23 +15,36 @@
         </mvvm:NavigableWindow.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="55"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="307"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Grid.ColumnSpan="2">
-            <Label Content="Overview of" FontWeight="Medium" FontSize="18"/>
-            <Label Content="{Binding CourseName}" FontSize="18" FontWeight="Medium"/>
+        <StackPanel Orientation="Vertical">
+            
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,-5" Grid.ColumnSpan="2">
+                <Label Content="Overview of" FontWeight="Medium" FontSize="18"/>
+                <Label Content="{Binding CourseName}" FontSize="18" FontWeight="Medium"/>
+            </StackPanel>
+            <Label Content="Applications:" FontWeight="Medium" FontSize="14"/>
         </StackPanel>
-        <DataGrid 
-        Grid.Column="0" Grid.Row="1" IsReadOnly="True"
-        AutoGenerateColumns="False"
-        ItemsSource="{Binding Students}"
-        SelectedItem="{Binding SelectedStudent}"
-        CanUserDeleteRows="False" 
+
+        <Grid Grid.Column="0" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="20"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
+            <DataGrid 
+                Grid.Row="0"
+                IsReadOnly="True"
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding Students}"
+                SelectedItem="{Binding SelectedStudent}"
+                CanUserDeleteRows="False" 
     >
             <DataGrid.Columns >
                 <DataGridTextColumn  Header="Name" Binding="{Binding Name}" Width="*"/>
@@ -40,6 +53,25 @@
 
 
         </DataGrid>
+            <Label Grid.Row="1" Content="Attendees:" Margin="0,-4,0,0"/>
+            <DataGrid 
+            Grid.Row="2"
+            IsReadOnly="True"
+            AutoGenerateColumns="False"
+            ItemsSource="{Binding Attendees}"
+            CanUserDeleteRows="False" 
+>
+                <DataGrid.Columns >
+                    <DataGridTextColumn  Header="Name" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}" Width="*"/>
+                </DataGrid.Columns>
+
+
+            </DataGrid>
+        </Grid>
+        
+        
+        
         <StackPanel Grid.Column="1" Grid.Row="1" Margin="10,0,0,0">
             <Label Content="Details" FontSize="16" FontWeight="Medium"/>
             <StackPanel Orientation="Horizontal">
