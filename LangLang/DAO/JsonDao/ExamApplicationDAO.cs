@@ -31,6 +31,16 @@ public class ExamApplicationDAO : IExamApplicationDAO
 
     public ExamApplication? GetExamApplication(string id) => ExamApplications.GetValueOrDefault(id);
 
+    public ExamApplication? GetExamApplication(string studentId, string examId)
+    {
+        var applications = GetAllExamApplications().Where(application =>
+            application.StudentId == studentId && application.ExamId == examId
+        ).ToList();
+        if (applications.Count <= 0)
+            return null;
+        return applications[0];
+    }
+
     public List<ExamApplication> GetExamApplicationsByStudent(string studentId)
         => GetAllExamApplications().Where(application => application.StudentId == studentId).ToList();
 

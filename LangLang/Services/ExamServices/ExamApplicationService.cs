@@ -17,6 +17,9 @@ public class ExamApplicationService : IExamApplicationService
 
     public ExamApplication? GetExamApplication(string id) => _examApplicationDao.GetExamApplication(id);
 
+    public ExamApplication? GetExamApplication(string studentId, string examId)
+        => _examApplicationDao.GetExamApplication(studentId, examId);
+
     public List<ExamApplication> GetExamApplicationsForStudent(string studentId)
         => _examApplicationDao.GetExamApplicationsByStudent(studentId);
 

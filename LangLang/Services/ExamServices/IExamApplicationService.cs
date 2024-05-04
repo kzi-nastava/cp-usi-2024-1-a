@@ -6,6 +6,7 @@ namespace LangLang.Services.ExamServices;
 public interface IExamApplicationService
 {
     public ExamApplication? GetExamApplication(string id);
+    public ExamApplication? GetExamApplication(string studentId, string examId);
     public List<ExamApplication> GetExamApplicationsForStudent(string studentId);
     public List<ExamApplication> GetExamApplications(string examId);
     public List<ExamApplication> GetPendingExamApplications(string examId);

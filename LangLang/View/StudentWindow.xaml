@@ -663,7 +663,7 @@
                                         BorderThickness="0"
                                         Margin="2"
                                         Command="{Binding DataContext.CancelExamCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                        CommandParameter="{Binding Id}">
+                                        CommandParameter="{Binding }">
                                         <Button.Template>
                                             <ControlTemplate TargetType="{x:Type Button}">
                                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">

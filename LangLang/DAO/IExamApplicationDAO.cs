@@ -7,6 +7,7 @@ public interface IExamApplicationDAO
 {
     public List<ExamApplication> GetAllExamApplications();
     public ExamApplication? GetExamApplication(string id);
+    public ExamApplication? GetExamApplication(string studentId, string examId);
     public List<ExamApplication> GetExamApplicationsByStudent(string studentId);
     public List<ExamApplication> GetExamApplicationsByExam(string examId);
     public List<ExamApplication> GetPendingExamApplicationsByExam(string examId);
