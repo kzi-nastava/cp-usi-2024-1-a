@@ -1,30 +1,30 @@
 ﻿using System;
-using System.Linq;
-using System.Net.Mail;
 using Consts;
 using LangLang.DTO;
+using LangLang.Model;
 using LangLang.Services.UserServices;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.Services.AuthenticationServices
 {
     public class RegisterService : IRegisterService
     {
-        private readonly IProfileService _profileService;
+        private readonly IUserValidator _userValidator;
         private readonly IAccountService _accountService;
 
-        public RegisterService(IProfileService profileService, IAccountService accountService)
+        public RegisterService(IUserValidator userValidator, IAccountService accountService)
         {
-            _profileService = profileService;
+            _userValidator = userValidator;
             _accountService = accountService;
         }
 
-        public bool RegisterStudent(string? email, string? password, string? name, string? surname, DateTime birthDay, Gender gender, string? phoneNumber, EducationLvl educationLvl)
+        public ValidationError RegisterStudent(string? email, string? password, string? name, string? surname, DateTime birthDay, Gender gender, string? phoneNumber, EducationLvl educationLvl)
         {
-            bool passed = CheckUserData(email, password, name, surname, phoneNumber);
-            passed &= !IsEmailTaken(email!);
-            passed &= (birthDay != DateTime.MinValue);
+            ValidationError error = ValidationError.None;
+            error |= _userValidator.CheckUserData(email, password, name, surname, phoneNumber, birthDay);
+            error |= _userValidator.EmailTaken(email!);
 
-            if (passed)
+            if (error == ValidationError.None)
             {
                 _accountService.RegisterStudent(new RegisterStudentDto(
                     email!,
@@ -37,59 +37,7 @@ namespace LangLang.Services.AuthenticationServices
                     educationLvl
                     ));
             }
-            return passed;
-        }
-
-        public bool IsEmailTaken(string email)
-        {
-            return _profileService.IsEmailTaken(email);
-        }
-
-        public bool CheckUserData(string? email, string? password, string? name, string? surname, string? phoneNumber)
-        {
-            if(FieldsEmpty(email, password, name, surname, phoneNumber))
-            {
-                return false;
-            }
-            bool passed = true;
-            passed &= CheckName(name!, surname!);
-            passed &= CheckPassword(password!);
-            passed &= CheckPhoneNumber(phoneNumber!);
-            try
-            {
-                _ = new MailAddress(email!);
-            }
-            catch
-            {
-                passed = false;
-            }
-            return passed;
-        }
-
-        private bool FieldsEmpty(string? email, string? password, string? name, string? surname, string? phoneNumber)
-        {
-            return email == null || password == null || name == null || surname == null || phoneNumber == null;
-        }
-
-
-        public bool CheckPassword(string password)
-        {
-            return password.Length >= 8 && password.Any(char.IsDigit) && password.Any(char.IsUpper);
-        }
-
-        public bool CheckPhoneNumber(string phoneNumber)
-        {
-            foreach (char c in phoneNumber)
-            {
-                if (c < '0' || c > '9')
-                    return false;
-            }
-            return phoneNumber.Length >= 6;
-        }
-
-        private static bool CheckName(string name, string surname)
-        {
-            return !name.Any(char.IsDigit) && !surname.Any(char.IsDigit);
+            return error;
         }
     }
 }

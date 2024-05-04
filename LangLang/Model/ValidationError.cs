@@ -6,7 +6,7 @@ namespace LangLang.Model;
 [Flags]
 public enum ValidationError
 {
-    Valid            = 0,
+    None             = 0,
     FieldsEmpty      = 1,
     NameInvalid      = 2,
     SurnameInvalid   = 4,
@@ -25,8 +25,12 @@ public static class ValidationErrorExtensions
     {
         List<string> result = new();
         foreach (ValidationError flag in Enum.GetValues(typeof(ValidationError)))
+        {
+            if (!flag)
+                continue;
             if (error.HasFlag(flag))
                 result.Add(flag.GetMessage());
+        }
         return result;
     }
     /// <summary>
@@ -35,7 +39,7 @@ public static class ValidationErrorExtensions
     public static string GetMessage(this ValidationError error) 
         => error switch
     {
-        ValidationError.Valid => "Valid",
+        ValidationError.None => "Valid",
         { } when error.HasFlag(ValidationError.FieldsEmpty)
             => "All the fields are required",
         { } when error.HasFlag(ValidationError.NameInvalid)
@@ -53,5 +57,3 @@ public static class ValidationErrorExtensions
         _ => "User data invalid"
     };
 }
-
-
