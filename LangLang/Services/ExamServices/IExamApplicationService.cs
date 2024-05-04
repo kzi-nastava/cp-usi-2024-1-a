@@ -13,4 +13,6 @@ public interface IExamApplicationService
     public ExamApplication AcceptApplication(ExamApplication application);
     public ExamApplication RejectApplication(ExamApplication application);
     public void CancelApplication(ExamApplication application);
+    List<Exam> FilterAppliedExams(Student student, List<Exam> exams);
+    List<Exam> FilterNotAppliedExams(Student student, List<Exam> exams);
 }

@@ -1,8 +1,12 @@
-﻿using LangLang.Model;
+﻿using System.Collections.Generic;
+using LangLang.Model;
 
 namespace LangLang.Services.ExamServices;
 
 public interface IExamCoordinator
 {
-    public ExamApplication? ApplyForExam(Student student, Exam exam);
+    public List<Exam> GetAvailableExams(Student student);
+    public ExamApplication ApplyForExam(Student student, Exam exam);
+    public List<Exam> GetAppliedExams(Student student);
+    public Exam? GetAttendingExam(Student student);
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LangLang.DAO;
 using LangLang.Model;
 
@@ -55,5 +56,40 @@ public class ExamApplicationService : IExamApplicationService
         if (application.ExamApplicationState != ExamApplication.State.Pending)
             throw new ArgumentException($"Cannot cancel application with state {application.ExamApplicationState}.");
         _examApplicationDao.DeleteExamApplication(application.Id);
+    }
+
+    /// <summary>
+    /// Filters out exams for which the student has <b>NOT</b> already applied for from the given exam list.
+    /// </summary>
+    /// <param name="student">Student whose applications should be considered.</param>
+    /// <param name="exams">Exams to be filtered.</param>
+    /// <returns>List of exams that is provided as an argument without exams that the student has <b>NOT</b> already applied for.</returns>
+    public List<Exam> FilterNotAppliedExams(Student student, List<Exam> exams)
+    {
+        HashSet<string> appliedExamIds = new();
+        foreach (var application in GetExamApplicationsForStudent(student.Id))
+        {
+            appliedExamIds.Add(application.ExamId);
+        }
+
+        return exams.Where(exam => !appliedExamIds.Contains(exam.Id)).ToList();
+    }
+    
+    /// <summary>
+    /// Filters out pending exams for which the student has already applied for from the given exam list.
+    /// Only exams with applications that are in <b>PENDING</b> status are kept.
+    /// </summary>
+    /// <param name="student">Student whose applications should be considered.</param>
+    /// <param name="exams">Exams to be filtered.</param>
+    /// <returns>List of exams that is provided as an argument without exams that the student has already applied for.</returns>
+    public List<Exam> FilterAppliedExams(Student student, List<Exam> exams)
+    {
+        var applicationsForExams = GetExamApplicationsForStudent(student.Id)
+            .ToDictionary(application => application.ExamId);
+
+        return exams.Where(exam =>
+            applicationsForExams.ContainsKey(exam.Id) &&
+            applicationsForExams[exam.Id].ExamApplicationState == ExamApplication.State.Pending
+        ).ToList();
     }
 }

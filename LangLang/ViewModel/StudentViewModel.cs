@@ -44,9 +44,10 @@ namespace LangLang.ViewModel
         public ObservableCollection<Course> FinishedCourses { get; set; }
         public ObservableCollection<Course> AppliedCourses { get; set; }
         public ObservableCollection<Course> AttendingCourse { get; set; }
-        public ObservableCollection<Exam> Exams { get; set; }
+        public ObservableCollection<Exam> AvailableExams { get; set; }
+        public ObservableCollection<Exam> AppliedExams { get; set; }
         public ObservableCollection<Exam> FinishedExams { get; set; }
-        public ObservableCollection<Exam> AttendingExam { get; set; }
+        public ObservableCollection<Exam> AttendingExams { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
@@ -224,16 +225,18 @@ namespace LangLang.ViewModel
             FinishedCourses = new ObservableCollection<Course>();
             AttendingCourse = new ObservableCollection<Course>(); 
             AppliedCourses = new ObservableCollection<Course>();
-            Exams = new ObservableCollection<Exam>();
-            AttendingExam = new ObservableCollection<Exam>();
+            AvailableExams = new ObservableCollection<Exam>();
+            AppliedExams = new ObservableCollection<Exam>();
+            AttendingExams = new ObservableCollection<Exam>();
             FinishedExams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
             Durations = new ObservableCollection<int?> { null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
             Start = DateTime.Now;
 
-            LoadExams();
-            //LoadAttendingExam();
+            LoadAvailableExams();
+            LoadAppliedExams();
+            LoadAttendingExams();
             //LoadFinishedExams();
             LoadLanguages();
             LoadCourses();
@@ -316,11 +319,17 @@ namespace LangLang.ViewModel
 
         private void ApplyExam(Exam exam)
         {
-            var application = _examCoordinator.ApplyForExam(_loggedInUser, exam);
-            if (application == null)
-                MessageBox.Show("Failed to apply for exam");
-            else
-                MessageBox.Show($"Successful apply for exam {exam.Id}", "Success");
+            try
+            {
+                _examCoordinator.ApplyForExam(_loggedInUser, exam);
+                MessageBox.Show($"Successful apply for exam.", "Success");
+                LoadAvailableExams();
+                LoadAppliedExams();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Failed to apply for exam: {e.Message}", "Error");
+            }
         }
 
 
@@ -351,8 +360,8 @@ namespace LangLang.ViewModel
             ExamLanguageFilter = "";
             ExamLevelFilter = null;
             ExamStartFilter = null;
-            Exams.Clear();
-            LoadExams();
+            AvailableExams.Clear();
+            LoadAvailableExams();
             OnPropertyChanged();
         }
 
@@ -394,13 +403,28 @@ namespace LangLang.ViewModel
             }
         }
 
-        public void LoadExams()
+        private void LoadAvailableExams()
         {
-            var examsDictionary = _examService.GetAvailableExamsForStudent(_loggedInUser);
-            foreach (Exam exam in examsDictionary)
+            AvailableExams = new ObservableCollection<Exam>();
+            foreach (var exam in _examCoordinator.GetAvailableExams(_loggedInUser))
             {
-                Exams.Add(exam);
+                AvailableExams.Add(exam);
             }
+        }
+        
+        private void LoadAppliedExams()
+        {
+            AppliedExams = new ObservableCollection<Exam>();
+            foreach (var exam in _examCoordinator.GetAppliedExams(_loggedInUser))
+            {
+                AppliedExams.Add(exam);
+            }
+        }
+        
+        private void LoadAttendingExams()
+        {
+            var exam = _examCoordinator.GetAttendingExam(_loggedInUser);
+            AttendingExams = exam == null ? new ObservableCollection<Exam>() : new ObservableCollection<Exam>{exam};
         }
 
         public void LoadLanguages()
@@ -498,7 +522,7 @@ namespace LangLang.ViewModel
         public void FilterExams()
         {
             // Clear existing exams from the list
-            Exams.Clear();
+            AvailableExams.Clear();
 
             // Get all exams
             var exams = _examService.GetAllExams();
@@ -511,7 +535,7 @@ namespace LangLang.ViewModel
                 {
                     if (ExamStartFilter == null || (ExamStartFilter != null && exam.Time.Date == ExamStartFilter.Value.Date))
                     {
-                        Exams.Add(exam);
+                        AvailableExams.Add(exam);
                     }
                 }
             }
