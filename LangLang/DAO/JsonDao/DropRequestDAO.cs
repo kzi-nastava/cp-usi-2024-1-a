@@ -31,32 +31,18 @@ public class DropRequestDAO : IDropRequestDAO
         return dropRequest;
     }
 
-    public List<DropRequest> GetDropRequests(Profile profile)
+    public List<DropRequest> GetDropRequests(string courseId)
     {
         List<DropRequest> dropRequests = new();
         foreach(DropRequest dropRequest in DropRequests.Values)
         {
-            if(dropRequest.ReceiverId == profile.Email)
+            if(dropRequest.CourseId == courseId)
             {
                 dropRequests.Add(dropRequest);
             }
         }
         return dropRequests;
     }
-
-    public List<DropRequest> GetDropRequestsCourse(Profile profile, string courseId)
-    {
-        List<DropRequest> dropRequests = new();
-        foreach (DropRequest dropRequest in DropRequests.Values)
-        {
-            if (dropRequest.ReceiverId == profile.Email &&  dropRequest.CourseId == courseId)
-            {
-                dropRequests.Add(dropRequest);
-            }
-        }
-        return dropRequests;
-    }
-    
     public DropRequest? UpdateDropRequest(string id, DropRequest dropRequest)
     {
         if (!DropRequests.ContainsKey(id)) return null;
