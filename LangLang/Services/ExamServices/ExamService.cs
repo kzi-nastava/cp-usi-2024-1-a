@@ -142,7 +142,11 @@ public class ExamService : IExamService
             {
                 continue;
             }
-            // TODO: Only allow exams for languages with finished courses
+            if (!student.KnownLanguages.ContainsKey(exam.Language.Name) ||
+                student.KnownLanguages[exam.Language.Name] < exam.LanguageLvl)
+            {
+                continue;
+            } 
             exams.Add(exam);
         }
 
