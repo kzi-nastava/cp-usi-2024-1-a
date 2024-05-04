@@ -144,5 +144,31 @@ namespace LangLang.Services.CourseServices
                 );
             }
         }
+
+        public void UpdateStates()
+        {
+            foreach(Course course in GetAll().Values)
+            {
+                if(course.Start <= DateTime.Now && course.Start + course.Duration*Constants.CancellableCourseTime >= DateTime.Now)
+                {
+                    course.State = Course.CourseState.InProgress;
+                    UpdateCourse(course);
+                }else if (course.Start - Constants.CancellableCourseTime < DateTime.Now)
+                {
+                    course.State = Course.CourseState.Locked;
+                    UpdateCourse(course);
+                }
+                else if(course.Start -Constants.CancellableCourseTime >= DateTime.Now)
+                {
+                    course.State = Course.CourseState.NotStarted;
+                    UpdateCourse(course);
+                }
+                else
+                {
+                    course.State = Course.CourseState.FinishedNotGraded;
+                    UpdateCourse(course);
+                }
+            }
+        }
     }
 }

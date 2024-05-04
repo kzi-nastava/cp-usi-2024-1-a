@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using LangLang.Services.UtilityServices;
+using LangLang.Services.CourseServices;
 
 namespace LangLang.ViewModel
 {
@@ -21,6 +22,7 @@ namespace LangLang.ViewModel
         private readonly IStudentDAO _studentDAO;
         private readonly IUserProfileMapper _userProfileMapper;
         private readonly IPenaltyService _penaltyService;
+        private readonly IStudentCourseCoordinator _studentCourseCoordinator;
         public RelayCommand AcceptStudentCommand { get; }
         public RelayCommand DenyStudentCommand { get; }
         public RelayCommand GivePenaltyPointCommand { get; }
@@ -32,6 +34,7 @@ namespace LangLang.ViewModel
         private uint penaltyPts;
         private string sender = "";
         private string dropMessage = "";
+        private ObservableCollection<Student> students = new ObservableCollection<Student>();
         public string Name
         {
             get => name;
@@ -97,11 +100,22 @@ namespace LangLang.ViewModel
             }
         }
 
-        public ObservableCollection<Student> Students { get; set; }
+        public ObservableCollection<Student> Students
+        {
+            get => students;
+            set
+            {
+                SetField(ref students, value);
+            }
+        }
 
-        public ActiveCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IPenaltyService penaltyService)
+        public ActiveCourseInfoViewModel(NavigationStore navigationStore, 
+            CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, 
+            IUserProfileMapper userProfileMapper, IPenaltyService penaltyService,
+            IStudentCourseCoordinator studentCourseCoordinator)
         {
             NavigationStore = navigationStore;
+            _studentCourseCoordinator = studentCourseCoordinator;
             _currentCourseStore = currentCourseStore;
             _userProfileMapper = userProfileMapper;
             _penaltyService = penaltyService;
@@ -115,12 +129,7 @@ namespace LangLang.ViewModel
 
         private List<Student> LoadStudents()
         {
-            List<Student> students = new List<Student>();
-            foreach (Student student in _studentDAO.GetAllStudents().Values)
-            {
-                students.Add(student);
-            }
-            return students;
+            return _studentCourseCoordinator.GetAttendanceStudentsCourse(_currentCourseStore.CurrentCourse!.Id);
         }
         private void SelectStudent()
         {
@@ -140,15 +149,13 @@ namespace LangLang.ViewModel
             DropMessage = "molim te nemoj da mi das penal";
 
         }
-        private void GradeStudent(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
         private void GivePenaltyPoint(object? obj)
         {
             string email = (string)obj!;
             _penaltyService.AddPenaltyPoint(selectedStudent!);
+            MessageBox.Show("Penalty point added.", "Success");
+            Students.Clear();
+            Students = new ObservableCollection<Student>(LoadStudents());
         }
 
         private void DenyStudent(object? obj)

@@ -279,6 +279,7 @@ namespace LangLang.ViewModel
             _navigationService = navigationService;
             _timetableService = timetableService;
             _popupNavigationService = popupNavigationService;
+            _courseService.UpdateStates();
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLvl>();
@@ -315,7 +316,7 @@ namespace LangLang.ViewModel
                 case CourseState.NotStarted:
                 _popupNavigationService.Navigate(ViewType.UpcomingCourseInfo);
                     break;
-                case CourseState.Active:
+                case CourseState.InProgress:
                 _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
                     break;
                 case CourseState.FinishedNotGraded:
@@ -575,7 +576,7 @@ namespace LangLang.ViewModel
             selectedItem = null;
             MaxStudents = 0;
             NumStudents = 0;
-            State = Course.CourseState.Active;
+            State = Course.CourseState.InProgress;
             Start = DateTime.Now;
 
 
