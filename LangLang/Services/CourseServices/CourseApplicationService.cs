@@ -136,5 +136,18 @@ namespace LangLang.Services.CourseServices
                 DeleteApplication(application.Id);
             }
         }
+
+        public List<CourseApplication> GetPendingApplicationsForCourse(string courseId)
+        {
+            List<CourseApplication> applications = new();
+            foreach(CourseApplication application in _courseApplicationDAO.GetCourseApplicationsForCourse(courseId))
+            {
+                if(application.CourseApplicationState == State.Pending)
+                {
+                    applications.Add(application);
+                }
+            }
+            return applications;
+        }
     }
 }
