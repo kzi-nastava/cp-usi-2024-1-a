@@ -155,7 +155,7 @@ namespace LangLang.Services.CourseServices
 
         public List<Student> GetAppliedStudentsCourse(string courseId)
         {
-            List<CourseApplication> applications = _courseApplicationService.GetApplicationsForCourse(courseId);
+            List<CourseApplication> applications = _courseApplicationService.GetPendingApplicationsForCourse(courseId);
             List<Student> appliedStudents = new();
             foreach (CourseApplication application in applications)
             {
@@ -255,6 +255,18 @@ namespace LangLang.Services.CourseServices
                 return false;
             }
             return true;
+        }
+
+        public void AcceptDropRequest(DropRequest dropRequest)
+        {
+            _dropRequestService.Accept(dropRequest);
+            _courseApplicationService.ActivateStudentApplications(dropRequest.SenderId);
+        }
+
+        public void DenyDropRequest(DropRequest dropRequest)
+        {
+            _dropRequestService.Deny(dropRequest);
+            _courseApplicationService.ActivateStudentApplications(dropRequest.SenderId);
         }
     }
 }
