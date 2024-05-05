@@ -110,5 +110,22 @@ namespace LangLang.Services.UserServices
                 tutor.Id
             ));
         }
+        public void UpdateTutor(string tutorId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+        {
+            Tutor tutor = _tutorService.GetTutorById(tutorId)!;
+            _tutorService.UpdateTutor(tutor, name, surname, birthDate, gender, phoneNumber);
+
+            Profile profile = _userProfileMapper.GetProfile(new UserDto(tutor, UserType.Tutor))
+                              ?? throw new InvalidOperationException("No profile associated with tutor.");
+            _profileService.UpdatePassword(profile, password);
+        }
+
+        public void DeleteTutor(Tutor tutor)
+        {
+            _tutorService.DeleteAccount(tutor);
+            var profile = _userProfileMapper.GetProfile(new UserDto(tutor, UserType.Tutor));
+            if (profile != null)
+                _profileService.DeleteProfile(profile.Email);
+        }
     }
 }

@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using Consts;
+using System.Xml.Linq;
 using LangLang.DAO;
+using LangLang.DAO.JsonDao;
 using LangLang.Model;
+using System;
 
 namespace LangLang.Services.UserServices
 {
@@ -36,10 +40,21 @@ namespace LangLang.Services.UserServices
 
         public Tutor AddTutor(Tutor tutor) => _tutorDao.AddTutor(tutor);
 
-        public Tutor? GetTutor(string email) => _tutorDao.GetTutor(email);
+        public Tutor? GetTutorById(string id) => _tutorDao.GetTutor(id);
 
-        public void DeleteTutor(string email) => _tutorDao.DeleteTutor(email);
+        public void DeleteAccount(Tutor tutor) => _tutorDao.DeleteTutor(tutor.Id);
 
-        public void UpdateTutor(Tutor tutor) => _tutorDao.UpdateTutor(tutor);
+        public bool UpdateTutor(Tutor tutor, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+        {
+            tutor.Name = name;
+            tutor.Surname = surname;
+            tutor.Gender = gender;
+            tutor.BirthDate = birthDate;
+            tutor.Gender = gender;
+            tutor.PhoneNumber = phoneNumber;
+
+            _tutorDao.UpdateTutor(tutor);
+            return true;
+        }
     }
 }
