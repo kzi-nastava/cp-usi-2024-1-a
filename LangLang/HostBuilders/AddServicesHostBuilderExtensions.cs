@@ -36,6 +36,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IProfileService, ProfileService>();
             services.AddSingleton<IUserProfileMapper, UserProfileMapper>();
             services.AddSingleton<IPenaltyService, PenaltyService>();
+            services.AddSingleton<IUserValidator, UserValidator>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<INotificationInfoService, NotificationInfoService>();
             services.AddSingleton<IExamApplicationService, ExamApplicationService>();

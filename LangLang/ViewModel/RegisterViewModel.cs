@@ -9,6 +9,7 @@ using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
 
@@ -37,14 +38,16 @@ namespace LangLang.ViewModel
 
         private readonly IRegisterService _registerService;
         private readonly ILoginService _loginService;
+        private readonly IUserValidator _userValidator;
         private readonly INavigationService _navigationService;
         
         public NavigationStore NavigationStore { get; }
         
-        public RegisterViewModel(IRegisterService registerService, ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
+        public RegisterViewModel(IRegisterService registerService, ILoginService loginService, IUserValidator userValidator, INavigationService navigationService, NavigationStore navigationStore)
         {
             _registerService = registerService;
             _loginService = loginService;
+            _userValidator = userValidator;
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             SignUpCommand = new RelayCommand(SignUp!);
@@ -154,44 +157,25 @@ namespace LangLang.ViewModel
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
-            bool successful = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+            ValidationError error = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
 
 
-            if (!successful)
+            if (error != ValidationError.None)
             {
-                if(StudentAccountViewModel.AccountFieldsEmpty(birthday, password, name, surname, phoneNumber))
+                if (error.HasFlag(ValidationError.FieldsEmpty))
                 {
-                    ErrorMessageRequired = "All the fields are required";
+                    ErrorMessageRequired = ValidationError.FieldsEmpty.GetMessage();
                     return;
                 }
-                try
-                {
-                    _ = new MailAddress(email!);
-                }
-                catch
-                {
-                    ErrorMessageEmail = "Incorrect email";
-                }
-                if(name!.Any(char.IsDigit))
-                {
-                    ErrorMessageName = "Name must be all letters";
-                }
-                if(surname!.Any(char.IsDigit))
-                {
-                    ErrorMessageSurname = "Surname must be all letters";
-                }
-                if(!_registerService.CheckPhoneNumber(phoneNumber!))
-                {
-                    ErrorMessagePhone = "Numerical, 6 or more numbers";
-                }
-                if(!_registerService.CheckPassword(password!))
-                {
-                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
-                }
-                if (email != null && _registerService.IsEmailTaken(email))
-                {
-                    ErrorMessageEmail = "Email already exists";
-                }
+
+                ErrorMessageEmail = error.GetMessageIfFlag(ValidationError.EmailInvalid);
+                ErrorMessageName = error.GetMessageIfFlag(ValidationError.NameInvalid);
+                ErrorMessageSurname = error.GetMessageIfFlag(ValidationError.SurnameInvalid);
+                ErrorMessagePhone = error.GetMessageIfFlag(ValidationError.PhoneInvalid);
+                ErrorMessagePassword = error.GetMessageIfFlag(ValidationError.PasswordInvalid);
+
+                if (_userValidator.EmailTaken(email!) != ValidationError.None)
+                    ErrorMessageEmail = ValidationError.EmailUnavailable.GetMessage();
             }
             else
             {
