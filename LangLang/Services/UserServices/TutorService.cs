@@ -44,7 +44,7 @@ namespace LangLang.Services.UserServices
 
         public void DeleteAccount(Tutor tutor) => _tutorDao.DeleteTutor(tutor.Id);
 
-        public bool UpdateTutor(Tutor tutor, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+        public bool UpdateTutor(Tutor tutor, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, DateTime dateAdded)
         {
             tutor.Name = name;
             tutor.Surname = surname;
@@ -52,6 +52,8 @@ namespace LangLang.Services.UserServices
             tutor.BirthDate = birthDate;
             tutor.Gender = gender;
             tutor.PhoneNumber = phoneNumber;
+            tutor.KnownLanguages = knownLanguages;
+            tutor.DateAdded = dateAdded;
 
             _tutorDao.UpdateTutor(tutor);
             return true;

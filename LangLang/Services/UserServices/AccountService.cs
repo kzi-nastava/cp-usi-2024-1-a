@@ -86,7 +86,7 @@ namespace LangLang.Services.UserServices
             ));
         }
 
-        public void RegisterTutor(RegisterTutorDto registerDto)
+        public Tutor RegisterTutor(RegisterTutorDto registerDto)
         {
             var profile = _profileService.AddProfile(new Profile(
                 registerDto.Email,
@@ -109,15 +109,17 @@ namespace LangLang.Services.UserServices
                 UserType.Tutor,
                 tutor.Id
             ));
+            return tutor;
         }
-        public void UpdateTutor(string tutorId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+        public Tutor UpdateTutor(string tutorId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, DateTime dateAdded)
         {
             Tutor tutor = _tutorService.GetTutorById(tutorId)!;
-            _tutorService.UpdateTutor(tutor, name, surname, birthDate, gender, phoneNumber);
+            _tutorService.UpdateTutor(tutor, name, surname, birthDate, gender, phoneNumber, knownLanguages, dateAdded);
 
             Profile profile = _userProfileMapper.GetProfile(new UserDto(tutor, UserType.Tutor))
                               ?? throw new InvalidOperationException("No profile associated with tutor.");
             _profileService.UpdatePassword(profile, password);
+            return tutor;
         }
 
         public void DeleteTutor(Tutor tutor)

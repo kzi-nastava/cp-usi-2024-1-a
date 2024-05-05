@@ -8,16 +8,21 @@ using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Controls;
 using LangLang.Services.AuthenticationServices;
+using System.Windows.Media;
+using LangLang.MVVM;
+using LangLang.View.Factories;
 
 namespace LangLang.View
 {
-    public partial class TutorTableWindow : Window
+    public partial class TutorTableWindow : NavigableWindow
     {
         private bool deletingRow = false;
-        public TutorTableWindow()
+        public TutorTableWindow(TutorTableViewModel tutorTableViewModel, ILangLangWindowFactory windowFactory)
+        : base(tutorTableViewModel, windowFactory)
         {
             InitializeComponent();
-            DataContext = new TutorTableViewModel(this, knownLanguagesHolder!);
+            DataContext = tutorTableViewModel;
+            tutorTableViewModel.Window = this;
             dpBirthDate.DisplayDateStart = new DateTime(1924, 1, 1);
             dpBirthDate.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
         }
@@ -134,5 +139,11 @@ namespace LangLang.View
             newRow.Children.Add(deleteB);
             knownLanguagesHolder.Items.Insert(index, newRow);
         }
+
+        public void RemoveKnownLanguages()
+        {
+            while (knownLanguagesHolder.Items.Count > 1)
+                knownLanguagesHolder.Items.RemoveAt(0); // remove everything except + button
+        }    
     }
 }

@@ -8,24 +8,25 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Mail;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using LangLang.DTO;
 using LangLang.Services.AuthenticationServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Services.UserServices;
-using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.Services.NavigationServices;
 
 namespace LangLang.ViewModel
 {
-    internal class TutorTableViewModel : ViewModelBase
+    public class TutorTableViewModel : ViewModelBase, INavigableDataContext
     {
-        private readonly TutorTableWindow window;
-        private readonly ItemsControl knownLanguagesHolder;
-        private readonly TutorService tutorService = TutorService.GetInstance();
-        private readonly LanguageService languageService = new();
+        private readonly ITutorService _tutorService;
+        private readonly ILanguageService _languageService;
         private readonly IRegisterService _registerService;
         private readonly IAccountService _accountService;
+        private readonly IUserValidator _userValidator;
+        private readonly INavigationService _navigationService;
+        private readonly IUserProfileMapper _userProfileMapper;
         public RelayCommand GoBackCommand { get; }
         public RelayCommand AddKnownLangaugeCommand { get; }
         public RelayCommand ChangeLanguageCommand { get; }
@@ -40,6 +41,7 @@ namespace LangLang.ViewModel
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<Gender> Genders { get; set; }
         public bool changedLanguages;
+        public bool changedEmailOrPassword;
         public bool selectingTutor;
 
         private string name = "";
@@ -58,13 +60,23 @@ namespace LangLang.ViewModel
         public string Email
         {
             get => email;
-            set => SetField(ref email, value);
+            set 
+            {
+                email = value;
+                changedEmailOrPassword = true;
+                OnPropertyChanged();
+            }
         }
         private string password = "";
         public string Password
         {
             get => password;
-            set => SetField(ref password, value);
+            set
+            {
+                password = value;
+                changedEmailOrPassword = true;
+                OnPropertyChanged();
+            }
         }
         private string phoneNumber = "";
         public string PhoneNumber
@@ -88,7 +100,7 @@ namespace LangLang.ViewModel
         private DateTime? dateAdded = null;
         public DateTime? DateAdded
         {
-            get => dateAdded;
+            get => dateAdded != null ? dateAdded : DateTime.Now;
             set => SetField(ref dateAdded, value);
         }
         private List<Tuple<string, LanguageLvl>> knownLanguages = new();
@@ -149,7 +161,7 @@ namespace LangLang.ViewModel
         private Tutor? selectedItem;
         public Tutor? SelectedItem
         {
-            get { return selectedItem; }
+            get => selectedItem;
             set
             {
                 selectedItem = value;
@@ -157,28 +169,41 @@ namespace LangLang.ViewModel
                 selectingTutor = true;
                 if (selectedItem != null)
                 {
+                    UserDto userDto = new(selectedItem, UserType.Tutor);
                     Name = selectedItem.Name;
                     Surname = selectedItem.Surname;
-                    // Email = selectedItem.Email;
-                    // Password = selectedItem.Password;
+                    Email = _userProfileMapper.GetProfile(userDto)!.Email;
+                    Password = _userProfileMapper.GetProfile(userDto)!.Password;
                     PhoneNumber = selectedItem.PhoneNumber;
                     BirthDate = selectedItem.BirthDate;
                     DateAdded = selectedItem.DateAdded;
                     SelectedGender = selectedItem.Gender;
                     SwitchKnownLanguages(selectedItem);
                 }
+                changedEmailOrPassword = false;
                 selectingTutor = false;
                 OnPropertyChanged();
             }
         }
-
-
-        public TutorTableViewModel(TutorTableWindow window, ItemsControl knownLanguagesHolder, IRegisterService registerService, IAccountService accountService)
+        private TutorTableWindow? _window;
+        public TutorTableWindow Window
         {
-            this.window = window;
-            this.knownLanguagesHolder = knownLanguagesHolder;
+            get => _window!;
+            set => _window = value;
+        }
+
+        public NavigationStore NavigationStore { get; }
+
+        public TutorTableViewModel(NavigationStore navigationStore, INavigationService navigationService, IRegisterService registerService, IAccountService accountService, ITutorService tutorService, ILanguageService languageService, IUserValidator userValidator, IUserProfileMapper userProfileMapper)
+        {
+            NavigationStore = navigationStore;
+            _navigationService = navigationService;
             _registerService = registerService;
             _accountService = accountService;
+            _tutorService = tutorService;
+            _languageService = languageService;
+            _userValidator = userValidator;
+            _userProfileMapper = userProfileMapper;
             Tutors = new();
             Languages = new();
             Levels = new();
@@ -188,7 +213,7 @@ namespace LangLang.ViewModel
             if (Languages.Count > 0)
                 KnownLanguages.Add(new(Languages[0]!, Levels[0]));
             else
-                knownLanguagesHolder.Items.RemoveAt(0);
+                throw new Exception("No languages found");
 
             GoBackCommand = new RelayCommand(execute => GoBack());
             AddKnownLangaugeCommand = new RelayCommand(execute => AddKnownLanguage());
@@ -210,9 +235,7 @@ namespace LangLang.ViewModel
 
         private void GoBack()
         {
-            // DirectorWindow directorWindow = new();
-            // directorWindow.Show();
-            window.Close();
+            _navigationService.Navigate(Factories.ViewType.Director);
         }
 
         private void ClearFilters()
@@ -234,7 +257,7 @@ namespace LangLang.ViewModel
                 languageIndex = Languages.IndexOf(value.Item1);
                 levelIndex = Levels.IndexOf(value.Item2);
             }
-            window.AddKnownLanguage(languageIndex, levelIndex, Languages, Levels);
+            Window.AddKnownLanguage(languageIndex, levelIndex, Languages, Levels);
             if (value == null)
             {
                 changedLanguages = true;
@@ -275,8 +298,7 @@ namespace LangLang.ViewModel
 
         private void SwitchKnownLanguages(Tutor selectedItem)
         {
-            while (knownLanguagesHolder.Items.Count > 1)
-                knownLanguagesHolder.Items.RemoveAt(0);
+            Window.RemoveKnownLanguages();
             KnownLanguages.Clear();
             foreach (var tuple in selectedItem.KnownLanguages)
                 AddKnownLanguage(new Tuple<string, LanguageLvl>(tuple.Item1.Name, tuple.Item2));
@@ -285,54 +307,11 @@ namespace LangLang.ViewModel
         {
             if (SelectedItem != null)
             {
-                if (changedLanguages)
+                if (changedLanguages || changedEmailOrPassword)
                     return false;
                 return true;
             }
             return false;
-        }
-
-        private string GenerateErrorMessage()
-        {
-            if (Email == null || Password == null || Name == null || Surname == null || PhoneNumber == null || Email == "" || Name == "" || Surname == "" || Password == "" || PhoneNumber == "")
-                return "All the fields are required!";
-
-            try
-            {
-                _ = new MailAddress(Email);
-            }
-            catch
-            {
-                return "Incorrect email!";
-            }
-
-            if (int.TryParse(Name, out _))
-            {
-                return "Name must be all letters!";
-            }
-
-            if (int.TryParse(Surname, out _))
-            {
-                return "Surname must be all letters!";
-            }
-
-            if (!int.TryParse(PhoneNumber, out _))
-            {
-                return "Phone number must be made up of numbers!";
-            }
-            if (Password.Length < 8 || !Password.Any(char.IsDigit) || !Password.Any(char.IsUpper))
-            {
-                return "Password must be at least 8 chars, uppercase and number!";
-            }
-            return "Invalid user data!";
-        }
-
-        private Tutor CreateTutor()
-        {
-            List<Tuple<Language, LanguageLvl>> knownLanguagesRightType = new();
-            foreach (var tuple in KnownLanguages)
-                knownLanguagesRightType.Add(new(languageService.GetLanguageById(tuple.Item1), tuple.Item2));
-            return new Tutor(Email, Password, Name, Surname, (DateTime)BirthDate!, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
         }
 
         private void UpdateTutor()
@@ -340,17 +319,15 @@ namespace LangLang.ViewModel
             if (SelectedItem == null)
                 return;
 
-            bool errored = ErrorInvalidTutor();
+            bool errored = ErrorInvalidTutor(true);
             if (errored)
                 return;
 
-            Tutor tutor = CreateTutor();
-            if (Email != SelectedItem.Email)
-            {
-                tutor.Email = SelectedItem.Email;
-                tutorService.UpdateTutorEmail(tutor, Email);
-            }
-            tutorService.UpdateTutor(tutor);
+            List<Tuple<Language, LanguageLvl>> knownLanguagesRightType = new();
+            foreach (var tuple in KnownLanguages)
+                knownLanguagesRightType.Add(new(_languageService.GetLanguageById(tuple.Item1)!, tuple.Item2));
+
+            Tutor tutor = _accountService.UpdateTutor(SelectedItem.Id, Password, Name, Surname, (DateTime)BirthDate!, SelectedGender, PhoneNumber, knownLanguagesRightType, (DateTime)DateAdded!);
             Tutors.Remove(SelectedItem);
             Tutors.Add(tutor);
             RemoveInputs();
@@ -359,7 +336,7 @@ namespace LangLang.ViewModel
         {
             if (SelectedItem == null) 
                 return;
-            tutorService.DeleteTutor(SelectedItem.Id);
+            _accountService.DeleteTutor(SelectedItem);
             Tutors.Remove(SelectedItem);
             RemoveInputs();
         }
@@ -367,12 +344,25 @@ namespace LangLang.ViewModel
         private bool CanAddTutor() => true;
         private void AddTutor()
         {
-            bool errored = ErrorInvalidTutor();
+            bool errored = ErrorInvalidTutor(false);
             if (errored) 
                 return;
 
-            Tutor tutor = CreateTutor();
-            tutorService.AddTutor(tutor);
+            List<Tuple<Language, LanguageLvl>> knownLanguagesRightType = new();
+            foreach (var tuple in KnownLanguages)
+                knownLanguagesRightType.Add(new(_languageService.GetLanguageById(tuple.Item1)!, tuple.Item2));
+
+            Tutor tutor = _accountService.RegisterTutor(new RegisterTutorDto(
+                Email,
+                Password,
+                Name,
+                Surname,
+                (DateTime)BirthDate!,
+                SelectedGender,
+                PhoneNumber,
+                knownLanguagesRightType,
+                (DateTime)DateAdded!
+                ));
             Tutors.Add(tutor);
             RemoveInputs();
             MessageBox.Show("The tutor is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -381,61 +371,32 @@ namespace LangLang.ViewModel
         /**<summary>
          *     Checks if tutor is invalid and shows error if so. Return true if an error is shown.
          * </summary> */
-        private bool ErrorInvalidTutor()
+        private bool ErrorInvalidTutor(bool updating)
         {
+            ValidationError error = ValidationError.None;
+            error |= _userValidator.CheckUserData(Email, Password, Name, Surname, PhoneNumber, BirthDate);
+            if (!updating)
+                error |= _userValidator.EmailTaken(Email);
             if (KnownLanguages.Count != KnownLanguages.Select(tuple => tuple.Item1).Distinct().Count())
-            {
-                MessageBox.Show("Languages entries must unique!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true;
-            }
+                error |= ValidationError.LangEntriesNotUnique;
 
-            bool valid = true;//_registerService.CheckUserData(Email, Password, Name, Surname, PhoneNumber);
-            if (!valid)
-            {
-                MessageBox.Show(GenerateErrorMessage(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true;
-            }
-            /*if (_registerService.IsEmailTaken(Email))
-            {
-                MessageBox.Show("Email not avaliable!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }*/
-            if (BirthDate == null)
-            {
-                MessageBox.Show("Birth date must be selected!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true;
-            }
-            List<Tuple<Language, LanguageLvl>> knownLanguagesRightType = new();
-            foreach (var tuple in KnownLanguages)
-                knownLanguagesRightType.Add(new(languageService.GetLanguageById(tuple.Item1), tuple.Item2));
-            Tutor tutor = new Tutor(Name, Surname, (DateTime)BirthDate, SelectedGender, PhoneNumber, knownLanguagesRightType, new(), new(), new int[5], DateAdded);
-            
-            
-            _accountService.RegisterTutor(new RegisterTutorDto(
-                Email,
-                Password,
-                Name,
-                Surname,
-                (DateTime)BirthDate,
-                SelectedGender,
-                PhoneNumber,
-                knownLanguagesRightType,
-                DateAdded!.Value
-                ));
-            
-            Tutors.Add(tutor);
-            RemoveInputs();
-            MessageBox.Show("The tutor is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (error == ValidationError.None)
+                return false;
+
+            List<string> messages = error.GetAllMessages();
+            string combinedMessage = string.Join(",\n", messages);
+            MessageBox.Show(combinedMessage, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+            return true;
         }
         public void LoadTutors()
         {
-            var tutors = tutorService.GetAllTutors();
+            var tutors = _tutorService.GetAllTutors();
             foreach(Tutor tutor in tutors.Values)
                 Tutors.Add(tutor);
         }
         public void LoadLanguages()
         {
-            var languages = languageService.GetAll();
+            var languages = _languageService.GetAll();
             foreach (Language language in languages)
                 Languages.Add(language.Name);
         }
@@ -461,15 +422,14 @@ namespace LangLang.ViewModel
             selectedItem = null;
 
             selectingTutor = true;
-            while (knownLanguagesHolder.Items.Count > 1)
-                knownLanguagesHolder.Items.RemoveAt(0); // remove everything except + button
+            Window.RemoveKnownLanguages(); 
             KnownLanguages.Clear();
             selectingTutor = false;
         }
         public void FilterTutors()
         {
             Tutors.Clear();
-            var tutors = tutorService.GetAllTutors();
+            var tutors = _tutorService.GetAllTutors();
             foreach (Tutor tutor in tutors.Values)
             {
                 if (LanguageFilter != ""

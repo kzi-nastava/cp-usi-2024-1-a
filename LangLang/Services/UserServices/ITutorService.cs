@@ -20,5 +20,5 @@ public interface ITutorService
     public void DeleteAccount(Tutor tutor);
 
     public bool UpdateTutor(Tutor tutor, string name, string surname, DateTime birthDate, Gender gender,
-        string phoneNumber);
+        string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, DateTime dateAdded);
 }

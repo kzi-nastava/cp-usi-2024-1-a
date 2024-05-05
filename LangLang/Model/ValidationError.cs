@@ -6,14 +6,15 @@ namespace LangLang.Model;
 [Flags]
 public enum ValidationError
 {
-    None             = 0,
-    FieldsEmpty      = 1,
-    NameInvalid      = 2,
-    SurnameInvalid   = 4,
-    PasswordInvalid  = 8,
-    PhoneInvalid     = 16,
-    EmailInvalid     = 32,
-    EmailUnavailable = 64
+    None                 = 0,
+    FieldsEmpty          = 1,
+    NameInvalid          = 2,
+    SurnameInvalid       = 4,
+    PasswordInvalid      = 8,
+    PhoneInvalid         = 16,
+    EmailInvalid         = 32,
+    EmailUnavailable     = 64,
+    LangEntriesNotUnique = 128
 };
 
 public static class ValidationErrorExtensions
@@ -54,6 +55,8 @@ public static class ValidationErrorExtensions
             => "Email invalid",
         { } when error.HasFlag(ValidationError.EmailUnavailable)
             => "Email unavailable",
+        { } when error.HasFlag(ValidationError.LangEntriesNotUnique)
+            => "Languages entries must unique",
         _ => "User data invalid"
     };
     /// <summary>
