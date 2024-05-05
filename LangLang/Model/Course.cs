@@ -21,7 +21,7 @@ namespace LangLang.Model
         public int NumStudents { get; set; }
         public enum CourseState
         {
-            NotStarted, Locked, Active, Canceled, InProgress, FinishedNotGraded, FinishedGraded
+            NotStarted, Locked, Canceled, InProgress, FinishedNotGraded, FinishedGraded
         }
 
         public CourseState State { get; set; }

@@ -36,6 +36,7 @@ namespace LangLang.ViewModel
         private string message = "";
         private uint penaltyPts;
         private ObservableCollection<Student> attendees = new ObservableCollection<Student>();
+        private ObservableCollection<Student> students = new ObservableCollection<Student>();
         public string Name
         {
             get => name;
@@ -84,7 +85,14 @@ namespace LangLang.ViewModel
             }
         }
 
-        public ObservableCollection<Student> Students { get; set; }
+        public ObservableCollection<Student> Students 
+        {
+            get => students;
+            set
+            {
+                SetField(ref students, value);
+            }
+        }
         public ObservableCollection<Student> Attendees
         {
             get => attendees;

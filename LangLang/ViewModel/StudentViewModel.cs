@@ -269,7 +269,8 @@ namespace LangLang.ViewModel
             Course course = _courseService.GetCourseById(courseId)!;
             try
             {
-                _courseCoordinator.DropCourse(_loggedInUser.Id);
+                string message = "Nemoj me kikovat majke ti";
+                _courseCoordinator.DropCourse(_loggedInUser.Id, message);
                 MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
                 AttendingCourse.Remove(course);
             }

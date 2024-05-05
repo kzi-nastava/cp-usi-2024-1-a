@@ -111,6 +111,16 @@ namespace LangLang.DAO.JsonDao
             Save();
         }
 
+        public string GetDropRequestId()
+        {
+            return LastId.DropRequestId.ToString();
+        }
+
+        public void IncrementDropRequstId()
+        {
+            LastId.DropRequestId++;
+            Save();
+        }
         private void Load()
         {
             Dictionary<string, LastId> ret = JsonUtil.ReadFromFile<LastId>(Constants.LastIdFilePath);
@@ -130,5 +140,6 @@ namespace LangLang.DAO.JsonDao
             Dictionary<string, LastId> dict = new Dictionary<string, LastId> { { JsonKey, LastId } };
             JsonUtil.WriteToFile(dict, Constants.LastIdFilePath);
         }
+
     }
 }

@@ -18,6 +18,8 @@ public interface ILastIdDAO
     public void IncrementCourseApplicationId();
     public string GetNotificationId();
     public void IncrementNotificationId();
+    public string GetDropRequestId();
+    public void IncrementDropRequstId();
     public string GetExamApplicationId();
     public void IncrementExamApplicationId();
 }

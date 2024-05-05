@@ -19,8 +19,7 @@ public interface ICourseService
     public void CalculateAverageScores(string id);
     public void AddAttendance(string courseId);
     public void CancelAttendance(string courseId);
-
-
+    public void UpdateStates();
     public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration,
         Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start,
         bool online, int numStudents, Course.CourseState? state, int maxStudents);

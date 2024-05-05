@@ -11,6 +11,7 @@ public interface ICourseApplicationService
     public CourseApplication? GetApplication(string studentId, string courseId);
     public List<CourseApplication> GetApplicationsForStudent(string studentId);
     public List<CourseApplication> GetApplicationsForCourse(string courseId);
+    public List<CourseApplication> GetPendingApplicationsForCourse(string courseId);
     public CourseApplication? GetCourseApplicationById(string id);
     public CourseApplication ChangeApplicationState(string applicationId, State state);
     public void RejectApplication(string applicationId);
