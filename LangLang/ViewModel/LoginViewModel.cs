@@ -1,35 +1,37 @@
 ﻿using System;
 using System.Security;
-using System.Windows;
 using System.Windows.Input;
-using LangLang.MVVM;
-using LangLang.View;
+using LangLang.DTO;
 using LangLang.Model;
-using LangLang.Services;
+using LangLang.MVVM;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel
 {
-    internal class LoginViewModel : ViewModelBase
+    public class LoginViewModel : ViewModelBase, INavigableDataContext
     {
         private string? _email;
         private SecureString? _password;
         private string? _errorMessage;
-        private readonly LoginService _loginService;
-        private readonly Window? _window;
+        
+        private readonly ILoginService _loginService;
+        private readonly INavigationService _navigationService;
+        
+        public NavigationStore NavigationStore { get; }
+
         public ICommand LoginCommand { get; }
+        public ICommand SwitchToRegisterCommand { get; }
 
-
-        public LoginViewModel()
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
         {
-            _loginService = LoginService.GetInstance();
+            _loginService = loginService;
+            _navigationService = navigationService;
+            NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
-        }
-
-        public LoginViewModel(Window window)
-        {
-            _window = window;
-            _loginService = LoginService.GetInstance();
-            LoginCommand = new RelayCommand(Login!);
+            SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
         }
 
         public string Email
@@ -49,19 +51,18 @@ namespace LangLang.ViewModel
             get => _errorMessage!;
             set =>SetField(ref _errorMessage, value);
         }
-
-
+        
         private void Login(object parameter)
         {
             ErrorMessage = "";
             string email = Email;
             string password = ConvertToUnsecureString(Password);
-            _loginService.LogIn(email, password);
+            LoginResult loginResult = _loginService.LogIn(email, password);
 
             //LoginFailed
-            if (!_loginService.validUser)
+            if (!loginResult.IsValidUser)
             {
-                if (!_loginService.validEmail)
+                if (!loginResult.IsValidEmail)
                 {
                     ErrorMessage = "User doesn't exist";
                 }
@@ -72,30 +73,26 @@ namespace LangLang.ViewModel
             }
             else
             {
-                User loggedUser;
-                if (_loginService.userType == typeof(Director))
-		        {
-                    loggedUser = DirectorService.GetInstance().LoggedUser;
-                    DirectorWindow directorWindow = new DirectorWindow();
-                    directorWindow.Show();
-                }
-		        else if (_loginService.userType == typeof(Tutor))
+                switch (loginResult.UserType)
                 {
-		            loggedUser = TutorService.GetInstance().LoggedUser;
-                    TutorWindow tutorWindow = new TutorWindow
-                    {
-                        DataContext = new TutorViewModel((Tutor)loggedUser)
-                    };
-                    tutorWindow.Show();
+                    case UserType.Director:
+                        _navigationService.Navigate(ViewType.Director);
+                        break;
+                    case UserType.Tutor:
+                        _navigationService.Navigate(ViewType.Tutor);
+                        break;
+                    case UserType.Student:
+                        _navigationService.Navigate(ViewType.Student);
+                        break;
+                    default:
+                        throw new ArgumentException("No available window for current user type");
                 }
-		        else
-                {
-		            loggedUser = StudentService.GetInstance().LoggedUser!;
-                    StudentWindow studentWindow = new StudentWindow();
-                    studentWindow.Show();
-		        }
-                _window!.Close();
             }
+        }
+
+        private void SwitchToRegister(object? parameter)
+        {
+            _navigationService.Navigate(ViewType.Register);
         }
 
         // Helper method to convert SecureString to plain text

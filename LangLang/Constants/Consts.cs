@@ -9,7 +9,13 @@ namespace Consts
         public static readonly TimeSpan ExamDuration = TimeSpan.FromHours(4);
         public static readonly TimeSpan LessonDuration = TimeSpan.FromMinutes(90);
         
-        public static readonly TimeSpan ConfirmableExamTime = new(7, 0, 0, 0);
+        public static readonly TimeSpan LockedExamTime = new(14, 0, 0, 0);
+        public static readonly TimeSpan ConfirmedExamTime = new(7, 0, 0, 0);
+        public static readonly TimeSpan ConfirmableCourseTime = new(7, 0, 0, 0);
+        public static readonly TimeSpan CancellableCourseTime = new(7, 0, 0, 0);
+        public static readonly string DateFormat = "yyyy-MM-dd";
+
+        public const uint PenaltyPointLimit = 3;
 
         public const string StudentFilePath = "../../../Data/Students.json";
         public const string CourseFilePath = "../../../Data/Courses.json";
@@ -18,6 +24,13 @@ namespace Consts
         public const string TutorFilePath = "../../../Data/Tutors.json";
         public const string DirectorFilePath = "../../../Data/Directors.json";
         public const string LastIdFilePath = "../../../Data/LastId.json";
+        public const string ProfileFilePath = "../../../Data/Profiles.json";
+        public const string PersonProfileMappingFilePath = "../../../Data/PersonProfile.json";
+        public const string CourseApplicationsFilePath = "../../../Data/CourseApplications.json";
+        public const string CourseAttendancesFilePath = "../../../Data/CourseAttendances.json";
+        public const string NotificationFilePath = "../../../Data/Notifications.json";
+        public const string DropRequestFilePath = "../../../Data/DropRequests.json";
+        public const string ExamApplicationFilePath = "../../../Data/ExamApplications.json";
     }
 
 
@@ -50,11 +63,6 @@ namespace Consts
                 _ => "",
             };
         }
-    }
-
-    public enum CourseState
-    {
-        Active, Canceled, Finished
     }
     public enum WorkDay
     {

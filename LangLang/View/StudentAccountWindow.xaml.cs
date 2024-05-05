@@ -1,15 +1,19 @@
 ﻿using LangLang.ViewModel;
 using System;
 using System.Windows;
+using LangLang.MVVM;
+using LangLang.Services.AuthenticationServices;
+using LangLang.View.Factories;
 
 namespace LangLang.View
 {
-    public partial class StudentAccountWindow : Window
+    public partial class StudentAccountWindow : NavigableWindow
     {
-        public StudentAccountWindow()
+        public StudentAccountWindow(StudentAccountViewModel studentAccountViewModel, IWindowFactory windowFactory)
+            : base(studentAccountViewModel, windowFactory)
         {
             InitializeComponent();
-            DataContext = new StudentAccountViewModel();
+            DataContext = studentAccountViewModel;
 
             //initialize datepicker requirements
             datePicker.DisplayDateStart = new DateTime(1924, 1, 1);

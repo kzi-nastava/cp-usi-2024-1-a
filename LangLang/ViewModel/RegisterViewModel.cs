@@ -4,13 +4,18 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Input;
 using Consts;
+using LangLang.DTO;
+using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
-using LangLang.View;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel
 {
-    internal class RegisterViewModel : ViewModelBase
+    public class RegisterViewModel : ViewModelBase, INavigableDataContext
     {
         private string? _email;
         private string? _password;
@@ -27,20 +32,26 @@ namespace LangLang.ViewModel
         private string? _errorMessageName;
         private string? _errorMessageSurname;
         private string? _errorMessagePhone;
-
-        private readonly RegisterView? _registerView;
+        
         public ICommand SignUpCommand { get; }
+        public ICommand SwitchToLoginCommand { get; }
 
-        public RegisterViewModel()
+        private readonly IRegisterService _registerService;
+        private readonly ILoginService _loginService;
+        private readonly IUserValidator _userValidator;
+        private readonly INavigationService _navigationService;
+        
+        public NavigationStore NavigationStore { get; }
+        
+        public RegisterViewModel(IRegisterService registerService, ILoginService loginService, IUserValidator userValidator, INavigationService navigationService, NavigationStore navigationStore)
         {
+            _registerService = registerService;
+            _loginService = loginService;
+            _userValidator = userValidator;
+            _navigationService = navigationService;
+            NavigationStore = navigationStore;
             SignUpCommand = new RelayCommand(SignUp!);
-        }
-
-
-        public RegisterViewModel(RegisterView registerView)
-        {
-            _registerView = registerView;
-            SignUpCommand = new RelayCommand(SignUp!);
+            SwitchToLoginCommand = new RelayCommand(SwitchToLogin);
         }
 
         public string? ErrorMessageRequired
@@ -146,52 +157,50 @@ namespace LangLang.ViewModel
             DateTime birthday = Birthday;
             EducationLvl educationLvl = EducationLvl;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+            ValidationError error = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
 
 
-            if (!successful)
+            if (error != ValidationError.None)
             {
-                if(StudentAccountViewModel.AccountFieldsEmpty(birthday, password!, name!, surname!, phoneNumber!))
+                if (error.HasFlag(ValidationError.FieldsEmpty))
                 {
-                    ErrorMessageRequired = "All the fields are required";
+                    ErrorMessageRequired = ValidationError.FieldsEmpty.GetMessage();
                     return;
                 }
-                try
-                {
-                    _ = new MailAddress(email!);
-                }
-                catch
-                {
-                    ErrorMessageEmail = "Incorrect email";
-                }
-                if(name!.Any(char.IsDigit))
-                {
-                    ErrorMessageName = "Name must be all letters";
-                }
-                if(surname!.Any(char.IsDigit))
-                {
-                    ErrorMessageSurname = "Surname must be all letters";
-                }
-                if(!RegisterService.CheckPhoneNumber(phoneNumber!))
-                {
-                    ErrorMessagePhone = "Numerical, 6 or more numbers";
-                }
-                if(!RegisterService.CheckPassword(password!))
-                {
-                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
-                }
-                if (email != null && RegisterService.CheckExistingEmail(email))
-                {
-                    ErrorMessageEmail = "Email already exists";
-                }
+
+                ErrorMessageEmail = error.GetMessageIfFlag(ValidationError.EmailInvalid);
+                ErrorMessageName = error.GetMessageIfFlag(ValidationError.NameInvalid);
+                ErrorMessageSurname = error.GetMessageIfFlag(ValidationError.SurnameInvalid);
+                ErrorMessagePhone = error.GetMessageIfFlag(ValidationError.PhoneInvalid);
+                ErrorMessagePassword = error.GetMessageIfFlag(ValidationError.PasswordInvalid);
+
+                if (_userValidator.EmailTaken(email!) != ValidationError.None)
+                    ErrorMessageEmail = ValidationError.EmailUnavailable.GetMessage();
             }
             else
             {
                 MessageBox.Show($"Succesfull registration");
-                LoginWindow view = new LoginWindow();
-                view.Show();
-                _registerView!.Close();
+                LoginResult loginResult = _loginService.LogIn(email!, password!);
+                switch (loginResult.UserType)
+                {
+                    case UserType.Director:
+                        _navigationService.Navigate(ViewType.Director);
+                        break;
+                    case UserType.Tutor:
+                        _navigationService.Navigate(ViewType.Tutor);
+                        break;
+                    case UserType.Student:
+                        _navigationService.Navigate(ViewType.Student);
+                        break;
+                    default:
+                        throw new ArgumentException("No available window for current user type");
+                }
             }
+        }
+
+        private void SwitchToLogin(object? parameter)
+        {
+            _navigationService.Navigate(ViewType.Login);
         }
     }
 }

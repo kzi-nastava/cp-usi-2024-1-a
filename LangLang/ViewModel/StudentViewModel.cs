@@ -1,39 +1,57 @@
-﻿using System;
+﻿using Consts;
+using LangLang.Model;
+using LangLang.MVVM;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.CourseServices;
+using LangLang.Services.ExamServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UserServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using LangLang.DAO;
-using LangLang.Model;
-using LangLang.MVVM;
-using LangLang.Services;
-using Consts;
+
 
 namespace LangLang.ViewModel
 {
-    internal class StudentViewModel : ViewModelBase
+    public class StudentViewModel : ViewModelBase, INavigableDataContext
     {
-        private readonly Window _window;
-        private readonly CourseService _courseService = new();
-        private readonly LanguageService _languageService = new();
-        private readonly StudentService _studentService = StudentService.GetInstance();
-        private readonly ExamService _examService = new();
-
+        private readonly Student _loggedInUser;
+        private readonly ICourseService _courseService;
+        private readonly ILanguageService _languageService;
+        private readonly IStudentService _studentService;
+        private readonly IExamService _examService;
+        private readonly IStudentCourseCoordinator _courseCoordinator;
+        private readonly IAccountService _accountService;
+        private readonly IExamCoordinator _examCoordinator;
+        private readonly IExamApplicationService _examApplicationService;
         public ICommand ClearExamFiltersCommand { get; }
         public ICommand ClearCourseFiltersCommand { get; }
+        public ICommand LogOutCommand { get; }
+        public ICommand DeleteProfileCommand { get; }
+        public ICommand OpenStudentProfileCommand { get; }
         public ICommand ApplyCourseCommand { get; }
         public ICommand CancelCourseCommand{ get; }
         public ICommand ApplyExamCommand { get; }
         public ICommand CancelExamCommand { get; }
         public ICommand RateTutorCommand { get; }
         public ICommand CancelAttendingCourseCommand { get; }
+        public ICommand CancelAttendingExamCommand { get; }
+        public ICommand OpenNotificationWindowCommand { get; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<Course> FinishedCourses { get; set; }
+        public ObservableCollection<Course> AppliedCourses { get; set; }
         public ObservableCollection<Course> AttendingCourse { get; set; }
-        public ObservableCollection<Exam> Exams { get; set; }
+        public ObservableCollection<Exam> AvailableExams { get; set; }
+        public ObservableCollection<Exam> AppliedExams { get; set; }
+        public ObservableCollection<Exam> FinishedExams { get; set; }
+        public ObservableCollection<Exam> AttendingExams { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
-        //public ObservableCollection<Course> AttendingCourse { get; set; }
 
         private string name = "";
         public string Name
@@ -79,8 +97,8 @@ namespace LangLang.ViewModel
             }
         }
 
-        private string start = "";
-        public string Start
+        private DateTime? start;
+        public DateTime? Start
         {
             get { return start; }
             set
@@ -181,75 +199,162 @@ namespace LangLang.ViewModel
                 OnPropertyChanged();
             }
         }
-        public StudentViewModel(Window window)
+
+        private readonly ILoginService _loginService;
+        private readonly INavigationService _navigationService;
+        private readonly IPopupNavigationService _popupNavigationService;
+        public NavigationStore NavigationStore { get; }
+        
+        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
         {
-            _window = window;
+            _loggedInUser = (Student?)authenticationStore.CurrentUser.Person ??
+                                throw new InvalidOperationException(
+                                    "Cannot create StudentViewModel without currently logged in student");
+            NavigationStore = navigationStore;
+            _courseService = courseService;
+            _accountService = accountService;
+            _languageService = languageService;
+            _examService = examService;
+            _examCoordinator = examCoordinator;
+            _examApplicationService = examApplicationService;
+            _studentService = studentService;
+            _loginService = loginService;
+            _courseCoordinator = courseCoordinator;
+            _navigationService = navigationService;
+            _popupNavigationService = popupNavigationService;
+
             Courses = new ObservableCollection<Course>();
             FinishedCourses = new ObservableCollection<Course>();
-            AttendingCourse = new ObservableCollection<Course>();
-            Exams = new ObservableCollection<Exam>();
+            AttendingCourse = new ObservableCollection<Course>(); 
+            AppliedCourses = new ObservableCollection<Course>();
+            AvailableExams = new ObservableCollection<Exam>();
+            AppliedExams = new ObservableCollection<Exam>();
+            AttendingExams = new ObservableCollection<Exam>();
+            FinishedExams = new ObservableCollection<Exam>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLvl>();
             Durations = new ObservableCollection<int?> { null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-            Start = DateTime.Now.ToShortDateString();
+            Start = DateTime.Now;
 
-            LoadExams();
+            LoadAvailableExams();
+            LoadAppliedExams();
+            LoadAttendingExams();
+            //LoadFinishedExams();
             LoadLanguages();
             LoadCourses();
+            LoadAttendingCourse();
+            LoadAppliedCourses();
             LoadFinishedCourses();
             LoadLanguageLevels();
-            LoadAttendingCourse();
 
             //initialize commands
             ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
+            LogOutCommand = new RelayCommand(_ => LogOut());
+            DeleteProfileCommand = new RelayCommand(_ => DeleteProfile());
+            OpenStudentProfileCommand = new RelayCommand(_ => OpenStudentProfile());
             ApplyCourseCommand = new RelayCommand<string>(ApplyCourse);
             CancelCourseCommand = new RelayCommand<string>(CancelCourse);
-            ApplyExamCommand = new RelayCommand<string>(ApplyExam);
-            CancelExamCommand = new RelayCommand<string>(CancelExam);
+            ApplyExamCommand = new RelayCommand<Exam>(ApplyExam);
+            CancelExamCommand = new RelayCommand<Exam>(CancelExam);
             RateTutorCommand = new RelayCommand<string>(RateTutor);
-            CancelAttendingCourseCommand = new RelayCommand(CancelAttendingCourse!);
+            CancelAttendingCourseCommand = new RelayCommand<string>(CancelAttendingCourse!);
+            CancelAttendingExamCommand = new RelayCommand(CancelAttendingExam!);
+            OpenNotificationWindowCommand = new RelayCommand(_ => OpenNotificationWindow());
         }
 
 
-
-        
-        private void CancelAttendingCourse(object parameter)
+        private void CancelAttendingCourse(string courseId)
         {
-            MessageBox.Show($"cancelled course sent!", "Success");
-            
+            Course course = _courseService.GetCourseById(courseId)!;
+            try
+            {
+                string message = "Nemoj me kikovat majke ti";
+                _courseCoordinator.DropCourse(_loggedInUser.Id, message);
+                MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
+                AttendingCourse.Remove(course);
+            }
+            catch
+            {
+                MessageBox.Show($"It's too early to drop {course.Name}. Wait before trying again.", "Success");
+
+            }
         }
-        
+
+        private void CancelAttendingExam(object parameter)
+        {
+            MessageBox.Show($"cancelled exam sent!", "Success");
+
+        }
+
+
 
         private void ApplyCourse(string courseId)
         {
-            if(_studentService.AppliedForCourse(_studentService.LoggedUser!, courseId))
+            try
             {
-                MessageBox.Show($"You've sent an application for this course", "Invalid");
+                _courseCoordinator.ApplyForCourse(courseId, _loggedInUser.Id);
+                Course course = _courseService.GetCourseById(courseId)!;
+                MessageBox.Show($"Application sent! You've successfully applied for {course.Name}!", "Success");
+
+                Course appliedCourse = _courseService.GetCourseById(courseId)!;
+                Courses.Remove(appliedCourse);
+                AppliedCourses.Add(appliedCourse);
             }
-            else
+            catch
             {
-                _studentService.ApplyForCourse(_studentService.LoggedUser!, courseId);
-                MessageBox.Show($"Application sent!", "Success");
+                MessageBox.Show($"Can't apply to other courses when already attending {AttendingCourse[0].Name} course!", "Fail");
             }
         }
 
 
         private void CancelCourse(string courseId)
         {
-            MessageBox.Show($"Successful cancel for course {courseId}", "Success");
+            Course course = _courseService.GetCourseById(courseId)!;
+            MessageBox.Show($"Your application for {course.Name} has been cancelled.", "Success");
+            _courseCoordinator.CancelApplication(_loggedInUser.Id, courseId);
+
+            Course cancelledCourse = _courseService.GetCourseById(courseId)!;
+            Courses.Add(cancelledCourse);
+            AppliedCourses.Remove(cancelledCourse);
         }
 
 
-        private void ApplyExam(string examId)
+        private void ApplyExam(Exam exam)
         {
-            MessageBox.Show($"Successful apply for exam {examId}", "Success");
+            try
+            {
+                _examCoordinator.ApplyForExam(_loggedInUser, exam);
+                MessageBox.Show($"Successful apply for exam.", "Success");
+                LoadAvailableExams();
+                LoadAppliedExams();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Failed to apply for exam: {e.Message}", "Error");
+            }
         }
 
 
-        private void CancelExam(string examId)
+        private void CancelExam(Exam exam)
         {
-            MessageBox.Show($"Successful cancel for exam {examId}", "Success");
+            var examApplication = _examApplicationService.GetExamApplication(_loggedInUser.Id, exam.Id);
+            if (examApplication == null)
+            {
+                MessageBox.Show($"No exam application to cancel.", "Error");
+                return;
+            }
+            try
+            {
+                _examApplicationService.CancelApplication(examApplication);
+                MessageBox.Show($"Successfully canceled exam application.", "Success");
+                LoadAvailableExams();
+                LoadAppliedExams();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Failed to cancel exam application: {e.Message}", "Error");
+            }
         }
 
         private void RateTutor(string courseId)
@@ -274,69 +379,71 @@ namespace LangLang.ViewModel
             ExamLanguageFilter = "";
             ExamLevelFilter = null;
             ExamStartFilter = null;
-            Exams.Clear();
-            LoadExams();
+            AvailableExams.Clear();
+            LoadAvailableExams();
             OnPropertyChanged();
         }
 
-
         public void LoadCourses()
         {
-            var courses = _courseService.GetAvailableCourses(_studentService.LoggedUser!);
-            int i = 0;
-            foreach (Course course in courses)
+            var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Id);
+            foreach (Course course in availableCourses)
             {
                 Courses.Add(course);
-                if(i == 0)
-                {
-                    FinishedCourses.Add(course);
-                    i++;
-                    //AttendingCourse.Add(course);
-                }
             }
-
         }
 
         private void LoadAttendingCourse()
         {
-            int i = 0;
-            foreach (Course cour in Courses)
+            //when trying to test attendance, apply for course
+            //in files change application state to 2 (accepted), then change course state to 4 (In progress so i can drop it)
+            //_courseCoordinator.GenerateAttendance("30");
+            Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Id)!;
+            if(attendingCourse != null)
             {
-                if (i == 0)
-                {
-                    i++;
-                    AttendingCourse.Add(cour);
-                    break;
-                }
-            }
-
-            /*
-            var attendingCourseId = _studentService.LoggedUser!.AttendingCourse;
-            AttendingCourse = new ObservableCollection<Course>
-            {
-                _courseService.GetCourseById(attendingCourseId)!
-            };
-
-            */
-        }
-
-        public void LoadExams()
-        {
-            ExamDAO examDAO = ExamDAO.GetInstance();
-            var examsDictionary = _examService.GetAvailableExamsForStudent(_studentService.LoggedUser!);
-            foreach (Exam exam in examsDictionary)
-            {
-                Exams.Add(exam);
+                AttendingCourse.Add(attendingCourse);
             }
         }
 
-        public void LoadFinishedCourses()
+        private void LoadAppliedCourses()
         {
-            var studentCourses =  _studentService.GetFinishedCourses(_studentService.LoggedUser!);
-            foreach(Course course in studentCourses)
+            foreach (Course course in _courseCoordinator.GetAppliedCoursesStudent(_loggedInUser.Id))
+            {
+                AppliedCourses.Add(course);
+            }
+        }
+
+        private void LoadFinishedCourses()
+        {
+            var finishedCourses = _courseCoordinator.GetFinishedCoursesStudent(_loggedInUser.Id);
+            foreach (Course course in finishedCourses)
             {
                 FinishedCourses.Add(course);
             }
+        }
+
+        private void LoadAvailableExams()
+        {
+            AvailableExams.Clear();
+            foreach (var exam in _examCoordinator.GetAvailableExams(_loggedInUser))
+            {
+                AvailableExams.Add(exam);
+            }
+        }
+        
+        private void LoadAppliedExams()
+        {
+            AppliedExams.Clear();
+            foreach (var exam in _examCoordinator.GetAppliedExams(_loggedInUser))
+            {
+                AppliedExams.Add(exam);
+            }
+        }
+        
+        private void LoadAttendingExams()
+        {
+            var exam = _examCoordinator.GetAttendingExam(_loggedInUser);
+            AttendingExams = exam == null ? new ObservableCollection<Exam>() : new ObservableCollection<Exam>{exam};
         }
 
         public void LoadLanguages()
@@ -357,7 +464,6 @@ namespace LangLang.ViewModel
             }
         }
 
-
         public void RemoveInputs()
         {
             Name = "";
@@ -366,10 +472,9 @@ namespace LangLang.ViewModel
             Duration = null;
             Online = false;
             selectedItem = null;
-            Start = DateTime.Now.ToShortDateString();
-
-
+            Start = DateTime.Now;
         }
+
         public void FilterCourses()
         {
             Courses.Clear();
@@ -378,7 +483,7 @@ namespace LangLang.ViewModel
             {
                 if ((course.Language.Name == CourseLanguageFilter || CourseLanguageFilter == "") && (course.Level == CourseLevelFilter || CourseLevelFilter == null))
                 {
-                    if (CourseStartFilter == null || (CourseStartFilter != null && course.Start == ((DateTime)CourseStartFilter).ToShortDateString()))
+                    if (CourseStartFilter == null || (CourseStartFilter != null && course.Start == ((DateTime)CourseStartFilter)))
                     {
                         if (course.Online == CourseOnlineFilter || CourseOnlineFilter == null)
                         {
@@ -436,10 +541,10 @@ namespace LangLang.ViewModel
         public void FilterExams()
         {
             // Clear existing exams from the list
-            Exams.Clear();
+            AvailableExams.Clear();
 
             // Get all exams
-            var exams = ExamDAO.GetInstance().GetAllExams().Values;
+            var exams = _examService.GetAllExams();
 
             // Filter exams based on criteria
             foreach (Exam exam in exams)
@@ -449,11 +554,33 @@ namespace LangLang.ViewModel
                 {
                     if (ExamStartFilter == null || (ExamStartFilter != null && exam.Time.Date == ExamStartFilter.Value.Date))
                     {
-                        Exams.Add(exam);
+                        AvailableExams.Add(exam);
                     }
                 }
             }
         }
 
+        private void LogOut()
+        {
+            _loginService.LogOut();
+            _navigationService.Navigate(ViewType.Login);
+        }
+
+        private void DeleteProfile()
+        {
+            _accountService.DeleteStudent(_loggedInUser);
+            MessageBox.Show("Your profile has been successfully deleted");
+            _navigationService.Navigate(ViewType.Login);
+        }
+
+        private void OpenStudentProfile()
+        {
+            _popupNavigationService.Navigate(ViewType.StudentAccount);
+        }
+
+        private void OpenNotificationWindow()
+        {
+            _popupNavigationService.Navigate(ViewType.Notifications);
+        }
     }
 }

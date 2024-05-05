@@ -1,22 +1,23 @@
-﻿<Window x:Class="LangLang.View.TutorWindow"
+﻿<mvvm:NavigableWindow x:Class="LangLang.View.TutorWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LangLang.View"
              xmlns:viewModel="clr-namespace:LangLang.ViewModel" xmlns:avalonia="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
-        mc:Ignorable="d"
+             xmlns:mvvm="clr-namespace:LangLang.MVVM"
+             mc:Ignorable="d"
              Height="770" Width="1030"
              ResizeMode="NoResize">
 
-    <Window.Resources>
+    <mvvm:NavigableWindow.Resources>
         <DataTemplate DataType="{x:Type viewModel:ExamViewModel}">
             <local:ExamView></local:ExamView>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:CourseViewModel}">
             <local:CourseView></local:CourseView>
         </DataTemplate>
-    </Window.Resources>
+    </mvvm:NavigableWindow.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -32,6 +33,8 @@
                     <RowDefinition Height="90"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
                     <avalonia:MaterialIcon Kind="AccountCircle" Width="40" Height="40" Margin="10,0,0,0"/>
@@ -50,6 +53,17 @@
                     CommandParameter = "exams" 
                     Grid.Row = "2" 
                     Margin="20,10,20,10"/>
+                
+                <Button Content = "Notifications" 
+                        Command = "{Binding NotificationsCommand}"
+                        Grid.Row = "3" 
+                        Margin="20,10,20,10"/>
+                        
+                <Button Content = "Logout" 
+                    Command = "{Binding LogoutCommand}" 
+                    Grid.Row = "5"
+                    Height="35"
+                    Margin="20,430,20,10"/>
             </Grid>
 
 
@@ -59,4 +73,4 @@
         </Grid>
 
     </Grid>
-</Window>
+</mvvm:NavigableWindow>

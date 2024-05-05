@@ -4,42 +4,38 @@ using System.Collections.Generic;
 
 namespace LangLang.Model
 {
-    public class Student : User
+    public class Student : Person
     {
-        //---------------------------Languages
-        private List<string> finishedCourses;
-        private List<string> coursesApplied;    //string is courseId
-        private List<string> examsApplied;
-        private List<string> notifications;
-
-        //--------------------------Properties
+        public string Id { get; set; }
+        
         public EducationLvl Education { get; set; }
         public uint PenaltyPts { get; set; }
-        public string AttendingCourse { get; set; }
-        public string AttendingExam {  get; set; }
+        
+        public Dictionary<string, LanguageLvl> KnownLanguages { get; set; }
 
-        public Student() : base("", "", "", "", DateTime.Now, Gender.Other, "")
+        public Student() : base("", "", DateTime.Now, Gender.Other, "")
         {
+            Id = "";
             PenaltyPts = 0;
-            AttendingCourse = "";
-            AttendingExam = "";
-            this.coursesApplied = new List<string>();
-            this.finishedCourses = new List<string>();
-            this.examsApplied = new List<string>();
-            this.notifications = new List<string>();
+            KnownLanguages = new Dictionary<string, LanguageLvl>();
         }
 
-        public Student(string email, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, string attendingExam, string attendingCourse, List<string> finishedCourses, List<string> coursesApplied, List<string> examsApplied, List<string> notifications)
-            : base(email, password, name, surname, birthDate, gender, phoneNumber)
+        public Student(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, Dictionary<string, LanguageLvl>? knownLanguages = null)
+            : base(name, surname, birthDate, gender, phoneNumber)
         {
+            Id = "";
             PenaltyPts = penaltyPts;
-            AttendingCourse = attendingCourse;
-            AttendingExam = attendingExam;
             Education = educationLvl;
-            this.coursesApplied = coursesApplied;
-            this.finishedCourses = finishedCourses;
-            this.examsApplied = examsApplied;
-            this.notifications = notifications;
+            KnownLanguages = knownLanguages ?? new Dictionary<string, LanguageLvl>();
+        }
+        
+        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, Dictionary<string, LanguageLvl> knownLanguages)
+            : base(name, surname, birthDate, gender, phoneNumber)
+        {
+            Id = id;
+            PenaltyPts = penaltyPts;
+            KnownLanguages = knownLanguages;
+            Education = educationLvl;
         }
 
         public void RemovePenaltyPts()
@@ -47,51 +43,9 @@ namespace LangLang.Model
             if (PenaltyPts > 0) { PenaltyPts--; }
         }
 
-        public void AddCourse(string course)
+        public void AddKnownLanguage(Language language, LanguageLvl languageLvl)
         {
-            coursesApplied.Add(course);
-        }
-
-        public void AddExam(string exam)
-        {
-            examsApplied.Add(exam);
-        }
-
-        public List<string> GetAppliedCourses()
-        {
-            return coursesApplied;
-        }
-
-        public List<string> GetFinishedCourses()
-        {
-            return finishedCourses;
-        }
-
-        public List<string> GetAppliedExams()
-        {
-            return examsApplied;
-        }
-
-
-        public void CancelAttendingCourse()
-        {
-            AttendingCourse = "";
-        }
-
-        public void CancelCourseApplication(string courseID)
-        {
-            coursesApplied.Remove(courseID);
-        }
-
-        public void AddNotification(string notification)
-        {
-            notifications.Add(notification);
-        }
-
-        public List<string> GetNotifications()
-        {
-            return notifications;
+            KnownLanguages[language.Name] = languageLvl;
         }
     }
 }
-

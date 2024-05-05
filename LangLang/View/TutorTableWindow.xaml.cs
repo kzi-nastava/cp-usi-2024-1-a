@@ -7,8 +7,7 @@ using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
+using LangLang.Services.AuthenticationServices;
 
 namespace LangLang.View
 {

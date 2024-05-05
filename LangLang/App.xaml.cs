@@ -1,17 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using LangLang.HostBuilders;
+using LangLang.View;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace LangLang
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        private readonly IHost _host = CreateHostBuilder().Build();
+
+        private static IHostBuilder CreateHostBuilder(string[]? args = null)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .AddDao()
+                .AddServices()
+                .AddStores()
+                .AddViewModels()
+                .AddWindows();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            _host.Start();
+
+            Window window = _host.Services.GetRequiredService<LoginWindow>();
+            window.Show();
+            
+            base.OnStartup(e);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            _host.StopAsync();
+            base.OnExit(e);
+        }
     }
 }

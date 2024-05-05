@@ -1,17 +1,23 @@
 ﻿using Consts;
-using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using LangLang.Model;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.UserServices;
+using LangLang.Stores;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.ViewModel
 {
-    internal class StudentAccountViewModel : ViewModelBase
+    public class StudentAccountViewModel : ViewModelBase, INavigableDataContext
     {
-        private StudentService studentService = StudentService.GetInstance();
+        private readonly IAccountService _accountService;
+        private readonly IAuthenticationStore _authenticationStore;
+        public NavigationStore NavigationStore { get; }
+        
         private string? _email;
         private string? _password;
         private string? _name;
@@ -26,22 +32,33 @@ namespace LangLang.ViewModel
         private string? _errorMessageSurname;
         private string? _errorMessagePhone;
 
-        public StudentAccountViewModel()
+        private readonly IUserValidator _userValidator;
+
+        private Student user = null!;
+        
+        public StudentAccountViewModel(IAccountService accountService,IUserValidator userValidator, IAuthenticationStore authenticationStore, NavigationStore navigationStore)
         {
+            _accountService = accountService;
+            _userValidator = userValidator;
+            _authenticationStore = authenticationStore;
+            NavigationStore = navigationStore;
             ConfirmCommand = new RelayCommand(ConfirmInput!);
             SetUserData();
         }
 
         private void SetUserData()
         {
-            Student user = studentService.LoggedUser!;
-            Email = user.Email;
+            Profile profile = _authenticationStore.CurrentUserProfile ?? 
+                              throw new InvalidOperationException("Cannot set user data without currently logged in user");
+            user = (Student?)_authenticationStore.CurrentUser.Person ??
+                        throw new InvalidOperationException("Cannot set user data without currently logged in user");
+            Email = profile.Email;
             Name = user.Name;
             Surname = user.Surname;
             PhoneNumber = user.PhoneNumber;
             Gender = user.Gender;
             Birthday = user.BirthDate;
-            Password = user.Password; 
+            Password = profile.Password; 
         }
 
         public string ErrorMessageRequired
@@ -134,52 +151,32 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = RegisterService.CheckUserData(studentService.LoggedUser!.Email, password, name, surname, phoneNumber);
+            ValidationError error = _userValidator.CheckUserData(email, password, name, surname, phoneNumber, birthday);
 
-            if (successful)
+            if (error == ValidationError.None)
             {
-                bool canEdit = studentService.UpdateStudent(password, name, surname,birthday, gender, phoneNumber);
-                if (canEdit)
+                try
                 {
+                    _accountService.UpdateStudent(user.Id, password, name, surname, birthday, gender, phoneNumber);
                     MessageBox.Show($"Succesfull update");
                 }
-                else
-                {
+                catch {
                     ErrorMessageRequired = "Student applied for courses, editing profile not allowed";
                     return;
                 }
             }
             else {
-                if (AccountFieldsEmpty(birthday, password, name, surname, phoneNumber)) 
+                if (error.HasFlag(ValidationError.FieldsEmpty)) 
                 {
-                    ErrorMessageRequired = "All the fields are required";
+                    ErrorMessageRequired = ValidationError.FieldsEmpty.GetMessage();
                     return;
                 }
 
-                if (name.Any(char.IsDigit))
-                {
-                    ErrorMessageName = "Name must be all letters";
-                }
-
-                if (surname.Any(char.IsDigit))
-                {
-                    ErrorMessageSurname = "Surname must be all letters";
-                }
-
-                if (!RegisterService.CheckPhoneNumber(phoneNumber))
-                {
-                    ErrorMessagePhone = "Must be made up of numbers";
-                }
-                if (!RegisterService.CheckPassword(password))
-                {
-                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
-                }
+                ErrorMessageName     = error.GetMessageIfFlag(ValidationError.NameInvalid);
+                ErrorMessageSurname  = error.GetMessageIfFlag(ValidationError.SurnameInvalid);
+                ErrorMessagePhone    = error.GetMessageIfFlag(ValidationError.PhoneInvalid);
+                ErrorMessagePassword = error.GetMessageIfFlag(ValidationError.PasswordInvalid);
             }
         }
-        public static bool AccountFieldsEmpty(DateTime birthday,  string password, string name, string surname, string phoneNumber)
-        {
-            return birthday == DateTime.MinValue || password == null || name == null || surname == null || phoneNumber == null || name == "" || surname == "" || password == "" || phoneNumber == "";
-        }
-
     }
 }
