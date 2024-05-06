@@ -18,6 +18,7 @@ public interface IExamService
 
     public Exam UpdateExam(string id, Language? language, LanguageLvl? languageLvl, DateOnly? examDate,
         TimeOnly? examTime, int classroomNumber, int maxStudents);
+    public void UpdateExam(Exam exam);
 
     public void DeleteExam(string id);
 
@@ -25,4 +26,6 @@ public interface IExamService
 
     public List<Exam> FilterExams(List<Exam> exams, Language? language = null, LanguageLvl? languageLvl = null,
         DateOnly? date = null);
+    public void FinishExam(Exam exam);
+    public void ConfirmExam(Exam exam);
 }

@@ -14,6 +14,7 @@ public interface ITutorService
     public Tutor? GetTutorById(string id);
 
     public Tutor? GetTutorForCourse(string courseId);
+    public Tutor? GetTutorForExam(string examId);
 
     public void AddRating(Tutor tutor, int rating);
 

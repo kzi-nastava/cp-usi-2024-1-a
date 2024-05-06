@@ -119,6 +119,10 @@ public class ExamService : IExamService
         }
         return exam;
     }
+    public void UpdateExam(Exam exam)
+    {
+        _examDao.UpdateExam(exam.Id, exam);
+    }
 
     public void DeleteExam(string id)
     {
@@ -203,5 +207,15 @@ public class ExamService : IExamService
         if (dateTime < examDateTime.Add(Constants.ExamDuration))
             return Exam.State.InProgress;
         return Exam.State.Finished;
+    }
+    public void FinishExam(Exam exam)
+    {
+        exam.ExamState = Exam.State.Finished;
+        UpdateExam(exam);
+    }
+    public void ConfirmExam(Exam exam)
+    {
+        exam.ExamState = Exam.State.Confirmed;
+        UpdateExam(exam);
     }
 }

@@ -7,8 +7,10 @@ using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.ExamServices;
+using LangLang.Services.NavigationServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel;
 
@@ -18,7 +20,9 @@ public class ExamViewModel : ViewModelBase
     
     private readonly IExamService _examService;
     private readonly ITimetableService _timetableService;
-    
+    private readonly IPopupNavigationService _popupNavigationService;
+    private readonly CurrentExamStore _currentExamStore;
+    public RelayCommand OpenExamInfoCommand { get; }
     public RelayCommand AddCommand { get; set; }
     public RelayCommand SelectedExamChangedCommand { get; set; }
     public RelayCommand UpdateCommand { get; set; }
@@ -162,14 +166,16 @@ public class ExamViewModel : ViewModelBase
         }
     }
     
-    public ExamViewModel(IAuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService)
+    public ExamViewModel(IAuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService, CurrentExamStore currentExamStore, IPopupNavigationService popupNavigationService)
     {
         _tutor = (Tutor?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
                                     "Cannot create ExamViewModel without currently logged in tutor");
         _examService = examService;
         _timetableService = timetableService;
-        
+        _currentExamStore = currentExamStore;
+        _popupNavigationService = popupNavigationService;
+
         exams = new ObservableCollection<Exam>(LoadExams());
         languages = new ObservableCollection<Language>(_tutor.KnownLanguages.Select(tuple => tuple.Item1));
         languageLevels = new ObservableCollection<LanguageLvl>();
@@ -194,6 +200,7 @@ public class ExamViewModel : ViewModelBase
         UpdateCommand = new RelayCommand(execute => UpdateExam(), execute => CanUpdateExam());
         DeleteCommand = new RelayCommand(execute => DeleteExam(), execute => CanDeleteExam());
         ClearFiltersCommand = new RelayCommand(execute => ClearFilters(), execute => CanClearFilters());
+        OpenExamInfoCommand = new RelayCommand(OpenExamInfo, canExecute => SelectedExam != null);
     }
 
     private int GetClassroomNumber()
@@ -312,5 +319,22 @@ public class ExamViewModel : ViewModelBase
     private bool CanClearFilters()
     {
         return FilterLanguage != null || FilterLanguageLvl != null || FilterDate != null;
+    }
+
+    private void OpenExamInfo(object? obj)
+    {
+        _currentExamStore.CurrentExam = SelectedExam;
+        switch (SelectedExam?.ExamState)
+        {
+            case Exam.State.NotStarted:
+                _popupNavigationService.Navigate(ViewType.UpcomingExamInfo);
+                break;
+            case Exam.State.InProgress:
+                _popupNavigationService.Navigate(ViewType.ActiveExamInfo);
+                break;
+            case Exam.State.Finished:
+                _popupNavigationService.Navigate(ViewType.FinishedExamInfo);
+                break;
+        }
     }
 }

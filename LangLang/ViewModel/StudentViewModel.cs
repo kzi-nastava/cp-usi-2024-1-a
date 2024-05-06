@@ -442,7 +442,7 @@ namespace LangLang.ViewModel
         
         private void LoadAttendingExams()
         {
-            var exam = _examCoordinator.GetAttendingExam(_loggedInUser);
+            var exam = _examCoordinator.GetAttendingExam(_loggedInUser.Id);
             AttendingExams = exam == null ? new ObservableCollection<Exam>() : new ObservableCollection<Exam>{exam};
         }
 

@@ -24,6 +24,7 @@ public static class AddDaoHostBuilderExtensions
             services.AddSingleton<IPersonProfileMappingDAO, PersonProfileMappingDAO>();
             services.AddSingleton<INotificationDAO, NotificationDAO>();
             services.AddSingleton<IExamApplicationDAO, ExamApplicationDAO>();
+            services.AddSingleton<IExamAttendanceDAO, ExamAttendanceDAO>();
             services.AddSingleton<IDropRequestDAO, DropRequestDAO>();
         });
         

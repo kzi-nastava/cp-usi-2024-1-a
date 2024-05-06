@@ -110,7 +110,15 @@ namespace LangLang.DAO.JsonDao
             LastId.ExamApplicationId++;
             Save();
         }
-
+        public string GetExamAttendanceId()
+        {
+            return LastId.ExamAttendanceId.ToString();
+        }
+        public void IncrementExamAttendanceId()
+        {
+            LastId.ExamAttendanceId++;
+            Save();
+        }
         public string GetDropRequestId()
         {
             return LastId.DropRequestId.ToString();

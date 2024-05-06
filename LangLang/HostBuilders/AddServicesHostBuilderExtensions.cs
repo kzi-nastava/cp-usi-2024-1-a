@@ -40,6 +40,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<INotificationInfoService, NotificationInfoService>();
             services.AddSingleton<IExamApplicationService, ExamApplicationService>();
+            services.AddSingleton<IExamAttendanceService, ExamAttendanceService>();
             services.AddSingleton<IExamCoordinator, ExamCoordinator>();
             services.AddSingleton<IDropRequestService, DropRequestService>();
             services.AddSingleton<IDropRequestInfoService, DropRequestInfoService>();

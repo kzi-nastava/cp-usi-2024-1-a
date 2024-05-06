@@ -22,4 +22,6 @@ public interface ILastIdDAO
     public void IncrementDropRequstId();
     public string GetExamApplicationId();
     public void IncrementExamApplicationId();
+    public string GetExamAttendanceId();
+    public void IncrementExamAttendanceId();
 }
