@@ -4,6 +4,7 @@ using LangLang.Services.AuthenticationServices;
 using LangLang.Services.NavigationServices;
 using LangLang.Stores;
 using LangLang.ViewModel.Factories;
+using System.Windows.Navigation;
 
 namespace LangLang.ViewModel
 {
@@ -28,8 +29,7 @@ namespace LangLang.ViewModel
 
         private void OpenTutorTable()
         {
-            TutorTableWindow tutorTable = new TutorTableWindow();
-            tutorTable.Show();
+            _navigationService.Navigate(ViewType.TutorTable);
         }
 
         private void Logout()

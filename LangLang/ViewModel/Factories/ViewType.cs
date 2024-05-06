@@ -14,4 +14,5 @@ public enum ViewType
     Exam,
     StudentAccount,
     Notifications,
+    TutorTable,
 }
