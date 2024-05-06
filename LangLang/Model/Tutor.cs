@@ -11,8 +11,8 @@ namespace LangLang.Model
     {
         public string Id { get; set; }
         
-        /// <summary> Hold counts for 1 to 5 rating. </summary>
-        private int[] ratingCounts = new int[5];
+        /// <summary> Hold counts for 1 to 10 rating. </summary>
+        public int[] RatingCounts { get; set; } = new int[10];
 
         public List<Tuple<Language, LanguageLvl>> KnownLanguages { get; set; }
         public List<string> Courses { get; set; }
@@ -45,7 +45,7 @@ namespace LangLang.Model
             KnownLanguages = knownLanguages;
             Courses = courses;
             Exams = exams;
-            this.ratingCounts = ratingCounts;
+            this.RatingCounts = ratingCounts;
             if (dateAdded == null)
                 DateAdded = DateTime.Now;
             else
@@ -57,7 +57,7 @@ namespace LangLang.Model
             KnownLanguages = knownLanguages;
             Courses = courses;
             Exams = exams;
-            this.ratingCounts = ratingCounts;
+            this.RatingCounts = ratingCounts;
             if (dateAdded == null)
                 DateAdded = DateTime.Now;
             else
@@ -67,20 +67,20 @@ namespace LangLang.Model
         public double GetAverageRating()
         {
             int sum = 0;
-            for (int i = 0; i < ratingCounts.Length; i++)
+            for (int i = 0; i < RatingCounts.Length; i++)
             {
-                sum += (i+1) * ratingCounts[i];
+                sum += (i+1) * RatingCounts[i];
             }
-            return (double)sum / ratingCounts.Length;
+            return (double)sum / RatingCounts.Length;
         }
 
         public void AddRating(int rating)
         {
             rating--;
-            if (rating < 0 || rating > ratingCounts.Length)
+            if (rating < 0 || rating > RatingCounts.Length)
                 throw new ArgumentOutOfRangeException($"Rating is too " + ((rating < 0) ? "low" : "high"));
             else
-                ratingCounts[rating]++;
+                RatingCounts[rating]++;
         }
     }
 }

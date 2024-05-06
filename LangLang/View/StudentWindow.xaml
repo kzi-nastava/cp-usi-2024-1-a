@@ -373,7 +373,7 @@
 
                 <Label Grid.Row="0" Content="Finished exams" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
 
-                <DataGrid Grid.Row="3" ItemsSource="{Binding AvailableExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                <DataGrid Grid.Row="3" ItemsSource="{Binding AvailableExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding LanguageLvl}" Width="*" />
@@ -384,30 +384,6 @@
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Classroom" Binding="{Binding ClassroomNumber}" Width="*" />
                         <DataGridTextColumn Header="Student capacity" Binding="{Binding MaxStudents}" Width="*" />
-                        <DataGridTemplateColumn  Width="90">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Rate tutor"
-                                        FontSize="14"
-                                        Foreground="White"
-                                        Background="{StaticResource YellowBtnColor}"
-                                        Height="25"
-                                        Width="80"
-                                        BorderThickness="0"
-                                        Margin="2"
-                                        Command="{Binding DataContext.RateTutorCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                        CommandParameter="{Binding Id}">  <!--We will need to be passing tutor id, but its currently not an attribute-->
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 

@@ -36,6 +36,7 @@ namespace LangLang.Services.UserServices
         public void AddRating(Tutor tutor, int rating)
         {
             tutor.AddRating(rating);
+            _tutorDao.UpdateTutor(tutor);
         }
 
         public Tutor AddTutor(Tutor tutor) => _tutorDao.AddTutor(tutor);
