@@ -1,6 +1,7 @@
 ﻿using LangLang.DAO;
 using LangLang.Model;
 using LangLang.Services.UserServices;
+using LangLang.Stores;
 using System.Collections.Generic;
 
 
@@ -85,19 +86,35 @@ namespace LangLang.Services.CourseServices
             //predavac 6., i dont see this being used anywhere later on
         }
 
-        public void RateTutor(CourseAttendance attendance, int rating)
+
+        public bool RateTutor(string courseId, string studentId, int rating)
         {
-            if (!attendance.isRated)
+            CourseAttendance attendance = GetAttendance(studentId, courseId)!;
+      
+            if (!attendance.IsRated)
             {
                 attendance.AddRating();
-                Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                //Tutor tutor = _tutorService.GetTutor(course.TutorId);
-                Tutor tutor = _tutorService.GetTutorForCourse(course.Id)!;
-               _tutorService.AddRating(tutor, rating);  //after tutor id gets added to course/exam
-                                                        //i will only pass tutor id and then the service will findById
+                _courseAttendanceDAO.UpdateCourseAttendance(attendance.Id, attendance);
+                Tutor tutor = _tutorService.GetTutorForCourse(courseId)!;
+               _tutorService.AddRating(tutor, rating);
+                return true;
             }
+            return false;
         }
 
+        public CourseAttendance? GetAttendance(string studentId, string courseId)
+        {
+            List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            foreach (CourseAttendance attendance in attendances)
+            {
+                Course course = _courseService.GetCourseById(attendance.CourseId)!;
+                if (course.Id == courseId)
+                {
+                    return attendance;
+                }
+            }
+            return null;
+        }
 
     }
 }

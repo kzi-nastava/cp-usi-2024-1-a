@@ -14,16 +14,16 @@ namespace LangLang.Model
         public int KnowledgeGrade {  get; set; }
         public int ActivityGrade { get; set; }
 
-        public bool isRated;
+        public bool IsRated { get; set; }
 
-        public bool isGraded;
+        public bool IsGraded { get; set; }
 
         public CourseAttendance() {
             Id = "";
             CourseId = "";
             StudentId = "";
-            isRated = false;
-            isGraded = false;
+            IsRated = false;
+            IsGraded = false;
             KnowledgeGrade = 0;
             ActivityGrade = 0;
         }
@@ -33,8 +33,8 @@ namespace LangLang.Model
             Id = "";
             CourseId = courseId;
             StudentId = studentId;
-            this.isRated = isRated;
-            this.isGraded = isGraded;
+            this.IsRated = isRated;
+            this.IsGraded = isGraded;
             ActivityGrade = activityGrade;
             KnowledgeGrade = knowledgeGrade;
         }
@@ -44,22 +44,22 @@ namespace LangLang.Model
             Id = id;
             CourseId = courseId;
             StudentId = studentId;
-            this.isRated = isRated;
-            this.isGraded = isGraded;
+            this.IsRated = isRated;
+            this.IsGraded = isGraded;
             KnowledgeGrade = knowledgeGrade;
             ActivityGrade = activityGrade;
         }
 
         public void AddGrade(int activityGrade, int knowledgeGrade)
         {
-            isGraded = true; 
+            IsGraded = true; 
             KnowledgeGrade = knowledgeGrade;
             ActivityGrade = activityGrade;
         }
 
         public void AddRating()
         {
-            isRated = true;
+            IsRated = true;
         }
 
     }

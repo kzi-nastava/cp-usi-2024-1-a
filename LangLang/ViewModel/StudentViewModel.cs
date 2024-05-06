@@ -400,7 +400,8 @@ namespace LangLang.ViewModel
         {
             //when trying to test attendance, apply for course
             //in files change application state to 2 (accepted), then change course state to 4 (In progress so i can drop it)
-            //_courseCoordinator.GenerateAttendance("30");
+            //_courseCoordinator.GenerateAttendance("2");
+
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Id)!;
             if(attendingCourse != null)
             {

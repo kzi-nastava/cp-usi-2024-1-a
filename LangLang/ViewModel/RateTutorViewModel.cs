@@ -14,7 +14,13 @@ namespace LangLang.ViewModel
     {
         public NavigationStore NavigationStore { get; }
 
+        private readonly Student _loggedInUser;
+
         private readonly CurrentCourseStore _currentCourseStore;
+
+        private readonly ICourseAttendanceService _courseAttendanceService;
+
+        private readonly IAuthenticationStore _authenticationStore;
 
         private readonly ITutorService _tutorService;
 
@@ -34,10 +40,13 @@ namespace LangLang.ViewModel
             }
         }
 
-        public RateTutorViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, ITutorService tutorService)
+        public RateTutorViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, ITutorService tutorService, IAuthenticationStore authenticationStore, ICourseAttendanceService courseAttendanceService)
         {
+            _authenticationStore = authenticationStore;
+            _loggedInUser = (Student?)authenticationStore.CurrentUser.Person!;
             NavigationStore = navigationStore;
             _currentCourseStore = currentCourseStore;
+            _courseAttendanceService = courseAttendanceService;
             _tutorService = tutorService;
             _selectedRating = 0;
             SubmitRatingCommand = new RelayCommand(SubmitRating!);
@@ -46,10 +55,19 @@ namespace LangLang.ViewModel
         private void SubmitRating(object parameter)
         {
             int selectedRating = Convert.ToInt32(parameter);
-            Tutor tutor = _tutorService.GetTutorForCourse(_currentCourseStore.CurrentCourse!.Id)!;
-            _tutorService.AddRating(tutor, selectedRating);
 
-            MessageBox.Show($"You've rated tutor {tutor.Name} {tutor.Surname} with {selectedRating}.", "Success");
+            bool successfull = _courseAttendanceService.RateTutor(_currentCourseStore.CurrentCourse!.Id, _loggedInUser.Id, selectedRating);
+
+            Tutor tutor = _tutorService.GetTutorForCourse(_currentCourseStore.CurrentCourse!.Id)!;
+            if (successfull)
+            {
+                MessageBox.Show($"You've rated tutor {tutor.Name} {tutor.Surname} with {selectedRating}.", "Success");
+            }
+            else
+            {
+                MessageBox.Show($"You've already rated tutor {tutor.Name} {tutor.Surname}!", "Unsuccessful");
+
+            }
 
         }
 

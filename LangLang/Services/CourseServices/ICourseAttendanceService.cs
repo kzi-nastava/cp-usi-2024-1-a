@@ -12,7 +12,8 @@ public interface ICourseAttendanceService
     public CourseAttendance AddAttendance(string studentId, string courseId);
     public void RemoveAttendee(string studentId, string courseId);
     public void GradeStudent(string studentId, string CourseId, int knowledgeGrade, int activityGrade);
-    public void RateTutor(CourseAttendance attendance, int rating);
+    public bool RateTutor(string courseId, string studentId, int rating);
+    public CourseAttendance? GetAttendance(string studentId, string courseId);
 
 }
 

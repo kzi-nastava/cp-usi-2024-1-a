@@ -166,7 +166,6 @@
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
-                        <DataGridTextColumn Header="Tutor" Width="*"/>
                         <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
                         <DataGridTextColumn Header="Starts" Width="*">
                             <DataGridTextColumn.Binding>
@@ -188,10 +187,6 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Reading" Binding="{Binding ReadingAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Writing" Binding="{Binding WritingAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Listening" Binding="{Binding ListeningAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="60" />
                         <DataGridTemplateColumn  Width="90">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -275,7 +270,6 @@
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
-                        <DataGridTextColumn Header="Tutor" Width="*"/>
                         <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
                         <DataGridTextColumn Header="Starts" Width="*">
                             <DataGridTextColumn.Binding>
@@ -297,10 +291,6 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Reading" Binding="{Binding ReadingAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Writing" Binding="{Binding WritingAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Listening" Binding="{Binding ListeningAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="60" />
                         <DataGridTemplateColumn  Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -313,7 +303,7 @@
                                         BorderThickness="0"
                                         Margin="2"
                                         Command="{Binding DataContext.RateTutorCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                        CommandParameter="{Binding Id}"> <!--We will need to be passing tutor id, but its currently not an attribute-->
+                                        CommandParameter="{Binding Id}">
                                         <Button.Template>
                                             <ControlTemplate TargetType="{x:Type Button}">
                                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
@@ -503,7 +493,6 @@
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
-                        <DataGridTextColumn Header="Tutor" Width="*"/>
                         <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
                         <DataGridTextColumn Header="Starts" Width="*">
                             <DataGridTextColumn.Binding>
@@ -525,10 +514,6 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Reading" Binding="{Binding ReadingAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Writing" Binding="{Binding WritingAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Listening" Binding="{Binding ListeningAvgScore}" Width="60" />
-                        <DataGridTextColumn Header="Speaking" Binding="{Binding SpeakingAvgScore}" Width="60" />
                         <DataGridTemplateColumn  Width="90">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
