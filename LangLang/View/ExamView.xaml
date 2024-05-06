@@ -59,7 +59,7 @@
                     </Grid>
                 </StackPanel>
                 <DataGrid Grid.Row="1" CanUserAddRows="False" 
-                      ItemsSource="{Binding AvailableExams}" 
+                      ItemsSource="{Binding Exams}" 
                       SelectedItem="{Binding SelectedExam}"
                       Margin="10,20,10,10" 
                       x:Name="DgCourses" 
@@ -125,7 +125,8 @@
                 
                 <Label>State:</Label>
                 <TextBlock Margin="5,0,0,0" Text="{Binding ExamState}"></TextBlock>
-            </StackPanel>
+                <Button Margin="10,5,10,0" Padding="2,2,2,2" Name="btnViewInfo" Content="View Info" Command="{Binding OpenExamInfoCommand}"></Button>
+                </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Margin="5" Content="Add" Width="70" Height="50" Command="{Binding AddCommand}" />
                 <Button Margin="5" Content="Update" Width="70" Height="50" Command="{Binding UpdateCommand}"/>
