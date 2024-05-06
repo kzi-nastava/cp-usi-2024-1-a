@@ -60,6 +60,14 @@ public class ExamApplicationService : IExamApplicationService
             throw new ArgumentException($"Cannot cancel application with state {application.ExamApplicationState}.");
         _examApplicationDao.DeleteExamApplication(application.Id);
     }
+    
+    public void DeleteApplications(string studentId)
+    {
+        foreach (var application in GetExamApplicationsForStudent(studentId))
+        {
+            _examApplicationDao.DeleteExamApplication(application.Id);
+        }
+    }
 
     /// <summary>
     /// Filters out exams for which the student has <b>NOT</b> already applied for from the given exam list.
@@ -78,6 +86,7 @@ public class ExamApplicationService : IExamApplicationService
         return exams.Where(exam => !appliedExamIds.Contains(exam.Id)).ToList();
     }
     
+
     /// <summary>
     /// Filters out pending exams for which the student has already applied for from the given exam list.
     /// Only exams with applications that are in <b>PENDING</b> status are kept.

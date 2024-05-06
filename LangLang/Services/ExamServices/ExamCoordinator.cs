@@ -188,8 +188,9 @@ public class ExamCoordinator : IExamCoordinator
     public void RemoveAttendee(string studentId)
     {
         var attendingExam = GetAttendingExam(studentId);
-        if (attendingExam == null) return;
-        _examAttendanceService.RemoveAttendee(studentId, attendingExam.Id);
+        if (attendingExam != null)
+            _examAttendanceService.RemoveAttendee(studentId, attendingExam.Id);
+        _examApplicationService.DeleteApplications(studentId);
     }
 
     public bool CanBeModified(string examId)
