@@ -33,8 +33,8 @@ namespace LangLang.Model
             Id = "";
             CourseId = courseId;
             StudentId = studentId;
-            IsRated = isRated;
-            IsGraded = isGraded;
+            this.IsRated = isRated;
+            this.IsGraded = isGraded;
             ActivityGrade = activityGrade;
             KnowledgeGrade = knowledgeGrade;
         }
@@ -44,8 +44,8 @@ namespace LangLang.Model
             Id = id;
             CourseId = courseId;
             StudentId = studentId;
-            IsRated = isRated;
-            IsGraded = isGraded;
+            this.IsRated = isRated;
+            this.IsGraded = isGraded;
             KnowledgeGrade = knowledgeGrade;
             ActivityGrade = activityGrade;
         }

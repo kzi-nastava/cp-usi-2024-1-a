@@ -6,7 +6,7 @@
         xmlns:mvvm="clr-namespace:LangLang.MVVM"
         xmlns:display="clr-namespace:LangLang.Model.Display"
         mc:Ignorable="d"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         Title="NotificationWindow" Height="540" Width="400">
     
     <mvvm:NavigableWindow.Resources>

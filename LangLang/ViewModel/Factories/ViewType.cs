@@ -18,4 +18,5 @@ public enum ViewType
     StudentAccount,
     Notifications,
     TutorTable,
+    RateTutor
 }
