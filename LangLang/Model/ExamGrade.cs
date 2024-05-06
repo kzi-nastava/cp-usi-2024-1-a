@@ -5,49 +5,49 @@ namespace LangLang.Model
 {
     public class ExamGrade
     {
-        private int _readingScore;
-        public int ReadingScore
+        private uint _readingScore;
+        public uint ReadingScore
         {
             get => _readingScore;
             set
             {
-                if (value < 0 || value > Constants.MaxReadingScore)
+                if (value > Constants.MaxReadingScore)
                     throw new ArgumentException("Invalid reading score range");
                 _readingScore = value;
             }
         }
 
-        private int writingScore;
-        public int WritingScore
+        private uint writingScore;
+        public uint WritingScore
         {
             get => writingScore;
             set
             {
-                if (value < 0 || value > Constants.MaxWritingScore)
+                if (value > Constants.MaxWritingScore)
                     throw new ArgumentException("Invalid writing score range");
                 writingScore = value;
             }
         }
 
-        private int listeningScore;
-        public int ListeningScore
+        private uint listeningScore;
+        public uint ListeningScore
         {
             get => listeningScore;
             set
             {
-                if (value < 0 || value > Constants.MaxListeningScore)
+                if (value > Constants.MaxListeningScore)
                     throw new ArgumentException("Invalid listening score range");
                 listeningScore = value;
             }
         }
 
-        private int speakingScore;
-        public int SpeakingScore
+        private uint speakingScore;
+        public uint SpeakingScore
         {
             get => speakingScore;
             set
             {
-                if (value < 0 || value > Constants.MaxSpeakingScore)
+                if (value > Constants.MaxSpeakingScore)
                     throw new ArgumentException("Invalid speaking score range");
                 speakingScore = value;
             }
@@ -57,7 +57,7 @@ namespace LangLang.Model
         {
         }
 
-        public ExamGrade(int readingScore, int writingScore, int listeningScore, int speakingScore)
+        public ExamGrade(uint readingScore, uint writingScore, uint listeningScore, uint speakingScore)
         {
             ReadingScore = readingScore;
             WritingScore = writingScore;

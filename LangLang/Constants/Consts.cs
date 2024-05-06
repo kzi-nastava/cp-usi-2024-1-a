@@ -17,11 +17,11 @@ namespace Consts
 
         public const uint PenaltyPointLimit = 3;
 
-        public const int MaxReadingScore = 60;
-        public const int MaxWritingScore = 60;
-        public const int MaxListeningScore = 40;
-        public const int MaxSpeakingScore = 50;
-        public const int MinPassingScore = 160;
+        public const uint MaxReadingScore = 60;
+        public const uint MaxWritingScore = 60;
+        public const uint MaxListeningScore = 40;
+        public const uint MaxSpeakingScore = 50;
+        public const uint MinPassingScore = 160;
 
         public const string StudentFilePath = "../../../Data/Students.json";
         public const string CourseFilePath = "../../../Data/Courses.json";

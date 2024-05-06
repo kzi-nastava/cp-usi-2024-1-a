@@ -12,12 +12,14 @@ namespace LangLang.Services.ExamServices
     public class ExamAttendanceService : IExamAttendanceService
     {
         private readonly IExamService _examService;
+        private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
         private readonly IExamAttendanceDAO _examAttendanceDAO;
 
-        public ExamAttendanceService(IExamService examService, ITutorService tutorService, IExamAttendanceDAO examAttendanceDAO)
+        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceDAO examAttendanceDAO)
         {
             _examService = examService;
+            _studentService = studentService;
             _tutorService = tutorService;
             _examAttendanceDAO = examAttendanceDAO;
         }
@@ -106,7 +108,13 @@ namespace LangLang.Services.ExamServices
             }
         }
 
-        private ExamAttendance? GetAttendance(string studentId, string examId)
+        public List<Student> GetStudents(string examId)
+        {
+            return GetAttendancesForExam(examId)
+                .Select(attendance => _studentService.GetStudentById(attendance.StudentId)!).ToList();
+        }
+
+        public ExamAttendance? GetAttendance(string studentId, string examId)
         {
             return _examAttendanceDAO.GetExamAttendancesForStudent(studentId).FirstOrDefault(attendance => attendance.ExamId == examId);
         }

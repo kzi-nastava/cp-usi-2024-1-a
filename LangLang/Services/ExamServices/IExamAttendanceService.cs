@@ -14,6 +14,7 @@ public interface IExamAttendanceService
     public void RemoveAttendee(string studentId, string examId);
     public void GradeStudent(string studentId, string examId, ExamGradeDto examGradeDto);
     public void RateTutor(ExamAttendance attendance, int rating);
-
+    public List<Student> GetStudents(string examId);
+    public ExamAttendance? GetAttendance(string studentId, string examId);
 }
 

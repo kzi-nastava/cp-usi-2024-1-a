@@ -2,12 +2,12 @@
 
 public class ExamGradeDto
 {
-    public int Reading { get; }
-    public int Writing { get; }
-    public int Listening { get; }
-    public int Speaking { get; }
+    public uint Reading { get; }
+    public uint Writing { get; }
+    public uint Listening { get; }
+    public uint Speaking { get; }
 
-    public ExamGradeDto(int reading, int writing, int listening, int speaking)
+    public ExamGradeDto(uint reading, uint writing, uint listening, uint speaking)
     {
         Reading = reading;
         Writing = writing;
