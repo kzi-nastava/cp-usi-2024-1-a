@@ -81,16 +81,19 @@ namespace LangLang.Services.CourseServices
             }
         }
 
-        public void GradeStudent(string studentId, string CourseId, int knowledgeGrade, int activityGrade)
+        public CourseAttendance? GradeStudent(string studentId, string courseId, int knowledgeGrade, int activityGrade)
         {
-            //predavac 6., i dont see this being used anywhere later on
+            CourseAttendance? attendance = _courseAttendanceDAO.GetStudentAttendanceForCourse(studentId, courseId);
+            if (attendance == null) return null;
+            attendance.AddGrade(activityGrade, knowledgeGrade);
+            _courseAttendanceDAO.UpdateCourseAttendance(attendance.Id, attendance);
+            return attendance;
         }
 
 
         public bool RateTutor(string courseId, string studentId, int rating)
         {
             CourseAttendance attendance = GetAttendance(studentId, courseId)!;
-      
             if (!attendance.IsRated)
             {
                 attendance.AddRating();

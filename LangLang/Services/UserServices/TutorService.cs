@@ -33,6 +33,20 @@ namespace LangLang.Services.UserServices
             return null;
         }
 
+        public Tutor? GetTutorForExam(string examId)
+        {
+            Dictionary<string, Tutor> allTutors = _tutorDao.GetAllTutors();
+            foreach (Tutor tutor in allTutors.Values)
+            {
+                List<string> exams = tutor.Exams;
+                foreach (string teachingExamId in exams)
+                {
+                    if (teachingExamId == examId) return tutor;
+                }
+            }
+            return null;
+        }
+
         public void AddRating(Tutor tutor, int rating)
         {
             tutor.AddRating(rating);

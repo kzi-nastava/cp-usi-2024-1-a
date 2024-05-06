@@ -31,6 +31,7 @@ namespace Consts
         public const string NotificationFilePath = "../../../Data/Notifications.json";
         public const string DropRequestFilePath = "../../../Data/DropRequests.json";
         public const string ExamApplicationFilePath = "../../../Data/ExamApplications.json";
+        public const string ExamAttendancesFilePath = "../../../Data/ExamAttendances.json";
     }
 
 

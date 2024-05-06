@@ -6,6 +6,7 @@ using LangLang.DAO;
 using LangLang.DTO;
 using LangLang.Model;
 using LangLang.Services.AuthenticationServices;
+using LangLang.Services.ExamServices;
 
 
 namespace LangLang.Services.UserServices
@@ -16,10 +17,11 @@ namespace LangLang.Services.UserServices
         private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
         private readonly IStudentCourseCoordinator _studentCourseCoordinator;
+        private readonly IExamCoordinator _examCoordinator;
         private readonly IPersonProfileMappingDAO _personProfileMappingDao;
         private readonly IUserProfileMapper _userProfileMapper;
 
-        public AccountService(IProfileService profileService, IStudentService studentService, ITutorService tutorService, IStudentCourseCoordinator studentCourseCoordinator, IPersonProfileMappingDAO personProfileMappingDao, IUserProfileMapper userProfileMapper)
+        public AccountService(IProfileService profileService, IStudentService studentService, ITutorService tutorService, IStudentCourseCoordinator studentCourseCoordinator, IPersonProfileMappingDAO personProfileMappingDao, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator)
         {
             _profileService = profileService;
             _studentService = studentService;
@@ -27,14 +29,18 @@ namespace LangLang.Services.UserServices
             _studentCourseCoordinator = studentCourseCoordinator;
             _personProfileMappingDao = personProfileMappingDao;
             _userProfileMapper = userProfileMapper;
+            _examCoordinator = examCoordinator;
         }
 
         public void UpdateStudent(string studentId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
-            //check for exams as well
             if (_studentCourseCoordinator.GetStudentAttendingCourse(studentId) != null)
             {
                 throw new ArgumentException("Student applied for courses, editing profile not allowed");
+            }
+            if (_examCoordinator.GetAttendingExam(studentId) != null)
+            {
+                throw new ArgumentException("Student applied for exam, editing profile not allowed");
             }
 
             Student student = _studentService.GetStudentById(studentId)!;
@@ -48,7 +54,7 @@ namespace LangLang.Services.UserServices
         public void DeleteStudent(Student student)
         {
             _studentCourseCoordinator.RemoveAttendee(student.Id);
-            //exam coordinator
+            _examCoordinator.RemoveAttendee(student.Id);
             _studentService.DeleteAccount(student);
             var profile = _userProfileMapper.GetProfile(new UserDto(student, UserType.Student));
             if(profile != null)
@@ -58,7 +64,7 @@ namespace LangLang.Services.UserServices
         public void DeactivateStudentAccount(Student student)
         {
             _studentCourseCoordinator.RemoveAttendee(student.Id);
-            // TODO: Remove from exams
+            _examCoordinator.RemoveAttendee(student.Id);
             var profile = _userProfileMapper.GetProfile(new UserDto(student, UserType.Student));
             if(profile != null)
                 _profileService.DeactivateProfile(profile);

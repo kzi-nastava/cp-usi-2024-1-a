@@ -33,7 +33,7 @@ public class ExamApplicationService : IExamApplicationService
     {
         if (exam.IsFull())
             throw new ArgumentException("No place available at exam.");
-        return _examApplicationDao.AddExamApplication(new ExamApplication(student.Id, exam.Id));
+        return _examApplicationDao.AddExamApplication(new ExamApplication(exam.Id, student.Id));
     }
 
     public ExamApplication AcceptApplication(ExamApplication application)
