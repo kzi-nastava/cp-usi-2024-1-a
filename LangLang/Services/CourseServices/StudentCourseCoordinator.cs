@@ -129,9 +129,6 @@ namespace LangLang.Services.CourseServices
         public void FinishCourse(string courseId, ObservableCollection<Student> students)
         {
             Course course = _courseService.GetCourseById(courseId)!;
-            // TODO: Calculate average scores
-            _courseService.CalculateAverageScores(courseId);
-            //_courseService.CalculateAverageScores
             _courseService.FinishCourse(courseId);
             foreach (Student student in students)
             {
