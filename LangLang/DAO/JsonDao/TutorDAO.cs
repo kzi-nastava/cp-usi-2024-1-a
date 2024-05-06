@@ -29,9 +29,9 @@ namespace LangLang.DAO.JsonDao
 
         public Dictionary<string, Tutor> GetAllTutors() => Tutors;
 
-        public Tutor? GetTutor(string email)
+        public Tutor? GetTutor(string id)
         {
-            return Tutors.GetValueOrDefault(email);
+            return Tutors.GetValueOrDefault(id);
         }
 
         public Tutor AddTutor(Tutor tutor)
@@ -52,11 +52,11 @@ namespace LangLang.DAO.JsonDao
             }
         }
 
-        public bool Exists(string email) => Tutors.ContainsKey(email);
+        public bool Exists(string id) => Tutors.ContainsKey(id);
 
-        public void DeleteTutor(string email)
+        public void DeleteTutor(string id)
         {
-            Tutors.Remove(email);
+            Tutors.Remove(id);
             Save();
         }
 

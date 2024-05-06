@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Consts;
 using LangLang.Model;
 
 namespace LangLang.Services.UserServices;
@@ -9,14 +11,15 @@ public interface ITutorService
 
     public Tutor AddTutor(Tutor tutor);
 
-    public Tutor? GetTutor(string email);
+    public Tutor? GetTutorById(string id);
 
     public Tutor? GetTutorForCourse(string courseId);
     public Tutor? GetTutorForExam(string examId);
 
     public void AddRating(Tutor tutor, int rating);
 
-    public void DeleteTutor(string email);
+    public void DeleteAccount(Tutor tutor);
 
-    public void UpdateTutor(Tutor tutor);
+    public bool UpdateTutor(Tutor tutor, string name, string surname, DateTime birthDate, Gender gender,
+        string phoneNumber, List<Tuple<Language, LanguageLvl>> knownLanguages, DateTime dateAdded);
 }

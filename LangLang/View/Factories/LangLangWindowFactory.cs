@@ -25,6 +25,7 @@ public class LangLangWindowFactory : ILangLangWindowFactory
             ActiveExamInfoViewModel activeExamInfoViewModel => new ActiveExamInfoWindow(activeExamInfoViewModel, this),
             UpcomingExamInfoViewModel upcomingExamInfoViewModel => new UpcomingExamInfoWindow(upcomingExamInfoViewModel, this),
             FinishedExamInfoViewModel finishedExamInfoViewModel => new FinishedExamInfoWindow(finishedExamInfoViewModel, this),
+            TutorTableViewModel tutorTableViewModel => new TutorTableWindow(tutorTableViewModel, this),
 
             _ => throw new ArgumentOutOfRangeException(nameof(viewModel), viewModel,
                 "No Window exists for the given ViewModel: " + viewModel.GetType())
