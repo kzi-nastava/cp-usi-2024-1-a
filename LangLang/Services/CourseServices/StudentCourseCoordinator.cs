@@ -122,7 +122,6 @@ namespace LangLang.Services.CourseServices
             
             _courseAttendanceService.RemoveAttendee(attendance.StudentId, attendance.CourseId); 
             _dropRequestService.AddDropRequest(attendance.CourseId, _authenticationStore.CurrentUserProfile!, message);
-            //Sent tutor the excuse why student wants to drop out
         }
 
         public void FinishCourse(string courseId, string studentId)

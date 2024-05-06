@@ -23,6 +23,7 @@ namespace LangLang.ViewModel
         private readonly ICourseService _courseService;
         private readonly ILanguageService _languageService;
         private readonly IStudentService _studentService;
+        private readonly CurrentCourseStore _currentCourseStore;
         private readonly IExamService _examService;
         private readonly IStudentCourseCoordinator _courseCoordinator;
         private readonly IAccountService _accountService;
@@ -205,12 +206,13 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
+        public StudentViewModel(IStudentService studentService, CurrentCourseStore currentCourseStore,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
         {
             _loggedInUser = (Student?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
                                     "Cannot create StudentViewModel without currently logged in student");
             NavigationStore = navigationStore;
+            _currentCourseStore = currentCourseStore;
             _courseService = courseService;
             _accountService = accountService;
             _languageService = languageService;
@@ -359,7 +361,8 @@ namespace LangLang.ViewModel
 
         private void RateTutor(string courseId)
         {
-            MessageBox.Show($"Successful rating for course {courseId}", "Success");
+            _currentCourseStore.CurrentCourse = _courseService.GetCourseById(courseId);
+            _popupNavigationService.Navigate(ViewType.RateTutor);
         }
 
         private void ClearCourseFilters(object? obj)
