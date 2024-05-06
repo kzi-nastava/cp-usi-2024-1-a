@@ -7,6 +7,7 @@ using LangLang.Services.UserServices;
 using LangLang.Stores;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using static LangLang.Model.CourseApplication;
 
 namespace LangLang.Services.CourseServices
@@ -125,12 +126,18 @@ namespace LangLang.Services.CourseServices
             //Sent tutor the excuse why student wants to drop out
         }
 
-        public void FinishCourse(string courseId, string studentId)
+        public void FinishCourse(string courseId, ObservableCollection<Student> students)
         {
+            Course course = _courseService.GetCourseById(courseId)!;
+            // TODO: Calculate average scores
+            _courseService.CalculateAverageScores(courseId);
             //_courseService.CalculateAverageScores
             _courseService.FinishCourse(courseId);
-            //student service add language skill
-            _courseApplicationService.ActivateStudentApplications(studentId);
+            foreach (Student student in students)
+            {
+                _studentService.AddLanguageSkill(student, course.Language, course.Level) ;
+                _courseApplicationService.ActivateStudentApplications(student.Id);
+            }
         }
 
         public List<Course> GetAvailableCourses(string studentId)

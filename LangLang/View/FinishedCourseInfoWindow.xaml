@@ -92,6 +92,24 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
+                <Button Content="Finish Course"
+                        FontSize="12"
+                        Foreground="White"
+                        Background="{StaticResource YellowBtnColor}"
+                        Height="25"
+                        Width="100"
+                        BorderThickness="0"
+                        Margin="2"
+                        Command="{Binding FinishCourseCommand}"
+                    >
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
         </StackPanel>
     </Grid>
