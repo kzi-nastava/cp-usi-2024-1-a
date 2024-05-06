@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using LangLang.DTO;
 using LangLang.Model;
 using LangLang.Services.AuthenticationServices;
-using LangLang.Services.CourseServices;
-using LangLang.Services.DropRequestServices;
-using LangLang.Services.ExamServices;
 using LangLang.Services.NotificationServices;
 using LangLang.Services.UserServices;
 using LangLang.Stores;
@@ -42,13 +39,9 @@ public class ExamCoordinator : IExamCoordinator
     }
     public ExamApplication ApplyForExam(Student student, Exam exam)
     {
-        // TODO: call _examAttendanceService to check for attendance status
-        // Student cannot apply for exam if they have an attendance on exam that is not in Exam.State.Reported state.
         var attendances = _examAttendanceService.GetAttendancesForStudent(student.Id);
         foreach (var attendace in attendances)
         {
-            if (attendace.ExamId == exam.Id)
-                continue;
             var foundExam = _examService.GetExamById(attendace.ExamId);
             if (foundExam != null && foundExam.ExamState != Exam.State.Reported)
                 throw new Exception("Student cannot apply to multiple exams");
@@ -80,15 +73,6 @@ public class ExamCoordinator : IExamCoordinator
         exam!.AddAttendance();
     }
 
-    public void ApplyForExam(string examId, string studentId)
-    {
-        if (_examAttendanceService.GetStudentAttendance(studentId) != null)
-        {
-            throw new ArgumentException("Applicant already enrolled in a class!");
-        }
-        _examApplicationService.ApplyForExam(_studentService.GetStudentById(studentId)!, _examService.GetExamById(examId)!);
-    }
-
     public void CancelApplication(string applicationId)
     {
         ExamApplication? application = _examApplicationService.GetExamApplication(applicationId);
@@ -116,7 +100,7 @@ public class ExamCoordinator : IExamCoordinator
         }
         _examApplicationService.CancelApplication(application);
     }
-    public void SendNotification(string message, string receiverId)
+    public void SendNotification(string? message, string receiverId)
     {
         if (message != null)
         {
@@ -166,20 +150,9 @@ public class ExamCoordinator : IExamCoordinator
         return attendanceStudents;
     }
 
-    public List<Exam> GetAppliedExams(string studentId)
-    {
-        List<ExamApplication> applications = _examApplicationService.GetExamApplicationsForStudent(studentId);
-        List<Exam> appliedExams = new();
-        foreach (ExamApplication application in applications)
-        {
-            appliedExams.Add(_examService.GetExamById(application.ExamId)!);
-        }
-        return appliedExams;
-    }
-
     public Exam? GetAttendingExam(string studentId)
     {
-        ExamAttendance examAttendance = _examAttendanceService.GetStudentAttendance(studentId)!;
+        var examAttendance = _examAttendanceService.GetStudentAttendance(studentId)!;
         if (examAttendance == null) return null;
         return _examService.GetExamById(examAttendance.ExamId);
     }
