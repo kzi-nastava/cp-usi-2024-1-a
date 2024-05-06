@@ -15,7 +15,7 @@ namespace LangLang.ViewModel;
     {
     public NavigationStore NavigationStore { get; }
 
-    private readonly CurrentExamStore _currentExamStore;
+    private readonly Exam _exam;
 
     private readonly IStudentDAO _studentDAO;
 
@@ -85,7 +85,9 @@ namespace LangLang.ViewModel;
     public FinishedExamInfoViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
     {
         NavigationStore = navigationStore;
-        _currentExamStore = currentExamStore;
+        _exam = currentExamStore.CurrentExam ??
+                throw new InvalidOperationException(
+                    "Cannot create FinishedExamInfoViewModel without the current exam set.");
         _studentDAO = studentDAO;
         _userProfileMapper = userProfileMapper;
         Students = new ObservableCollection<Student>(LoadStudents());
@@ -119,8 +121,19 @@ namespace LangLang.ViewModel;
             return;
         }
 
-        // TODO: Store grade
+        
+        
         MessageBox.Show($"Student {SelectedStudent!.Name} graded successfully!", "Success", MessageBoxButton.OK);
+    }
+
+    private bool CanGradeStudent()
+    {
+        return SelectedStudent != null && !IsGraded(SelectedStudent);
+    }
+
+    private bool IsGraded(Student student)
+    {
+        return false;
     }
 
     private List<Student> LoadStudents()

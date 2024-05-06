@@ -2,6 +2,8 @@
 using LangLang.Model;
 using LangLang.Services.UserServices;
 using System.Collections.Generic;
+using System.Linq;
+using LangLang.DTO;
 using static LangLang.Model.Exam;
 
 
@@ -10,14 +12,12 @@ namespace LangLang.Services.ExamServices
     public class ExamAttendanceService : IExamAttendanceService
     {
         private readonly IExamService _examService;
-        private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
         private readonly IExamAttendanceDAO _examAttendanceDAO;
 
-        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceDAO examAttendanceDAO)
+        public ExamAttendanceService(IExamService examService, ITutorService tutorService, IExamAttendanceDAO examAttendanceDAO)
         {
             _examService = examService;
-            _studentService = studentService;
             _tutorService = tutorService;
             _examAttendanceDAO = examAttendanceDAO;
         }
@@ -60,30 +60,37 @@ namespace LangLang.Services.ExamServices
 
         public ExamAttendance AddAttendance(string studentId, string examId)
         {
-            ExamAttendance attendance = new ExamAttendance(examId, studentId, false, false,0, 0);
+            ExamAttendance attendance = new ExamAttendance(examId, studentId, false, false);
             _examAttendanceDAO.AddExamAttendance(attendance);
             return attendance;
         }
 
         public void RemoveAttendee(string studentId, string examId)
         {
-            List<ExamAttendance> attendances = _examAttendanceDAO.GetExamAttendancesForStudent(studentId);
-            foreach (ExamAttendance attendance in attendances)
+            var attendance = GetAttendance(studentId, examId);
+            if (attendance == null) return;
+            
+            if(_examService.GetExamById(examId)!.ExamState != State.NotStarted)
             {
-                if (attendance.ExamId == examId)
-                {
-                    if(_examService.GetExamById(examId)!.ExamState != State.NotStarted)
-                    {
-                        _examService.GetExamById(examId)!.CancelAttendance();
-                    }
-                    _examAttendanceDAO.DeleteExamAttendance(attendance.Id);
-                }
+                _examService.GetExamById(examId)!.CancelAttendance();
             }
+            _examAttendanceDAO.DeleteExamAttendance(attendance.Id);
         }
 
-        public void GradeStudent(string studentId, string ExamId, int knowledgeGrade, int activityGrade)
+
+        public void GradeStudent(string studentId, string examId, ExamGradeDto examGradeDto)
         {
-            //predavac 6., i dont see this being used anywhere later on
+            var attendance = GetAttendance(studentId, examId);
+            if (attendance == null) return;
+
+            attendance.Grade = new ExamGrade(
+                examGradeDto.Reading,
+                examGradeDto.Writing,
+                examGradeDto.Listening,
+                examGradeDto.Speaking
+            );
+            
+            _examAttendanceDAO.UpdateExamAttendance(attendance.Id, attendance);
         }
 
         public void RateTutor(ExamAttendance attendance, int rating)
@@ -99,6 +106,9 @@ namespace LangLang.Services.ExamServices
             }
         }
 
-
+        private ExamAttendance? GetAttendance(string studentId, string examId)
+        {
+            return _examAttendanceDAO.GetExamAttendancesForStudent(studentId).FirstOrDefault(attendance => attendance.ExamId == examId);
+        }
     }
 }
