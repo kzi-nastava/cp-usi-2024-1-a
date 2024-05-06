@@ -84,7 +84,7 @@ namespace LangLang.Services.CourseServices
             {
                 throw new ArgumentException("Course not found");
             }
-            course.State = Course.CourseState.FinishedNotGraded;
+            course.State = Course.CourseState.FinishedGraded;
             UpdateCourse(course);
         }
         public void CalculateAverageScores(string id)

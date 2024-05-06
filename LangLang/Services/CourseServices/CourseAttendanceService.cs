@@ -1,6 +1,7 @@
 ﻿using LangLang.DAO;
 using LangLang.Model;
 using LangLang.Services.UserServices;
+using System;
 using System.Collections.Generic;
 
 
@@ -80,14 +81,18 @@ namespace LangLang.Services.CourseServices
             }
         }
 
-        public void GradeStudent(string studentId, string CourseId, int knowledgeGrade, int activityGrade)
+        public CourseAttendance? GradeStudent(string studentId, string courseId, int knowledgeGrade, int activityGrade)
         {
-            //predavac 6., i dont see this being used anywhere later on
+            CourseAttendance? attendance = _courseAttendanceDAO.GetStudentAttendanceForCourse(studentId, courseId);
+            if (attendance == null) return null;
+            attendance.AddGrade(activityGrade, knowledgeGrade);
+            _courseAttendanceDAO.UpdateCourseAttendance(attendance.Id, attendance);
+            return attendance;
         }
 
         public void RateTutor(CourseAttendance attendance, int rating)
         {
-            if (!attendance.isRated)
+            if (!attendance.IsRated)
             {
                 attendance.AddRating();
                 Course course = _courseService.GetCourseById(attendance.CourseId)!;
