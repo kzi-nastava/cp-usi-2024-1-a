@@ -434,7 +434,7 @@ namespace LangLang.ViewModel
         private void LoadAppliedExams()
         {
             AppliedExams.Clear();
-            foreach (var exam in _examCoordinator.GetAppliedExams(_loggedInUser.Id))
+            foreach (var exam in _examCoordinator.GetAppliedExams(_loggedInUser))
             {
                 AppliedExams.Add(exam);
             }
