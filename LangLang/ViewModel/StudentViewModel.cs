@@ -8,6 +8,7 @@ using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
+using LangLang.View;
 using LangLang.ViewModel.Factories;
 using System;
 using System.Collections.ObjectModel;
@@ -248,7 +249,6 @@ namespace LangLang.ViewModel
             LoadAppliedCourses();
             LoadFinishedCourses();
             LoadLanguageLevels();
-
             //initialize commands
             ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
@@ -271,9 +271,19 @@ namespace LangLang.ViewModel
             Course course = _courseService.GetCourseById(courseId)!;
             try
             {
-                string message = "Nemoj me kikovat majke ti";
+                string message = "";
+                if(_courseCoordinator.CanDropCourse(courseId))
+                {
+                    var messageWindow = new StudentExcuseWindow();
+                    messageWindow.ShowDialog();
+                    message = messageWindow.UserMessage;
+                    if(message == "")
+                    {
+                        message = "No further explanation";
+                    }
+                    MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
+                }
                 _courseCoordinator.DropCourse(_loggedInUser.Id, message);
-                MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
                 AttendingCourse.Remove(course);
             }
             catch
