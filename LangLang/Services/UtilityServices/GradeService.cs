@@ -19,7 +19,7 @@ public class GradeService : IGradeService
         return sum > Constants.MinPassingScore;
     }
 
-    private static int CeilDivide(int a, int b)
+    private static long CeilDivide(uint a, int b)
     {
         return (a + b - 1) / b;
     }
