@@ -1,197 +1,142 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Net.Mail;
-using System.Security;
 using System.Windows;
 using System.Windows.Input;
 using Consts;
+using LangLang.DTO;
+using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
-using LangLang.View;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel
 {
-    internal class RegisterViewModel : ViewModelBase
+    public class RegisterViewModel : ViewModelBase, INavigableDataContext
     {
-        private string _email;
-        private string _password;
-        private string _name;
-        private string _surname;
-        private string _phoneNumber;
+        private string? _email;
+        private string? _password;
+        private string? _name;
+        private string? _surname;
+        private string? _phoneNumber;
         private Gender _gender;
         private DateTime _birthday;
+        private EducationLvl _educationLvl;
 
+        private string? _errorMessageRequired;
+        private string? _errorMessageEmail;
+        private string? _errorMessagePassword;
+        private string? _errorMessageName;
+        private string? _errorMessageSurname;
+        private string? _errorMessagePhone;
+        
+        public ICommand SignUpCommand { get; }
+        public ICommand SwitchToLoginCommand { get; }
 
-
-        private string _errorMessageRequired;
-        private string _errorMessageEmail;
-        private string _errorMessagePassword;
-        private string _errorMessageName;
-        private string _errorMessageSurname;
-        private string _errorMessagePhone;
-
-
-        private readonly Window _window;
-
-
-        public RegisterViewModel()
+        private readonly IRegisterService _registerService;
+        private readonly ILoginService _loginService;
+        private readonly IUserValidator _userValidator;
+        private readonly INavigationService _navigationService;
+        
+        public NavigationStore NavigationStore { get; }
+        
+        public RegisterViewModel(IRegisterService registerService, ILoginService loginService, IUserValidator userValidator, INavigationService navigationService, NavigationStore navigationStore)
         {
-            SignUpCommand = new RelayCommand(SignUp);
+            _registerService = registerService;
+            _loginService = loginService;
+            _userValidator = userValidator;
+            _navigationService = navigationService;
+            NavigationStore = navigationStore;
+            SignUpCommand = new RelayCommand(SignUp!);
+            SwitchToLoginCommand = new RelayCommand(SwitchToLogin);
         }
 
-        private RegisterView _registerView;
-
-        public RegisterViewModel(RegisterView registerView)
-        {
-            _registerView = registerView;
-            SignUpCommand = new RelayCommand(SignUp);
-        }
-
-        /*
-        public RegisterViewModel(Window window)
-        {
-            _window = new Window();
-            SignUpCommand = new RelayCommand(SignUp);
-        }
-        */
-
-        public string ErrorMessageRequired
+        public string? ErrorMessageRequired
         {
             get => _errorMessageRequired;
-            set
-            {
-                _errorMessageRequired = value;
-                OnPropertyChanged(nameof(ErrorMessageRequired));
-            }
+            set => SetField(ref _errorMessageRequired, value);
         }
 
-        public string ErrorMessageEmail
+        public string? ErrorMessageEmail
         {
             get => _errorMessageEmail;
-            set
-            {
-                _errorMessageEmail = value;
-                OnPropertyChanged(nameof(ErrorMessageEmail));
-            }
+            set => SetField(ref _errorMessageEmail, value);
         }
 
-        public string ErrorMessagePassword
+        public string? ErrorMessagePassword
         {
             get => _errorMessagePassword;
-            set
-            {
-                _errorMessagePassword = value;
-                OnPropertyChanged(nameof(ErrorMessagePassword));
-            }
+            set => SetField(ref _errorMessagePassword, value);
         }
 
-        public string ErrorMessageName
+        public string? ErrorMessageName
         {
             get => _errorMessageName;
-            set
-            {
-                _errorMessageName = value;
-                OnPropertyChanged(nameof(ErrorMessageName));
-            }
+            set => SetField(ref _errorMessageName, value);
         }
 
-        public string ErrorMessageSurname
+        public string? ErrorMessageSurname
         {
             get => _errorMessageSurname;
-            set
-            {
-                _errorMessageSurname = value;
-                OnPropertyChanged(nameof(ErrorMessageSurname));
-            }
+            set => SetField(ref _errorMessageSurname, value);
         }
 
-        public string ErrorMessagePhone
+        public string? ErrorMessagePhone
         {
             get => _errorMessagePhone;
-            set
-            {
-                _errorMessagePhone = value;
-                OnPropertyChanged(nameof(ErrorMessagePhone));
-            }
+            set => SetField(ref _errorMessagePhone, value);
         }
 
-
-        public string Email
+        public string? Email
         {
             get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged(nameof(Email));
-            }
+            set => SetField(ref _email, value);
         }
 
-        public string Password
+        public string? Password
         {
             get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged(nameof(Password));
-            }
+            set => SetField(ref _password, value);
         }
-
-        public string Name
+        
+        public string? Name
         {
             get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged(nameof(Name));
-            }
+            set => SetField(ref _name, value);
         }
-
-        public string Surname
+        public string? Surname
         {
             get => _surname;
-            set
-            {
-                _surname = value;
-                OnPropertyChanged(nameof(Surname));
-            }
+            set => SetField(ref _surname, value);
         }
 
-        public string PhoneNumber
+        public string? PhoneNumber
         {
             get => _phoneNumber;
-            set
-            {
-                _phoneNumber = value;
-                OnPropertyChanged(nameof(PhoneNumber));
-            }
+            set => SetField(ref _phoneNumber, value);
         }
 
         public Gender Gender
         {
             get => _gender;
-            set
-            {
-                _gender = value;
-                OnPropertyChanged(nameof(Gender));
-            }
+            set => SetField(ref _gender, value);
         }
 
+        public EducationLvl EducationLvl
+        {
+            get => _educationLvl;
+            set => SetField(ref _educationLvl, value);
+        }
+        public string? BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
 
-        public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
         public DateTime Birthday
         {
             get => _birthday;
-            set
-            {
-                _birthday = value;
-                OnPropertyChanged(nameof(Birthday));
-            }
+            set => SetField(ref _birthday, value);
         }
-
-
-
-        public ICommand SignUpCommand { get; }
 
         private void SignUp(object parameter)
         {
@@ -203,69 +148,59 @@ namespace LangLang.ViewModel
             ErrorMessagePhone = "";
 
             // Directly access the properties
-            string email = Email;
-            string password = Password;
-            string name = Name;
-            string surname = Surname;
-            string phoneNumber = PhoneNumber;
+            string? email = Email;
+            string? password = Password;
+            string? name = Name;
+            string? surname = Surname;
+            string? phoneNumber = PhoneNumber;
             Gender gender = Gender;
             DateTime birthday = Birthday;
+            EducationLvl educationLvl = EducationLvl;
 
-            bool successful = RegisterService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, "");
+            ValidationError error = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
 
-            if (!successful)
+
+            if (error != ValidationError.None)
             {
-                if (birthday == DateTime.MinValue || email == null || password == null || name == null || surname == null || phoneNumber == null || email == "" || name == "" || surname == "" || password == "" || phoneNumber == "")
+                if (error.HasFlag(ValidationError.FieldsEmpty))
                 {
-                    ErrorMessageRequired = "All the fields are required";
+                    ErrorMessageRequired = ValidationError.FieldsEmpty.GetMessage();
                     return;
                 }
 
-                try
-                {
-                    _ = new MailAddress(email);
-                }
-                catch
-                {
-                    ErrorMessageEmail = "Incorrect email";
-                }
+                ErrorMessageEmail = error.GetMessageIfFlag(ValidationError.EmailInvalid);
+                ErrorMessageName = error.GetMessageIfFlag(ValidationError.NameInvalid);
+                ErrorMessageSurname = error.GetMessageIfFlag(ValidationError.SurnameInvalid);
+                ErrorMessagePhone = error.GetMessageIfFlag(ValidationError.PhoneInvalid);
+                ErrorMessagePassword = error.GetMessageIfFlag(ValidationError.PasswordInvalid);
 
-                if(int.TryParse(name, out _))
-                {
-                    ErrorMessageName = "Name must be all letters";
-                }
-                
-                if(int.TryParse(surname, out _))
-                {
-                    ErrorMessageSurname = "Surname must be all letters";
-                }
-
-                if(!int.TryParse(phoneNumber, out _))
-                {
-                    ErrorMessagePhone = "Must be made up of numbers";
-                }
-                if(password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
-                {
-                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
-                }
-                    
-
-                if (email != null && RegisterService.CheckExistingEmail(email))
-                {
-                    ErrorMessageEmail = "Email already exists";
-                }
+                if (_userValidator.EmailTaken(email!) != ValidationError.None)
+                    ErrorMessageEmail = ValidationError.EmailUnavailable.GetMessage();
             }
             else
             {
                 MessageBox.Show($"Succesfull registration");
-                LoginWindow view = new LoginWindow();
-                view.Show();
-                _registerView.Close();
-
+                LoginResult loginResult = _loginService.LogIn(email!, password!);
+                switch (loginResult.UserType)
+                {
+                    case UserType.Director:
+                        _navigationService.Navigate(ViewType.Director);
+                        break;
+                    case UserType.Tutor:
+                        _navigationService.Navigate(ViewType.Tutor);
+                        break;
+                    case UserType.Student:
+                        _navigationService.Navigate(ViewType.Student);
+                        break;
+                    default:
+                        throw new ArgumentException("No available window for current user type");
+                }
             }
         }
 
-
-
+        private void SwitchToLogin(object? parameter)
+        {
+            _navigationService.Navigate(ViewType.Login);
+        }
     }
 }

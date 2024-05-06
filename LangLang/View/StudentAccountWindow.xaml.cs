@@ -1,30 +1,21 @@
 ﻿using LangLang.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using LangLang.MVVM;
+using LangLang.Services.AuthenticationServices;
+using LangLang.View.Factories;
 
 namespace LangLang.View
 {
-    /// <summary>
-    /// Interaction logic for StudentAccountWindow.xaml
-    /// </summary>
-    public partial class StudentAccountWindow : Window
+    public partial class StudentAccountWindow : NavigableWindow
     {
-        public StudentAccountWindow()
+        public StudentAccountWindow(StudentAccountViewModel studentAccountViewModel, IWindowFactory windowFactory)
+            : base(studentAccountViewModel, windowFactory)
         {
             InitializeComponent();
-            DataContext = new StudentAccountViewModel(this);
+            DataContext = studentAccountViewModel;
 
+            //initialize datepicker requirements
             datePicker.DisplayDateStart = new DateTime(1924, 1, 1);
             datePicker.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
 

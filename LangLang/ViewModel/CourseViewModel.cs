@@ -1,105 +1,116 @@
 ﻿using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
+using LangLang.Services.CourseServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
+using static LangLang.Model.Course;
 
 namespace LangLang.ViewModel
 {
-    internal class CourseViewModel : ViewModelBase
+    public class CourseViewModel : ViewModelBase
     {
-        private readonly CourseService courseService;
-        private readonly LanguageService languageService;
-        private readonly TimetableService timetableService;
-        private Tutor loggedInUser;
-        public ICommand AddCourseCommand { get; }
-        public ICommand DeleteCourseCommand { get; }
-        public ICommand UpdateCourseCommand { get; }
-        public ICommand ToggleMaxStudentsCommand { get; }
-        public ICommand ClearFiltersCommand { get; }
+        private readonly ICourseService _courseService;
+        private readonly ITimetableService _timetableService;
+        private readonly INavigationService _navigationService;
+        private readonly IPopupNavigationService _popupNavigationService;
+        private readonly CurrentCourseStore _currentCourseStore;
+        private readonly Tutor _loggedInUser;
+        public RelayCommand OpenCourseInfoCommand { get; }
+        public RelayCommand AddCourseCommand { get; }
+        public RelayCommand DeleteCourseCommand { get; }
+        public RelayCommand UpdateCourseCommand { get; }
+        public RelayCommand ToggleMaxStudentsCommand { get; }
+        public RelayCommand ClearFiltersCommand { get; }
+        public RelayCommand SelectedCourseChangedCommand { get; set; }
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLvl> LanguageLevels { get; set; }
         public ObservableCollection<LanguageLvl> Levels { get; set; }
-        public ObservableCollection<CourseState> States { get; set; }
+        public ObservableCollection<Course.CourseState> States { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
         public ObservableCollection<WorkDay?> WorkDays { get; set; }
-        public ObservableCollection<TimeOnly?> MondayHours { get; set; }
-        public ObservableCollection<TimeOnly?> TuesdayHours { get; set; }
-        public ObservableCollection<TimeOnly?> WednesdayHours { get; set; }
-        public ObservableCollection<TimeOnly?> ThursdayHours { get; set; }
-        public ObservableCollection<TimeOnly?> FridayHours { get; set; }
-
-        private TimeOnly monday;
-        public TimeOnly Monday
+        public ObservableCollection<TimeOnly?> mondayHours = new ObservableCollection<TimeOnly?>();
+        public ObservableCollection<TimeOnly?> MondayHours
         {
-            get { return monday; }
-            set
-            {
-                monday = value;
-                OnPropertyChanged();
-            }
-
+            get => mondayHours;
+            set => SetField(ref mondayHours, value);
+        }
+        public ObservableCollection<TimeOnly?> tuesdayHours = new ObservableCollection<TimeOnly?>();
+        public ObservableCollection<TimeOnly?> TuesdayHours
+        {
+            get => tuesdayHours;
+            set => SetField(ref tuesdayHours, value);
         }
 
-        private TimeOnly tuesday;
-        public TimeOnly Tuesday
+        public ObservableCollection<TimeOnly?> wednesdayHours = new ObservableCollection<TimeOnly?>();
+        public ObservableCollection<TimeOnly?> WednesdayHours
         {
-            get { return tuesday; }
-            set
-            {
-                tuesday = value;
-                OnPropertyChanged();
-            }
+            get => wednesdayHours;
+            set => SetField(ref wednesdayHours, value);
         }
 
-        private TimeOnly wednesday;
-        public TimeOnly Wednesday
+        public ObservableCollection<TimeOnly?> thursdayHours = new ObservableCollection<TimeOnly?>();
+        public ObservableCollection<TimeOnly?> ThursdayHours
         {
-            get { return wednesday; }
-            set
-            {
-                wednesday = value;
-                OnPropertyChanged();
-            }
+            get => thursdayHours;
+            set => SetField(ref thursdayHours, value);
         }
 
-        private TimeOnly thursday;
-        public TimeOnly Thursday
+        public ObservableCollection<TimeOnly?> fridayHours = new ObservableCollection<TimeOnly?>();
+        public ObservableCollection<TimeOnly?> FridayHours
         {
-            get { return thursday; }
-            set
-            {
-                thursday = value;
-                OnPropertyChanged();
-            }
+            get => fridayHours;
+            set => SetField(ref fridayHours, value);
         }
 
-        private TimeOnly friday;
-        public TimeOnly Friday
+        private TimeOnly? monday;
+        public TimeOnly? Monday
         {
-            get { return friday; }
-            set
-            {
-                friday = value;
-                OnPropertyChanged();
-            }
+            get => monday;
+            set => SetField(ref monday, value);
+        }
+
+        private TimeOnly? tuesday;
+        public TimeOnly? Tuesday
+        {
+            get => tuesday;
+            set => SetField(ref tuesday, value);
+        }
+
+        private TimeOnly? wednesday;
+        public TimeOnly? Wednesday
+        {
+            get => wednesday;
+            set => SetField(ref wednesday, value);
+        }
+
+        private TimeOnly? thursday;
+        public TimeOnly? Thursday
+        {
+            get => thursday;
+            set => SetField(ref thursday, value);
+        }
+
+        private TimeOnly? friday;
+        public TimeOnly? Friday
+        {
+            get => friday;
+            set => SetField(ref friday, value);
         }
 
         private string name = "";
         public string Name
         {
-            get { return name; }
-            set
-            {
-                name = value;
-                OnPropertyChanged();
-            }
+            get => name;
+            set => SetField(ref name, value);
         }
 
         private string languageName = "";
@@ -108,16 +119,15 @@ namespace LangLang.ViewModel
             get { return languageName; }
             set
             {
-                languageName = value;
+                SetField(ref languageName, value);
                 LoadLanguageLevels(languageName);
-                OnPropertyChanged();
             }
         }
 
         private LanguageLvl level;
         public LanguageLvl Level
         {
-            get { return level; }
+            get =>  level;
             set
             {
                 level = value;
@@ -128,11 +138,10 @@ namespace LangLang.ViewModel
         private int? duration;
         public int? Duration
         {
-            get { return duration; }
+            get => duration; 
             set
             {
-                duration = value;
-                OnPropertyChanged();
+                SetField(ref duration, value);
                 LoadHours();
             }
         }
@@ -140,33 +149,24 @@ namespace LangLang.ViewModel
         private ObservableCollection<WorkDay> scheduleDays = new ObservableCollection<WorkDay>();
         public ObservableCollection<WorkDay> ScheduleDays
         {
-            get { return scheduleDays; }
-            set
-            {
-                scheduleDays = value;
-                OnPropertyChanged();
-            }
+            get => scheduleDays;
+            set => SetField(ref scheduleDays, value);
         }
 
         private Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
         public Dictionary<WorkDay, Tuple<TimeOnly, int>> Schedule
         {
-            get { return schedule; }
-            set
-            {
-                schedule = value;
-                OnPropertyChanged();
-            }
+            get => schedule;
+            set => SetField(ref schedule, value);
         }
 
-        private string start = "";
-        public string Start
+        private DateTime? start;
+        public DateTime? Start
         {
-            get { return start; }
-            set
+            get => start;
+            set 
             {
-                start = value;
-                OnPropertyChanged();
+                SetField(ref start, value);
                 LoadHours();
             }
         }
@@ -174,190 +174,117 @@ namespace LangLang.ViewModel
         private bool online;
         public bool Online
         {
-            get { return online; }
-            set
-            {
-                online = value;
-                OnPropertyChanged();
-            }
+            get => online;
+            set => SetField(ref online, value);
         }
 
         private bool isMaxStudentsDisabled;
         public bool IsMaxStudentsDisabled
         {
-            get { return isMaxStudentsDisabled; }
-            set
-            {
-                if(isMaxStudentsDisabled != value)
-                {
-                    isMaxStudentsDisabled = value;
-                    OnPropertyChanged();
-                }
-            }
+            get => isMaxStudentsDisabled;
+            set => SetField(ref isMaxStudentsDisabled, value);
         }
 
         private int maxStudents;
         public int MaxStudents
         {
-            get { return maxStudents; }
-            set
-            {
-                maxStudents = value;
-                OnPropertyChanged();
-            }
+            get => maxStudents;
+            set => SetField(ref maxStudents, value);
         }
         private int numStudents;
         public int NumStudents
         {
-            get { return numStudents; }
-            set
-            {
-                numStudents = value;
-                OnPropertyChanged();
-            }
+            get => numStudents;
+            set => SetField(ref numStudents, value);
         }
 
-        private CourseState state;
-        public CourseState State
+        private Course.CourseState state;
+        public Course.CourseState State
         {
-            get { return state; }
-            set
-            {
-                state = value;
-                OnPropertyChanged();
-            }
+            get => state;
+            set => SetField(ref state, value);
         }
         // FILTER VALUES
         private string languageFilter = "";
         public string LanguageFilter
         {
-            get { return languageFilter; }
+            get => languageFilter; 
             set
             {
-                languageFilter = value;
+                SetField(ref languageFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private LanguageLvl? levelFilter;
         public LanguageLvl? LevelFilter
         {
-            get { return levelFilter; }
+            get => levelFilter; 
             set
             {
-                levelFilter = value;
+                SetField(ref levelFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private DateTime? startFilter;
         public DateTime? StartFilter
         {
-            get { return startFilter; }
+            get => startFilter; 
             set
             {
-                startFilter = value;
+                SetField(ref startFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private bool? onlineFilter;
         public bool? OnlineFilter
         {
-            get { return onlineFilter; }
+            get => onlineFilter; 
             set
             {
-                onlineFilter = value;
+                SetField(ref onlineFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private int durationFilter;
         public int DurationFilter
         {
-            get { return durationFilter; }
+            get => durationFilter;
             set
             {
-                durationFilter = value;
+                SetField(ref durationFilter, value);
                 FilterCourses();
-                OnPropertyChanged();
             }
         }
 
         private Course? selectedItem;
         public Course? SelectedItem
         {
-            get { return selectedItem; }
-            set
-            {
-                selectedItem = value;
-                if (selectedItem != null)
-                {
-
-                    Name = selectedItem.Name;
-                    LanguageName = selectedItem.Language.Name;
-                    Level = selectedItem.Level;
-                    Duration = selectedItem.Duration;
-                    Schedule = selectedItem.Schedule;
-                    ScheduleDays = new ObservableCollection<WorkDay>();
-                    foreach(WorkDay workday in Schedule.Keys)
-                    {
-                        ScheduleDays.Add(workday);
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Monday))
-                    {
-                        Monday = Schedule[WorkDay.Monday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Tuesday))
-                    {
-                        Tuesday = Schedule[WorkDay.Tuesday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Wednesday))
-                    {
-                        Wednesday = Schedule[WorkDay.Wednesday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Thursday))
-                    {
-                        Thursday = Schedule[WorkDay.Thursday].Item1;
-                    }
-                    if (Schedule.ContainsKey(WorkDay.Friday))
-                    {
-                        Friday = Schedule[WorkDay.Friday].Item1;
-                    }
-                    Start = selectedItem.Start;
-                    Online = selectedItem.Online;
-                    if (Online)
-                    {
-                        MaxStudents = int.MaxValue;
-                        IsMaxStudentsDisabled = true;
-                    }
-                    else
-                    {
-                        MaxStudents = selectedItem.MaxStudents;
-                        IsMaxStudentsDisabled = false;
-                    }
-                    NumStudents = selectedItem.NumStudents;
-                    State = selectedItem.State;
-
-                }
-                OnPropertyChanged();
+            get => selectedItem;
+            set {
+                SetField(ref selectedItem, value);
+                SelectCourse(value);
             }
         }
-        public CourseViewModel(Tutor loggedInUser,CourseService courseService, LanguageService languageService, TimetableService timetableService)
+        public CourseViewModel(IAuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, INavigationService navigationService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
         {
-            this.courseService = courseService;
-            this.languageService = languageService;
-            this.loggedInUser = loggedInUser;
-            this.timetableService = timetableService;
+            _loggedInUser = (Tutor?)authenticationStore.CurrentUser.Person ??
+                           throw new InvalidOperationException(
+                               "Cannot create CourseViewModel without currently logged in tutor");
+            _currentCourseStore = currentCourseStore;
+            _courseService = courseService;
+            _navigationService = navigationService;
+            _timetableService = timetableService;
+            _popupNavigationService = popupNavigationService;
+            _courseService.UpdateStates();
             Courses = new ObservableCollection<Course>();
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLvl>();
             Levels = new ObservableCollection<LanguageLvl>();
-            States = new ObservableCollection<CourseState>();
+            States = new ObservableCollection<Course.CourseState>();
             Durations = new ObservableCollection<int?> {null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
             WorkDays = new ObservableCollection<WorkDay?>();
             MondayHours = new ObservableCollection<TimeOnly?> {null, new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00) };
@@ -365,18 +292,90 @@ namespace LangLang.ViewModel
             WednesdayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
             ThursdayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
             FridayHours = new ObservableCollection<TimeOnly?>{null,new TimeOnly(10, 30, 00), new TimeOnly(12, 30, 00)};
-            Start = DateTime.Now.ToShortDateString();
+            Start = DateTime.Now;
             LoadLanguages();
             LoadCourses();
             LoadLanguageLevels();
             LoadCourseStates();
             LoadWorkDays();
             LoadHours();
-            AddCourseCommand = new RelayCommand(SaveCourse, CanSaveCourse);
-            DeleteCourseCommand = new RelayCommand(DeleteCourse, CanDeleteCourse);
-            UpdateCourseCommand = new RelayCommand(UpdateCourse, CanUpdateCourse);
+            AddCourseCommand = new RelayCommand(SaveCourse, canExecute => true);
+            DeleteCourseCommand = new RelayCommand(DeleteCourse, canExecute => SelectedItem != null);
+            UpdateCourseCommand = new RelayCommand(UpdateCourse, canExecute => SelectedItem != null);
             ToggleMaxStudentsCommand = new RelayCommand(ToggleMaxStudents);
             ClearFiltersCommand = new RelayCommand(ClearFilters);
+            SelectedCourseChangedCommand = new RelayCommand(SelectCourse);
+            OpenCourseInfoCommand = new RelayCommand(OpenCourseInfo, canExecute => SelectedItem != null);
+        }
+
+        private void OpenCourseInfo(object? obj)
+        {
+            _currentCourseStore.CurrentCourse = selectedItem;
+            switch (SelectedItem?.State)
+            {
+                case CourseState.NotStarted:
+                _popupNavigationService.Navigate(ViewType.UpcomingCourseInfo);
+                    break;
+                case CourseState.InProgress:
+                _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
+                    break;
+                case CourseState.FinishedNotGraded:
+                _popupNavigationService.Navigate(ViewType.FinishedCourseInfo);
+                    break;
+            }
+        }
+
+        private void SelectCourse(object? obj)
+        {
+            if (selectedItem != null)
+            {
+
+                Name = selectedItem.Name;
+                LanguageName = selectedItem.Language.Name;
+                Level = selectedItem.Level;
+                Duration = selectedItem.Duration;
+                Schedule = selectedItem.Schedule;
+                ScheduleDays = new ObservableCollection<WorkDay>();
+                foreach (WorkDay workday in Schedule.Keys)
+                {
+                    ScheduleDays.Add(workday);
+                }
+                if (Schedule.ContainsKey(WorkDay.Monday))
+                {
+                    Monday = Schedule[WorkDay.Monday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Tuesday))
+                {
+                    Tuesday = Schedule[WorkDay.Tuesday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Wednesday))
+                {
+                    Wednesday = Schedule[WorkDay.Wednesday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Thursday))
+                {
+                    Thursday = Schedule[WorkDay.Thursday].Item1;
+                }
+                if (Schedule.ContainsKey(WorkDay.Friday))
+                {
+                    Friday = Schedule[WorkDay.Friday].Item1;
+                }
+                Start = selectedItem.Start;
+                Online = selectedItem.Online;
+                if (Online)
+                {
+                    MaxStudents = int.MaxValue;
+                    IsMaxStudentsDisabled = true;
+                }
+                else
+                {
+                    MaxStudents = selectedItem.MaxStudents;
+                    IsMaxStudentsDisabled = false;
+                }
+                NumStudents = selectedItem.NumStudents;
+                State = selectedItem.State;
+
+            }
         }
 
         private void ClearFilters(object? obj)
@@ -403,16 +402,12 @@ namespace LangLang.ViewModel
                 MaxStudents = 0;
             }
         }
-        private bool CanUpdateCourse(object? arg)
-        {
-            return SelectedItem != null;
-        }
         private void UpdateCourse(object? obj)
         {
             CreateSchedule();
             if(SelectedItem != null)
             {
-                Course? updatedCourse = courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+                Course? updatedCourse = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
                 if(updatedCourse == null)
                 {
                     MessageBox.Show("There was an error updating the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -425,7 +420,7 @@ namespace LangLang.ViewModel
                     Courses.Remove(SelectedItem);
 
                 }
-                courseService.UpdateCourse(updatedCourse);
+                _courseService.UpdateCourse(updatedCourse);
                 Courses.Add(updatedCourse);
                 RemoveInputs();
             }
@@ -435,47 +430,69 @@ namespace LangLang.ViewModel
             if(SelectedItem != null)
             {
                 string keyToDelete = SelectedItem.Id;
-                courseService.DeleteCourse(keyToDelete, loggedInUser);
+                _courseService.DeleteCourse(keyToDelete, _loggedInUser);
                 Courses.Remove(SelectedItem);
                 RemoveInputs();
             }
         }
-        private bool CanDeleteCourse(object? args)
-        {
-            return SelectedItem != null;
-        }
-        private bool CanSaveCourse(object? arg)
-        {
-            return true;
-        }
         private void SaveCourse(object? obj)
         {
             CreateSchedule();
-            Course? course = courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+            Course? course = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
 
             if (course == null)
             {
                 MessageBox.Show("There was an error saving the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            courseService.AddCourse(course, loggedInUser);
+            _courseService.AddCourse(course, _loggedInUser);
             Courses.Add(course);
             RemoveInputs();
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
 
+        }
+        private int GetClassroomNumber(TimeOnly? time)
+        {
+            if (Start != null && time != null)
+            {
+                var classrooms = _timetableService.GetAvailableClassrooms(DateOnly.FromDateTime((DateTime)Start), time.Value, Constants.ExamDuration, _loggedInUser);
+                if (classrooms.Count > 0)
+                {
+                    return classrooms[0];
+                }
+            }
+
+            return -1;
         }
         private void CreateSchedule()
         {
             Schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
             foreach(WorkDay workDay in ScheduleDays)
             {
-                // TODO: get the free classroom for now its set to the first classroom
-                Schedule[workDay] = new Tuple<TimeOnly, int>(Monday, 1);
+                if(workDay == WorkDay.Monday && Monday != null)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Monday, GetClassroomNumber(Monday));
+                }else if(workDay == WorkDay.Tuesday && Tuesday != null)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Tuesday, GetClassroomNumber(Tuesday));
+                }
+                else if (workDay == WorkDay.Wednesday && Wednesday != null)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Wednesday, GetClassroomNumber(Wednesday));
+                }
+                else if (workDay == WorkDay.Thursday && Thursday != null)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Thursday, GetClassroomNumber(Thursday));
+                }
+                else if (workDay == WorkDay.Friday && Friday != null)
+                {
+                    Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Friday, GetClassroomNumber(Friday));
+                }
             }
         }
         public void LoadCourses()
         {
-            var courses = courseService.GetCoursesByTutor(loggedInUser);
+            var courses = _courseService.GetCoursesByTutor(_loggedInUser);
             foreach(Course course in courses.Values){
                 Courses.Add(course);
             }
@@ -483,7 +500,7 @@ namespace LangLang.ViewModel
         }
         public void LoadLanguages()
         {
-            foreach(Tuple<Language,LanguageLvl> languageTuple in loggedInUser.KnownLanguages){
+            foreach(Tuple<Language,LanguageLvl> languageTuple in _loggedInUser.KnownLanguages){
                 Languages.Add(languageTuple.Item1.Name);
             }
             Languages.Add("");
@@ -491,10 +508,9 @@ namespace LangLang.ViewModel
         }
         public void LoadLanguageLevels(string language = "")
         {
-            Levels.Clear();
-            LanguageLevels.Clear();
             if(language == "")
             {
+                Levels.Clear();
                 foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
                 {
                     Levels.Add(lvl);
@@ -502,18 +518,23 @@ namespace LangLang.ViewModel
             }
             else
             {
-                foreach (Tuple<Language, LanguageLvl> languageTuple in loggedInUser.KnownLanguages)
+                LanguageLevels.Clear();
+                foreach (Tuple<Language, LanguageLvl> languageTuple in _loggedInUser.KnownLanguages)
                 {
                     if(languageTuple.Item1.Name == language)
                     {
-                        LanguageLevels.Add(languageTuple.Item2);
+                        foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
+                        {
+                            if (lvl > languageTuple.Item2) break;
+                            LanguageLevels.Add(lvl);
+                        }
                     }
                 }
             }
         }
         public void LoadCourseStates()
         {
-            foreach (CourseState state in Enum.GetValues(typeof(CourseState)))
+            foreach (Course.CourseState state in Enum.GetValues(typeof(Course.CourseState)))
             {
                 States.Add(state);
             }
@@ -527,13 +548,22 @@ namespace LangLang.ViewModel
         }
         public void LoadHours()
         {
-            // if (Duration == null) return;
-            // var availableLessonTimes = timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(DateTime.Parse(start)), Duration.Value, loggedInUser);
-            // MondayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Monday].Select(t => (TimeOnly?)t));
-            // TuesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Tuesday].Select(t => (TimeOnly?)t));
-            // WednesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Wednesday].Select(t => (TimeOnly?)t));
-            // ThursdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Thursday].Select(t => (TimeOnly?)t));
-            // FridayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Friday].Select(t => (TimeOnly?)t));
+            if (Duration == null) return;
+            if(start == null)
+            {
+                return;
+            }
+            var availableLessonTimes = _timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(start.Value), Duration.Value, _loggedInUser);
+            MondayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Monday].Select(t => (TimeOnly?)t));
+            MondayHours.Insert(0, null);
+            TuesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Tuesday].Select(t => (TimeOnly?)t));
+            TuesdayHours.Insert(0, null);
+            WednesdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Wednesday].Select(t => (TimeOnly?)t));
+            WednesdayHours.Insert(0, null);
+            ThursdayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Thursday].Select(t => (TimeOnly?)t));
+            ThursdayHours.Insert(0, null);
+            FridayHours = new ObservableCollection<TimeOnly?>(availableLessonTimes[WorkDay.Friday].Select(t => (TimeOnly?)t));
+            FridayHours.Insert(0, null);
         }
         public void RemoveInputs()
         {
@@ -546,20 +576,20 @@ namespace LangLang.ViewModel
             selectedItem = null;
             MaxStudents = 0;
             NumStudents = 0;
-            State = CourseState.Active;
-            Start = DateTime.Now.ToShortDateString();
+            State = Course.CourseState.InProgress;
+            Start = DateTime.Now;
 
 
         }
         public void FilterCourses()
         {
             Courses.Clear();
-            var courses = courseService.GetCoursesByTutor(loggedInUser);
+            var courses = _courseService.GetCoursesByTutor(_loggedInUser);
             foreach (Course course in courses.Values)
             {
                 if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
                 {
-                    if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter).ToShortDateString()))
+                    if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter)))
                     {
                         if(course.Online == OnlineFilter || OnlineFilter == null)
                         { 

@@ -75,7 +75,7 @@ namespace LangLang.Util
                     throw new JsonException();
                 }
 
-                return TimeOnly.Parse(reader.GetString());
+                return TimeOnly.Parse(reader.GetString()!);
             }
 
             public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
@@ -93,17 +93,13 @@ namespace LangLang.Util
                     throw new JsonException("Expected string value.");
                 }
 
-                if (!DateTime.TryParse(reader.GetString(), out DateTime result))
-                {
-                    throw new JsonException("Invalid date format.");
-                }
-
-                return result;
+                Int64 milliseconds = Int64.Parse(reader.GetString() ?? throw new JsonException("Invalid date time format."));
+                return  DateTimeMillisecondsConverter.ToDateTime(milliseconds);
             }
 
             public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
             {
-                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+                writer.WriteStringValue(DateTimeMillisecondsConverter.ToMilliseconds(value).ToString());
             }
         }
     }

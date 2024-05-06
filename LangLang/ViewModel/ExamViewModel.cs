@@ -6,17 +6,23 @@ using System.Windows;
 using Consts;
 using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
+using LangLang.Services.ExamServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Services.UtilityServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel;
 
-internal class ExamViewModel : ViewModelBase
+public class ExamViewModel : ViewModelBase
 {
-    private Tutor tutor;
+    private readonly Tutor _tutor;
     
-    private ExamService examService;
-    private TimetableService timetableService;
-    
+    private readonly IExamService _examService;
+    private readonly ITimetableService _timetableService;
+    private readonly IPopupNavigationService _popupNavigationService;
+    private readonly CurrentExamStore _currentExamStore;
+    public RelayCommand OpenExamInfoCommand { get; }
     public RelayCommand AddCommand { get; set; }
     public RelayCommand SelectedExamChangedCommand { get; set; }
     public RelayCommand UpdateCommand { get; set; }
@@ -26,6 +32,7 @@ internal class ExamViewModel : ViewModelBase
     private ObservableCollection<Exam> exams;
     private ObservableCollection<Language> languages;
     private ObservableCollection<LanguageLvl> languageLevels;
+    private ObservableCollection<LanguageLvl> filterLanguageLevels;
     private ObservableCollection<TimeOnly> availableTimes;
     
     private Exam? selectedExam;
@@ -58,6 +65,11 @@ internal class ExamViewModel : ViewModelBase
     {
         get => languageLevels;
         set => SetField(ref languageLevels, value);
+    }
+    public ObservableCollection<LanguageLvl> FilterLanguageLevels
+    {
+        get => filterLanguageLevels;
+        set => SetField(ref filterLanguageLevels, value);
     }
     public ObservableCollection<TimeOnly> AvailableTimes
     {
@@ -102,7 +114,7 @@ internal class ExamViewModel : ViewModelBase
                 AvailableTimes = new ObservableCollection<TimeOnly>();
                 return;
             }
-            var times = timetableService.GetAvailableExamTimes(DateOnly.FromDateTime(examDate.Value), tutor);
+            var times = _timetableService.GetAvailableExamTimes(DateOnly.FromDateTime(examDate.Value), _tutor);
             AvailableTimes = new ObservableCollection<TimeOnly>(times);
         }
     }
@@ -154,27 +166,31 @@ internal class ExamViewModel : ViewModelBase
         }
     }
     
-    public ExamViewModel(Tutor tutor, ExamService examService, TimetableService timetableService)
+    public ExamViewModel(IAuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService, CurrentExamStore currentExamStore, IPopupNavigationService popupNavigationService)
     {
-        this.tutor = tutor;
-        this.examService = examService;
-        this.timetableService = timetableService;
-        
+        _tutor = (Tutor?)authenticationStore.CurrentUser.Person ??
+                                throw new InvalidOperationException(
+                                    "Cannot create ExamViewModel without currently logged in tutor");
+        _examService = examService;
+        _timetableService = timetableService;
+        _currentExamStore = currentExamStore;
+        _popupNavigationService = popupNavigationService;
+
         exams = new ObservableCollection<Exam>(LoadExams());
-        languages = new ObservableCollection<Language>(tutor.KnownLanguages.Select(tuple => tuple.Item1));
+        languages = new ObservableCollection<Language>(_tutor.KnownLanguages.Select(tuple => tuple.Item1));
         languageLevels = new ObservableCollection<LanguageLvl>();
+        filterLanguageLevels = new ObservableCollection<LanguageLvl>(Enum.GetValues<LanguageLvl>());
         
         languageToLvl = new Dictionary<Language, List<LanguageLvl>>();
-        foreach (var knownLanguage in tutor.KnownLanguages)
+        foreach (var knownLanguage in _tutor.KnownLanguages)
         {
-            if (!languageToLvl.ContainsKey(knownLanguage.Item1))
+            var levels = new List<LanguageLvl>();
+            foreach (LanguageLvl lvl in Enum.GetValues(typeof(LanguageLvl)))
             {
-                languageToLvl.Add(knownLanguage.Item1, new List<LanguageLvl>{knownLanguage.Item2});
+                if (lvl > knownLanguage.Item2) break;
+                levels.Add(lvl);
             }
-            else
-            {
-                languageToLvl[knownLanguage.Item1].Add(knownLanguage.Item2);
-            }
+            languageToLvl.Add(knownLanguage.Item1, levels);
         }
         
         availableTimes = new ObservableCollection<TimeOnly>();
@@ -184,6 +200,7 @@ internal class ExamViewModel : ViewModelBase
         UpdateCommand = new RelayCommand(execute => UpdateExam(), execute => CanUpdateExam());
         DeleteCommand = new RelayCommand(execute => DeleteExam(), execute => CanDeleteExam());
         ClearFiltersCommand = new RelayCommand(execute => ClearFilters(), execute => CanClearFilters());
+        OpenExamInfoCommand = new RelayCommand(OpenExamInfo, canExecute => SelectedExam != null);
     }
 
     private int GetClassroomNumber()
@@ -191,7 +208,7 @@ internal class ExamViewModel : ViewModelBase
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
         if (selectedDate != null && ExamTime != null)
         {
-            var classrooms = timetableService.GetAvailableClassrooms(selectedDate.Value, ExamTime.Value, Constants.ExamDuration, tutor);
+            var classrooms = _timetableService.GetAvailableClassrooms(selectedDate.Value, ExamTime.Value, Constants.ExamDuration, _tutor);
             if (classrooms.Count > 0)
             {
                 return classrooms[0];
@@ -207,7 +224,7 @@ internal class ExamViewModel : ViewModelBase
         int classroomNumber = GetClassroomNumber();
         try
         {
-            Exam exam = examService.AddExam(tutor, Language, LanguageLvl, selectedDate, ExamTime, classroomNumber, MaxStudents);
+            Exam exam = _examService.AddExam(_tutor, Language, LanguageLvl, selectedDate, ExamTime, classroomNumber, MaxStudents);
             Exams.Add(exam);
             ResetFields();
         }
@@ -248,7 +265,7 @@ internal class ExamViewModel : ViewModelBase
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
         try
         {
-            Exam exam = examService.UpdateExam(selectedExam!.Id, Language, LanguageLvl, selectedDate, ExamTime, selectedExam!.ClassroomNumber, MaxStudents);
+            Exam exam = _examService.UpdateExam(selectedExam!.Id, Language, LanguageLvl, selectedDate, ExamTime, selectedExam!.ClassroomNumber, MaxStudents);
             Exams[Exams.IndexOf(SelectedExam!)] = exam;
             ResetFields();
         }
@@ -267,7 +284,7 @@ internal class ExamViewModel : ViewModelBase
     {
         try
         {
-            examService.DeleteExam(selectedExam!.Id);
+            _examService.DeleteExam(selectedExam!.Id);
             Exams.Remove(SelectedExam!);
         }
         catch (ArgumentException e)
@@ -284,12 +301,12 @@ internal class ExamViewModel : ViewModelBase
     private void FilterExams()
     {
         DateOnly? filterDateOnly = FilterDate != null ? DateOnly.FromDateTime(FilterDate!.Value) : null;
-        Exams = new ObservableCollection<Exam>(examService.FilterExams(LoadExams(), FilterLanguage, FilterLanguageLvl, filterDateOnly));
+        Exams = new ObservableCollection<Exam>(_examService.FilterExams(LoadExams(), FilterLanguage, FilterLanguageLvl, filterDateOnly));
     }
     
     private List<Exam> LoadExams()
     {
-        return examService.GetExamsByTutor(tutor.Email);
+        return _examService.GetExamsByTutor(_tutor.Id);
     }
     
     private void ClearFilters()
@@ -302,5 +319,22 @@ internal class ExamViewModel : ViewModelBase
     private bool CanClearFilters()
     {
         return FilterLanguage != null || FilterLanguageLvl != null || FilterDate != null;
+    }
+
+    private void OpenExamInfo(object? obj)
+    {
+        _currentExamStore.CurrentExam = SelectedExam;
+        switch (SelectedExam?.ExamState)
+        {
+            case Exam.State.NotStarted:
+                _popupNavigationService.Navigate(ViewType.UpcomingExamInfo);
+                break;
+            case Exam.State.InProgress:
+                _popupNavigationService.Navigate(ViewType.ActiveExamInfo);
+                break;
+            case Exam.State.Finished:
+                _popupNavigationService.Navigate(ViewType.FinishedExamInfo);
+                break;
+        }
     }
 }

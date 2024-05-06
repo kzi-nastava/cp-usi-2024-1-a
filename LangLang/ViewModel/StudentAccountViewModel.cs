@@ -1,192 +1,136 @@
 ﻿using Consts;
-using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
-using LangLang.View;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using LangLang.Model;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.UserServices;
+using LangLang.Stores;
+using LangLang.Services.UtilityServices;
 
 namespace LangLang.ViewModel
 {
-    internal class StudentAccountViewModel : ViewModelBase
+    public class StudentAccountViewModel : ViewModelBase, INavigableDataContext
     {
-        private StudentService studentService = StudentService.GetInstance();
-
-        private string _email;
-        private string _password;
-        private string _name;
-        private string _surname;
-        private string _phoneNumber;
+        private readonly IAccountService _accountService;
+        private readonly IAuthenticationStore _authenticationStore;
+        public NavigationStore NavigationStore { get; }
+        
+        private string? _email;
+        private string? _password;
+        private string? _name;
+        private string? _surname;
+        private string? _phoneNumber;
         private Gender _gender;
         private DateTime _birthday;
 
-        private string _errorMessageRequired;
-        private string _errorMessagePassword;
-        private string _errorMessageName;
-        private string _errorMessageSurname;
-        private string _errorMessagePhone;
+        private string? _errorMessageRequired;
+        private string? _errorMessagePassword;
+        private string? _errorMessageName;
+        private string? _errorMessageSurname;
+        private string? _errorMessagePhone;
 
+        private readonly IUserValidator _userValidator;
 
-        private readonly Window _window;
-
-
-        public StudentAccountViewModel()
+        private Student user = null!;
+        
+        public StudentAccountViewModel(IAccountService accountService,IUserValidator userValidator, IAuthenticationStore authenticationStore, NavigationStore navigationStore)
         {
-            ConfirmCommand = new RelayCommand(ConfirmInput);
-        }
-
-
-        private StudentAccountWindow _accountWindow;
-
-        public StudentAccountViewModel(StudentAccountWindow accountWindow)
-        {
-            _accountWindow = accountWindow;
-            ConfirmCommand = new RelayCommand(ConfirmInput);
+            _accountService = accountService;
+            _userValidator = userValidator;
+            _authenticationStore = authenticationStore;
+            NavigationStore = navigationStore;
+            ConfirmCommand = new RelayCommand(ConfirmInput!);
             SetUserData();
         }
 
-
         private void SetUserData()
         {
-            Student user = studentService.LoggedUser;
-            Email = user.Email;
+            Profile profile = _authenticationStore.CurrentUserProfile ?? 
+                              throw new InvalidOperationException("Cannot set user data without currently logged in user");
+            user = (Student?)_authenticationStore.CurrentUser.Person ??
+                        throw new InvalidOperationException("Cannot set user data without currently logged in user");
+            Email = profile.Email;
             Name = user.Name;
             Surname = user.Surname;
             PhoneNumber = user.PhoneNumber;
             Gender = user.Gender;
             Birthday = user.BirthDate;
-            Password = user.Password; // Assuming you don't want to display the password
+            Password = profile.Password; 
         }
 
         public string ErrorMessageRequired
         {
-            get => _errorMessageRequired;
-            set
-            {
-                _errorMessageRequired = value;
-                OnPropertyChanged(nameof(ErrorMessageRequired));
-            }
+            get => _errorMessageRequired!;
+            set => SetField(ref _errorMessageRequired, value);
         }
-
 
         public string ErrorMessagePassword
         {
-            get => _errorMessagePassword;
-            set
-            {
-                _errorMessagePassword = value;
-                OnPropertyChanged(nameof(ErrorMessagePassword));
-            }
+            get => _errorMessagePassword!;
+            set => SetField(ref _errorMessagePassword, value);
         }
 
         public string ErrorMessageName
         {
-            get => _errorMessageName;
-            set
-            {
-                _errorMessageName = value;
-                OnPropertyChanged(nameof(ErrorMessageName));
-            }
+            get => _errorMessageName!;
+            set => SetField(ref _errorMessageName, value);
         }
 
         public string ErrorMessageSurname
         {
-            get => _errorMessageSurname;
-            set
-            {
-                _errorMessageSurname = value;
-                OnPropertyChanged(nameof(ErrorMessageSurname));
-            }
+            get => _errorMessageSurname!;
+            set => SetField(ref _errorMessageSurname, value);
         }
 
         public string ErrorMessagePhone
         {
-            get => _errorMessagePhone;
-            set
-            {
-                _errorMessagePhone = value;
-                OnPropertyChanged(nameof(ErrorMessagePhone));
-            }
+            get => _errorMessagePhone!;
+            set => SetField(ref _errorMessagePhone, value);
         }
-
 
         public string Email
         {
-            get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged(nameof(Email));
-            }
+            get => _email!;
+            set => SetField(ref _email, value);
         }
 
         public string Password
         {
-            get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged(nameof(Password));
-            }
+            get => _password!;
+            set => SetField(ref _password, value);
         }
 
         public string Name
         {
-            get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged(nameof(Name));
-            }
+            get => _name!;
+            set => SetField(ref _name, value);
         }
 
         public string Surname
         {
-            get => _surname;
-            set
-            {
-                _surname = value;
-                OnPropertyChanged(nameof(Surname));
-            }
+            get => _surname!;
+            set => SetField(ref _surname, value);
         }
 
         public string PhoneNumber
         {
-            get => _phoneNumber;
-            set
-            {
-                _phoneNumber = value;
-                OnPropertyChanged(nameof(PhoneNumber));
-            }
+            get => _phoneNumber!;
+            set => SetField(ref _phoneNumber, value);
         }
-
         public Gender Gender
         {
             get => _gender;
-            set
-            {
-                _gender = value;
-                OnPropertyChanged(nameof(Gender));
-            }
+            set => SetField(ref _gender, value);
         }
         public string BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
         public DateTime Birthday
         {
             get => _birthday;
-            set
-            {
-                _birthday = value;
-                OnPropertyChanged(nameof(Birthday));
-            }
+            set => SetField(ref _birthday, value);
         }
-
-
 
         public ICommand ConfirmCommand { get; }
 
@@ -207,50 +151,32 @@ namespace LangLang.ViewModel
             Gender gender = Gender;
             DateTime birthday = Birthday;
 
-            bool successful = RegisterService.CheckUserData(studentService.LoggedUser.Email, password, name, surname, phoneNumber);
+            ValidationError error = _userValidator.CheckUserData(email, password, name, surname, phoneNumber, birthday);
 
-            if (successful)
+            if (error == ValidationError.None)
             {
-                bool canEdit = studentService.UpdateStudent(password, name, surname,birthday, gender, phoneNumber);
-                if (canEdit)
+                try
                 {
+                    _accountService.UpdateStudent(user.Id, password, name, surname, birthday, gender, phoneNumber);
                     MessageBox.Show($"Succesfull update");
                 }
-                else
-                {
+                catch {
                     ErrorMessageRequired = "Student applied for courses, editing profile not allowed";
                     return;
                 }
-
             }
             else {
-                if (birthday == DateTime.MinValue || password == null || name == null || surname == null || phoneNumber == null || name == "" || surname == "" || password == "" || phoneNumber == "")
+                if (error.HasFlag(ValidationError.FieldsEmpty)) 
                 {
-                    ErrorMessageRequired = "All the fields are required";
+                    ErrorMessageRequired = ValidationError.FieldsEmpty.GetMessage();
                     return;
                 }
 
-                if (int.TryParse(name, out _))
-                {
-                    ErrorMessageName = "Name must be all letters";
-                }
-
-                if (int.TryParse(surname, out _))
-                {
-                    ErrorMessageSurname = "Surname must be all letters";
-                }
-
-                if (!int.TryParse(phoneNumber, out _))
-                {
-                    ErrorMessagePhone = "Must be made up of numbers";
-                }
-                if (password.Length < 8 || !password.Any(char.IsDigit) || !password.Any(char.IsUpper))
-                {
-                    ErrorMessagePassword = "At least 8 chars, uppercase and number ";
-                }
-
+                ErrorMessageName     = error.GetMessageIfFlag(ValidationError.NameInvalid);
+                ErrorMessageSurname  = error.GetMessageIfFlag(ValidationError.SurnameInvalid);
+                ErrorMessagePhone    = error.GetMessageIfFlag(ValidationError.PhoneInvalid);
+                ErrorMessagePassword = error.GetMessageIfFlag(ValidationError.PasswordInvalid);
             }
-
         }
     }
 }

@@ -15,12 +15,16 @@ namespace LangLang.Model
         public LanguageLvl Level { get; set; }
         public int Duration { get; set; }
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
-        public string Start { get; set; }
+        public DateTime Start { get; set; }
         public bool Online { get; set; }
         public int MaxStudents { get; set; }
         public int NumStudents { get; set; }
+        public enum CourseState
+        {
+            NotStarted, Locked, Canceled, InProgress, FinishedNotGraded, FinishedGraded
+        }
+
         public CourseState State { get; set; }
-        public int NumPenaltyPts { get; set; }
         public int NumStudentsPassed { get; set; }
         public double ReadingAvgScore { get; set; }
         public double WritingAvgScore { get; set; }
@@ -36,13 +40,12 @@ namespace LangLang.Model
             Level = LanguageLvl.A1;
             Duration = 0;
             Schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
-            Start = DateTime.Now.ToString("yyyy-MM-dd");
+            Start = DateTime.Now;
             Online = false;
             MaxStudents = 0;
             NumStudents = 0;
             State = CourseState.Canceled;
             //set default values for attributes for reports
-            NumPenaltyPts = 0;
             NumStudentsPassed = 0;
             ReadingAvgScore = 0;
             WritingAvgScore = 0;
@@ -57,13 +60,12 @@ namespace LangLang.Model
             Level = level;
             Duration = duration;
             Schedule = schedule;
-            Start = start.ToString("yyyy-MM-dd");
+            Start = start;
             Online = online;
             MaxStudents = maxStudents;
             NumStudents = numStudents;
             State = state;
             //set default values for attributes for reports
-            NumPenaltyPts = 0;
             NumStudentsPassed = 0;
             ReadingAvgScore = 0;
             WritingAvgScore = 0;
@@ -79,13 +81,12 @@ namespace LangLang.Model
             Level = level;
             Duration = duration;
             Schedule = schedule;
-            Start = start.ToString("yyyy-MM-dd");
+            Start = start;
             Online = online;
             MaxStudents = maxStudents;
             NumStudents = numStudents;
             State = state;
             //set default values for attributes for reports
-            NumPenaltyPts = 0;
             NumStudentsPassed = 0;
             ReadingAvgScore = 0;
             WritingAvgScore = 0;
@@ -106,6 +107,15 @@ namespace LangLang.Model
         public bool IsFull()
         {
             return NumStudents == MaxStudents;
+        }
+
+        public bool CanBeModified()
+        {
+            if (State == CourseState.NotStarted)
+            {
+                return true;
+            }
+            return false;
         }
 
 

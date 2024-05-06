@@ -4,92 +4,146 @@ using LangLang.ViewModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Controls;
+using LangLang.Services.AuthenticationServices;
+using System.Windows.Media;
+using LangLang.MVVM;
+using LangLang.View.Factories;
 
 namespace LangLang.View
 {
-    public partial class TutorTableWindow : Window
+    public partial class TutorTableWindow : NavigableWindow
     {
-        public TutorTableWindow()
+        private bool deletingRow = false;
+        public TutorTableWindow(TutorTableViewModel tutorTableViewModel, ILangLangWindowFactory windowFactory)
+        : base(tutorTableViewModel, windowFactory)
         {
             InitializeComponent();
-            ItemsControl? knownLanguagesHolder = FindName("knownLanguagesHolder") as ItemsControl;
-            if (knownLanguagesHolder == null)
-                throw new Exception("Known languages holder ItemsControl not found");
-            DataContext = new TutorTableViewModel(this, knownLanguagesHolder!);
+            DataContext = tutorTableViewModel;
+            tutorTableViewModel.Window = this;
             dpBirthDate.DisplayDateStart = new DateTime(1924, 1, 1);
             dpBirthDate.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
         }
-        public void cbLanguages_SelectionChanged(object sender, SelectionChangedEventArgs e) 
+        public void LanguageSelectionChanged(object sender, SelectionChangedEventArgs e) 
         {
-            var viewModel = DataContext as TutorTableViewModel;
-            if (viewModel == null)
+            if (DataContext is not TutorTableViewModel viewModel) // unable to parse DataContext
                 return;
-            if (viewModel.selectingTutor)
+            if (viewModel.selectingTutor)            // event called from changing tutor selection, ignore call
                 return;
-            if (sender == null)
+            if (deletingRow)                         // event called from deleting language row, ignore call
                 return;
-            if (viewModel.KnownLanguages == null || viewModel.KnownLanguages.Count == 0)
+            if (sender == null)                      // sender parameter not sent correctly
                 return;
-            if (e.AddedItems[0] == null)
+            if (viewModel.KnownLanguages.Count == 0) // event called while initializing window, ignore call
+                return;
+            if (e.AddedItems.Count == 0 || e.AddedItems[0] == null) // if selection is canceled or invalid
                 return;
             if (sender is not ComboBox || (sender as ComboBox)!.Parent == null)
                 return;
-            viewModel.changedLanguages = true;
 
             Grid row = ((sender as ComboBox)!.Parent as Grid)!;
             ItemsControl parent = (row.Parent as ItemsControl)!;
-
             int index = parent.Items.IndexOf(row);
-            viewModel.KnownLanguages[index] = new ((e.AddedItems[0] as string)!, viewModel.KnownLanguages[index].Item2);
+            string languageName = (string)e.AddedItems[0]!;
+
+            viewModel.ChangeLanguageCommand.Execute(Tuple.Create(index, languageName));
         }
 
-        public void cbLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void LevelSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var viewModel = DataContext as TutorTableViewModel;
-            if (viewModel == null)
+            if (DataContext is not TutorTableViewModel viewModel) // unable to parse DataContext
                 return;
-            if (viewModel.selectingTutor)
+            if (viewModel.selectingTutor)            // event called from changing tutor selection, ignore call
                 return;
-            if (sender == null)
+            if (deletingRow)                         // event called from deleting language row, ignore call
                 return;
-            if (viewModel.KnownLanguages == null || viewModel.KnownLanguages.Count == 0)
+            if (sender == null)                      // sender parameter not sent correctly
                 return;
-            if (e.AddedItems[0] == null)
+            if (viewModel.KnownLanguages.Count == 0) // event called while initializing window, ignore call
+                return;
+            if (e.AddedItems.Count == 0 || e.AddedItems[0] == null) // if selection is canceled or invalid
                 return;
             if (sender is not ComboBox || (sender as ComboBox)!.Parent == null)
                 return;
-            viewModel.changedLanguages = true;
 
             Grid row = ((sender as ComboBox)!.Parent as Grid)!;
             ItemsControl parent = (row.Parent as ItemsControl)!;
-
             int index = parent.Items.IndexOf(row);
-            viewModel.KnownLanguages[index] = new(viewModel.KnownLanguages[index].Item1, (LanguageLvl)e.AddedItems[0]!);
+            LanguageLvl level = (LanguageLvl)e.AddedItems[0]!;
+
+            viewModel.ChangeLevelCommand.Execute(Tuple.Create(index, level));
         }
 
-        private void dgTutors_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void DeleteKnownLanguageClicked(object sender, RoutedEventArgs e)
         {
-            var viewModel = DataContext as TutorTableViewModel;
-            if(viewModel != null)
-            {
-            }
-        }
-
-        public void DeleteKnownLanguage_Click(object sender, RoutedEventArgs e)
-        {
-            var viewModel = DataContext as TutorTableViewModel;
-            if (viewModel == null)
+            if (DataContext is not TutorTableViewModel viewModel)
                 return;
             if (sender == null)
                 return;
-            viewModel.changedLanguages = true;
+            deletingRow = true;
             Grid row = ((sender as Button)!.Parent as Grid)!;
             ItemsControl parent = (row.Parent as ItemsControl)!;
             int index = parent.Items.IndexOf(row);
             parent.Items.Remove(row);
-            viewModel.KnownLanguages.RemoveAt(index);
+            viewModel.DeleteKnownLanguageCommand.Execute(index);
+            deletingRow = false;
         }
+
+        public void AddKnownLanguage(int languageIndex, int levelIndex, ObservableCollection<string?> languages, ObservableCollection<LanguageLvl> levels)
+        {
+            int index = knownLanguagesHolder.Items.Count - 1;
+            
+            Grid newRow = new();
+            newRow.ColumnDefinitions.Add(new ColumnDefinition());
+            newRow.ColumnDefinitions.Add(new ColumnDefinition());
+            newRow.ColumnDefinitions.Add(new ColumnDefinition());
+            newRow.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
+            newRow.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+            newRow.ColumnDefinitions[2].Width = new GridLength(20);
+
+            ComboBox languagesCB = new()
+            {
+                Margin = new Thickness(0),
+                Name = $"cbLanguages{index}",
+                ItemsSource = languages,
+                SelectedIndex = languageIndex
+            };
+            languagesCB.SetValue(Grid.ColumnProperty, 0);
+            languagesCB.SelectionChanged += LanguageSelectionChanged;
+            
+            ComboBox levelsCB = new()
+            {
+                Margin = new Thickness(5, 0, 0, 0),
+                Name = $"cbLevels{index}",
+                ItemsSource = levels,
+                SelectedIndex = levelIndex
+            };
+            levelsCB.SetValue(Grid.ColumnProperty, 1);
+            levelsCB.SelectionChanged += LevelSelectionChanged;
+            
+            Button deleteB = new()
+            {
+                Margin = new Thickness(3, 0, 0, 3),
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                FontSize = 10,
+                Content = "╳"
+            };
+            deleteB.SetValue(Grid.ColumnProperty, 2);
+            deleteB.Click += DeleteKnownLanguageClicked;
+
+            newRow.Children.Add(languagesCB);
+            newRow.Children.Add(levelsCB);
+            newRow.Children.Add(deleteB);
+            knownLanguagesHolder.Items.Insert(index, newRow);
+        }
+
+        public void RemoveKnownLanguages()
+        {
+            while (knownLanguagesHolder.Items.Count > 1)
+                knownLanguagesHolder.Items.RemoveAt(0); // remove everything except + button
+        }    
     }
 }

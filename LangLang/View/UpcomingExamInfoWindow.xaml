@@ -1,0 +1,144 @@
+﻿<mvvm:NavigableWindow  xmlns:mvvm="clr-namespace:LangLang.MVVM" x:Class="LangLang.View.UpcomingExamInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LangLang.View"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Upcoming exam" Height="450" Width="550">
+        <mvvm:NavigableWindow.Resources>
+            <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
+            <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
+            <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
+            <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
+            <SolidColorBrush x:Key="GreenBtnColor" Color="Green" />
+        </mvvm:NavigableWindow.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="307"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Vertical">
+            
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,-5" Grid.ColumnSpan="2">
+                <Label Content="Exam overview" FontWeight="Medium" FontSize="18"/>
+            </StackPanel>
+            <Label Content="Students:" FontWeight="Medium" FontSize="14"/>
+        </StackPanel>
+
+        <Grid Grid.Column="0" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <DataGrid 
+                x:Name="studentDataGrid"
+                Grid.Row="0"
+                IsReadOnly="True"
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding Students}"
+                SelectedItem="{Binding SelectedStudent}"
+                CanUserDeleteRows="False" LoadingRow="studentDataGrid_LoadingRow" SelectionChanged="studentDataGrid_SelectionChanged"
+    >
+                <DataGrid.Columns >
+                    <DataGridTextColumn  Header="Name" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        
+        
+        
+        <StackPanel Grid.Column="1" Grid.Row="1" Margin="10,0,0,0">
+            <Label Content="Details" FontSize="16" FontWeight="Medium"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Email:"/>
+                <Label Content="{Binding Email}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Name:"/>
+                <Label Content="{Binding Name}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Surname:"/>
+                <Label Content="{Binding Surname}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Penalty points:"/>
+                <Label Content="{Binding PenaltyPts}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,20,0,0">
+                <Button Content="Add"
+                        FontSize="12"
+                        Foreground="White"
+                        Background="{StaticResource GreenBtnColor}"
+                        Height="25"
+                        Width="80"
+                        BorderThickness="0"
+                        Margin="2"
+                        Command="{Binding AddStudentCommand}"
+                        >
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Content="Remove"
+        FontSize="12"
+        Foreground="White"
+        Background="{StaticResource RedBtnColor}"
+        Height="25"
+        Width="80"
+        BorderThickness="0"
+        Margin="20,2,2,2"
+        Command="{Binding RemoveStudentCommand}"
+        >
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+            <Label Content="Message:"/>
+            <Border CornerRadius="15" Background="LightGray">
+                <TextBox Text="{Binding Message}" TextWrapping="Wrap" MinHeight="80" VerticalScrollBarVisibility="Auto" 
+                         Background="Transparent" BorderThickness="0" Padding="10" MaxLength="55"/>
+            </Border>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,20,0,0">
+                <Button Content="Confirm list"
+                        FontSize="12"
+                        Foreground="White"
+                        Background="{StaticResource BlueBtnColor}"
+                        Height="25"
+                        Width="80"
+                        BorderThickness="0"
+                        Margin="2"
+                        Command="{Binding ConfirmListCommand}"
+                        >
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+
+
+        </StackPanel>
+
+
+    </Grid> 
+</mvvm:NavigableWindow>

@@ -1,10 +1,14 @@
-﻿using LangLang.Model;
+﻿using System;
+using LangLang.Model;
 using LangLang.MVVM;
-using LangLang.Services;
+using LangLang.Services.AuthenticationServices;
+using LangLang.Services.NavigationServices;
+using LangLang.Stores;
+using LangLang.ViewModel.Factories;
 
 namespace LangLang.ViewModel
 {
-    internal class TutorViewModel : ViewModelBase
+    public class TutorViewModel : ViewModelBase, INavigableDataContext
     {
         private Tutor loggedInUser;
         
@@ -12,45 +16,59 @@ namespace LangLang.ViewModel
 
         private ExamViewModel? examViewModel;
         private CourseViewModel? courseViewModel;
+        private LoginViewModel? loginViewModel;
 
-        private LanguageService? languageService;
+        private ILoginService _loginService;
+        private INavigationService _navigationService;
+        private IPopupNavigationService _popupNavigationService;
+
+        private ILangLangViewModelFactory _viewModelFactory;
+        
+        public NavigationStore NavigationStore { get; }
+        
         private string tutorName = "";
         public string TutorName
         {
-            get { return tutorName; }
+            get => tutorName;
             set
             {
                 tutorName = value;
                 OnPropertyChanged();
             }
         }
-        public LanguageService LanguageService => languageService ??= new LanguageService();
-        
-        private TimetableService? timetableService;
-        public TimetableService TimetableService => timetableService ??= new TimetableService();
 
-        public ExamViewModel ExamViewModel
+        private ExamViewModel ExamViewModel
         {
             get
             {
                 if (examViewModel == null)
                 {
-                    ExamService examService = new ExamService();
-                    examViewModel = new ExamViewModel(loggedInUser, examService, TimetableService);
+                    examViewModel = (ExamViewModel)_viewModelFactory.CreateViewModel(ViewType.Exam);
                 }
         
                 return examViewModel;
             }
         }
-        
-        public CourseViewModel CourseViewModel
+        private LoginViewModel LoginViewModel
+        {
+            get
+            {
+                if (loginViewModel == null)
+                {
+                    loginViewModel = (LoginViewModel)_viewModelFactory.CreateViewModel(ViewType.Login);
+                }
+
+                return loginViewModel;
+            }
+        }
+
+        private CourseViewModel CourseViewModel
         {
             get
             {
                 if (courseViewModel == null)
                 {
-                    CourseService courseService = new CourseService();
-                    courseViewModel = new CourseViewModel(loggedInUser,courseService, LanguageService, TimetableService);
+                    courseViewModel = (CourseViewModel)_viewModelFactory.CreateViewModel(ViewType.Course);
                 }
         
                 return courseViewModel;
@@ -63,13 +81,34 @@ namespace LangLang.ViewModel
             private set => SetField(ref currentViewModel, value);
         }
         public RelayCommand NavCommand { get; set; }
+        public RelayCommand NotificationsCommand { get; }
+        public RelayCommand LogoutCommand { get; set; }
 
-        public TutorViewModel(Tutor loggedInUser)
+        public TutorViewModel(
+            IAuthenticationStore authenticationStore, ILoginService loginService,
+            INavigationService navigationService, IPopupNavigationService popupNavigationService,
+            NavigationStore navigationStore, ILangLangViewModelFactory viewModelFactory
+            )
         {
-            this.loggedInUser = loggedInUser;
+            _loginService = loginService;
+            _navigationService = navigationService;
+            _popupNavigationService = popupNavigationService;
+            NavigationStore = navigationStore;
+            _viewModelFactory = viewModelFactory;
+            loggedInUser = (Tutor?)authenticationStore.CurrentUser.Person ??
+                                throw new InvalidOperationException(
+                                    "Cannot create TutorViewModel without currently logged in tutor");
             currentViewModel = CourseViewModel; // TODO: change to ProfileViewModel
             NavCommand = new RelayCommand(execute => OnNav(execute as string));
+            NotificationsCommand = new RelayCommand(_ => OpenNotificationWindow());
+            LogoutCommand = new RelayCommand(execute => Logout());
             TutorName = loggedInUser.Name;
+        }
+
+        private void Logout()
+        {
+            _loginService.LogOut();
+            _navigationService.Navigate(ViewType.Login);
         }
 
         private void OnNav(string? destination)
@@ -80,6 +119,11 @@ namespace LangLang.ViewModel
                 "exams" => ExamViewModel,
                 _ => CurrentViewModel
             };
+        }
+        
+        private void OpenNotificationWindow()
+        {
+            _popupNavigationService.Navigate(ViewType.Notifications);
         }
     }
 }
