@@ -11,6 +11,7 @@ namespace LangLang.Model
         public int CourseAttendanceId { get; set; }
         public int NotificationId { get; set; }
         public int ExamApplicationId { get; set; }
+        public int ExamAttendanceId { get; set; }
         public int DropRequestId { get; set; }
 
         public LastId()
@@ -24,9 +25,10 @@ namespace LangLang.Model
             NotificationId = 0;
             DropRequestId = 0;
             ExamApplicationId = 0;
+            ExamAttendanceId = 0;
         }
 
-        public LastId(int courseId, int examId, int studentId, int tutorId, int courseApplicationId, int courseAttendanceId, int notificationId, int dropRequestId, int examApplicationId)
+        public LastId(int courseId, int examId, int studentId, int tutorId, int courseApplicationId, int courseAttendanceId, int notificationId, int dropRequestId, int examApplicationId, int examAttendanceId)
         {
             CourseId = courseId;
             ExamId = examId;
@@ -37,6 +39,7 @@ namespace LangLang.Model
             NotificationId = notificationId;
             DropRequestId = dropRequestId;
             ExamApplicationId = examApplicationId;
+            ExamAttendanceId = examAttendanceId;
         }
     }
 }
