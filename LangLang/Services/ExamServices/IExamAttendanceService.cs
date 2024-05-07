@@ -16,5 +16,7 @@ public interface IExamAttendanceService
     public void RateTutor(ExamAttendance attendance, int rating);
     public List<Student> GetStudents(string examId);
     public ExamAttendance? GetAttendance(string studentId, string examId);
+    public void AddPassedLanguagesToStudents(Exam exam);
+    public bool AvailableForApplication(Exam exam, Student student);
 }
 
