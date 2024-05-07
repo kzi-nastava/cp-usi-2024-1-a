@@ -16,7 +16,6 @@ public interface ICourseService
     public void DeleteCourse(string id, Tutor loggedInUser);
     public void UpdateCourse(Course course);
     public void FinishCourse(string id);
-    public void CalculateAverageScores(string id);
     public void AddAttendance(string courseId);
     public void CancelAttendance(string courseId);
     public void UpdateStates();
