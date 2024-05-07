@@ -31,6 +31,7 @@ namespace LangLang.ViewModel;
     private string writingScore = "";
     private string listeningScore = "";
     private string speakingScore = "";
+    private bool graded = false;
     public string Name
     {
         get => name;
@@ -70,6 +71,11 @@ namespace LangLang.ViewModel;
     {
         get => speakingScore;
         set => SetField(ref speakingScore, value);
+    }
+    public bool Graded
+    {
+        get => graded;
+        set => SetField(ref graded, value);
     }
 
     private Student? selectedStudent;
@@ -132,7 +138,8 @@ namespace LangLang.ViewModel;
             MessageBox.Show(e.Message, "Error");
             return;
         }
-        
+
+        Graded = true;
         MessageBox.Show($"Student {SelectedStudent!.Name} graded successfully!", "Success", MessageBoxButton.OK);
     }
 
@@ -165,6 +172,7 @@ namespace LangLang.ViewModel;
         Surname = SelectedStudent.Surname;
         Email = profile.Email;
         PenaltyPts = SelectedStudent.PenaltyPts;
+        Graded = IsGraded(SelectedStudent);
     }
 }
 

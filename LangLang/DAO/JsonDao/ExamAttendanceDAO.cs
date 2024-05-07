@@ -89,6 +89,7 @@ namespace LangLang.DAO.JsonDao
         {
             if (!ExamAttendances.ContainsKey(id)) return null;
             ExamAttendances[id] = attendance;
+            SaveExamAttendances();
             return attendance;
         }
         private void SaveExamAttendances()
