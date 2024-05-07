@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using Consts;
@@ -20,6 +21,7 @@ public class ExamViewModel : ViewModelBase
     
     private readonly IExamService _examService;
     private readonly ITimetableService _timetableService;
+    private readonly NavigationStore _navigationStore;
     private readonly IPopupNavigationService _popupNavigationService;
     private readonly CurrentExamStore _currentExamStore;
     public RelayCommand OpenExamInfoCommand { get; }
@@ -166,7 +168,7 @@ public class ExamViewModel : ViewModelBase
         }
     }
     
-    public ExamViewModel(IAuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService, CurrentExamStore currentExamStore, IPopupNavigationService popupNavigationService)
+    public ExamViewModel(IAuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService, CurrentExamStore currentExamStore, IPopupNavigationService popupNavigationService, NavigationStore navigationStore)
     {
         _tutor = (Tutor?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
@@ -175,7 +177,7 @@ public class ExamViewModel : ViewModelBase
         _timetableService = timetableService;
         _currentExamStore = currentExamStore;
         _popupNavigationService = popupNavigationService;
-
+        _navigationStore = navigationStore;
         exams = new ObservableCollection<Exam>(LoadExams());
         languages = new ObservableCollection<Language>(_tutor.KnownLanguages.Select(tuple => tuple.Item1));
         languageLevels = new ObservableCollection<LanguageLvl>();
@@ -327,14 +329,23 @@ public class ExamViewModel : ViewModelBase
         switch (SelectedExam?.ExamState)
         {
             case Exam.State.NotStarted:
+            case Exam.State.Locked:
                 _popupNavigationService.Navigate(ViewType.UpcomingExamInfo);
+                _navigationStore.PopupClosed += OnPopupClosed;
                 break;
             case Exam.State.InProgress:
                 _popupNavigationService.Navigate(ViewType.ActiveExamInfo);
+                _navigationStore.PopupClosed += OnPopupClosed;
                 break;
             case Exam.State.Finished:
                 _popupNavigationService.Navigate(ViewType.FinishedExamInfo);
+                _navigationStore.PopupClosed += OnPopupClosed;
                 break;
         }
+    }
+
+    private void OnPopupClosed()
+    {
+        _navigationStore.PopupClosed -= OnPopupClosed;
     }
 }

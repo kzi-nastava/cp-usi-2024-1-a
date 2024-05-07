@@ -30,6 +30,7 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddTransient<FinishedExamInfoViewModel>();
 
             services.AddTransient<TutorTableViewModel>();
+            services.AddTransient<RateTutorViewModel>();
             
             services.AddScoped<CreateViewModel<LoginViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<LoginViewModel>
@@ -88,6 +89,10 @@ public static class AddViewModelsHostBuilderExtensions
 
             services.AddScoped<CreateViewModel<NotificationViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<NotificationViewModel>
+            );
+
+            services.AddScoped<CreateViewModel<RateTutorViewModel>>(
+            servicesProvider => servicesProvider.GetRequiredService<RateTutorViewModel>
             );
         });
         

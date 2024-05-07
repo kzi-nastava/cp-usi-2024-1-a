@@ -39,14 +39,10 @@ public class ExamCoordinator : IExamCoordinator
     }
     public ExamApplication ApplyForExam(Student student, Exam exam)
     {
-        var attendances = _examAttendanceService.GetAttendancesForStudent(student.Id);
-        foreach (var attendace in attendances)
-        {
-            var foundExam = _examService.GetExamById(attendace.ExamId);
-            if (foundExam != null && foundExam.ExamState != Exam.State.Reported)
-                throw new Exception("Student cannot apply to multiple exams");
-        }
-        return _examApplicationService.ApplyForExam(student, exam);
+        if(_examAttendanceService.AvailableForApplication(exam, student))
+            return _examApplicationService.ApplyForExam(student, exam);
+        else
+            throw new Exception("Student cannot apply to multiple exams");
     }
 
     public List<Exam> GetAppliedExams(Student student)
@@ -66,7 +62,6 @@ public class ExamCoordinator : IExamCoordinator
         {
             throw new ArgumentException("Cannot accept student at this state");
         }
-        //_examApplicationService.PauseStudentApplications(application);
         _examAttendanceService.AddAttendance(application.StudentId, application.ExamId);
         _examApplicationService.AcceptApplication(application);
         Exam? exam = _examService.GetExamById(application.ExamId);
@@ -121,8 +116,7 @@ public class ExamCoordinator : IExamCoordinator
     {
         //_examService.CalculateAverageScores
         _examService.FinishExam(exam);
-        //student service add language skill
-        //_examApplicationService.ActivateStudentApplications(studentId);
+        _examAttendanceService.AddPassedLanguagesToStudents(exam);
     }
     public void ConfirmExam(Exam exam)
         => _examService.ConfirmExam(exam);
@@ -152,7 +146,7 @@ public class ExamCoordinator : IExamCoordinator
 
     public Exam? GetAttendingExam(string studentId)
     {
-        var examAttendance = _examAttendanceService.GetStudentAttendance(studentId)!;
+        var examAttendance = _examAttendanceService.GetStudentAttendance(studentId);
         if (examAttendance == null) return null;
         return _examService.GetExamById(examAttendance.ExamId);
     }
@@ -188,8 +182,9 @@ public class ExamCoordinator : IExamCoordinator
     public void RemoveAttendee(string studentId)
     {
         var attendingExam = GetAttendingExam(studentId);
-        if (attendingExam == null) return;
-        _examAttendanceService.RemoveAttendee(studentId, attendingExam.Id);
+        if (attendingExam != null)
+            _examAttendanceService.RemoveAttendee(studentId, attendingExam.Id);
+        _examApplicationService.DeleteApplications(studentId);
     }
 
     public bool CanBeModified(string examId)

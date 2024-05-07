@@ -3,6 +3,7 @@ using LangLang.DTO;
 using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
+using LangLang.Services.CourseServices;
 using LangLang.Stores;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,10 @@ namespace LangLang.ViewModel;
     private readonly IStudentDAO _studentDAO;
 
     private readonly IUserProfileMapper _userProfileMapper;
+    private readonly IStudentCourseCoordinator _studentCourseCoordinator;
+    private readonly ICourseAttendanceService _courseAttendanceService;
     public RelayCommand GradeStudentCommand { get; }
+    public RelayCommand FinishCourseCommand { get; }
 
     private string courseName = "";
     private string name = "";
@@ -28,9 +32,9 @@ namespace LangLang.ViewModel;
     private string email = "";
     private string message = "";
     private uint penaltyPts;
-    private ObservableCollection<uint> grades = new ObservableCollection<uint> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    private uint activityScore;
-    private uint knowledgeScore;
+    private ObservableCollection<int> grades = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    private int activityScore;
+    private int knowledgeScore;
     public string Name
     {
         get => name;
@@ -59,7 +63,7 @@ namespace LangLang.ViewModel;
             SetField(ref courseName, value);
         }
     }
-    public uint ActivityScore
+    public int ActivityScore
     {
         get => activityScore;
         set
@@ -67,7 +71,7 @@ namespace LangLang.ViewModel;
             SetField(ref activityScore, value);
         }
     }
-    public uint KnowledgeScore
+    public int KnowledgeScore
     {
         get => knowledgeScore;
         set
@@ -95,19 +99,47 @@ namespace LangLang.ViewModel;
         }
     }
     public ObservableCollection<Student> Students { get; set; }
-    public ObservableCollection<uint> Grades 
+    public ObservableCollection<int> Grades 
     {
         get => grades;
     }
-    public FinishedCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
+    public FinishedCourseInfoViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, 
+        IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IStudentCourseCoordinator studentCourseCoordinator, 
+        ICourseAttendanceService courseAttendanceService)
     {
         NavigationStore = navigationStore;
+        _studentCourseCoordinator = studentCourseCoordinator;
+        _courseAttendanceService = courseAttendanceService;
         _currentCourseStore = currentCourseStore;
         _studentDAO = studentDAO;
         _userProfileMapper = userProfileMapper;
         Students = new ObservableCollection<Student>(LoadStudents());
         CourseName = _currentCourseStore.CurrentCourse!.Name;
         GradeStudentCommand = new RelayCommand(GradeStudent, canExecute => SelectedStudent != null);
+        FinishCourseCommand = new RelayCommand(FinishCourse, CanFinishCourse);
+    }
+
+    private bool CanFinishCourse(object? arg)
+    {
+        foreach (CourseAttendance attendance in _courseAttendanceService.GetAttendancesForCourse(_currentCourseStore.CurrentCourse!.Id))
+        {
+            if (!attendance.IsGraded)
+            {
+                return false;
+            }
+        }
+        if(_currentCourseStore.CurrentCourse!.State == Course.CourseState.FinishedGraded)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private void FinishCourse(object? obj)
+    {
+        
+        _studentCourseCoordinator.FinishCourse(_currentCourseStore.CurrentCourse!.Id, Students);
+        MessageBox.Show("Course finished successfully!", "Success", MessageBoxButton.OK);
     }
 
     private void GradeStudent(object? obj)
@@ -117,6 +149,7 @@ namespace LangLang.ViewModel;
             MessageBox.Show("Fill all grade fields!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+        _courseAttendanceService.GradeStudent(SelectedStudent!.Id, _currentCourseStore.CurrentCourse!.Id , KnowledgeScore, ActivityScore);
 
         MessageBox.Show($"Student {SelectedStudent!.Name} graded successfully with: activity {ActivityScore}, knowledge {KnowledgeScore} " +
             $"score", "Success", MessageBoxButton.OK);
@@ -124,12 +157,7 @@ namespace LangLang.ViewModel;
 
     private List<Student> LoadStudents()
     {
-        List<Student> students = new List<Student>();
-        foreach (Student student in _studentDAO.GetAllStudents().Values)
-        {
-            students.Add(student);
-        }
-        return students;
+        return _studentCourseCoordinator.GetAttendanceStudentsCourse(_currentCourseStore.CurrentCourse!.Id);
     }
     private void SelectStudent()
     {
@@ -140,6 +168,10 @@ namespace LangLang.ViewModel;
         Surname = SelectedStudent.Surname;
         Email = profile.Email;
         PenaltyPts = SelectedStudent.PenaltyPts;
+        CourseAttendance? courseAttendance = _courseAttendanceService.GetStudentAttendance(SelectedStudent.Id);
+        if (courseAttendance == null) return;
+        ActivityScore = courseAttendance.ActivityGrade;
+        KnowledgeScore = courseAttendance.KnowledgeGrade;
 
     }
 }

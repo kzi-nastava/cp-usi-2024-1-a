@@ -8,6 +8,7 @@ using LangLang.Services.NavigationServices;
 using LangLang.Services.UserServices;
 using LangLang.Services.UtilityServices;
 using LangLang.Stores;
+using LangLang.View;
 using LangLang.ViewModel.Factories;
 using System;
 using System.Collections.ObjectModel;
@@ -23,6 +24,7 @@ namespace LangLang.ViewModel
         private readonly ICourseService _courseService;
         private readonly ILanguageService _languageService;
         private readonly IStudentService _studentService;
+        private readonly CurrentCourseStore _currentCourseStore;
         private readonly IExamService _examService;
         private readonly IStudentCourseCoordinator _courseCoordinator;
         private readonly IAccountService _accountService;
@@ -205,12 +207,13 @@ namespace LangLang.ViewModel
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentViewModel(IStudentService studentService,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
+        public StudentViewModel(IStudentService studentService, CurrentCourseStore currentCourseStore,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
         {
             _loggedInUser = (Student?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
                                     "Cannot create StudentViewModel without currently logged in student");
             NavigationStore = navigationStore;
+            _currentCourseStore = currentCourseStore;
             _courseService = courseService;
             _accountService = accountService;
             _languageService = languageService;
@@ -246,7 +249,6 @@ namespace LangLang.ViewModel
             LoadAppliedCourses();
             LoadFinishedCourses();
             LoadLanguageLevels();
-
             //initialize commands
             ClearCourseFiltersCommand = new RelayCommand(ClearCourseFilters);
             ClearExamFiltersCommand = new RelayCommand(ClearExamFilters);
@@ -269,9 +271,19 @@ namespace LangLang.ViewModel
             Course course = _courseService.GetCourseById(courseId)!;
             try
             {
-                string message = "Nemoj me kikovat majke ti";
+                string message = "";
+                if(_courseCoordinator.CanDropCourse(courseId))
+                {
+                    var messageWindow = new StudentExcuseWindow();
+                    messageWindow.ShowDialog();
+                    message = messageWindow.UserMessage;
+                    if(message == "")
+                    {
+                        message = "No further explanation";
+                    }
+                    MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
+                }
                 _courseCoordinator.DropCourse(_loggedInUser.Id, message);
-                MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
                 AttendingCourse.Remove(course);
             }
             catch
@@ -359,7 +371,8 @@ namespace LangLang.ViewModel
 
         private void RateTutor(string courseId)
         {
-            MessageBox.Show($"Successful rating for course {courseId}", "Success");
+            _currentCourseStore.CurrentCourse = _courseService.GetCourseById(courseId);
+            _popupNavigationService.Navigate(ViewType.RateTutor);
         }
 
         private void ClearCourseFilters(object? obj)
@@ -397,7 +410,8 @@ namespace LangLang.ViewModel
         {
             //when trying to test attendance, apply for course
             //in files change application state to 2 (accepted), then change course state to 4 (In progress so i can drop it)
-            //_courseCoordinator.GenerateAttendance("30");
+            //_courseCoordinator.GenerateAttendance("2");
+
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Id)!;
             if(attendingCourse != null)
             {

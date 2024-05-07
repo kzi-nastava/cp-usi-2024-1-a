@@ -16,6 +16,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<NotificationViewModel> _createNotificationViewModel;
     private readonly CreateViewModel<ActiveCourseInfoViewModel> _createActiveCourseInfoViewModel;
     private readonly CreateViewModel<UpcomingCourseInfoViewModel> _createUpcomingCourseInfoViewModel;
+    private readonly CreateViewModel<RateTutorViewModel> _createRateTutorViewModel;
     private readonly CreateViewModel<FinishedCourseInfoViewModel> _createFinishedCourseInfoViewModel;
     private readonly CreateViewModel<TutorTableViewModel> _createTutorTableViewModel;
     private readonly CreateViewModel<ActiveExamInfoViewModel> _createActiveExamInfoViewModel;
@@ -33,6 +34,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<NotificationViewModel> createNotificationViewModel,
         CreateViewModel<ActiveCourseInfoViewModel> createActiveCourseInfoViewModel,
         CreateViewModel<UpcomingCourseInfoViewModel> createUpcomingCourseInfoViewModel,
+        CreateViewModel<RateTutorViewModel> createRateTutorViewModel,
         CreateViewModel<FinishedCourseInfoViewModel> createfinishedCourseInfoViewModel,
         CreateViewModel<ActiveExamInfoViewModel> createActiveExamInfoViewModel,
         CreateViewModel<UpcomingExamInfoViewModel> createUpcomingExamInfoViewModel,
@@ -51,6 +53,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createNotificationViewModel = createNotificationViewModel;
         _createActiveCourseInfoViewModel = createActiveCourseInfoViewModel;
         _createUpcomingCourseInfoViewModel = createUpcomingCourseInfoViewModel;
+        _createRateTutorViewModel = createRateTutorViewModel;
         _createFinishedCourseInfoViewModel = createfinishedCourseInfoViewModel;
         _createActiveExamInfoViewModel = createActiveExamInfoViewModel;
         _createUpcomingExamInfoViewModel = createUpcomingExamInfoViewModel;
@@ -74,6 +77,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.Notifications => _createNotificationViewModel(),
             ViewType.ActiveCourseInfo => _createActiveCourseInfoViewModel(),
             ViewType.UpcomingCourseInfo => _createUpcomingCourseInfoViewModel(),
+            ViewType.RateTutor => _createRateTutorViewModel(),
             ViewType.FinishedCourseInfo => _createFinishedCourseInfoViewModel(),
             ViewType.ActiveExamInfo => _createActiveExamInfoViewModel(),
             ViewType.UpcomingExamInfo => _createUpcomingExamInfoViewModel(),

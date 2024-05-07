@@ -44,6 +44,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IExamCoordinator, ExamCoordinator>();
             services.AddSingleton<IDropRequestService, DropRequestService>();
             services.AddSingleton<IDropRequestInfoService, DropRequestInfoService>();
+            services.AddSingleton<IGradeService, GradeService>();
         });
         
         return host;

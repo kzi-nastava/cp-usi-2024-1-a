@@ -1,5 +1,4 @@
-﻿using LangLang.DAO;
-using LangLang.DTO;
+﻿using LangLang.DTO;
 using LangLang.Model;
 using LangLang.MVVM;
 using LangLang.Services.AuthenticationServices;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using LangLang.Services.ExamServices;
 
 namespace LangLang.ViewModel;
 
@@ -15,11 +15,12 @@ namespace LangLang.ViewModel;
     {
     public NavigationStore NavigationStore { get; }
 
-    private readonly CurrentExamStore _currentExamStore;
-
-    private readonly IStudentDAO _studentDAO;
+    private readonly Exam _exam;
 
     private readonly IUserProfileMapper _userProfileMapper;
+
+    private readonly IExamAttendanceService _examAttendanceService;
+    
     public RelayCommand GradeStudentCommand { get; }
 
     private string name = "";
@@ -30,6 +31,7 @@ namespace LangLang.ViewModel;
     private string writingScore = "";
     private string listeningScore = "";
     private string speakingScore = "";
+    private bool graded = false;
     public string Name
     {
         get => name;
@@ -70,6 +72,11 @@ namespace LangLang.ViewModel;
         get => speakingScore;
         set => SetField(ref speakingScore, value);
     }
+    public bool Graded
+    {
+        get => graded;
+        set => SetField(ref graded, value);
+    }
 
     private Student? selectedStudent;
     public Student? SelectedStudent
@@ -82,14 +89,16 @@ namespace LangLang.ViewModel;
         }
     }
     public ObservableCollection<Student> Students { get; set; }
-    public FinishedExamInfoViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, IStudentDAO studentDAO, IUserProfileMapper userProfileMapper)
+    public FinishedExamInfoViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, IUserProfileMapper userProfileMapper, IExamAttendanceService examAttendanceService)
     {
         NavigationStore = navigationStore;
-        _currentExamStore = currentExamStore;
-        _studentDAO = studentDAO;
+        _exam = currentExamStore.CurrentExam ??
+                throw new InvalidOperationException(
+                    "Cannot create FinishedExamInfoViewModel without the current exam set.");
         _userProfileMapper = userProfileMapper;
+        _examAttendanceService = examAttendanceService;
         Students = new ObservableCollection<Student>(LoadStudents());
-        GradeStudentCommand = new RelayCommand(GradeStudent, canExecute => SelectedStudent != null);
+        GradeStudentCommand = new RelayCommand(GradeStudent, _ => CanGradeStudent());
     }
 
     private void GradeStudent(object? obj)
@@ -119,14 +128,36 @@ namespace LangLang.ViewModel;
             return;
         }
 
-        // TODO: Store grade
+        try
+        {
+            _examAttendanceService.GradeStudent(SelectedStudent!.Id, _exam.Id,
+                new ExamGradeDto(reading, writing, listening, speaking));
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Error");
+            return;
+        }
+
+        Graded = true;
         MessageBox.Show($"Student {SelectedStudent!.Name} graded successfully!", "Success", MessageBoxButton.OK);
+    }
+
+    private bool CanGradeStudent()
+    {
+        return SelectedStudent != null && !IsGraded(SelectedStudent);
+    }
+
+    private bool IsGraded(Student student)
+    {
+        var attendance = _examAttendanceService.GetAttendance(student.Id, _exam.Id);
+        return attendance is { IsGraded: true };
     }
 
     private List<Student> LoadStudents()
     {
         List<Student> students = new List<Student>();
-        foreach (Student student in _studentDAO.GetAllStudents().Values)
+        foreach (Student student in _examAttendanceService.GetStudents(_exam.Id))
         {
             students.Add(student);
         }
@@ -141,6 +172,7 @@ namespace LangLang.ViewModel;
         Surname = SelectedStudent.Surname;
         Email = profile.Email;
         PenaltyPts = SelectedStudent.PenaltyPts;
+        Graded = IsGraded(SelectedStudent);
     }
 }
 

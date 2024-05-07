@@ -4,10 +4,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LangLang.View"
-        mc:Ignorable="d"
+        xmlns:local="clr-namespace:LangLang.View" xmlns:viewmodel="clr-namespace:LangLang.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:FinishedExamInfoViewModel}"
+                      mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="FinishedExamInfoWindow" Height="450" Width="550">
+        Title="FinishedExamInfoWindow" Height="500" Width="550">
     <mvvm:NavigableWindow.Resources>
         <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
         <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
@@ -24,8 +24,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Grid.ColumnSpan="2">
-            <Label Content="Overview of" FontWeight="Medium" FontSize="18"/>
-            <Label Content="{Binding ExamName}" FontSize="18" FontWeight="Medium"/>
+            <Label Content="Exam overview" FontWeight="Medium" FontSize="18"/>
         </StackPanel>
         <DataGrid 
             Grid.Column="0" Grid.Row="1" IsReadOnly="True"
@@ -58,6 +57,10 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="Penalty points:"/>
                 <Label Content="{Binding PenaltyPts}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Graded:"/>
+                <Label Content="{Binding Graded}" />
             </StackPanel>
 
             <Label Content="Grades" FontSize="16" FontWeight="Medium" Margin="0,10,0,0"/>

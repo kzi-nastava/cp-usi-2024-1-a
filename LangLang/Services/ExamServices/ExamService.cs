@@ -146,11 +146,16 @@ public class ExamService : IExamService
             {
                 continue;
             }
-            if (!student.KnownLanguages.ContainsKey(exam.Language.Name) ||
-                student.KnownLanguages[exam.Language.Name] < exam.LanguageLvl)
+            if (!student.CompletedCourseLanguages.ContainsKey(exam.Language.Name) ||
+                student.CompletedCourseLanguages[exam.Language.Name] < exam.LanguageLvl)
             {
                 continue;
-            } 
+            }
+            if (student.PassedExamLanguages.ContainsKey(exam.Language.Name) &&
+                student.PassedExamLanguages[exam.Language.Name] >= exam.LanguageLvl)
+            {
+                continue;
+            }
             exams.Add(exam);
         }
 
