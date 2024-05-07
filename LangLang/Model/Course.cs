@@ -25,11 +25,6 @@ namespace LangLang.Model
         }
 
         public CourseState State { get; set; }
-        public int NumStudentsPassed { get; set; }
-        public double ReadingAvgScore { get; set; }
-        public double WritingAvgScore { get; set; }
-        public double ListeningAvgScore { get; set; }
-        public double SpeakingAvgScore { get; set; }
 
         
         public Course()
@@ -45,12 +40,6 @@ namespace LangLang.Model
             MaxStudents = 0;
             NumStudents = 0;
             State = CourseState.Canceled;
-            //set default values for attributes for reports
-            NumStudentsPassed = 0;
-            ReadingAvgScore = 0;
-            WritingAvgScore = 0;
-            ListeningAvgScore = 0;
-            SpeakingAvgScore = 0;
         }
         public Course(string id,string name, Language language, LanguageLvl level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
         {
@@ -65,12 +54,6 @@ namespace LangLang.Model
             MaxStudents = maxStudents;
             NumStudents = numStudents;
             State = state;
-            //set default values for attributes for reports
-            NumStudentsPassed = 0;
-            ReadingAvgScore = 0;
-            WritingAvgScore = 0;
-            ListeningAvgScore = 0;
-            SpeakingAvgScore = 0;
         }
         // Constructor without id when creating a new course
         public Course(string name, Language language, LanguageLvl level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
@@ -86,12 +69,6 @@ namespace LangLang.Model
             MaxStudents = maxStudents;
             NumStudents = numStudents;
             State = state;
-            //set default values for attributes for reports
-            NumStudentsPassed = 0;
-            ReadingAvgScore = 0;
-            WritingAvgScore = 0;
-            ListeningAvgScore = 0;
-            SpeakingAvgScore = 0;
         }
 
         public void AddAttendance()
@@ -118,9 +95,5 @@ namespace LangLang.Model
             return false;
         }
 
-
-
-
     }
-
 }
