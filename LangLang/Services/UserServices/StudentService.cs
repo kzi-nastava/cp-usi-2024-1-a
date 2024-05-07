@@ -62,7 +62,13 @@ namespace LangLang.Services.UserServices
         
         public void AddLanguageSkill(Student student, Language language, LanguageLvl languageLvl)
         {
-            student.AddKnownLanguage(language, languageLvl);
+            student.AddCompletedCourseLanguage(language, languageLvl);
+            _studentDao.UpdateStudent(student);
+        }
+
+        public void AddPassedLanguage(Student student, Language language, LanguageLvl languageLvl)
+        {
+            student.AddPassedExamLanguage(language, languageLvl);
             _studentDao.UpdateStudent(student);
         }
     }

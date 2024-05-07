@@ -4,6 +4,7 @@ using LangLang.Services.UserServices;
 using System.Collections.Generic;
 using System.Linq;
 using LangLang.DTO;
+using LangLang.Services.UtilityServices;
 using static LangLang.Model.Exam;
 
 
@@ -15,13 +16,15 @@ namespace LangLang.Services.ExamServices
         private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
         private readonly IExamAttendanceDAO _examAttendanceDAO;
+        private readonly IGradeService _gradeService;
 
-        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceDAO examAttendanceDAO)
+        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceDAO examAttendanceDAO, IGradeService gradeService)
         {
             _examService = examService;
             _studentService = studentService;
             _tutorService = tutorService;
             _examAttendanceDAO = examAttendanceDAO;
+            _gradeService = gradeService;
         }
 
         public List<ExamAttendance> GetAttendancesForStudent(string studentId)
@@ -117,6 +120,31 @@ namespace LangLang.Services.ExamServices
         public ExamAttendance? GetAttendance(string studentId, string examId)
         {
             return _examAttendanceDAO.GetExamAttendancesForStudent(studentId).FirstOrDefault(attendance => attendance.ExamId == examId);
+        }
+
+        public void AddPassedLanguagesToStudents(Exam exam)
+        {
+            foreach (var attendance in GetAttendancesForExam(exam.Id))
+            {
+                if (attendance.Grade != null && _gradeService.IsPassingGrade(attendance.Grade))
+                {
+                    var student = _studentService.GetStudentById(attendance.StudentId);
+                    if(student == null) continue;
+                    _studentService.AddPassedLanguage(student, exam.Language, exam.LanguageLvl);
+                }
+            }
+        }
+
+        public bool AvailableForApplication(Exam exam, Student student)
+        {
+            var attendances = GetAttendancesForStudent(student.Id);
+            foreach (var attendance in attendances)
+            {
+                var foundExam = _examService.GetExamById(attendance.ExamId);
+                if (foundExam != null && foundExam.ExamState != Exam.State.Reported)
+                    return false;
+            }
+            return true;
         }
     }
 }
