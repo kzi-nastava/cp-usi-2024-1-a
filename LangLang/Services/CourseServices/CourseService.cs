@@ -92,11 +92,13 @@ namespace LangLang.Services.CourseServices
         public void AddAttendance(string courseId)
         {
             GetCourseById(courseId)!.AddAttendance();
+            UpdateCourse(GetCourseById(courseId)!);
         }
 
         public void CancelAttendance(string courseId)
         {
             GetCourseById(courseId)!.CancelAttendance();
+            UpdateCourse(GetCourseById(courseId)!);
         }
 
         public Course? ValidateInputs(string name, string? languageName, LanguageLvl? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, Course.CourseState? state, int maxStudents)
