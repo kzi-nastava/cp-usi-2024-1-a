@@ -38,6 +38,7 @@ namespace LangLang.Services.CourseServices
             if (course == null) throw new ArgumentException("No existing course.");
             if (course.IsFull()) throw new ArgumentException("The course is full.");
             CourseApplication application = new CourseApplication(studentId, courseId, State.Pending);
+            _courseService.AddAttendance(courseId);
             _courseApplicationDAO.AddCourseApplication(application);
             return application;
         }
