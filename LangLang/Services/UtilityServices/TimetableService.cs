@@ -156,6 +156,7 @@ public class TimetableService : ITimetableService
             }
             else
             {
+                if(timeAndClassroom.Item2 == -1) continue;
                 takenTimes[timeAndClassroom.Item2]
                     .Add(new Tuple<TimeOnly, TimeSpan>(timeAndClassroom.Item1, Constants.LessonDuration));
             }
