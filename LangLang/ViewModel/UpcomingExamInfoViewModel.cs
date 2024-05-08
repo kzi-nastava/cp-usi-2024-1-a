@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 
 namespace LangLang.ViewModel
 {
@@ -40,7 +41,7 @@ namespace LangLang.ViewModel
         private string email = "";
         private string message = "";
         private uint penaltyPts;
-        private ObservableCollection<Student> students = new ObservableCollection<Student>();
+        private ObservableCollection<StudentAddedStatusDto> studentsStatuses = new();
         public string Name
         {
             get => name;
@@ -70,8 +71,8 @@ namespace LangLang.ViewModel
             }
         }
 
-        private Student? selectedStudent;
-        public Student? SelectedStudent
+        private StudentAddedStatusDto? selectedStudent;
+        public StudentAddedStatusDto? SelectedStudent
         {
             get => selectedStudent;
             set
@@ -81,18 +82,15 @@ namespace LangLang.ViewModel
             }
         }
 
-        public ObservableCollection<Student> Students 
+        public ObservableCollection<StudentAddedStatusDto> StudentsStatuses
         {
-            get => students;
+            get => studentsStatuses;
             set
             {
-                SetField(ref students, value);
+                SetField(ref studentsStatuses, value);
             }
         }
-        public Dictionary<string, bool> AddedStudents { get; set; } = new();
         public Dictionary<string, string> DenyMessages { get; set; } = new();
-
-        public UpcomingExamInfoWindow? Window { get; set; }
 
         public UpcomingExamInfoViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, 
             IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator,
@@ -104,45 +102,53 @@ namespace LangLang.ViewModel
             _currentExamStore = currentExamStore;
             _studentDAO = studentDAO;
             _closepopupNavigationService = closepopupNavigationService;
-            Students = new ObservableCollection<Student>(LoadStudents());
-            foreach (Student student in Students)
+            StudentsStatuses = new ObservableCollection<StudentAddedStatusDto>();
+            LoadStudents();
+            foreach (var dto in StudentsStatuses)
             {
-                AddedStudents.Add(student.Id, true);
-                DenyMessages.Add(student.Id, "");
+                DenyMessages.Add(dto.Student.Id, "");
             }
             AddStudentCommand = new RelayCommand(AddStudent, canExecute => SelectedStudent != null);
             RemoveStudentCommand = new RelayCommand(RemoveStudent, canExecute => SelectedStudent != null);
             ConfirmListCommand = new RelayCommand(ConfirmList);
         }
 
-        private List<Student> LoadStudents()
+        private void LoadStudents()
         {
-            return _examCoordinator.GetAppliedStudents(_currentExamStore.CurrentExam!.Id);
+            foreach (Student student in _examCoordinator.GetAppliedStudents(_currentExamStore.CurrentExam!.Id))
+                StudentsStatuses.Add(new StudentAddedStatusDto(student, true));
         }
         private void SelectStudent()
         {
             if (SelectedStudent == null) return;
-            Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent, UserType.Student));
+            Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent.Student, UserType.Student));
             if (profile == null) return;
             Email = profile.Email;
 
-            Name = SelectedStudent.Name;
-            Surname = SelectedStudent.Surname;
-            PenaltyPts = SelectedStudent.PenaltyPts;
+            Name = SelectedStudent.Student.Name;
+            Surname = SelectedStudent.Student.Surname;
+            PenaltyPts = SelectedStudent.Student.PenaltyPts;
         }
 
         private void RemoveStudent(object? obj)
         {
-            if (Message == "" && DenyMessages[SelectedStudent!.Id] == "")
+            if (Message == "" && DenyMessages[SelectedStudent!.Student.Id] == "")
             {
                 MessageBox.Show("You need to create deny message!", "Error");
                 return;
             }
             if (Message != "")
-                DenyMessages[SelectedStudent!.Id] = Message;
-            AddedStudents[SelectedStudent!.Id] = false;
-            Window.RemoveClick();
-            OnPropertyChanged();
+                DenyMessages[SelectedStudent!.Student.Id] = Message;
+            for (int i = 0; i < StudentsStatuses.Count; i++)
+            {
+                if (StudentsStatuses[i] == SelectedStudent)
+                {
+                    StudentAddedStatusDto newDto = new(StudentsStatuses[i].Student, false);
+                    StudentsStatuses[i] = newDto;
+                    break;
+                }
+            }
+            OnPropertyChanged(nameof(StudentsStatuses));
         }
         private void DenyStudent(Student student)
         {
@@ -151,9 +157,16 @@ namespace LangLang.ViewModel
         }
         public void AddStudent(object? obj)
         {
-            AddedStudents[SelectedStudent!.Id] = true;
-            Window.AddClick();
-            OnPropertyChanged();
+            for (int i = 0; i < StudentsStatuses.Count; i++)
+            {
+                if (StudentsStatuses[i] == SelectedStudent)
+                {
+                    StudentAddedStatusDto newDto = new(StudentsStatuses[i].Student, true);
+                    StudentsStatuses[i] = newDto;
+                    break;
+                }
+            }
+            OnPropertyChanged(nameof(StudentsStatuses));
         }
 
         private void AcceptStudent(Student student)
@@ -163,19 +176,19 @@ namespace LangLang.ViewModel
         }
         private void ConfirmList(object? obj)
         {
-            int acceptedCount = AddedStudents.Count(item => item.Value == true);
+            int acceptedCount = StudentsStatuses.Count(item => item.Added == true);
             if (acceptedCount > _currentExamStore.CurrentExam!.MaxStudents)
             {
                 MessageBox.Show($"Exam only has {_currentExamStore.CurrentExam!.MaxStudents} slots", "Error");
                 return;
             }
             
-            foreach (Student student in Students)
+            foreach (var dto in StudentsStatuses)
             {
-                if (AddedStudents[student.Id])
-                    AcceptStudent(student);
+                if (dto.Added)
+                    AcceptStudent(dto.Student);
                 else
-                    DenyStudent(student);
+                    DenyStudent(dto.Student);
             }
 
             _examCoordinator.ConfirmExam(_currentExamStore.CurrentExam);

@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LangLang.View"
-        mc:Ignorable="d"
+        xmlns:local="clr-namespace:LangLang.View" xmlns:viewmodel="clr-namespace:LangLang.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:UpcomingExamInfoViewModel}"
+                       mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Upcoming exam" Height="450" Width="550">
         <mvvm:NavigableWindow.Resources>
@@ -31,29 +31,25 @@
             <Label Content="Students:" FontWeight="Medium" FontSize="14"/>
         </StackPanel>
 
-        <Grid Grid.Column="0" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+        <DataGrid 
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            IsReadOnly="True"
+            AutoGenerateColumns="False"
+            ItemsSource="{Binding StudentsStatuses}"
+            SelectedItem="{Binding SelectedStudent}"
+            CanUserDeleteRows="False"
+            SelectionMode="Single"
+        >
+            <DataGrid.Columns >
+                <DataGridTextColumn  Header="Name" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}" Width="*"/>
+                <DataGridTextColumn  Header="Added" Binding="{Binding Added}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
-            <DataGrid 
-                x:Name="studentDataGrid"
-                Grid.Row="0"
-                IsReadOnly="True"
-                AutoGenerateColumns="False"
-                ItemsSource="{Binding Students}"
-                SelectedItem="{Binding SelectedStudent}"
-                CanUserDeleteRows="False" LoadingRow="studentDataGrid_LoadingRow" SelectionChanged="studentDataGrid_SelectionChanged"
-    >
-                <DataGrid.Columns >
-                    <DataGridTextColumn  Header="Name" Binding="{Binding Name}" Width="*"/>
-                    <DataGridTextColumn  Header="Surname" Binding="{Binding Surname}" Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-        
-        
-        
+
+
         <StackPanel Grid.Column="1" Grid.Row="1" Margin="10,0,0,0">
             <Label Content="Details" FontSize="16" FontWeight="Medium"/>
             <StackPanel Orientation="Horizontal">

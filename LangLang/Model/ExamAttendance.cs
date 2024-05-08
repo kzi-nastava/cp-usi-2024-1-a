@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Windows.Themes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace LangLang.Model
             ExamId = "";
             StudentId = "";
             isRated = false;
-            Grade = new ExamGrade();
+            Grade = null;
         }
 
         public ExamAttendance(string examId, string studentId, bool isRated, bool isGraded, ExamGrade? grade = null)
@@ -33,7 +34,8 @@ namespace LangLang.Model
             ExamId = examId;
             StudentId = studentId;
             this.isRated = isRated;
-            Grade = grade ?? new ExamGrade();
+            if (grade != null)
+                Grade = grade;
         }
 
         public void AddRating()
