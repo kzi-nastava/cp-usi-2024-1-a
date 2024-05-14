@@ -166,7 +166,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course;
         Name = SelectedStudent.Name;
         Surname = SelectedStudent.Surname;
         Email = profile.Email;
-        PenaltyPts = SelectedStudent.PenaltyPts;
+        PenaltyPts = SelectedStudent.PenaltyPoints;
         CourseAttendance? courseAttendance = _courseAttendanceService.GetStudentAttendance(SelectedStudent.Id);
         if (courseAttendance == null) return;
         ActivityScore = courseAttendance.ActivityGrade;

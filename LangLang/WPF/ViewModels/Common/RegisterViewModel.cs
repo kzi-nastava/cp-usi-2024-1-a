@@ -21,7 +21,7 @@ namespace LangLang.WPF.ViewModels.Common
         private string? _phoneNumber;
         private Gender _gender;
         private DateTime _birthday;
-        private EducationLvl _educationLvl;
+        private EducationLevel _educationLevel;
 
         private string? _errorMessageRequired;
         private string? _errorMessageEmail;
@@ -122,10 +122,10 @@ namespace LangLang.WPF.ViewModels.Common
             set => SetField(ref _gender, value);
         }
 
-        public EducationLvl EducationLvl
+        public EducationLevel EducationLevel
         {
-            get => _educationLvl;
-            set => SetField(ref _educationLvl, value);
+            get => _educationLevel;
+            set => SetField(ref _educationLevel, value);
         }
         public string? BirthdayFormatted => _birthday.ToString("yyyy-MM-dd");
 
@@ -152,9 +152,9 @@ namespace LangLang.WPF.ViewModels.Common
             string? phoneNumber = PhoneNumber;
             Gender gender = Gender;
             DateTime birthday = Birthday;
-            EducationLvl educationLvl = EducationLvl;
+            EducationLevel educationLevel = EducationLevel;
 
-            ValidationError error = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLvl);
+            ValidationError error = _registerService.RegisterStudent(email, password, name, surname, birthday, gender, phoneNumber, educationLevel);
 
 
             if (error != ValidationError.None)

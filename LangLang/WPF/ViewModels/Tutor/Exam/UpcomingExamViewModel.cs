@@ -122,7 +122,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
 
             Name = SelectedStudent.Student.Name;
             Surname = SelectedStudent.Student.Surname;
-            PenaltyPts = SelectedStudent.Student.PenaltyPts;
+            PenaltyPts = SelectedStudent.Student.PenaltyPoints;
         }
 
         private void RemoveStudent(object? obj)

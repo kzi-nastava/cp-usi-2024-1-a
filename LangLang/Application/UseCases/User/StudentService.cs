@@ -40,14 +40,14 @@ namespace LangLang.Application.UseCases.User
 
         public uint AddPenaltyPoint(Student student)
         {
-            student.AddPenaltyPts();
+            student.AddPenaltyPoint();
             _studentDao.UpdateStudent(student);
-            return student.PenaltyPts;
+            return student.PenaltyPoints;
         }
 
         public void RemovePenaltyPoint(Student student)
         {
-            student.RemovePenaltyPts();
+            student.RemovePenaltyPoint();
             _studentDao.UpdateStudent(student);
         }
         

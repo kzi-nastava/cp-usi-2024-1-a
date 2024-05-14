@@ -115,7 +115,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
             Name = SelectedStudent.Name;
             Surname = SelectedStudent.Surname;
             Email = profile.Email;
-            PenaltyPts = SelectedStudent.PenaltyPts;
+            PenaltyPts = SelectedStudent.PenaltyPoints;
         }
 
         private void FinishExam(object? obj)

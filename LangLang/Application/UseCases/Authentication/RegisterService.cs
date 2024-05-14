@@ -17,7 +17,7 @@ namespace LangLang.Application.UseCases.Authentication
             _accountService = accountService;
         }
 
-        public ValidationError RegisterStudent(string? email, string? password, string? name, string? surname, DateTime birthDay, Gender gender, string? phoneNumber, EducationLvl educationLvl)
+        public ValidationError RegisterStudent(string? email, string? password, string? name, string? surname, DateTime birthDay, Gender gender, string? phoneNumber, EducationLevel educationLevel)
         {
             ValidationError error = ValidationError.None;
             error |= _userValidator.CheckUserData(email, password, name, surname, phoneNumber, birthDay);
@@ -33,7 +33,7 @@ namespace LangLang.Application.UseCases.Authentication
                     birthDay,
                     gender,
                     phoneNumber!,
-                    educationLvl
+                    educationLevel
                     ));
             }
             return error;
