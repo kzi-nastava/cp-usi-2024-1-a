@@ -11,6 +11,7 @@
              xmlns:course1="clr-namespace:LangLang.WPF.Views.Tutor.Course"
              mc:Ignorable="d"
              Height="770" Width="1030"
+             WindowStartupLocation="CenterScreen"
              ResizeMode="NoResize">
 
     <mvvm:NavigableWindow.Resources>
