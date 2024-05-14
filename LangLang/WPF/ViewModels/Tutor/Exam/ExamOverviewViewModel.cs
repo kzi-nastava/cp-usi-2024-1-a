@@ -8,7 +8,7 @@ using LangLang.Application.UseCases.Exam;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Application.Utility.Timetable;
 using LangLang.Domain.Model;
-using LangLang.Repositories;
+using LangLang.Domain;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
 

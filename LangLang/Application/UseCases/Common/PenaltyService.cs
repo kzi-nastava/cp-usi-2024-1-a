@@ -3,8 +3,7 @@ using LangLang.Application.UseCases.User;
 using LangLang.Application.Utility.Authentication;
 using LangLang.Application.Utility.Notification;
 using LangLang.Domain.Model;
-using LangLang.Repositories;
-
+using LangLang.Domain;
 namespace LangLang.Application.UseCases.Common;
 
 public class PenaltyService : IPenaltyService

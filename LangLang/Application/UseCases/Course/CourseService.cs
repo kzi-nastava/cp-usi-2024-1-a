@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
-using LangLang.Repositories;
 
 namespace LangLang.Application.UseCases.Course
 {
