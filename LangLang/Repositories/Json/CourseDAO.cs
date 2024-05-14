@@ -76,6 +76,16 @@ namespace LangLang.Repositories.Json
             return courses;
         }
 
+        public Dictionary<string, Course> GetCoursesByTutor(Tutor tutor)
+        {
+            Dictionary<string, Course> courses = new();
+            foreach (string courseId in tutor.Courses)
+            {
+                courses.Add(courseId, GetCourseById(courseId)!);
+            }
+            return courses;
+        }
+
         public void DeleteCourse(string id)
         {
             Courses.Remove(id);

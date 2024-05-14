@@ -7,21 +7,7 @@ namespace LangLang.Repositories.Json
 {
     public class CourseAttendanceDAO: ICourseAttendanceDAO
     {
-        private Dictionary<string, CourseAttendance>? _courseAttendance;
         private readonly ILastIdDAO _lastIdDAO;
-
-        private Dictionary<string, CourseAttendance> CourseAttendances
-        {
-            get
-            {
-                _courseAttendance ??= JsonUtil.ReadFromFile<CourseAttendance>(Constants.CourseAttendancesFilePath);
-                return _courseAttendance;
-            }
-            set
-            {
-                _courseAttendance = value;
-            }
-        }
 
         public CourseAttendanceDAO(ILastIdDAO lastIdDAO)
         {
@@ -29,12 +15,14 @@ namespace LangLang.Repositories.Json
         }
         public Dictionary<string, CourseAttendance> GetAllCourseAttendances()
         {
-            return CourseAttendances;
+            return JsonUtil.ReadFromFile<CourseAttendance>(Constants.CourseAttendancesFilePath);
         }
         public CourseAttendance? GetCourseAttendanceById(string id)
         {
-            return CourseAttendances.GetValueOrDefault(id);
+            Dictionary<string, CourseAttendance> courseAttendances = GetAllCourseAttendances();
+            return courseAttendances.GetValueOrDefault(id);
         }
+        
         public List<CourseAttendance> GetCourseAttendancesForCourse(string courseId)
         {
             List<CourseAttendance> attendances = new();
@@ -47,7 +35,8 @@ namespace LangLang.Repositories.Json
             }
             return attendances;
         }
-        public List<CourseAttendance> GetCourseAttendancesForStudent(string studentId)
+        
+        public List<CourseAttendance> GetAllCourseAttendancesForStudent(string studentId)
         {
             List<CourseAttendance> attendances = new();
             foreach (CourseAttendance attendance in GetAllCourseAttendances().Values)
@@ -59,42 +48,36 @@ namespace LangLang.Repositories.Json
             }
             return attendances;
         }
-        public CourseAttendance? GetStudentAttendanceForCourse(string studentId, string courseId)
-        {
-            List<CourseAttendance> attendances = GetCourseAttendancesForStudent(studentId);
-            foreach (CourseAttendance attendance in attendances)
-            {
-                if (attendance.CourseId == courseId)
-                {
-                    return attendance;
-                }
-            }
-            return null;
-        }
 
         public CourseAttendance AddCourseAttendance(CourseAttendance attendance)
         {
             _lastIdDAO.IncrementCourseAttendanceId();
             attendance.Id = _lastIdDAO.GetCourseAttendanceId();
-            CourseAttendances.Add(attendance.Id, attendance);
-            SaveCourseAttendances();
+            Dictionary<string, CourseAttendance> courseAttendances = GetAllCourseAttendances();
+            courseAttendances.Add(attendance.Id, attendance);
+            SaveCourseAttendances(courseAttendances);
             return attendance;
         }
+        
         public void DeleteCourseAttendance(string id)
         {
-            CourseAttendances.Remove(id);
-            SaveCourseAttendances();
+            Dictionary<string, CourseAttendance> courseAttendances = GetAllCourseAttendances();
+            courseAttendances.Remove(id);
+            SaveCourseAttendances(courseAttendances);
         }
+        
         public CourseAttendance? UpdateCourseAttendance(string id, CourseAttendance attendance)
         {
-            if (!CourseAttendances.ContainsKey(id)) return null;
-            CourseAttendances[id] = attendance;
-            SaveCourseAttendances();
+            Dictionary<string, CourseAttendance> courseAttendances = GetAllCourseAttendances();
+            if (!courseAttendances.ContainsKey(id)) return null;
+            courseAttendances[id] = attendance;
+            SaveCourseAttendances(courseAttendances);
             return attendance;
         }
-        private void SaveCourseAttendances()
+        
+        private void SaveCourseAttendances(Dictionary<string, CourseAttendance> courseAttendances)
         {
-            JsonUtil.WriteToFile(CourseAttendances, Constants.CourseAttendancesFilePath);
+            JsonUtil.WriteToFile(courseAttendances, Constants.CourseAttendancesFilePath);
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace LangLang.Domain.Model
 {
@@ -82,14 +83,49 @@ namespace LangLang.Domain.Model
             return NumStudents == MaxStudents;
         }
 
-        public bool CanBeModified()
+        public bool IsActive()
         {
-            if (State == CourseState.NotStarted)
-            {
-                return true;
-            }
-            return false;
+            return State != CourseState.NotStarted && State != CourseState.FinishedGraded;
         }
 
+        public bool IsFinished()
+        {
+            return State == CourseState.FinishedGraded || State == CourseState.FinishedNotGraded;
+        }
+
+        public bool CanBeModified()
+        {
+            return State == CourseState.NotStarted;
+        }
+
+        public bool IsApplicable()
+        {
+            return State == CourseState.NotStarted && !IsFull();
+        }
+
+        public void Finish()
+        {
+            State = CourseState.FinishedGraded;
+        }
+
+
+        public void UpdateState() {
+            if (Start <= DateTime.Now && Start + Duration * Constants.CancellableCourseTime >= DateTime.Now)
+            {
+                State = CourseState.InProgress;
+            }
+            else if (Start - Constants.CancellableCourseTime < DateTime.Now)
+            {
+                State = CourseState.Locked;
+            }
+            else if (Start - Constants.CancellableCourseTime >= DateTime.Now)
+            {
+                State = CourseState.NotStarted;
+            }
+            else
+            {
+                State = CourseState.FinishedNotGraded;
+            }
+        }
     }
 }

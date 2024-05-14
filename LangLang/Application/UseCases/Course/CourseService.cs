@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -28,27 +27,17 @@ namespace LangLang.Application.UseCases.Course
         }
         public Dictionary<string, Domain.Model.Course> GetCoursesByTutor(Tutor loggedInUser)
         {
-            Dictionary<string, Domain.Model.Course> courses = new();
-            foreach (string courseId in loggedInUser.Courses)
-            {
-                courses.Add(courseId, _courseDao.GetCourseById(courseId)!);
-            }
-            return courses;
+            return _courseDao.GetCoursesByTutor(loggedInUser);
         }
         public List<Domain.Model.Course> GetAvailableCourses(Student student)
         {
             List<Domain.Model.Course> courses = new();
             foreach (Domain.Model.Course course in GetAll().Values.ToList())
             {
-                if (course.State != Domain.Model.Course.CourseState.NotStarted)
+                if(course.IsApplicable())
                 {
-                    continue;
+                    courses.Add(course);
                 }
-                if (course.IsFull())
-                {
-                    continue;
-                }
-                courses.Add(course);
             }
 
             return courses;
@@ -85,7 +74,7 @@ namespace LangLang.Application.UseCases.Course
             {
                 throw new ArgumentException("Course not found");
             }
-            course.State = Domain.Model.Course.CourseState.FinishedGraded;
+            course.Finish();
             UpdateCourse(course);
         }
 
@@ -141,25 +130,8 @@ namespace LangLang.Application.UseCases.Course
         {
             foreach(Domain.Model.Course course in GetAll().Values)
             {
-                if(course.Start <= DateTime.Now && course.Start + course.Duration*Constants.CancellableCourseTime >= DateTime.Now)
-                {
-                    course.State = Domain.Model.Course.CourseState.InProgress;
-                    UpdateCourse(course);
-                }else if (course.Start - Constants.CancellableCourseTime < DateTime.Now)
-                {
-                    course.State = Domain.Model.Course.CourseState.Locked;
-                    UpdateCourse(course);
-                }
-                else if(course.Start -Constants.CancellableCourseTime >= DateTime.Now)
-                {
-                    course.State = Domain.Model.Course.CourseState.NotStarted;
-                    UpdateCourse(course);
-                }
-                else
-                {
-                    course.State = Domain.Model.Course.CourseState.FinishedNotGraded;
-                    UpdateCourse(course);
-                }
+                course.UpdateState();
+                UpdateCourse(course);
             }
         }
     }

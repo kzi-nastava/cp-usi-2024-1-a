@@ -6,19 +6,7 @@ using LangLang.Repositories.Json.Util;
 namespace LangLang.Repositories.Json;
 public class CourseApplicationDAO : ICourseApplicationDAO
 {
-        private Dictionary<string, CourseApplication>? _courseApplications;
         private readonly ILastIdDAO _lastIdDAO;
-
-        private Dictionary<string, CourseApplication> CourseApplications
-        {
-            get
-            {
-            _courseApplications ??= JsonUtil.ReadFromFile<CourseApplication>(Constants.CourseApplicationsFilePath);
-            return _courseApplications;
-                }
-        set => _courseApplications = value;
-            
-        }
 
     public CourseApplicationDAO(ILastIdDAO lastIdDAO)
         {
@@ -26,11 +14,13 @@ public class CourseApplicationDAO : ICourseApplicationDAO
         }
     public Dictionary<string, CourseApplication> GetAllCourseApplications()
         {
-            return CourseApplications;
+            Dictionary<string, CourseApplication> courseApplications = JsonUtil.ReadFromFile<CourseApplication>(Constants.CourseApplicationsFilePath);
+            return courseApplications;
         }
     public CourseApplication? GetCourseApplicationById(string id)
     {
-        return CourseApplications.GetValueOrDefault(id);
+        Dictionary<string, CourseApplication> courseApplications = GetAllCourseApplications();
+        return courseApplications.GetValueOrDefault(id);
     }
     public List<CourseApplication> GetCourseApplicationsForCourse(string courseId)
     {
@@ -72,24 +62,28 @@ public class CourseApplicationDAO : ICourseApplicationDAO
             {
         _lastIdDAO.IncrementCourseApplicationId();
         application.Id = _lastIdDAO.GetCourseApplicationId();
-        CourseApplications.Add(application.Id, application);
-        SaveCourseApplications();
+
+        Dictionary<string, CourseApplication> courseApplications = GetAllCourseApplications();
+        courseApplications.Add(application.Id, application);
+        SaveCourseApplications(courseApplications);
         return application;
             }
     public void DeleteCourseApplication(string id)
     {
-        CourseApplications.Remove(id);
-        SaveCourseApplications();
+        Dictionary<string, CourseApplication> courseApplications = GetAllCourseApplications();
+        courseApplications.Remove(id);
+        SaveCourseApplications(courseApplications);
         }
     public CourseApplication? UpdateCourseApplication(string id, CourseApplication application)
         {
-        if (!CourseApplications.ContainsKey(id)) return null;
-        CourseApplications[id] = application;
+        Dictionary<string, CourseApplication> courseApplications = GetAllCourseApplications();
+        if (!courseApplications.ContainsKey(id)) return null;
+        courseApplications[id] = application;
         return application;
         }
-    private void SaveCourseApplications()
+    private void SaveCourseApplications(Dictionary<string, CourseApplication> courseApplications)
     {
-        JsonUtil.WriteToFile(CourseApplications, Constants.CourseApplicationsFilePath);
+        JsonUtil.WriteToFile(courseApplications, Constants.CourseApplicationsFilePath);
     }
 
 }

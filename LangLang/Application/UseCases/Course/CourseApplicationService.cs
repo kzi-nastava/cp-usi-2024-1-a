@@ -28,6 +28,7 @@ namespace LangLang.Application.UseCases.Course
             foreach (CourseApplication application in applications)
             {
                 application.ChangeApplicationState(State.Pending);
+                _courseApplicationDAO.UpdateCourseApplication(application.Id, application);
             }
         }
 
@@ -75,15 +76,7 @@ namespace LangLang.Application.UseCases.Course
 
         public CourseApplication? GetApplication(string studentId, string courseId)
         {
-            List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
-            foreach (CourseApplication application in applications)
-            {
-                if (application.CourseId == courseId)
-                {
-                    return application;
-                }
-            }
-            return null;
+            return _courseApplicationDAO.GetStudentApplicationForCourse(studentId, courseId);
         }
 
         public void PauseStudentApplications(string studentId)
@@ -112,6 +105,7 @@ namespace LangLang.Application.UseCases.Course
                 throw new ArgumentException("Cannot find course.");
             }
             application.ChangeApplicationState(State.Rejected);
+            _courseApplicationDAO.UpdateCourseApplication(application.Id, application);
         }
 
         public void CancelApplication(string applicationId)

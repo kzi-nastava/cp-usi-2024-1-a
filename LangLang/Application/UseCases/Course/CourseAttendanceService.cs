@@ -8,21 +8,19 @@ namespace LangLang.Application.UseCases.Course
     public class CourseAttendanceService : ICourseAttendanceService
     {
         private readonly ICourseService _courseService;
-        private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
         private readonly ICourseAttendanceDAO _courseAttendanceDAO;
 
-        public CourseAttendanceService(ICourseService courseService, IStudentService studentService, ITutorService tutorService, ICourseAttendanceDAO courseAttendanceDAO)
+        public CourseAttendanceService(ICourseService courseService, ITutorService tutorService, ICourseAttendanceDAO courseAttendanceDAO)
         {
             _courseService = courseService;
-            _studentService = studentService;
             _tutorService = tutorService;
             _courseAttendanceDAO = courseAttendanceDAO;
         }
 
-        public List<CourseAttendance> GetAttendancesForStudent(string studentId)
+        public List<CourseAttendance> GetAllStudentAttendances(string studentId)
         {
-            return _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            return _courseAttendanceDAO.GetAllCourseAttendancesForStudent(studentId);
         }
 
         public List<CourseAttendance> GetAttendancesForCourse(string courseId)
@@ -32,25 +30,26 @@ namespace LangLang.Application.UseCases.Course
 
         public CourseAttendance? GetStudentAttendance(string studentId)
         {
-            List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            List<CourseAttendance> attendances = _courseAttendanceDAO.GetAllCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
                 Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State != Domain.Model.Course.CourseState.NotStarted && course.State != Domain.Model.Course.CourseState.FinishedGraded)
+                if (course.IsActive())
                 {
                     return attendance;
                 }
             }
             return null;
         }
+       
         public List<CourseAttendance> GetFinishedCoursesStudent(string studentId)
         {
-            List<CourseAttendance> allAttendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            List<CourseAttendance> allAttendances = _courseAttendanceDAO.GetAllCourseAttendancesForStudent(studentId);
             List<CourseAttendance> finishedAttendances = new();
             foreach (CourseAttendance attendance in allAttendances)
             {
                 Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.State == Domain.Model.Course.CourseState.FinishedGraded || course.State == Domain.Model.Course.CourseState.FinishedNotGraded)
+                if (course.IsFinished())
                     finishedAttendances.Add(attendance);
             }
             return finishedAttendances;
@@ -65,7 +64,7 @@ namespace LangLang.Application.UseCases.Course
 
         public void RemoveAttendee(string studentId, string courseId)
         {
-            List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            List<CourseAttendance> attendances = _courseAttendanceDAO.GetAllCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
                 if (attendance.CourseId == courseId)
@@ -81,7 +80,7 @@ namespace LangLang.Application.UseCases.Course
 
         public CourseAttendance? GradeStudent(string studentId, string courseId, int knowledgeGrade, int activityGrade)
         {
-            CourseAttendance? attendance = _courseAttendanceDAO.GetStudentAttendanceForCourse(studentId, courseId);
+            CourseAttendance? attendance = GetStudentAttendance(studentId);
             if (attendance == null) return null;
             attendance.AddGrade(activityGrade, knowledgeGrade);
             _courseAttendanceDAO.UpdateCourseAttendance(attendance.Id, attendance);
@@ -105,7 +104,7 @@ namespace LangLang.Application.UseCases.Course
 
         public CourseAttendance? GetAttendance(string studentId, string courseId)
         {
-            List<CourseAttendance> attendances = _courseAttendanceDAO.GetCourseAttendancesForStudent(studentId);
+            List<CourseAttendance> attendances = _courseAttendanceDAO.GetAllCourseAttendancesForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
             {
                 Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;

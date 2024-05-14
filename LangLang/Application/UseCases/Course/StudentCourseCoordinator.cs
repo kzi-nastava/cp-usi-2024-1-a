@@ -152,7 +152,6 @@ namespace LangLang.Application.UseCases.Course
                     availableCourses.Remove(appliedCourse);
                 }
             }
-
             return availableCourses;
         }
 
@@ -214,7 +213,7 @@ namespace LangLang.Application.UseCases.Course
             {
                 if(application.CourseApplicationState == State.Accepted)
                 {
-                    bool studentAttendingAnotherCourse = (_courseAttendanceService.GetAttendancesForStudent(application.StudentId)).Count != 0;
+                    bool studentAttendingAnotherCourse = (_courseAttendanceService.GetStudentAttendance(application.StudentId)) != null;
                     if (!studentAttendingAnotherCourse)
                     {
                         _courseAttendanceService.AddAttendance(application.StudentId, application.CourseId);
@@ -239,11 +238,7 @@ namespace LangLang.Application.UseCases.Course
             {
                 return false;
             }
-            if (course.State != Domain.Model.Course.CourseState.NotStarted)
-            {
-                return false;
-            }
-            return true;
+            return course.CanBeModified();
         }
 
         public bool CanDropCourse(string courseId)
@@ -253,11 +248,7 @@ namespace LangLang.Application.UseCases.Course
             {
                 return false;
             }
-            if(course.State != Domain.Model.Course.CourseState.InProgress)
-            {
-                return false;
-            }
-            return true;
+            return course.State == Domain.Model.Course.CourseState.InProgress;
         }
 
         public void AcceptDropRequest(Domain.Model.DropRequest dropRequest)
