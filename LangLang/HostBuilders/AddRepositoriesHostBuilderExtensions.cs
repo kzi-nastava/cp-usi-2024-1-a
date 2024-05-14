@@ -1,0 +1,33 @@
+﻿using LangLang.Domain.RepositoryInterfaces;
+using LangLang.Repositories.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace LangLang.HostBuilders;
+
+public static class AddRepositoriesHostBuilderExtensions
+{
+    public static IHostBuilder AddDao(this IHostBuilder host)
+    {
+        host.ConfigureServices(services =>
+        {
+            services.AddSingleton<ICourseDAO, CourseDAO>();
+            services.AddSingleton<IDirectorDAO, DirectorDAO>();
+            services.AddSingleton<IExamDAO, ExamDAO>();
+            services.AddSingleton<ILanguageDAO, LanguageDAO>();
+            services.AddSingleton<ILastIdDAO, LastIdDAO>();
+            services.AddSingleton<IStudentDAO, StudentDAO>();
+            services.AddSingleton<ITutorDAO, TutorDAO>();
+            services.AddSingleton<ICourseApplicationDAO, CourseApplicationDAO>();
+            services.AddSingleton<ICourseAttendanceDAO, CourseAttendanceDAO>();
+            services.AddSingleton<IProfileDAO, ProfileDAO>();
+            services.AddSingleton<IPersonProfileMappingDAO, PersonProfileMappingDAO>();
+            services.AddSingleton<INotificationDAO, NotificationDAO>();
+            services.AddSingleton<IExamApplicationDAO, ExamApplicationDAO>();
+            services.AddSingleton<IExamAttendanceDAO, ExamAttendanceDAO>();
+            services.AddSingleton<IDropRequestDAO, DropRequestDAO>();
+        });
+        
+        return host;
+    }
+}

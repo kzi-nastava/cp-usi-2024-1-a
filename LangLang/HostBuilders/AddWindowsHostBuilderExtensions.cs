@@ -1,5 +1,5 @@
-﻿using LangLang.View;
-using LangLang.View.Factories;
+﻿using LangLang.WPF.Views.Common;
+using LangLang.WPF.Views.Factories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

@@ -1,4 +1,4 @@
-﻿using LangLang.Stores;
+﻿using LangLang.Application.Stores;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
