@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 using LangLang.HostBuilders;
-using LangLang.View;
+using LangLang.WPF.Views.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace LangLang
 {
-    public partial class App : Application
+    public partial class App : System.Windows.Application
     {
         private readonly IHost _host = CreateHostBuilder().Build();
 

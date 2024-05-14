@@ -1,13 +1,17 @@
-﻿using LangLang.Services.AuthenticationServices;
-using LangLang.Services.NavigationServices;
-using LangLang.Services.UserServices;
-using LangLang.Services.UtilityServices;
-using LangLang.Services.CourseServices;
-using LangLang.Services.ExamServices;
-using LangLang.Services.NotificationServices;
+﻿using LangLang.Application.UseCases.Authentication;
+using LangLang.Application.UseCases.Common;
+using LangLang.Application.UseCases.Course;
+using LangLang.Application.UseCases.DropRequest;
+using LangLang.Application.UseCases.Exam;
+using LangLang.Application.UseCases.User;
+using LangLang.Application.Utility.Authentication;
+using LangLang.Application.Utility.Navigation;
+using LangLang.Application.Utility.Notification;
+using LangLang.Application.Utility.Timetable;
+using LangLang.Application.Utility.Validators;
+using LangLang.Domain.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using LangLang.Services.DropRequestServices;
 
 namespace LangLang.HostBuilders;
 
