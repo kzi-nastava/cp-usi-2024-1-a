@@ -41,6 +41,21 @@ namespace LangLang.Domain.Model
             Education = educationLvl;
         }
 
+        public void Update(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+        {
+            Name = name;
+            Surname = surname;
+            Gender = gender;
+            BirthDate = birthDate;
+            Gender = gender;
+            PhoneNumber = phoneNumber;
+        }
+
+        public void AddPenaltyPts()
+        {
+            PenaltyPts++; 
+        }
+
         public void RemovePenaltyPts()
         {
             if (PenaltyPts > 0) { PenaltyPts--; }

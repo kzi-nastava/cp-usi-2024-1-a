@@ -15,18 +15,10 @@ namespace LangLang.Application.UseCases.User
             _studentDao = studentDao;
         }
 
-        //Return if the updating is successful
-        public bool UpdateStudent(Student student, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
+        public void UpdateStudent(Student student, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
-            student.Name = name;
-            student.Surname = surname;
-            student.Gender = gender;
-            student.BirthDate = birthDate;
-            student.Gender = gender;
-            student.PhoneNumber = phoneNumber;
-
+            student.Update(name, surname, birthDate, gender, phoneNumber);  
             _studentDao.UpdateStudent(student);
-            return true;
         }
     
         public void DeleteAccount(Student student)
@@ -39,6 +31,8 @@ namespace LangLang.Application.UseCases.User
             return _studentDao.GetStudent(studentId);
         }
 
+        public List<Student> GetAllStudents() => _studentDao.GetAllStudents().Values.ToList();
+
         public Student AddStudent(Student student)
         {
             return _studentDao.AddStudent(student);
@@ -46,7 +40,7 @@ namespace LangLang.Application.UseCases.User
 
         public uint AddPenaltyPoint(Student student)
         {
-            student.PenaltyPts++;
+            student.AddPenaltyPts();
             _studentDao.UpdateStudent(student);
             return student.PenaltyPts;
         }
@@ -56,8 +50,6 @@ namespace LangLang.Application.UseCases.User
             student.RemovePenaltyPts();
             _studentDao.UpdateStudent(student);
         }
-
-        public List<Student> GetAllStudents() => _studentDao.GetAllStudents().Values.ToList();
         
         public void AddLanguageSkill(Student student, Language language, LanguageLevel languageLevel)
         {
