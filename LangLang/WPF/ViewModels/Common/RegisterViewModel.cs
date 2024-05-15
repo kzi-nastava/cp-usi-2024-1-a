@@ -177,21 +177,7 @@ namespace LangLang.WPF.ViewModels.Common
             else
             {
                 MessageBox.Show($"Succesfull registration");
-                LoginResult loginResult = _loginService.LogIn(email!, password!);
-                switch (loginResult.UserType)
-                {
-                    case UserType.Director:
-                        _navigationService.Navigate(ViewType.Director);
-                        break;
-                    case UserType.Tutor:
-                        _navigationService.Navigate(ViewType.Tutor);
-                        break;
-                    case UserType.Student:
-                        _navigationService.Navigate(ViewType.Student);
-                        break;
-                    default:
-                        throw new ArgumentException("No available window for current user type");
-                }
+                SwitchToLogin(null);
             }
         }
 
