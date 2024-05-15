@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace LangLang.Domain.Model
 {
-    public class Course
+    public class Course : IEntity
     {
         public string Id { get; set; }
         public string Name { get; set; }

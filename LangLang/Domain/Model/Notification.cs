@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace LangLang.Domain.Model;
 
-public class Notification : INotifyPropertyChanged
+public class Notification : INotifyPropertyChanged, IEntity
 {
     public string Id { get; set; }
     public string? SenderId { get; set; }

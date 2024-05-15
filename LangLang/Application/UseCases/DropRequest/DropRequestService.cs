@@ -6,38 +6,38 @@ namespace LangLang.Application.UseCases.DropRequest;
 
 public class DropRequestService : IDropRequestService
 {
-    private readonly IDropRequestDAO _dropRequestDao;
+    private readonly IDropRequestRepository _dropRequestRepository;
 
-    public DropRequestService(IDropRequestDAO dropRequestDao)
+    public DropRequestService(IDropRequestRepository dropRequestRepository)
     {
-        _dropRequestDao = dropRequestDao;
+        _dropRequestRepository = dropRequestRepository;
     }
     public Domain.Model.DropRequest Accept(Domain.Model.DropRequest dropRequest)
     {
         dropRequest.DropRequestStatus = Domain.Model.DropRequest.Status.Accepted;
-        _dropRequestDao.UpdateDropRequest(dropRequest.Id, dropRequest);
+        _dropRequestRepository.Update(dropRequest.Id, dropRequest);
         return dropRequest;
     }
 
     public Domain.Model.DropRequest AddDropRequest(string courseId, Profile sender, string message)
     {
-        return _dropRequestDao.AddDropRequest(new Domain.Model.DropRequest(sender.Email, courseId, message));
+        return _dropRequestRepository.Add(new Domain.Model.DropRequest(sender.Email, courseId, message));
     }
 
     public Domain.Model.DropRequest Deny(Domain.Model.DropRequest dropRequest)
     {
         dropRequest.DropRequestStatus = Domain.Model.DropRequest.Status.Denied;
-        _dropRequestDao.UpdateDropRequest(dropRequest.Id, dropRequest);
+        _dropRequestRepository.Update(dropRequest.Id, dropRequest);
         return dropRequest;
     }
 
     public List<Domain.Model.DropRequest> GetDropRequests(string courseId)
     {
-        return _dropRequestDao.GetDropRequests(courseId);
+        return _dropRequestRepository.GetDropRequests(courseId);
     }
 
     public List<Domain.Model.DropRequest> GetInReviewDropRequests(string courseId)
     {
-        return _dropRequestDao.GetInReviewDropRequests(courseId);
+        return _dropRequestRepository.GetInReviewDropRequests(courseId);
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using LangLang.Domain.Model;
 
-namespace LangLang.Repositories.Json.Util;
+namespace LangLang.Domain.Utility;
 
-public class DayConverter
+public static class DayConverter
 {
     public static WorkDay ToWorkDay(DayOfWeek day)
     {

@@ -1,6 +1,6 @@
 ﻿namespace LangLang.Domain.Model
 {
-    public class CourseAttendance
+    public class CourseAttendance : IEntity
     {
         public string Id {  get; set; }
         public string CourseId { get; set; }

@@ -2,7 +2,7 @@
 
 namespace LangLang.Domain.Model
 {
-    public class Director : Person
+    public class Director : Person, IEntity
     {
         public string Id { get; set; }
         

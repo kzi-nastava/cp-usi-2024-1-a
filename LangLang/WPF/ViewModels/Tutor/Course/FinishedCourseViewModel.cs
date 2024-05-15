@@ -17,7 +17,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course;
 
     private readonly CurrentCourseStore _currentCourseStore;
 
-    private readonly IStudentDAO _studentDAO;
+    private readonly IStudentRepository _studentRepository;
 
     private readonly IUserProfileMapper _userProfileMapper;
     private readonly IStudentCourseCoordinator _studentCourseCoordinator;
@@ -103,14 +103,14 @@ namespace LangLang.WPF.ViewModels.Tutor.Course;
         get => grades;
     }
     public FinishedCourseViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, 
-        IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IStudentCourseCoordinator studentCourseCoordinator, 
+        IStudentRepository studentRepository, IUserProfileMapper userProfileMapper, IStudentCourseCoordinator studentCourseCoordinator, 
         ICourseAttendanceService courseAttendanceService)
     {
         NavigationStore = navigationStore;
         _studentCourseCoordinator = studentCourseCoordinator;
         _courseAttendanceService = courseAttendanceService;
         _currentCourseStore = currentCourseStore;
-        _studentDAO = studentDAO;
+        _studentRepository = studentRepository;
         _userProfileMapper = userProfileMapper;
         Students = new ObservableCollection<Domain.Model.Student>(LoadStudents());
         CourseName = _currentCourseStore.CurrentCourse!.Name;

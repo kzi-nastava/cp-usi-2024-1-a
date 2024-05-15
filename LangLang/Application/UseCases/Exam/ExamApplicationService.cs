@@ -8,32 +8,32 @@ namespace LangLang.Application.UseCases.Exam;
 
 public class ExamApplicationService : IExamApplicationService
 {
-    private readonly IExamApplicationDAO _examApplicationDao;
+    private readonly IExamApplicationRepository _examApplicationRepository;
 
-    public ExamApplicationService(IExamApplicationDAO examApplicationDao)
+    public ExamApplicationService(IExamApplicationRepository examApplicationRepository)
     {
-        _examApplicationDao = examApplicationDao;
+        _examApplicationRepository = examApplicationRepository;
     }
 
-    public ExamApplication? GetExamApplication(string id) => _examApplicationDao.GetExamApplication(id);
+    public ExamApplication? GetExamApplication(string id) => _examApplicationRepository.Get(id);
 
     public ExamApplication? GetExamApplication(string studentId, string examId)
-        => _examApplicationDao.GetExamApplication(studentId, examId);
+        => _examApplicationRepository.Get(studentId, examId);
 
     public List<ExamApplication> GetExamApplicationsForStudent(string studentId)
-        => _examApplicationDao.GetExamApplicationsByStudent(studentId);
+        => _examApplicationRepository.GetByStudent(studentId);
 
     public List<ExamApplication> GetExamApplications(string examId)
-        => _examApplicationDao.GetExamApplicationsByExam(examId);
+        => _examApplicationRepository.GetByExam(examId);
 
     public List<ExamApplication> GetPendingExamApplications(string examId)
-        => _examApplicationDao.GetPendingExamApplicationsByExam(examId);
+        => _examApplicationRepository.GetPendingExamApplicationsByExam(examId);
 
     public ExamApplication ApplyForExam(Student student, Domain.Model.Exam exam)
     {
         if (exam.IsFull())
             throw new ArgumentException("No place available at exam.");
-        return _examApplicationDao.AddExamApplication(new ExamApplication(exam.Id, student.Id));
+        return _examApplicationRepository.Add(new ExamApplication(exam.Id, student.Id));
     }
 
     public ExamApplication AcceptApplication(ExamApplication application)
@@ -41,7 +41,7 @@ public class ExamApplicationService : IExamApplicationService
         if (application.ExamApplicationState != ExamApplication.State.Pending)
             throw new ArgumentException("Cannot accept application that is not pending.");
         application.ExamApplicationState = ExamApplication.State.Accepted;
-        return _examApplicationDao.UpdateExamApplication(application.Id, application) ??
+        return _examApplicationRepository.Update(application.Id, application) ??
                throw new ArgumentException("No application with the given id.");
     }
 
@@ -50,7 +50,7 @@ public class ExamApplicationService : IExamApplicationService
         if (application.ExamApplicationState != ExamApplication.State.Pending)
             throw new ArgumentException("Cannot reject application that is not pending.");
         application.ExamApplicationState = ExamApplication.State.Rejected;
-        return _examApplicationDao.UpdateExamApplication(application.Id, application) ??
+        return _examApplicationRepository.Update(application.Id, application) ??
                throw new ArgumentException("No application with the given id.");
     }
 
@@ -58,14 +58,14 @@ public class ExamApplicationService : IExamApplicationService
     {
         if (application.ExamApplicationState != ExamApplication.State.Pending)
             throw new ArgumentException($"Cannot cancel application with state {application.ExamApplicationState}.");
-        _examApplicationDao.DeleteExamApplication(application.Id);
+        _examApplicationRepository.Delete(application.Id);
     }
     
     public void DeleteApplications(string studentId)
     {
         foreach (var application in GetExamApplicationsForStudent(studentId))
         {
-            _examApplicationDao.DeleteExamApplication(application.Id);
+            _examApplicationRepository.Delete(application.Id);
         }
     }
 

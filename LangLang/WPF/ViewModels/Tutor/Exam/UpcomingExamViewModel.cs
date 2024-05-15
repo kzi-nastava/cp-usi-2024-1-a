@@ -25,7 +25,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
 
         private readonly IExamCoordinator _examCoordinator;
 
-        private readonly IStudentDAO _studentDAO;
+        private readonly IStudentRepository _studentRepository;
         private readonly IClosePopupNavigationService _closepopupNavigationService;
         public RelayCommand AddStudentCommand { get; }
         public RelayCommand RemoveStudentCommand { get; }
@@ -88,14 +88,14 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
         public Dictionary<string, string> DenyMessages { get; set; } = new();
 
         public UpcomingExamViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, 
-            IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator,
+            IStudentRepository studentRepository, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator,
             IClosePopupNavigationService closepopupNavigationService)
         {
             NavigationStore = navigationStore;
             _examCoordinator = examCoordinator;
             _userProfileMapper = userProfileMapper;
             _currentExamStore = currentExamStore;
-            _studentDAO = studentDAO;
+            _studentRepository = studentRepository;
             _closepopupNavigationService = closepopupNavigationService;
             StudentsStatuses = new ObservableCollection<StudentAddedStatusViewModel>();
             LoadStudents();
