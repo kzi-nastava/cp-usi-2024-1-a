@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace LangLang.Domain.Model;
 
-public class DropRequest : INotifyPropertyChanged
+public class DropRequest : INotifyPropertyChanged, IEntity
 {
     public string Id { get; set; }
     public string SenderId { get; set; }

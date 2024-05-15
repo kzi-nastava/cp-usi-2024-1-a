@@ -16,16 +16,16 @@ namespace LangLang.Application.UseCases.User
         private readonly ITutorService _tutorService;
         private readonly IStudentCourseCoordinator _studentCourseCoordinator;
         private readonly IExamCoordinator _examCoordinator;
-        private readonly IPersonProfileMappingDAO _personProfileMappingDao;
+        private readonly IPersonProfileMappingRepository _personProfileMappingRepository;
         private readonly IUserProfileMapper _userProfileMapper;
 
-        public AccountService(IProfileService profileService, IStudentService studentService, ITutorService tutorService, IStudentCourseCoordinator studentCourseCoordinator, IPersonProfileMappingDAO personProfileMappingDao, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator)
+        public AccountService(IProfileService profileService, IStudentService studentService, ITutorService tutorService, IStudentCourseCoordinator studentCourseCoordinator, IPersonProfileMappingRepository personProfileMappingRepository, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator)
         {
             _profileService = profileService;
             _studentService = studentService;
             _tutorService = tutorService;
             _studentCourseCoordinator = studentCourseCoordinator;
-            _personProfileMappingDao = personProfileMappingDao;
+            _personProfileMappingRepository = personProfileMappingRepository;
             _userProfileMapper = userProfileMapper;
             _examCoordinator = examCoordinator;
         }
@@ -83,7 +83,7 @@ namespace LangLang.Application.UseCases.User
                 registerDto.EducationLevel,
                 0
             ));
-            _personProfileMappingDao.AddMapping(new PersonProfileMapping(
+            _personProfileMappingRepository.Add(new PersonProfileMapping(
                 profile.Email,
                 UserType.Student,
                 student.Id
@@ -108,7 +108,7 @@ namespace LangLang.Application.UseCases.User
                 new int[5],
                 registerDto.DateAdded
             ));
-            _personProfileMappingDao.AddMapping(new PersonProfileMapping(
+            _personProfileMappingRepository.Add(new PersonProfileMapping(
                 profile.Email,
                 UserType.Tutor,
                 tutor.Id

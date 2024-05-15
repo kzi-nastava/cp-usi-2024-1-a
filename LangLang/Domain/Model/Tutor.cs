@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LangLang.Domain.Model
 {
-    public class Tutor : Person
+    public class Tutor : Person, IEntity
     {
         public string Id { get; set; }
         

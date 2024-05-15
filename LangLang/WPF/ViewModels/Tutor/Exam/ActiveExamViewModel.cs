@@ -20,7 +20,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
         public NavigationStore NavigationStore { get; }
         public IAuthenticationStore AuthenticationStore { get; }
         private readonly CurrentExamStore _currentExamStore;
-        private readonly IStudentDAO _studentDAO;
+        private readonly IStudentRepository _studentRepository;
         private readonly IUserProfileMapper _userProfileMapper;
         private readonly IPenaltyService _penaltyService;
         private readonly IExamCoordinator _examCoordinator;
@@ -79,7 +79,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
         }
 
         public ActiveExamViewModel(NavigationStore navigationStore, 
-            CurrentExamStore currentExamStore, IStudentDAO studentDAO, 
+            CurrentExamStore currentExamStore, IStudentRepository studentRepository, 
             IUserProfileMapper userProfileMapper, IPenaltyService penaltyService,
             IExamCoordinator examCoordinator, IDropRequestService dropRequestService,
             IAuthenticationStore authenticationStore, IDropRequestInfoService dropRequestInfoService,
@@ -97,7 +97,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
             _accountService = accountService;
             _closepopupNavigationService = closepopupNavigationService;
 
-            _studentDAO = studentDAO;
+            _studentRepository = studentRepository;
             Students = new ObservableCollection<Domain.Model.Student>(LoadStudents());
             KickStudentCommand = new RelayCommand(KickStudent, canExecute => SelectedStudent != null);
             FinishExamCommand = new RelayCommand(FinishExam);
