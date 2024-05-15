@@ -46,10 +46,10 @@ namespace LangLang.WPF.ViewModels.Student
         public ObservableCollection<CourseViewModel> FinishedCourses { get; set; }
         public ObservableCollection<CourseViewModel> AppliedCourses { get; set; }
         public ObservableCollection<CourseViewModel> AttendingCourse { get; set; }
-        public ObservableCollection<Exam> AvailableExams { get; set; }
-        public ObservableCollection<Exam> AppliedExams { get; set; }
-        public ObservableCollection<Exam> FinishedExams { get; set; }
-        public ObservableCollection<Exam> AttendingExams { get; set; }
+        public ObservableCollection<ExamViewModel> AvailableExams { get; set; }
+        public ObservableCollection<ExamViewModel> AppliedExams { get; set; }
+        public ObservableCollection<ExamViewModel> FinishedExams { get; set; }
+        public ObservableCollection<ExamViewModel> AttendingExams { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLevel> Levels { get; set; }
         public ObservableCollection<int?> Durations { get; set; }
@@ -230,10 +230,10 @@ namespace LangLang.WPF.ViewModels.Student
             FinishedCourses = new ObservableCollection<CourseViewModel>();
             AttendingCourse = new ObservableCollection<CourseViewModel>(); 
             AppliedCourses = new ObservableCollection<CourseViewModel>();
-            AvailableExams = new ObservableCollection<Exam>();
-            AppliedExams = new ObservableCollection<Exam>();
-            AttendingExams = new ObservableCollection<Exam>();
-            FinishedExams = new ObservableCollection<Exam>();
+            AvailableExams = new ObservableCollection<ExamViewModel>();
+            AppliedExams = new ObservableCollection<ExamViewModel>();
+            AttendingExams = new ObservableCollection<ExamViewModel>();
+            FinishedExams = new ObservableCollection<ExamViewModel>();
             Languages = new ObservableCollection<string?>();
             Levels = new ObservableCollection<LanguageLevel>();
             Durations = new ObservableCollection<int?> { null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
@@ -331,7 +331,6 @@ namespace LangLang.WPF.ViewModels.Student
             Course cancelledCourse = _courseService.GetCourseById(courseId)!;
             string tutorName = _tutorService.GetTutorNameForCourse(cancelledCourse.Id);
             Courses.Add(new CourseViewModel(cancelledCourse, tutorName));
-            CourseViewModel hellll = new CourseViewModel(cancelledCourse, tutorName);
 
             foreach(CourseViewModel courseViewModel in AppliedCourses) {
                 if(courseViewModel.Id == courseId)
@@ -454,7 +453,7 @@ namespace LangLang.WPF.ViewModels.Student
             AvailableExams.Clear();
             foreach (var exam in _examCoordinator.GetAvailableExams(_loggedInUser))
             {
-                AvailableExams.Add(exam);
+                AvailableExams.Add(new ExamViewModel(exam));
             }
         }
         
@@ -463,14 +462,14 @@ namespace LangLang.WPF.ViewModels.Student
             AppliedExams.Clear();
             foreach (var exam in _examCoordinator.GetAppliedExams(_loggedInUser))
             {
-                AppliedExams.Add(exam);
+                AppliedExams.Add(new ExamViewModel(exam));
             }
         }
         
         private void LoadAttendingExams()
         {
             var exam = _examCoordinator.GetAttendingExam(_loggedInUser.Id);
-            AttendingExams = exam == null ? new ObservableCollection<Exam>() : new ObservableCollection<Exam>{exam};
+            AttendingExams = exam == null ? new ObservableCollection<ExamViewModel>() : new ObservableCollection<ExamViewModel>{new ExamViewModel(exam)};
         }
 
         public void LoadLanguages()
@@ -582,7 +581,7 @@ namespace LangLang.WPF.ViewModels.Student
                 {
                     if (ExamStartFilter == null || (ExamStartFilter != null && exam.Time.Date == ExamStartFilter.Value.Date))
                     {
-                        AvailableExams.Add(exam);
+                        AvailableExams.Add(new ExamViewModel(exam));
                     }
                 }
             }
