@@ -64,18 +64,7 @@ namespace LangLang.Application.UseCases.Course
 
         public void RemoveAttendee(string studentId, string courseId)
         {
-            List<CourseAttendance> attendances = _courseAttendanceDAO.GetAllCourseAttendancesForStudent(studentId);
-            foreach (CourseAttendance attendance in attendances)
-            {
-                if (attendance.CourseId == courseId)
-                {
-                    if(_courseService.GetCourseById(courseId)!.State != Domain.Model.Course.CourseState.NotStarted)
-                    {
-                        _courseService.CancelAttendance(courseId);
-                    }
-                    _courseAttendanceDAO.DeleteCourseAttendance(attendance.Id);
-                }
-            }
+            _courseAttendanceDAO.DeleteCourseAttendance(GetStudentAttendance(studentId)!.Id);
         }
 
         public CourseAttendance? GradeStudent(string studentId, string courseId, int knowledgeGrade, int activityGrade)
