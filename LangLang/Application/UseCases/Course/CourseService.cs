@@ -117,7 +117,7 @@ namespace LangLang.Application.UseCases.Course
             
         }
 
-        private bool FieldsEmpty(string name, string? languageName, LanguageLevel? level, int? duration, Domain.Model.Course.CourseState? state, DateTime? start, int maxStudents)
+        private static bool FieldsEmpty(string name, string? languageName, LanguageLevel? level, int? duration, Domain.Model.Course.CourseState? state, DateTime? start, int maxStudents)
         {
             return name == "" || languageName == null || duration == null || start == null || maxStudents == 0 || level == null || state == null;
         }
