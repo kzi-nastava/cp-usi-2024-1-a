@@ -8,7 +8,7 @@ namespace LangLang.HostBuilders;
 
 public static class AddRepositoriesHostBuilderExtensions
 {
-    public static IHostBuilder AddDao(this IHostBuilder host)
+    public static IHostBuilder AddRepositories(this IHostBuilder host)
     {
         host.ConfigureServices(services =>
         {
