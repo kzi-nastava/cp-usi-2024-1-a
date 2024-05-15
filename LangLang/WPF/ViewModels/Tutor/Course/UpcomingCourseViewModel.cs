@@ -133,7 +133,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
 
             Name = SelectedStudent.Name;
             Surname = SelectedStudent.Surname;
-            PenaltyPts = SelectedStudent.PenaltyPts;
+            PenaltyPts = SelectedStudent.PenaltyPoints;
 
         }
 

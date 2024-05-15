@@ -73,14 +73,14 @@
                     
 
                     <ComboBox x:Name="cmbEducation" Width="208" HorizontalAlignment="Left" Margin="395,1,0,18" Grid.Row="6"
-                    SelectedItem="{Binding EducationLvl, UpdateSourceTrigger=PropertyChanged}">
+                    SelectedItem="{Binding EducationLevel, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBox.ItemsSource>
-                            <x:Array Type="{x:Type model:EducationLvl}">
-                                <model:EducationLvl>ElementarySchool</model:EducationLvl>
-                                <model:EducationLvl>HighSchool</model:EducationLvl>
-                                <model:EducationLvl>CollegeDegree</model:EducationLvl>
-                                <model:EducationLvl>MastersDegree</model:EducationLvl>
-                                <model:EducationLvl>PhD</model:EducationLvl>
+                            <x:Array Type="{x:Type model:EducationLevel}">
+                                <model:EducationLevel>ElementarySchool</model:EducationLevel>
+                                <model:EducationLevel>HighSchool</model:EducationLevel>
+                                <model:EducationLevel>CollegeDegree</model:EducationLevel>
+                                <model:EducationLevel>MastersDegree</model:EducationLevel>
+                                <model:EducationLevel>PhD</model:EducationLevel>
                             </x:Array>
                         </ComboBox.ItemsSource>
                     </ComboBox>

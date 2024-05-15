@@ -7,8 +7,8 @@ namespace LangLang.Domain.Model
     {
         public string Id { get; set; }
         
-        public EducationLvl Education { get; set; }
-        public uint PenaltyPts { get; set; }
+        public EducationLevel Education { get; set; }
+        public uint PenaltyPoints { get; set; }
         
         public Dictionary<string, LanguageLevel> CompletedCourseLanguages { get; set; }
         public Dictionary<string, LanguageLevel> PassedExamLanguages { get; set; }
@@ -16,34 +16,49 @@ namespace LangLang.Domain.Model
         public Student() : base("", "", DateTime.Now, Gender.Other, "")
         {
             Id = "";
-            PenaltyPts = 0;
+            PenaltyPoints = 0;
             CompletedCourseLanguages = new Dictionary<string, LanguageLevel>();
             PassedExamLanguages = new Dictionary<string, LanguageLevel>();
         }
 
-        public Student(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, Dictionary<string, LanguageLevel>? completedCourseLanguages = null, Dictionary<string, LanguageLevel>? passedExamLanguages = null)
+        public Student(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLevel educationLevel, uint penaltyPoints, Dictionary<string, LanguageLevel>? completedCourseLanguages = null, Dictionary<string, LanguageLevel>? passedExamLanguages = null)
             : base(name, surname, birthDate, gender, phoneNumber)
         {
             Id = "";
-            PenaltyPts = penaltyPts;
-            Education = educationLvl;
+            PenaltyPoints = penaltyPoints;
+            Education = educationLevel;
             CompletedCourseLanguages = completedCourseLanguages ?? new Dictionary<string, LanguageLevel>();
             PassedExamLanguages = passedExamLanguages ?? new Dictionary<string, LanguageLevel>();
         }
         
-        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLvl educationLvl, uint penaltyPts, Dictionary<string, LanguageLevel> completedCourseLanguages, Dictionary<string, LanguageLevel> passedExamLanguages)
+        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLevel educationLvl, uint penaltyPoints, Dictionary<string, LanguageLevel> completedCourseLanguages, Dictionary<string, LanguageLevel> passedExamLanguages)
             : base(name, surname, birthDate, gender, phoneNumber)
         {
             Id = id;
-            PenaltyPts = penaltyPts;
+            PenaltyPoints = penaltyPoints;
             CompletedCourseLanguages = completedCourseLanguages;
             PassedExamLanguages = passedExamLanguages;
             Education = educationLvl;
         }
 
-        public void RemovePenaltyPts()
+        public void Update(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
-            if (PenaltyPts > 0) { PenaltyPts--; }
+            Name = name;
+            Surname = surname;
+            Gender = gender;
+            BirthDate = birthDate;
+            Gender = gender;
+            PhoneNumber = phoneNumber;
+        }
+
+        public void AddPenaltyPoint()
+        {
+            PenaltyPoints++; 
+        }
+
+        public void RemovePenaltyPoint()
+        {
+            if (PenaltyPoints > 0) { PenaltyPoints--; }
         }
 
         public void AddCompletedCourseLanguage(Language language, LanguageLevel languageLevel)
@@ -57,7 +72,7 @@ namespace LangLang.Domain.Model
         }
     }
     
-    public enum EducationLvl
+    public enum EducationLevel
     {
         ElementarySchool, HighSchool, CollegeDegree, MastersDegree, PhD
     }

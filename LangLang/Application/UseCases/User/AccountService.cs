@@ -80,7 +80,7 @@ namespace LangLang.Application.UseCases.User
                 registerDto.BirthDay,
                 registerDto.Gender,
                 registerDto.PhoneNumber,
-                registerDto.EducationLvl,
+                registerDto.EducationLevel,
                 0
             ));
             _personProfileMappingDao.AddMapping(new PersonProfileMapping(

@@ -13,53 +13,46 @@ public class StudentDAO : IStudentDAO
     {
         _lastIdDao = lastIdDao;
     }
-
-    private Dictionary<string, Student>? _students;
-    
-    private Dictionary<string, Student> Students
-    {
-        get {
-            _students ??= JsonUtil.ReadFromFile<Student>(Constants.StudentFilePath);
-            return _students!;
-        }
-        set => _students = value;
-    }
-
+   
     public Dictionary<string, Student> GetAllStudents()
     {
-        return Students;
+        return JsonUtil.ReadFromFile<Student>(Constants.StudentFilePath);
     }
 
     public Student? GetStudent(string id)
     {
-        return Students.GetValueOrDefault(id);
+        Dictionary<string, Student> students = GetAllStudents();
+        return students.GetValueOrDefault(id);
     }
 
     public Student AddStudent(Student student)
     {
         _lastIdDao.IncrementStudentId();
         student.Id = _lastIdDao.GetStudentId();
-        Students[student.Id] = student;
-        SaveStudents();
+        Dictionary<string, Student> students = GetAllStudents();
+        students[student.Id] = student;
+        SaveStudents(students);
         return student;
     }
 
     public Student UpdateStudent(Student student)
     {
-        Students[student.Id] = student;
-        SaveStudents();
+        Dictionary<string, Student> students = GetAllStudents();
+        students[student.Id] = student;
+        SaveStudents(students);
         return student;
     }
 
     public void DeleteStudent(string id)
     {
-        Students.Remove(id);
-        SaveStudents();
+        Dictionary<string, Student> students = GetAllStudents();
+        students.Remove(id);
+        SaveStudents(students);
     }
 
-    private void SaveStudents()
+    private void SaveStudents(Dictionary<string, Student> students)
     {
-        JsonUtil.WriteToFile(Students, Constants.StudentFilePath);
+        JsonUtil.WriteToFile(students, Constants.StudentFilePath);
     }
 
 }

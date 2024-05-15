@@ -180,7 +180,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             Name = SelectedStudent.Name;
             Surname = SelectedStudent.Surname;
             Email = profile.Email;
-            PenaltyPts = SelectedStudent.PenaltyPts;
+            PenaltyPts = SelectedStudent.PenaltyPoints;
 
         }
         private void SelectDropRequest()
