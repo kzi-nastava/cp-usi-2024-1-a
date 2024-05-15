@@ -61,6 +61,11 @@ namespace LangLang.Domain.Model
                 DateAdded = (DateTime)dateAdded;
         }
 
+        public string GetFullName()
+        {
+            return Name + " " + Surname;
+        }
+
         public double GetAverageRating()
         {
             int sum = 0;

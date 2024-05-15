@@ -22,6 +22,7 @@ namespace LangLang.WPF.ViewModels.Student
         private readonly ICourseService _courseService;
         private readonly ILanguageService _languageService;
         private readonly IStudentService _studentService;
+        private readonly ITutorService _tutorService;
         private readonly CurrentCourseStore _currentCourseStore;
         private readonly IExamService _examService;
         private readonly IStudentCourseCoordinator _courseCoordinator;
@@ -41,10 +42,10 @@ namespace LangLang.WPF.ViewModels.Student
         public ICommand CancelAttendingCourseCommand { get; }
         public ICommand CancelAttendingExamCommand { get; }
         public ICommand OpenNotificationWindowCommand { get; }
-        public ObservableCollection<Course> Courses { get; set; }
-        public ObservableCollection<Course> FinishedCourses { get; set; }
-        public ObservableCollection<Course> AppliedCourses { get; set; }
-        public ObservableCollection<Course> AttendingCourse { get; set; }
+        public ObservableCollection<CourseViewModel> Courses { get; set; }
+        public ObservableCollection<CourseViewModel> FinishedCourses { get; set; }
+        public ObservableCollection<CourseViewModel> AppliedCourses { get; set; }
+        public ObservableCollection<CourseViewModel> AttendingCourse { get; set; }
         public ObservableCollection<Exam> AvailableExams { get; set; }
         public ObservableCollection<Exam> AppliedExams { get; set; }
         public ObservableCollection<Exam> FinishedExams { get; set; }
@@ -205,7 +206,7 @@ namespace LangLang.WPF.ViewModels.Student
         private readonly IPopupNavigationService _popupNavigationService;
         public NavigationStore NavigationStore { get; }
         
-        public StudentMenuViewModel(IStudentService studentService, CurrentCourseStore currentCourseStore,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
+        public StudentMenuViewModel(IStudentService studentService, CurrentCourseStore currentCourseStore,IAccountService accountService, ILoginService loginService, IStudentCourseCoordinator courseCoordinator, INavigationService navigationService, ITutorService tutorService, IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ICourseService courseService, ILanguageService languageService, IExamService examService, IAuthenticationStore authenticationStore, IExamCoordinator examCoordinator, IExamApplicationService examApplicationService)
         {
             _loggedInUser = (Domain.Model.Student?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
@@ -215,6 +216,7 @@ namespace LangLang.WPF.ViewModels.Student
             _courseService = courseService;
             _accountService = accountService;
             _languageService = languageService;
+            _tutorService = tutorService;
             _examService = examService;
             _examCoordinator = examCoordinator;
             _examApplicationService = examApplicationService;
@@ -224,10 +226,10 @@ namespace LangLang.WPF.ViewModels.Student
             _navigationService = navigationService;
             _popupNavigationService = popupNavigationService;
 
-            Courses = new ObservableCollection<Course>();
-            FinishedCourses = new ObservableCollection<Course>();
-            AttendingCourse = new ObservableCollection<Course>(); 
-            AppliedCourses = new ObservableCollection<Course>();
+            Courses = new ObservableCollection<CourseViewModel>();
+            FinishedCourses = new ObservableCollection<CourseViewModel>();
+            AttendingCourse = new ObservableCollection<CourseViewModel>(); 
+            AppliedCourses = new ObservableCollection<CourseViewModel>();
             AvailableExams = new ObservableCollection<Exam>();
             AppliedExams = new ObservableCollection<Exam>();
             AttendingExams = new ObservableCollection<Exam>();
@@ -263,7 +265,6 @@ namespace LangLang.WPF.ViewModels.Student
             OpenNotificationWindowCommand = new RelayCommand(_ => OpenNotificationWindow());
         }
 
-
         private void CancelAttendingCourse(string courseId)
         {
             Course course = _courseService.GetCourseById(courseId)!;
@@ -282,7 +283,7 @@ namespace LangLang.WPF.ViewModels.Student
                     MessageBox.Show($"You've successfully dropped {course.Name} course.", "Success");
                 }
                 _courseCoordinator.DropCourse(_loggedInUser.Id, message);
-                AttendingCourse.Remove(course);
+                AttendingCourse.Clear();
             }
             catch
             {
@@ -297,8 +298,6 @@ namespace LangLang.WPF.ViewModels.Student
 
         }
 
-
-
         private void ApplyCourse(string courseId)
         {
             try
@@ -307,16 +306,21 @@ namespace LangLang.WPF.ViewModels.Student
                 Course course = _courseService.GetCourseById(courseId)!;
                 MessageBox.Show($"Application sent! You've successfully applied for {course.Name}!", "Success");
 
-                Course appliedCourse = _courseService.GetCourseById(courseId)!;
-                Courses.Remove(appliedCourse);
-                AppliedCourses.Add(appliedCourse);
+                foreach (CourseViewModel courseViewModel in Courses)
+                {
+                    if (courseViewModel.Id == courseId)
+                    {
+                        Courses.Remove(courseViewModel);
+                        AppliedCourses.Add(courseViewModel);
+                        return;
+                    }
+                }
             }
             catch
             {
                 MessageBox.Show($"Can't apply to other courses when already attending {AttendingCourse[0].Name} course!", "Fail");
             }
         }
-
 
         private void CancelCourse(string courseId)
         {
@@ -325,10 +329,18 @@ namespace LangLang.WPF.ViewModels.Student
             _courseCoordinator.CancelApplication(_loggedInUser.Id, courseId);
 
             Course cancelledCourse = _courseService.GetCourseById(courseId)!;
-            Courses.Add(cancelledCourse);
-            AppliedCourses.Remove(cancelledCourse);
-        }
+            string tutorName = _tutorService.GetTutorNameForCourse(cancelledCourse.Id);
+            Courses.Add(new CourseViewModel(cancelledCourse, tutorName));
+            CourseViewModel hellll = new CourseViewModel(cancelledCourse, tutorName);
 
+            foreach(CourseViewModel courseViewModel in AppliedCourses) {
+                if(courseViewModel.Id == courseId)
+                {
+                    AppliedCourses.Remove(courseViewModel);
+                    return;
+                }
+            }
+        }
 
         private void ApplyExam(Exam exam)
         {
@@ -344,7 +356,6 @@ namespace LangLang.WPF.ViewModels.Student
                 MessageBox.Show($"Failed to apply for exam: {e.Message}", "Error");
             }
         }
-
 
         private void CancelExam(Exam exam)
         {
@@ -400,7 +411,8 @@ namespace LangLang.WPF.ViewModels.Student
             var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Id);
             foreach (Course course in availableCourses)
             {
-                Courses.Add(course);
+                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                Courses.Add(new CourseViewModel(course, tutorName));
             }
         }
 
@@ -413,7 +425,8 @@ namespace LangLang.WPF.ViewModels.Student
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Id)!;
             if(attendingCourse != null)
             {
-                AttendingCourse.Add(attendingCourse);
+                string tutorName = _tutorService.GetTutorNameForCourse(attendingCourse.Id);
+                AttendingCourse.Add(new CourseViewModel(attendingCourse, tutorName));
             }
         }
 
@@ -421,7 +434,8 @@ namespace LangLang.WPF.ViewModels.Student
         {
             foreach (Course course in _courseCoordinator.GetAppliedCoursesStudent(_loggedInUser.Id))
             {
-                AppliedCourses.Add(course);
+                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                AppliedCourses.Add(new CourseViewModel(course, tutorName));
             }
         }
 
@@ -430,7 +444,8 @@ namespace LangLang.WPF.ViewModels.Student
             var finishedCourses = _courseCoordinator.GetFinishedCoursesStudent(_loggedInUser.Id);
             foreach (Course course in finishedCourses)
             {
-                FinishedCourses.Add(course);
+                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                FinishedCourses.Add(new CourseViewModel(course, tutorName));
             }
         }
 
@@ -490,8 +505,8 @@ namespace LangLang.WPF.ViewModels.Student
         public void FilterCourses()
         {
             Courses.Clear();
-            var courses = _courseService.GetAll();
-            foreach (Course course in courses.Values)
+            var courses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Id);
+            foreach (Course course in courses)
             {
                 if ((course.Language.Name == CourseLanguageFilter || CourseLanguageFilter == "") && (course.Level == CourseLevelFilter || CourseLevelFilter == null))
                 {
@@ -501,7 +516,8 @@ namespace LangLang.WPF.ViewModels.Student
                         {
                             if (course.Duration == CourseDurationFilter || CourseDurationFilter == 0)
                             {
-                                Courses.Add(course);
+                                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                                Courses.Add(new CourseViewModel(course, tutorName));
                             }
                         }
                     }
