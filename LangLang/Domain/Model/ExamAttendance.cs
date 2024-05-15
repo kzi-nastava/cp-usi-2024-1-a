@@ -2,7 +2,7 @@
 
 namespace LangLang.Domain.Model
 {
-    public class ExamAttendance
+    public class ExamAttendance : IEntity
     {
         public string Id {  get; set; }
         public string ExamId { get; set; }

@@ -39,7 +39,7 @@ public class ExamOverviewViewModel : ViewModelBase
     private Domain.Model.Exam? selectedExam;
 
     private Language? language;
-    private LanguageLevel? languageLvl;
+    private LanguageLevel? _languageLevel;
     private DateTime? examDate;
     private TimeOnly? examTime;
     private int maxStudents;
@@ -92,14 +92,14 @@ public class ExamOverviewViewModel : ViewModelBase
             if (Equals(language, value)) return;
             language = value;
             OnPropertyChanged(nameof(language));
-            LanguageLvl = null;
+            LanguageLevel = null;
             LanguageLevels = language == null ? new ObservableCollection<LanguageLevel>() : new ObservableCollection<LanguageLevel>(languageToLvl[language]);
         }
     }
-    public LanguageLevel? LanguageLvl
+    public LanguageLevel? LanguageLevel
     {
-        get => languageLvl;
-        set => SetField(ref languageLvl, value);
+        get => _languageLevel;
+        set => SetField(ref _languageLevel, value);
     }
     public DateTime? ExamDate
     {
@@ -225,7 +225,7 @@ public class ExamOverviewViewModel : ViewModelBase
         int classroomNumber = GetClassroomNumber();
         try
         {
-            Domain.Model.Exam exam = _examService.AddExam(_tutor, Language, LanguageLvl, selectedDate, ExamTime, classroomNumber, MaxStudents);
+            Domain.Model.Exam exam = _examService.AddExam(_tutor, Language, LanguageLevel, selectedDate, ExamTime, classroomNumber, MaxStudents);
             Exams.Add(exam);
             ResetFields();
         }
@@ -237,13 +237,13 @@ public class ExamOverviewViewModel : ViewModelBase
 
     private bool CanAddExam()
     {
-        return Language != null && LanguageLvl != null && ExamDate != null && ExamTime != null && MaxStudents > 0;
+        return Language != null && LanguageLevel != null && ExamDate != null && ExamTime != null && MaxStudents > 0;
     }
     
     private void ResetFields()
     {
         Language = null;
-        LanguageLvl = null;
+        LanguageLevel = null;
         ExamDate = null;
         ExamTime = null;
         MaxStudents = 0;
@@ -253,7 +253,7 @@ public class ExamOverviewViewModel : ViewModelBase
     {
         if (SelectedExam == null) return;
         Language = SelectedExam.Language;
-        LanguageLvl = SelectedExam.LanguageLevel;
+        LanguageLevel = SelectedExam.LanguageLevel;
         ExamDate = SelectedExam.Time.Date;
         ExamTime = SelectedExam.TimeOfDay;
         MaxStudents = SelectedExam.MaxStudents;
@@ -266,7 +266,7 @@ public class ExamOverviewViewModel : ViewModelBase
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
         try
         {
-            Domain.Model.Exam exam = _examService.UpdateExam(selectedExam!.Id, Language, LanguageLvl, selectedDate, ExamTime, selectedExam!.ClassroomNumber, MaxStudents);
+            Domain.Model.Exam exam = _examService.UpdateExam(selectedExam!.Id, Language, LanguageLevel, selectedDate, ExamTime, selectedExam!.ClassroomNumber, MaxStudents);
             Exams[Exams.IndexOf(SelectedExam!)] = exam;
             ResetFields();
         }

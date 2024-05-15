@@ -23,7 +23,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
 
         private readonly IStudentCourseCoordinator _studentCourseCoordinator;
 
-        private readonly IStudentDAO _studentDAO;
+        private readonly IStudentRepository _studentRepository;
         public RelayCommand AcceptStudentCommand { get; }
         public RelayCommand DenyStudentCommand { get; }
 
@@ -101,13 +101,13 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         }
 
         public UpcomingCourseViewModel(NavigationStore navigationStore, CurrentCourseStore currentCourseStore, 
-            IStudentDAO studentDAO, IUserProfileMapper userProfileMapper, IStudentCourseCoordinator studentCourseCoordinator)
+            IStudentRepository studentRepository, IUserProfileMapper userProfileMapper, IStudentCourseCoordinator studentCourseCoordinator)
         {
             NavigationStore = navigationStore;
             _studentCourseCoordinator = studentCourseCoordinator;
             _userProfileMapper = userProfileMapper;
             _currentCourseStore = currentCourseStore;
-            _studentDAO = studentDAO;
+            _studentRepository = studentRepository;
             Students = new ObservableCollection<Domain.Model.Student>(LoadStudents());
             Attendees = new ObservableCollection<Domain.Model.Student>(LoadAttendees());
             CourseName = _currentCourseStore.CurrentCourse!.Name;

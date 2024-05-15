@@ -10,28 +10,28 @@ namespace LangLang.Application.UseCases.Course
 {
     public class CourseService : ICourseService
     {
-        private readonly ICourseDAO _courseDao;
-        private readonly ILanguageDAO _languageDao;
-        private readonly ITutorDAO _tutorDao;
+        private readonly ICourseRepository _courseRepository;
+        private readonly ILanguageRepository _languageRepository;
+        private readonly ITutorRepository _tutorRepository;
 
-        public CourseService(ICourseDAO courseDao, ILanguageDAO languageDao, ITutorDAO tutorDao)
+        public CourseService(ICourseRepository courseRepository, ILanguageRepository languageRepository, ITutorRepository tutorRepository)
         {
-            _courseDao = courseDao;
-            _languageDao = languageDao;
-            _tutorDao = tutorDao;
+            _courseRepository = courseRepository;
+            _languageRepository = languageRepository;
+            _tutorRepository = tutorRepository;
         }
 
 
         public Dictionary<string, Domain.Model.Course> GetAll()
         {
-            return _courseDao.GetAllCourses();
+            return _courseRepository.GetAll();
         }
         public Dictionary<string, Domain.Model.Course> GetCoursesByTutor(Tutor loggedInUser)
         {
             Dictionary<string, Domain.Model.Course> courses = new();
             foreach (string courseId in loggedInUser.Courses)
             {
-                courses.Add(courseId, _courseDao.GetCourseById(courseId)!);
+                courses.Add(courseId, _courseRepository.Get(courseId)!);
             }
             return courses;
         }
@@ -56,26 +56,26 @@ namespace LangLang.Application.UseCases.Course
 
         public void AddCourse(Domain.Model.Course course, Tutor loggedInUser)
         {
-            _courseDao.AddCourse(course);
+            _courseRepository.Add(course);
             loggedInUser.Courses.Add(course.Id);
-            _tutorDao.UpdateTutor(loggedInUser);
+            _tutorRepository.Update(loggedInUser.Id, loggedInUser);
         }
 
         public Domain.Model.Course? GetCourseById(string id)
         {
-            return _courseDao.GetCourseById(id);
+            return _courseRepository.Get(id);
         }
 
         public void DeleteCourse(string id, Tutor loggedInUser)
         {
             loggedInUser.Courses.Remove(id);
-            _courseDao.DeleteCourse(id);
-            _tutorDao.UpdateTutor(loggedInUser);
+            _courseRepository.Delete(id);
+            _tutorRepository.Update(loggedInUser.Id, loggedInUser);
         }
 
         public void UpdateCourse(Domain.Model.Course course)
         {
-            _courseDao.UpdateCourse(course);
+            _courseRepository.Update(course.Id, course);
         }
 
         public void FinishCourse(string id)
@@ -113,7 +113,7 @@ namespace LangLang.Application.UseCases.Course
             }
             else
             {
-                Language? language = _languageDao.GetLanguageById(languageName);
+                Language? language = _languageRepository.Get(languageName);
                 if (language == null)
                 {
                     return null;

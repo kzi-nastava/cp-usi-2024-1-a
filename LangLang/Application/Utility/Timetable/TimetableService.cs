@@ -4,6 +4,7 @@ using System.Linq;
 using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
+using LangLang.Domain.Utility;
 using LangLang.Repositories.Json.Util;
 using TimeOnly = System.TimeOnly;
 
@@ -11,13 +12,13 @@ namespace LangLang.Application.Utility.Timetable;
 
 public class TimetableService : ITimetableService
 {
-    private readonly ICourseDAO _courseDao;
-    private readonly IExamDAO _examDao;
+    private readonly ICourseRepository _courseRepository;
+    private readonly IExamRepository _examRepository;
 
-    public TimetableService(ICourseDAO courseDao, IExamDAO examDao)
+    public TimetableService(ICourseRepository courseRepository, IExamRepository examRepository)
     {
-        _courseDao = courseDao;
-        _examDao = examDao;
+        _courseRepository = courseRepository;
+        _examRepository = examRepository;
     }
 
     private List<TimeOnly> GetAllExamTimes()
@@ -125,7 +126,7 @@ public class TimetableService : ITimetableService
             takenTimes.Add(i, new List<Tuple<TimeOnly, TimeSpan>>());
         }
         
-        List<Exam> exams = _examDao.GetExamsByDate(date);
+        List<Exam> exams = _examRepository.GetByDate(date);
         foreach (Exam exam in exams)
         {
             // if the current tutor is busy in one classroom, mark all other classrooms as taken
@@ -142,7 +143,7 @@ public class TimetableService : ITimetableService
             }
         }
 
-        List<Course> courses = _courseDao.GetCoursesByDate(date);
+        List<Course> courses = _courseRepository.GetCoursesByDate(date);
         foreach (Course course in courses)
         {
             if(course.Online) continue;
