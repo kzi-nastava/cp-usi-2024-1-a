@@ -51,8 +51,6 @@ namespace LangLang.Application.UseCases.Course
             _courseApplicationService.PauseStudentApplications(application.StudentId);
             _courseAttendanceService.AddAttendance(application.StudentId, application.CourseId);
             _courseApplicationService.DeleteApplication(application.Id);
-            Domain.Model.Course? course = _courseService.GetCourseById(application.CourseId);
-            course!.AddAttendance();
         }
 
         public void ApplyForCourse(string courseId, string studentId)
