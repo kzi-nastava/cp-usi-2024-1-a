@@ -34,7 +34,7 @@ namespace LangLang.Application.UseCases.Course
             List<Domain.Model.Course> courses = new();
             foreach (Domain.Model.Course course in GetAll().Values.ToList())
             {
-                if(course.IsApplicable())
+                if (course.IsApplicable())
                 {
                     courses.Add(course);
                 }
@@ -92,38 +92,34 @@ namespace LangLang.Application.UseCases.Course
 
         public Domain.Model.Course? ValidateInputs(string name, string? languageName, LanguageLevel? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, Domain.Model.Course.CourseState? state, int maxStudents)
         {
-            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0 || maxStudents == 0 || level == null || state == null)
+            if (FieldsEmpty(name, languageName, level, duration, state, start, maxStudents) || scheduleDays.Count == 0) return null;
+            Language? language = _languageDao.GetLanguageById(languageName!);
+            if (language == null)
             {
                 return null;
             }
-            if (start == null)
+            if (online)
             {
-                return null;
+                maxStudents = int.MaxValue;
             }
-            else
-            {
-                Language? language = _languageDao.GetLanguageById(languageName);
-                if (language == null)
-                {
-                    return null;
-                }
-                if (online)
-                {
-                    maxStudents = int.MaxValue;
-                }
-                return new Domain.Model.Course(
-                    name,
-                    language,
-                    (LanguageLevel)level,
-                    (int)duration,
-                    schedule,
-                    (DateTime)start,
-                    online,
-                    numStudents,
-                    (Domain.Model.Course.CourseState)state,
-                    maxStudents
-                );
-            }
+            return new Domain.Model.Course(
+                name,
+                language,
+                (LanguageLevel)level!,
+                (int)duration!,
+                schedule,
+                (DateTime)start!,
+                online,
+                numStudents,
+                (Domain.Model.Course.CourseState)state!,
+                maxStudents
+            );
+            
+        }
+
+        private bool FieldsEmpty(string name, string? languageName, LanguageLevel? level, int? duration, Domain.Model.Course.CourseState? state, DateTime? start, int maxStudents)
+        {
+            return name == "" || languageName == null || duration == null || start == null || maxStudents == 0 || level == null || state == null;
         }
 
         public void UpdateStates()
