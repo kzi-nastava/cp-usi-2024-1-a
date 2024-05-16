@@ -2,7 +2,7 @@
 using PdfSharpCore.Drawing;
 using System.Collections.Generic;
 
-public class PDFReport
+public class PDFReportService
 {
     public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<string> columnNames, List<List<string>> tableData)
     {
@@ -20,19 +20,17 @@ public class PDFReport
         XFont paragraphFont = new XFont("Arial", 12);
         XFont tableHeaderFont = new XFont("Arial", 12, XFontStyle.Bold);
         XFont cellFont = new XFont("Arial", 10);
-
-        // Calculate page dimensions
         XRect contentRect = new XRect(40, 40, page.Width - 80, page.Height - 80);
 
-        // Draw title
+        //title
         XSize titleSize = gfx.MeasureString(title, titleFont);
         gfx.DrawString(title, titleFont, XBrushes.Black, new XPoint(contentRect.Left + (contentRect.Width - titleSize.Width) / 2, contentRect.Top));
 
-        // Draw introductory paragraph
+        //Introductory paragraph
         contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
         gfx.DrawString(introductoryParagraph, paragraphFont, XBrushes.Black, contentRect, XStringFormats.TopLeft);
 
-        // Draw table
+        // table
         contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
         DrawTable(gfx, contentRect, columnNames, tableData, tableHeaderFont, cellFont);
 

@@ -1,71 +1,13 @@
-﻿using System;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Net;
 using PdfSharpCore.Pdf;
 using System.IO;
-using LangLang.Application.UseCases.Report.CoursePensaltyReport;
-using System.Windows.Documents;
-using System.Collections.Generic;
 
 
 namespace LangLang.Application.UseCases.Email;
 
 public class EmailService: IEmailService
 {
-
-    public EmailService() {
-        //SendEmail("masamasa12332@gmail.com");
-        PDFReport pdfReportService = new PDFReport();
-        List<string> list1 = new List<string>()
-        {
-            "name",
-            "language",
-            "level"
-        };
-        List<List<string>> list2 = new List<List<string>>();
-        list2.Add(new List<string>()
-        {
-            "marija",
-            "parezanin",
-            "hey"
-        });
-        list2.Add(new List<string>()
-        {
-            "marija",
-            "parezanin",
-            "hey"
-        }); list2.Add(new List<string>()
-        {
-            "marija",
-            "parezanin",
-            "hey"
-        }); list2.Add(new List<string>()
-        {
-            "marija",
-            "parezanin",
-            "hey"
-        }); list2.Add(new List<string>()
-        {
-            "marija",
-            "parezanin",
-            "hey"
-        }); list2.Add(new List<string>()
-        {
-            "marija",
-            "parezanin",
-            "hey"
-        }); list2.Add(new List<string>()
-        {
-            "marija",
-            "parezanin",
-            "hey"
-        });
-
-        SendEmailWithPDFAttachment("masamasa12332@gmail.com", pdfReportService.GetReportPDF("titlee", "paraaagt", list1, list2));
-    }
-
-
-
     public void SendEmail(string recipient)
     {
         SmtpClient smtpClient = GetServerClient();
@@ -93,7 +35,7 @@ public class EmailService: IEmailService
         mail.To.Add(new MailAddress(recipient));
 
 
-        Attachment attachment = new Attachment(pdfStream, "example.pdf", "application/pdf");
+        Attachment attachment = new Attachment(pdfStream, "LangLangReport.pdf", "application/pdf");
 
 
         mail.Subject = "Checking if emailing works";
