@@ -9,12 +9,15 @@ public interface ITutorService
     public Dictionary<string, Tutor> GetAllTutors();
 
     public Tutor AddTutor(Tutor tutor);
-
+    
     public Tutor? GetTutorById(string id);
-
+    
     public Tutor? GetTutorForCourse(string courseId);
-    public Tutor? GetTutorForExam(string examId);
 
+    public string GetTutorNameForCourse(string courseId);
+    
+    public Tutor? GetTutorForExam(string examId);
+    
     public void AddRating(Tutor tutor, int rating);
 
     public void DeleteAccount(Tutor tutor);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -28,6 +29,12 @@ namespace LangLang.Application.UseCases.User
                 }
             }
             return null;
+        }
+
+        public string GetTutorNameForCourse(string courseId)
+        {
+            Tutor tutor = GetTutorForCourse(courseId)!;
+            return tutor.GetFullName();
         }
 
         public Tutor? GetTutorForExam(string examId)
