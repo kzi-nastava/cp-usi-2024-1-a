@@ -1,6 +1,6 @@
 ﻿namespace LangLang.Domain.Model;
 
-public class ExamApplication
+public class ExamApplication : IEntity
 {
     public string Id { get; set; }
     public string ExamId { get; set; }

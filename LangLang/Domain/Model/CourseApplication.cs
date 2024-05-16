@@ -1,6 +1,6 @@
 ﻿namespace LangLang.Domain.Model
 {
-    public class CourseApplication
+    public class CourseApplication : IEntity
     {
         public string Id { get; set; }
         public enum State

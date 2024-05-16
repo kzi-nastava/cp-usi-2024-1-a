@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace LangLang.Domain.Model
 {
-    public class Course
+    public class Course : IEntity
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -127,5 +128,11 @@ namespace LangLang.Domain.Model
                 State = CourseState.FinishedNotGraded;
             }
         }
+
+        public static bool IsValid(string name, string? languageName, LanguageLevel? level, int? duration, CourseState? state, DateTime? start, int maxStudents, ObservableCollection<WorkDay> scheduleDays)
+        {
+            return !(name == "" || languageName == null || duration == null || start == null || maxStudents == 0 || level == null || state == null || scheduleDays.Count == 0);
+        }
+
     }
 }

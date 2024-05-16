@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -8,59 +7,59 @@ namespace LangLang.Application.UseCases.User
 {
     public class StudentService : IStudentService
     {
-        private readonly IStudentDAO _studentDao;
+        private readonly IStudentRepository _studentRepository;
         
-        public StudentService(IStudentDAO studentDao)
+        public StudentService(IStudentRepository studentRepository)
         {
-            _studentDao = studentDao;
+            _studentRepository = studentRepository;
         }
 
         public void UpdateStudent(Student student, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
             student.Update(name, surname, birthDate, gender, phoneNumber);  
-            _studentDao.UpdateStudent(student);
+            _studentRepository.Update(student.Id, student);
         }
     
         public void DeleteAccount(Student student)
         {
-            _studentDao.DeleteStudent(student.Id);
+            _studentRepository.Delete(student.Id);
         }
 
         public Student? GetStudentById(string studentId)
         {
-            return _studentDao.GetStudent(studentId);
+            return _studentRepository.Get(studentId);
         }
 
-        public List<Student> GetAllStudents() => _studentDao.GetAllStudents().Values.ToList();
+        public List<Student> GetAllStudents() => _studentRepository.GetAll();
 
         public Student AddStudent(Student student)
         {
-            return _studentDao.AddStudent(student);
+            return _studentRepository.Add(student);
         }
 
         public uint AddPenaltyPoint(Student student)
         {
             student.AddPenaltyPoint();
-            _studentDao.UpdateStudent(student);
+            _studentRepository.Update(student.Id, student);
             return student.PenaltyPoints;
         }
 
         public void RemovePenaltyPoint(Student student)
         {
             student.RemovePenaltyPoint();
-            _studentDao.UpdateStudent(student);
+            _studentRepository.Update(student.Id, student);
         }
         
         public void AddLanguageSkill(Student student, Language language, LanguageLevel languageLevel)
         {
             student.AddCompletedCourseLanguage(language, languageLevel);
-            _studentDao.UpdateStudent(student);
+            _studentRepository.Update(student.Id, student);
         }
 
         public void AddPassedLanguage(Student student, Language language, LanguageLevel languageLevel)
         {
             student.AddPassedExamLanguage(language, languageLevel);
-            _studentDao.UpdateStudent(student);
+            _studentRepository.Update(student.Id, student);
         }
     }
 

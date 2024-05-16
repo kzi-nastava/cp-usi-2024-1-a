@@ -9,44 +9,44 @@ namespace LangLang.Application.UseCases.Exam;
 
 public class ExamService : IExamService
 {
-    private readonly IExamDAO _examDao;
-    private readonly ITutorDAO _tutorDao;
-    private readonly ILanguageDAO _languageDao;
+    private readonly IExamRepository _examRepository;
+    private readonly ITutorRepository _tutorRepository;
+    private readonly ILanguageRepository _languageRepository;
 
-    public ExamService(IExamDAO examDao, ITutorDAO tutorDao, ILanguageDAO languageDao)
+    public ExamService(IExamRepository examRepository, ITutorRepository tutorRepository, ILanguageRepository languageRepository)
     {
-        _examDao = examDao;
-        _tutorDao = tutorDao;
-        _languageDao = languageDao;
+        _examRepository = examRepository;
+        _tutorRepository = tutorRepository;
+        _languageRepository = languageRepository;
     }
 
     public List<Domain.Model.Exam> GetAllExams()
     {
-        var exams = _examDao.GetAllExams().Values.ToList();
+        var exams = _examRepository.GetAll();
         return UpdateExamStates(exams);
     }
 
     public Domain.Model.Exam? GetExamById(string id)
     {
-        var exam = _examDao.GetExamById(id);
+        var exam = _examRepository.Get(id);
         if (exam != null)
         {
             exam = UpdateExamStateBasedOnDateTime(exam);
-            _examDao.UpdateExam(exam.Id, exam);
+            _examRepository.Update(exam.Id, exam);
         }
         return exam;
     }
 
     public List<Domain.Model.Exam> GetExamsByTutor(string tutorId)
     {
-        Tutor? tutor = _tutorDao.GetTutor(tutorId);
+        Tutor? tutor = _tutorRepository.Get(tutorId);
         if (tutor == null)
         {
             return new List<Domain.Model.Exam>();
         }
 
         List<string> examIds = tutor.Exams;
-        return UpdateExamStates(_examDao.GetExamsForIds(examIds));
+        return UpdateExamStates(_examRepository.Get(examIds));
     }
 
     private bool IsExamValid(Language? language, LanguageLevel? languageLvl, DateOnly? examDate, TimeOnly? examTime, int classroomNumber, int maxStudents)
@@ -56,7 +56,7 @@ public class ExamService : IExamService
         {
             return false;
         }
-        if (_languageDao.GetLanguageById(language.Name) == null)
+        if (_languageRepository.Get(language.Name) == null)
         {
             return false;
         }
@@ -77,10 +77,10 @@ public class ExamService : IExamService
 
         DateTime dateTime = new DateTime(examDate!.Value.Year, examDate.Value.Month, examDate.Value.Day, examTime!.Value.Hour, examTime.Value.Minute, examTime.Value.Second);
         Domain.Model.Exam exam = new Domain.Model.Exam(language!, languageLvl!.Value, dateTime, classroomNumber, Domain.Model.Exam.State.NotStarted, maxStudents);
-        exam = _examDao.AddExam(exam);
+        exam = _examRepository.Add(exam);
 
         tutor.Exams.Add(exam.Id);
-        _tutorDao.UpdateTutor(tutor);
+        _tutorRepository.Update(tutor.Id, tutor);
         return exam;
     }
 
@@ -91,7 +91,7 @@ public class ExamService : IExamService
             throw new ArgumentException("Invalid exam data");
         }
 
-        Domain.Model.Exam? oldExam = _examDao.GetExamById(id);
+        Domain.Model.Exam? oldExam = _examRepository.Get(id);
         if (oldExam == null)
         {
             throw new ArgumentException("Exam not found");
@@ -112,7 +112,7 @@ public class ExamService : IExamService
         Domain.Model.Exam? exam = new Domain.Model.Exam(id, language!, languageLvl!.Value, dateTime, classroomNumber, examState, maxStudents);
         exam = UpdateExamStateBasedOnDateTime(exam);
         
-        exam = _examDao.UpdateExam(id, exam);
+        exam = _examRepository.Update(id, exam);
         if (exam == null)
         {
             throw new ArgumentException("Exam not found");
@@ -121,16 +121,16 @@ public class ExamService : IExamService
     }
     public void UpdateExam(Domain.Model.Exam exam)
     {
-        _examDao.UpdateExam(exam.Id, exam);
+        _examRepository.Update(exam.Id, exam);
     }
 
     public void DeleteExam(string id)
     {
-        if (_examDao.GetExamById(id) == null)
+        if (_examRepository.Get(id) == null)
         {
             throw new ArgumentException("Exam not found");
         }
-        _examDao.DeleteExam(id);
+        _examRepository.Delete(id);
     }
 
     public List<Domain.Model.Exam> GetAvailableExamsForStudent(Student student)
@@ -188,7 +188,7 @@ public class ExamService : IExamService
     private List<Domain.Model.Exam> UpdateExamStates(IEnumerable<Domain.Model.Exam> exams)
     {
         var updatedExams = exams.Select(UpdateExamStateBasedOnDateTime).ToList();
-        updatedExams.ForEach(exam => _examDao.UpdateExam(exam.Id, exam));
+        updatedExams.ForEach(exam => _examRepository.Update(exam.Id, exam));
         return updatedExams;
     }
     

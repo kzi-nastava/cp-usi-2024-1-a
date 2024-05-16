@@ -9,37 +9,37 @@ namespace LangLang.Application.Utility.Authentication;
 
 public class UserProfileMapper : IUserProfileMapper, IObserver<PersonProfileMapping>
 {
-    private readonly Dictionary<string, PersonProfileMapping> profileToUser;
-    private readonly Dictionary<string, string> studentToProfile = new();
-    private readonly Dictionary<string, string> tutorToProfile = new();
-    private readonly Dictionary<string, string> directorToProfile = new();
+    private readonly Dictionary<string, PersonProfileMapping> _profileToUser;
+    private readonly Dictionary<string, string> _studentToProfile = new();
+    private readonly Dictionary<string, string> _tutorToProfile = new();
+    private readonly Dictionary<string, string> _directorToProfile = new();
 
     private readonly IProfileService _profileService;
-    private readonly IStudentDAO _studentDao;
-    private readonly ITutorDAO _tutorDao;
-    private readonly IDirectorDAO _directorDao;
+    private readonly IStudentRepository _studentRepository;
+    private readonly ITutorRepository _tutorRepository;
+    private readonly IDirectorRepository _directorRepository;
 
-    public UserProfileMapper(IPersonProfileMappingDAO personProfileMappingDao, IProfileService profileService, IStudentDAO studentDao, ITutorDAO tutorDao, IDirectorDAO directorDao)
+    public UserProfileMapper(IPersonProfileMappingRepository personProfileMappingRepository, IProfileService profileService, IStudentRepository studentRepository, ITutorRepository tutorRepository, IDirectorRepository directorRepository)
     {
         _profileService = profileService;
-        _studentDao = studentDao;
-        _tutorDao = tutorDao;
-        _directorDao = directorDao;
+        _studentRepository = studentRepository;
+        _tutorRepository = tutorRepository;
+        _directorRepository = directorRepository;
         
-        profileToUser = personProfileMappingDao.GetAll();
+        _profileToUser = personProfileMappingRepository.GetMap();
         InitPersonToProfileMappings();
-        personProfileMappingDao.Subscribe(this);
+        personProfileMappingRepository.Subscribe(this);
     }
 
     private void InitPersonToProfileMappings()
     {
-        foreach (var mapping in profileToUser.Values)
+        foreach (var mapping in _profileToUser.Values)
         {
             var mapper = mapping.UserType switch
             {
-                UserType.Student => studentToProfile,
-                UserType.Tutor => tutorToProfile,
-                UserType.Director => directorToProfile,
+                UserType.Student => _studentToProfile,
+                UserType.Tutor => _tutorToProfile,
+                UserType.Director => _directorToProfile,
                 _ => throw new ArgumentException("User type not supported.")
             };
             mapper.Add(mapping.UserId, mapping.Email);
@@ -48,12 +48,12 @@ public class UserProfileMapper : IUserProfileMapper, IObserver<PersonProfileMapp
 
     public UserDto GetPerson(Profile profile)
     {
-        var mapping = profileToUser[profile.Email];
+        var mapping = _profileToUser[profile.Email];
         Person? person = mapping.UserType switch
         {
-            UserType.Student => _studentDao.GetStudent(mapping.UserId),
-            UserType.Tutor => _tutorDao.GetTutor(mapping.UserId),
-            UserType.Director => _directorDao.GetDirector(mapping.UserId),
+            UserType.Student => _studentRepository.Get(mapping.UserId),
+            UserType.Tutor => _tutorRepository.Get(mapping.UserId),
+            UserType.Director => _directorRepository.Get(mapping.UserId),
             _ => null
         };
         return new UserDto(person, mapping.UserType);
@@ -65,9 +65,9 @@ public class UserProfileMapper : IUserProfileMapper, IObserver<PersonProfileMapp
         
         var email = user.UserType switch
         {
-            UserType.Student => studentToProfile.GetValueOrDefault(((Student)user.Person).Id),
-            UserType.Tutor => tutorToProfile.GetValueOrDefault(((Tutor)user.Person).Id),
-            UserType.Director => directorToProfile.GetValueOrDefault(((Director)user.Person).Id),
+            UserType.Student => _studentToProfile.GetValueOrDefault(((Student)user.Person).Id),
+            UserType.Tutor => _tutorToProfile.GetValueOrDefault(((Tutor)user.Person).Id),
+            UserType.Director => _directorToProfile.GetValueOrDefault(((Director)user.Person).Id),
             _ => throw new ArgumentException("User type not supported.")
         };
 
@@ -76,25 +76,24 @@ public class UserProfileMapper : IUserProfileMapper, IObserver<PersonProfileMapp
 
     public void OnCompleted()
     {
-        profileToUser.Clear();
-        studentToProfile.Clear();
-        tutorToProfile.Clear();
-        directorToProfile.Clear();
+        _profileToUser.Clear();
+        _studentToProfile.Clear();
+        _tutorToProfile.Clear();
+        _directorToProfile.Clear();
     }
 
     public void OnError(Exception error)
     {
-        
     }
 
     public void OnNext(PersonProfileMapping mapping)
     {
-        profileToUser.Add(mapping.Email, mapping);
+        _profileToUser.Add(mapping.Email, mapping);
         var mapper = mapping.UserType switch
         {
-            UserType.Student => studentToProfile,
-            UserType.Tutor => tutorToProfile,
-            UserType.Director => directorToProfile,
+            UserType.Student => _studentToProfile,
+            UserType.Tutor => _tutorToProfile,
+            UserType.Director => _directorToProfile,
             _ => throw new ArgumentException("User type not supported.")
         };
         mapper.Add(mapping.UserId, mapping.Email);
