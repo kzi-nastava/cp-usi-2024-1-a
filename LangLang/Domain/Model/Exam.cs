@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace LangLang.Domain.Model
 {
-    public class Exam
+    public class Exam : IEntity
     {
         public string Id { get; set; }
         public Language Language { get; set; }

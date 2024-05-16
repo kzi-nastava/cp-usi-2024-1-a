@@ -7,20 +7,20 @@ namespace LangLang.Application.UseCases.Common
 {
     public class LanguageService : ILanguageService
     {
-        private readonly ILanguageDAO _languageDao;
+        private readonly ILanguageRepository _languageRepository;
 
-        public LanguageService(ILanguageDAO languageDao)
+        public LanguageService(ILanguageRepository languageRepository)
         {
-            _languageDao = languageDao;
+            _languageRepository = languageRepository;
         }
 
         public List<Language> GetAll()
         {
-            return _languageDao.GetAllLanguages().Values.ToList();
+            return _languageRepository.GetAll();
         }
         public Language? GetLanguageById(string name)
         {
-            return _languageDao.GetLanguageById(name);
+            return _languageRepository.Get(name);
         }
     }
 }

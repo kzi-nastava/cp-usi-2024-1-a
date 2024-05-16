@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LangLang.Domain.Model
 {
-    public class Student : Person
+    public class Student : Person, IEntity
     {
         public string Id { get; set; }
         

@@ -11,24 +11,23 @@ namespace LangLang.Application.UseCases.Course
     {
         private readonly ICourseService _courseService;
         private readonly IStudentService _studentService;
-        private readonly ICourseApplicationDAO _courseApplicationDAO;
+        private readonly ICourseApplicationRepository _courseApplicationRepository;
 
-        public CourseApplicationService(ICourseService courseService, IStudentService studentService, ICourseApplicationDAO courseApplicationDAO)
+        public CourseApplicationService(ICourseService courseService, IStudentService studentService, ICourseApplicationRepository courseApplicationRepository)
         {
             _courseService = courseService;
             _studentService = studentService;
-            _courseApplicationDAO = courseApplicationDAO;
+            _courseApplicationRepository = courseApplicationRepository;
         }
 
         //after accepting one course all other applications are paused,
         //when accepted course finishes this method is called to set all values back to pending from paused.
         public void ActivateStudentApplications(string studentId)
         {
-            List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
+            List<CourseApplication> applications = _courseApplicationRepository.GetForStudent(studentId);
             foreach (CourseApplication application in applications)
             {
                 application.ChangeApplicationState(State.Pending);
-                _courseApplicationDAO.UpdateCourseApplication(application.Id, application);
             }
         }
 
@@ -39,62 +38,70 @@ namespace LangLang.Application.UseCases.Course
             if (course.IsFull()) throw new ArgumentException("The course is full.");
             CourseApplication application = new CourseApplication(studentId, courseId, State.Pending);
             _courseService.AddAttendance(courseId);
-            _courseApplicationDAO.AddCourseApplication(application);
+            _courseApplicationRepository.Add(application);
             return application;
         }
 
         public CourseApplication ChangeApplicationState(string applicationId, State state)
         {
-            CourseApplication? application = _courseApplicationDAO.GetCourseApplicationById(applicationId);
+            CourseApplication? application = _courseApplicationRepository.Get(applicationId);
             if (application == null)
             {
                 throw new ArgumentException("Course application not found");
             }
             application.ChangeApplicationState(state);
-            _courseApplicationDAO.UpdateCourseApplication(applicationId, application);
+            _courseApplicationRepository.Update(applicationId, application);
             return application;
         }
         public void DeleteApplication(string applicationId)
         {
-            _courseApplicationDAO.DeleteCourseApplication(applicationId);
+            _courseApplicationRepository.Delete(applicationId);
         }
 
         public List<CourseApplication> GetApplicationsForCourse(string courseId)
         {
-            return _courseApplicationDAO.GetCourseApplicationsForCourse(courseId);
+            return _courseApplicationRepository.GetForCourse(courseId);
         }
 
         public List<CourseApplication> GetApplicationsForStudent(string studentId)
         {
-            return _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
+            return _courseApplicationRepository.GetForStudent(studentId);
         }
 
         public CourseApplication? GetCourseApplicationById(string id)
         {
-            return _courseApplicationDAO.GetCourseApplicationById(id);
+            return _courseApplicationRepository.Get(id);
         }
 
         public CourseApplication? GetApplication(string studentId, string courseId)
         {
-            return _courseApplicationDAO.GetStudentApplicationForCourse(studentId, courseId);
+            List<CourseApplication> applications = _courseApplicationRepository.GetForStudent(studentId);
+            foreach (CourseApplication application in applications)
+            {
+                if (application.CourseId == courseId)
+                {
+                    return application;
+                }
+            }
+            return null;
         }
 
         public void PauseStudentApplications(string studentId)
         {
-            List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
+            List<CourseApplication> applications = _courseApplicationRepository.GetForStudent(studentId);
             foreach (CourseApplication application in applications)
             {
                 if (application.CourseApplicationState != State.Accepted)
                 {
                     application.ChangeApplicationState(State.Paused);
-                    _courseApplicationDAO.UpdateCourseApplication(application.Id, application);
+                    _courseApplicationRepository.Update(application.Id, application);
                 }
             }
         }
 
         public void RejectApplication(string applicationId)
         {
-            CourseApplication? application = _courseApplicationDAO.GetCourseApplicationById(applicationId);
+            CourseApplication? application = _courseApplicationRepository.Get(applicationId);
             if (application == null)
             {
                 throw new ArgumentException("Course application not found");
@@ -105,7 +112,6 @@ namespace LangLang.Application.UseCases.Course
                 throw new ArgumentException("Cannot find course.");
             }
             application.ChangeApplicationState(State.Rejected);
-            _courseApplicationDAO.UpdateCourseApplication(application.Id, application);
         }
 
         public void CancelApplication(string applicationId)
@@ -120,7 +126,7 @@ namespace LangLang.Application.UseCases.Course
         }
         public void RemoveStudentApplications(string studentId)
         {
-            List<CourseApplication> applications = _courseApplicationDAO.GetCourseApplicationsForStudent(studentId);
+            List<CourseApplication> applications = _courseApplicationRepository.GetForStudent(studentId);
             foreach (CourseApplication application in applications)
             {
                 if (application.CourseApplicationState == State.Accepted)
@@ -134,7 +140,7 @@ namespace LangLang.Application.UseCases.Course
         public List<CourseApplication> GetPendingApplicationsForCourse(string courseId)
         {
             List<CourseApplication> applications = new();
-            foreach(CourseApplication application in _courseApplicationDAO.GetCourseApplicationsForCourse(courseId))
+            foreach(CourseApplication application in _courseApplicationRepository.GetForCourse(courseId))
             {
                 if(application.CourseApplicationState == State.Pending)
                 {

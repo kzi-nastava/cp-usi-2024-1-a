@@ -505,6 +505,7 @@ namespace LangLang.WPF.ViewModels.Student
         {
             Courses.Clear();
             var courses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Id);
+
             foreach (Course course in courses)
             {
                 if ((course.Language.Name == CourseLanguageFilter || CourseLanguageFilter == "") && (course.Level == CourseLevelFilter || CourseLevelFilter == null))

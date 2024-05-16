@@ -118,7 +118,6 @@ namespace LangLang.Application.UseCases.Course
             }
             _courseService.CancelAttendance(attendance.CourseId);
             _courseApplicationService.ActivateStudentApplications(attendance.StudentId);
-            
             _courseAttendanceService.RemoveAttendee(attendance.StudentId, attendance.CourseId); 
             _dropRequestService.AddDropRequest(attendance.CourseId, _authenticationStore.CurrentUserProfile!, message);
         }

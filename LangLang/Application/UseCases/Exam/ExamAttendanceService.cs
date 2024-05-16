@@ -15,31 +15,31 @@ namespace LangLang.Application.UseCases.Exam
         private readonly IExamService _examService;
         private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
-        private readonly IExamAttendanceDAO _examAttendanceDAO;
+        private readonly IExamAttendanceRepository _examAttendanceRepository;
         private readonly IGradeService _gradeService;
 
-        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceDAO examAttendanceDAO, IGradeService gradeService)
+        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceRepository examAttendanceRepository, IGradeService gradeService)
         {
             _examService = examService;
             _studentService = studentService;
             _tutorService = tutorService;
-            _examAttendanceDAO = examAttendanceDAO;
+            _examAttendanceRepository = examAttendanceRepository;
             _gradeService = gradeService;
         }
 
         public List<ExamAttendance> GetAttendancesForStudent(string studentId)
         {
-            return _examAttendanceDAO.GetExamAttendancesForStudent(studentId);
+            return _examAttendanceRepository.GetForStudent(studentId);
         }
 
         public List<ExamAttendance> GetAttendancesForExam(string examId)
         {
-            return _examAttendanceDAO.GetExamAttendancesForExam(examId);
+            return _examAttendanceRepository.GetForExam(examId);
         }
 
         public ExamAttendance? GetStudentAttendance(string studentId)
         {
-            List<ExamAttendance> attendances = _examAttendanceDAO.GetExamAttendancesForStudent(studentId);
+            List<ExamAttendance> attendances = _examAttendanceRepository.GetForStudent(studentId);
             foreach (ExamAttendance attendance in attendances)
             {
                 Domain.Model.Exam exam = _examService.GetExamById(attendance.ExamId)!;
@@ -52,7 +52,7 @@ namespace LangLang.Application.UseCases.Exam
         }
         public List<ExamAttendance> GetFinishedExamsStudent(string studentId)
         {
-            List<ExamAttendance> allAttendances = _examAttendanceDAO.GetExamAttendancesForStudent(studentId);
+            List<ExamAttendance> allAttendances = _examAttendanceRepository.GetForStudent(studentId);
             List<ExamAttendance> finishedAttendances = new();
             foreach (ExamAttendance attendance in allAttendances)
             {
@@ -66,7 +66,7 @@ namespace LangLang.Application.UseCases.Exam
         public ExamAttendance AddAttendance(string studentId, string examId)
         {
             ExamAttendance attendance = new ExamAttendance(examId, studentId, false, false);
-            _examAttendanceDAO.AddExamAttendance(attendance);
+            _examAttendanceRepository.Add(attendance);
             return attendance;
         }
 
@@ -79,7 +79,7 @@ namespace LangLang.Application.UseCases.Exam
             {
                 _examService.GetExamById(examId)!.CancelAttendance();
             }
-            _examAttendanceDAO.DeleteExamAttendance(attendance.Id);
+            _examAttendanceRepository.Delete(attendance.Id);
         }
 
 
@@ -95,7 +95,7 @@ namespace LangLang.Application.UseCases.Exam
                 examGradeDto.Speaking
             );
             
-            _examAttendanceDAO.UpdateExamAttendance(attendance.Id, attendance);
+            _examAttendanceRepository.Update(attendance.Id, attendance);
         }
 
         public void RateTutor(ExamAttendance attendance, int rating)
@@ -119,7 +119,7 @@ namespace LangLang.Application.UseCases.Exam
 
         public ExamAttendance? GetAttendance(string studentId, string examId)
         {
-            return _examAttendanceDAO.GetExamAttendancesForStudent(studentId).FirstOrDefault(attendance => attendance.ExamId == examId);
+            return _examAttendanceRepository.GetForStudent(studentId).FirstOrDefault(attendance => attendance.ExamId == examId);
         }
 
         public void AddPassedLanguagesToStudents(Domain.Model.Exam exam)

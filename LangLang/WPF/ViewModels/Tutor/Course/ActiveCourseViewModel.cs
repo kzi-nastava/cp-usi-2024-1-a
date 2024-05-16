@@ -19,7 +19,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         public NavigationStore NavigationStore { get; }
         public IAuthenticationStore AuthenticationStore { get; }
         private readonly CurrentCourseStore _currentCourseStore;
-        private readonly IStudentDAO _studentDAO;
+        private readonly IStudentRepository _studentRepository;
         private readonly IUserProfileMapper _userProfileMapper;
         private readonly IPenaltyService _penaltyService;
         private readonly IStudentCourseCoordinator _studentCourseCoordinator;
@@ -133,7 +133,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         }
 
         public ActiveCourseViewModel(NavigationStore navigationStore, 
-            CurrentCourseStore currentCourseStore, IStudentDAO studentDAO, 
+            CurrentCourseStore currentCourseStore, IStudentRepository studentRepository, 
             IUserProfileMapper userProfileMapper, IPenaltyService penaltyService,
             IStudentCourseCoordinator studentCourseCoordinator, IDropRequestService dropRequestService,
             IAuthenticationStore authenticationStore, IDropRequestInfoService dropRequestInfoService,
@@ -148,7 +148,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             _userProfileMapper = userProfileMapper;
             _penaltyService = penaltyService;
             _dropRequestService = dropRequestService;
-            _studentDAO = studentDAO;
+            _studentRepository = studentRepository;
             Students = new ObservableCollection<Domain.Model.Student>(LoadStudents());
             DropRequests = new ObservableCollection<DropRequestViewModel>(LoadDropRequests());
             CourseName = _currentCourseStore.CurrentCourse!.Name;

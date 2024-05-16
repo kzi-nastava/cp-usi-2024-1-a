@@ -4,11 +4,11 @@ namespace LangLang.Application.UseCases.User
 {
     public class DirectorService : IDirectorService
     {
-        private readonly IDirectorDAO _directorDao;
+        private readonly IDirectorRepository _directorRepository;
 
-        public DirectorService(IDirectorDAO directorDao)
+        public DirectorService(IDirectorRepository directorRepository)
         {
-            _directorDao = directorDao;
+            _directorRepository = directorRepository;
         }
     }
 }
