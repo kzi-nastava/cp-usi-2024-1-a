@@ -4,6 +4,8 @@ using System.Windows.Input;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
+using LangLang.Application.UseCases.Email;
+using LangLang.Application.UseCases.Report;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
 using LangLang.WPF.MVVM;
@@ -25,12 +27,15 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, IEmailService emailService, IReportService reportService)
         {
             _loginService = loginService;
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
+            //for testing, so that upon running the app an email gets sent right away
+            IReportCoordinator reportCoordinator = new ReportCoordinator(emailService, reportService);
+
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
         }
 
