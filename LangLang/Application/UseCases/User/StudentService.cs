@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -31,7 +30,7 @@ namespace LangLang.Application.UseCases.User
             return _studentRepository.Get(studentId);
         }
 
-        public List<Student> GetAllStudents() => _studentRepository.GetAll().Values.ToList();
+        public List<Student> GetAllStudents() => _studentRepository.GetAll();
 
         public Student AddStudent(Student student)
         {

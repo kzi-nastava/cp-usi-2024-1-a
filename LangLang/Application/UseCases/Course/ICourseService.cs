@@ -7,7 +7,7 @@ namespace LangLang.Application.UseCases.Course;
 
 public interface ICourseService
 {
-    public Dictionary<string, Domain.Model.Course> GetAll();
+    public List<Domain.Model.Course> GetAll();
     public Dictionary<string, Domain.Model.Course> GetCoursesByTutor(Tutor loggedInUser);
     public List<Domain.Model.Course> GetAvailableCourses(Student student);
     public void AddCourse(Domain.Model.Course course, Tutor loggedInUser);
