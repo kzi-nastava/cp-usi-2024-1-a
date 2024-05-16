@@ -1,10 +1,6 @@
-﻿using LangLang.Application.UseCases.Course;
-using LangLang.Domain.Model;
-using System;
+﻿using LangLang.Application.DTO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LangLang.Application.UseCases.Report;
 
@@ -14,7 +10,7 @@ public class ReportService: IReportService
     {
     }
 
-    public ReportTableData GetCoursePenaltyReport()
+    public ReportTableDto GetCoursePenaltyReport()
     {
         //temporary table data
         List<string> columnNames = new List<string>()
@@ -34,7 +30,7 @@ public class ReportService: IReportService
             });
 
         }
-        return new ReportTableData(columnNames, list2);
+        return new ReportTableDto(columnNames, list2);
     }
 
 

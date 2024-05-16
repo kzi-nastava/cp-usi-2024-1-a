@@ -1,5 +1,5 @@
-﻿using LangLang.Application.UseCases.Email;
-using LangLang.Domain.Model;
+﻿using LangLang.Application.DTO;
+using LangLang.Application.UseCases.Email;
 
 
 namespace LangLang.Application.UseCases.Report;
@@ -21,7 +21,7 @@ public class ReportCoordinator: IReportCoordinator
         //SendEmail("masamasa12332@gmail.com");
         PDFReportService pdfReportService = new PDFReportService();
 
-        ReportTableData tableData = _reportService.GetCoursePenaltyReport();
+        ReportTableDto tableData = _reportService.GetCoursePenaltyReport();
 
         string recipient = "masamasa12332@gmail.com";
         string title = "Report of penalty statistics";

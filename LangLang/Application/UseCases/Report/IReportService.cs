@@ -1,10 +1,9 @@
-﻿using LangLang.Domain.Model;
-
+﻿using LangLang.Application.DTO;
 
 namespace LangLang.Application.UseCases.Report;
 
 public interface IReportService
 {
-    public ReportTableData GetCoursePenaltyReport();
+    public ReportTableDto GetCoursePenaltyReport();
 
 }

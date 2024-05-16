@@ -2,11 +2,11 @@
 using PdfSharpCore.Drawing;
 using System.Collections.Generic;
 using LangLang.Application.UseCases.Report;
-using LangLang.Domain.Model;
+using LangLang.Application.DTO;
 
 public class PDFReportService : IPDFReportService
 {
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, ReportTableData tableData)
+    public PdfDocument GetReportPDF(string title, string introductoryParagraph, ReportTableDto tableData)
     {
         PdfDocument pdfDocument = new PdfDocument();
 
@@ -35,7 +35,7 @@ public class PDFReportService : IPDFReportService
         return pdfDocument;
     }
 
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<ReportTableData> tables)
+    public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<ReportTableDto> tables)
     {
         PdfDocument pdfDocument = new PdfDocument();
 
@@ -59,7 +59,7 @@ public class PDFReportService : IPDFReportService
 
         // table
         contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
-        foreach (ReportTableData tableData in tables)
+        foreach (ReportTableDto tableData in tables)
         {
             DrawTable(gfx, contentRect, tableData.ColumnNames, tableData.Rows, tableHeaderFont, cellFont, pdfDocument);
         }
