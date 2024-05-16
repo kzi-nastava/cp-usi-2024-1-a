@@ -17,6 +17,6 @@ public class PersonProfileMappingRepository : Repository<PersonProfileMapping>, 
     
     public Dictionary<string, PersonProfileMapping> GetMap()
     {
-        return GetAll();
+        return Load();
     }
 }

@@ -13,7 +13,7 @@ public class CourseApplicationRepository : AutoIdRepository<CourseApplication>, 
     public List<CourseApplication> GetForCourse(string courseId)
     {
         List<CourseApplication> applications = new();
-        foreach (CourseApplication application in GetAll().Values)
+        foreach (CourseApplication application in GetAll())
         {
             if (application.CourseId == courseId)
             {
@@ -27,7 +27,7 @@ public class CourseApplicationRepository : AutoIdRepository<CourseApplication>, 
     public List<CourseApplication> GetForStudent(string studentId)
     {
         List<CourseApplication> applications = new();
-        foreach (CourseApplication application in GetAll().Values)
+        foreach (CourseApplication application in GetAll())
         {
             if (application.StudentId == studentId)
             {

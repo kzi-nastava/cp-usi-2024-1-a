@@ -491,7 +491,7 @@ namespace LangLang.WPF.ViewModels.Student
         {
             Courses.Clear();
             var courses = _courseService.GetAll();
-            foreach (Course course in courses.Values)
+            foreach (Course course in courses)
             {
                 if ((course.Language.Name == CourseLanguageFilter || CourseLanguageFilter == "") && (course.Level == CourseLevelFilter || CourseLevelFilter == null))
                 {

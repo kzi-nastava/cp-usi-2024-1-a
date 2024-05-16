@@ -14,12 +14,11 @@ namespace LangLang.Application.UseCases.User
             _tutorRepository = tutorRepository;
         }
 
-        public Dictionary<string, Tutor> GetAllTutors() => _tutorRepository.GetAll();
+        public List<Tutor> GetAllTutors() => _tutorRepository.GetAll();
 
         public Tutor? GetTutorForCourse(string courseId)
         {
-            Dictionary<string, Tutor> allTutors = _tutorRepository.GetAll();
-            foreach(Tutor tutor in allTutors.Values)
+            foreach(Tutor tutor in _tutorRepository.GetAll())
             {
                 List<string> courses = tutor.Courses;
                 foreach(string teachingCourseId in courses)
@@ -32,8 +31,7 @@ namespace LangLang.Application.UseCases.User
 
         public Tutor? GetTutorForExam(string examId)
         {
-            Dictionary<string, Tutor> allTutors = _tutorRepository.GetAll();
-            foreach (Tutor tutor in allTutors.Values)
+            foreach (Tutor tutor in _tutorRepository.GetAll())
             {
                 List<string> exams = tutor.Exams;
                 foreach (string teachingExamId in exams)
