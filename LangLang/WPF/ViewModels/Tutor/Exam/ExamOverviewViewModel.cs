@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Exam;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Application.Utility.Timetable;
-using LangLang.Domain.Model;
 using LangLang.Domain;
+using LangLang.Domain.Model;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
 
@@ -17,7 +18,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
 public class ExamOverviewViewModel : ViewModelBase
 {
     private readonly Domain.Model.Tutor _tutor;
-    
+
     private readonly IExamService _examService;
     private readonly ITimetableService _timetableService;
     private readonly NavigationStore _navigationStore;
@@ -30,159 +31,173 @@ public class ExamOverviewViewModel : ViewModelBase
     public RelayCommand DeleteCommand { get; set; }
     public RelayCommand ClearFiltersCommand { get; set; }
 
-    private ObservableCollection<Domain.Model.Exam> exams;
-    private ObservableCollection<Language> languages;
-    private ObservableCollection<LanguageLevel> languageLevels;
-    private ObservableCollection<LanguageLevel> filterLanguageLevels;
-    private ObservableCollection<TimeOnly> availableTimes;
-    
-    private Domain.Model.Exam? selectedExam;
+    private ObservableCollection<ExamViewModel> _exams;
+    private ObservableCollection<Language> _languages;
+    private ObservableCollection<LanguageLevel> _languageLevels;
+    private ObservableCollection<LanguageLevel> _filterLanguageLevels;
+    private ObservableCollection<TimeOnly> _availableTimes;
 
-    private Language? language;
+    private ExamViewModel? _selectedExam;
+
+    private Language? _language;
     private LanguageLevel? _languageLevel;
-    private DateTime? examDate;
-    private TimeOnly? examTime;
-    private int maxStudents;
-    private int numStudents;
-    private Domain.Model.Exam.State examState;
-    
-    private Language? filterLanguage;
-    private LanguageLevel? filterLanguageLvl;
-    private DateTime? filterDate;
-    
-    private Dictionary<Language, List<LanguageLevel>> languageToLvl;
+    private DateTime? _examDate;
+    private TimeOnly? _examTime;
+    private int _maxStudents;
+    private int _numStudents;
+    private Domain.Model.Exam.State _examState;
 
-    public ObservableCollection<Domain.Model.Exam> Exams
+    private Language? _filterLanguage;
+    private LanguageLevel? _filterLanguageLvl;
+    private DateTime? _filterDate;
+
+    private readonly Dictionary<Language, List<LanguageLevel>> _languageToLvl;
+
+    public ObservableCollection<ExamViewModel> Exams
     {
-        get => exams;
-        set => SetField(ref exams, value);
+        get => _exams;
+        private set => SetField(ref _exams, value);
     }
+
     public ObservableCollection<Language> Languages
     {
-        get => languages;
-        set => SetField(ref languages, value);
+        get => _languages;
+        set => SetField(ref _languages, value);
     }
+
     public ObservableCollection<LanguageLevel> LanguageLevels
     {
-        get => languageLevels;
-        set => SetField(ref languageLevels, value);
+        get => _languageLevels;
+        private set => SetField(ref _languageLevels, value);
     }
+
     public ObservableCollection<LanguageLevel> FilterLanguageLevels
     {
-        get => filterLanguageLevels;
-        set => SetField(ref filterLanguageLevels, value);
+        get => _filterLanguageLevels;
+        set => SetField(ref _filterLanguageLevels, value);
     }
+
     public ObservableCollection<TimeOnly> AvailableTimes
     {
-        get => availableTimes;
-        set => SetField(ref availableTimes, value);
+        get => _availableTimes;
+        private set => SetField(ref _availableTimes, value);
     }
-    
-    public Domain.Model.Exam? SelectedExam
+
+    public ExamViewModel? SelectedExam
     {
-        get => selectedExam;
-        set => SetField(ref selectedExam, value);
+        get => _selectedExam;
+        set => SetField(ref _selectedExam, value);
     }
-    
+
     public Language? Language
     {
-        get => language;
+        get => _language;
         set
         {
-            if (Equals(language, value)) return;
-            language = value;
-            OnPropertyChanged(nameof(language));
+            if (!SetField(ref _language, value)) return;
             LanguageLevel = null;
-            LanguageLevels = language == null ? new ObservableCollection<LanguageLevel>() : new ObservableCollection<LanguageLevel>(languageToLvl[language]);
+            LanguageLevels = _language == null
+                ? new ObservableCollection<LanguageLevel>()
+                : new ObservableCollection<LanguageLevel>(_languageToLvl[_language]);
         }
     }
+
     public LanguageLevel? LanguageLevel
     {
         get => _languageLevel;
         set => SetField(ref _languageLevel, value);
     }
+
     public DateTime? ExamDate
     {
-        get => examDate;
+        get => _examDate;
         set
         {
-            if (examDate == value) return;
-            examDate = value;
-            OnPropertyChanged(nameof(examDate));
+            if (!SetField(ref _examDate, value)) return;
             ExamTime = null;
-            if (examDate == null)
+            if (_examDate == null)
             {
                 AvailableTimes = new ObservableCollection<TimeOnly>();
                 return;
             }
-            var times = _timetableService.GetAvailableExamTimes(DateOnly.FromDateTime(examDate.Value), _tutor);
+
+            var times = _timetableService.GetAvailableExamTimes(DateOnly.FromDateTime(_examDate.Value), _tutor);
             AvailableTimes = new ObservableCollection<TimeOnly>(times);
         }
     }
+
     public TimeOnly? ExamTime
     {
-        get => examTime;
-        set => SetField(ref examTime, value);
+        get => _examTime;
+        set => SetField(ref _examTime, value);
     }
+
     public int MaxStudents
     {
-        get => maxStudents;
-        set => SetField(ref maxStudents, value);
+        get => _maxStudents;
+        set => SetField(ref _maxStudents, value);
     }
+
     public int NumStudents
     {
-        get => numStudents;
-        set => SetField(ref numStudents, value);
+        get => _numStudents;
+        set => SetField(ref _numStudents, value);
     }
+
     public Domain.Model.Exam.State ExamState
     {
-        get => examState;
-        set => SetField(ref examState, value);
+        get => _examState;
+        private set => SetField(ref _examState, value);
     }
-    
+
     public Language? FilterLanguage
     {
-        get => filterLanguage;
-        set {
-            SetField(ref filterLanguage, value);
+        get => _filterLanguage;
+        set
+        {
+            SetField(ref _filterLanguage, value);
             FilterExams();
         }
     }
-    
+
     public LanguageLevel? FilterLanguageLvl
     {
-        get => filterLanguageLvl;
-        set {
-            SetField(ref filterLanguageLvl, value);
+        get => _filterLanguageLvl;
+        set
+        {
+            SetField(ref _filterLanguageLvl, value);
             FilterExams();
         }
     }
-    
+
     public DateTime? FilterDate
     {
-        get => filterDate;
-        set {
-            SetField(ref filterDate, value);
+        get => _filterDate;
+        set
+        {
+            SetField(ref _filterDate, value);
             FilterExams();
         }
     }
-    
-    public ExamOverviewViewModel(IAuthenticationStore authenticationStore, IExamService examService, ITimetableService timetableService, CurrentExamStore currentExamStore, IPopupNavigationService popupNavigationService, NavigationStore navigationStore)
+
+    public ExamOverviewViewModel(IAuthenticationStore authenticationStore, IExamService examService,
+        ITimetableService timetableService, CurrentExamStore currentExamStore,
+        IPopupNavigationService popupNavigationService, NavigationStore navigationStore)
     {
         _tutor = (Domain.Model.Tutor?)authenticationStore.CurrentUser.Person ??
-                                throw new InvalidOperationException(
-                                    "Cannot create ExamViewModel without currently logged in tutor");
+                 throw new InvalidOperationException(
+                     "Cannot create ExamViewModel without currently logged in tutor");
         _examService = examService;
         _timetableService = timetableService;
         _currentExamStore = currentExamStore;
         _popupNavigationService = popupNavigationService;
         _navigationStore = navigationStore;
-        exams = new ObservableCollection<Domain.Model.Exam>(LoadExams());
-        languages = new ObservableCollection<Language>(_tutor.KnownLanguages.Select(tuple => tuple.Item1));
-        languageLevels = new ObservableCollection<LanguageLevel>();
-        filterLanguageLevels = new ObservableCollection<LanguageLevel>(Enum.GetValues<LanguageLevel>());
-        
-        languageToLvl = new Dictionary<Language, List<LanguageLevel>>();
+        _exams = new ObservableCollection<ExamViewModel>(LoadExams());
+        _languages = new ObservableCollection<Language>(_tutor.KnownLanguages.Select(tuple => tuple.Item1));
+        _languageLevels = new ObservableCollection<LanguageLevel>();
+        _filterLanguageLevels = new ObservableCollection<LanguageLevel>(Enum.GetValues<LanguageLevel>());
+
+        _languageToLvl = new Dictionary<Language, List<LanguageLevel>>();
         foreach (var knownLanguage in _tutor.KnownLanguages)
         {
             var levels = new List<LanguageLevel>();
@@ -191,11 +206,12 @@ public class ExamOverviewViewModel : ViewModelBase
                 if (lvl > knownLanguage.Item2) break;
                 levels.Add(lvl);
             }
-            languageToLvl.Add(knownLanguage.Item1, levels);
+
+            _languageToLvl.Add(knownLanguage.Item1, levels);
         }
-        
-        availableTimes = new ObservableCollection<TimeOnly>();
-        
+
+        _availableTimes = new ObservableCollection<TimeOnly>();
+
         AddCommand = new RelayCommand(_ => AddExam(), _ => CanAddExam());
         SelectedExamChangedCommand = new RelayCommand(_ => SelectExam());
         UpdateCommand = new RelayCommand(_ => UpdateExam(), _ => CanUpdateExam());
@@ -209,7 +225,8 @@ public class ExamOverviewViewModel : ViewModelBase
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
         if (selectedDate != null && ExamTime != null)
         {
-            var classrooms = _timetableService.GetAvailableClassrooms(selectedDate.Value, ExamTime.Value, Constants.ExamDuration, _tutor);
+            var classrooms = _timetableService.GetAvailableClassrooms(selectedDate.Value, ExamTime.Value,
+                Constants.ExamDuration, _tutor);
             if (classrooms.Count > 0)
             {
                 return classrooms[0];
@@ -218,15 +235,16 @@ public class ExamOverviewViewModel : ViewModelBase
 
         return -1;
     }
-    
+
     private void AddExam()
     {
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
-        int classroomNumber = GetClassroomNumber();
+        var classroomNumber = GetClassroomNumber();
         try
         {
-            Domain.Model.Exam exam = _examService.AddExam(_tutor, Language, LanguageLevel, selectedDate, ExamTime, classroomNumber, MaxStudents);
-            Exams.Add(exam);
+            var exam = _examService.AddExam(new ExamDto(null, Language, LanguageLevel, selectedDate, ExamTime,
+                classroomNumber, MaxStudents, _tutor));
+            Exams.Add(new ExamViewModel(exam));
             ResetFields();
         }
         catch (ArgumentException e)
@@ -239,7 +257,7 @@ public class ExamOverviewViewModel : ViewModelBase
     {
         return Language != null && LanguageLevel != null && ExamDate != null && ExamTime != null && MaxStudents > 0;
     }
-    
+
     private void ResetFields()
     {
         Language = null;
@@ -252,22 +270,31 @@ public class ExamOverviewViewModel : ViewModelBase
     private void SelectExam()
     {
         if (SelectedExam == null) return;
-        Language = SelectedExam.Language;
-        LanguageLevel = SelectedExam.LanguageLevel;
-        ExamDate = SelectedExam.Time.Date;
-        ExamTime = SelectedExam.TimeOfDay;
-        MaxStudents = SelectedExam.MaxStudents;
-        NumStudents = SelectedExam.NumStudents;
-        ExamState = SelectedExam.ExamState;
+        var exam = _examService.GetExamById(SelectedExam.Id);
+        if (exam == null) return;
+
+        Language = exam.Language;
+        LanguageLevel = exam.LanguageLevel;
+        ExamDate = exam.Time.Date;
+        ExamTime = exam.TimeOfDay;
+        MaxStudents = exam.MaxStudents;
+        NumStudents = exam.NumStudents;
+        ExamState = exam.ExamState;
     }
 
     private void UpdateExam()
     {
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
+        int classroomNumber = GetClassroomNumber();
+
+        var exam = _examService.GetExamById(SelectedExam!.Id);
+        if (exam == null) return;
+
         try
         {
-            Domain.Model.Exam exam = _examService.UpdateExam(selectedExam!.Id, Language, LanguageLevel, selectedDate, ExamTime, selectedExam!.ClassroomNumber, MaxStudents);
-            Exams[Exams.IndexOf(SelectedExam!)] = exam;
+            exam = _examService.UpdateExam(new ExamDto(_selectedExam!.Id, Language, LanguageLevel, selectedDate,
+                ExamTime, classroomNumber, MaxStudents));
+            Exams[Exams.IndexOf(SelectedExam!)] = new ExamViewModel(exam);
             ResetFields();
         }
         catch (ArgumentException e)
@@ -275,17 +302,17 @@ public class ExamOverviewViewModel : ViewModelBase
             MessageBox.Show($"Error updating exam: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-    
+
     private bool CanUpdateExam()
     {
         return SelectedExam != null;
     }
-    
+
     private void DeleteExam()
     {
         try
         {
-            _examService.DeleteExam(selectedExam!.Id);
+            _examService.DeleteExam(_selectedExam!.Id);
             Exams.Remove(SelectedExam!);
         }
         catch (ArgumentException e)
@@ -293,30 +320,36 @@ public class ExamOverviewViewModel : ViewModelBase
             MessageBox.Show($"Error deleting exam: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-    
+
     private bool CanDeleteExam()
     {
         return SelectedExam != null;
     }
-    
+
     private void FilterExams()
     {
         DateOnly? filterDateOnly = FilterDate != null ? DateOnly.FromDateTime(FilterDate!.Value) : null;
-        Exams = new ObservableCollection<Domain.Model.Exam>(_examService.FilterExams(LoadExams(), FilterLanguage, FilterLanguageLvl, filterDateOnly));
+        Exams = new ObservableCollection<ExamViewModel>(ConvertToExamViewModel(_examService.FilterExams(FilterLanguage,
+            FilterLanguageLvl, filterDateOnly)));
     }
-    
-    private List<Domain.Model.Exam> LoadExams()
+
+    private List<ExamViewModel> LoadExams()
     {
-        return _examService.GetExamsByTutor(_tutor.Id);
+        return ConvertToExamViewModel(_examService.GetExamsByTutor(_tutor.Id));
     }
-    
+
+    private List<ExamViewModel> ConvertToExamViewModel(List<Domain.Model.Exam> exams)
+    {
+        return exams.Select(exam => new ExamViewModel(exam)).ToList();
+    }
+
     private void ClearFilters()
     {
         FilterLanguage = null;
         FilterLanguageLvl = null;
         FilterDate = null;
     }
-    
+
     private bool CanClearFilters()
     {
         return FilterLanguage != null || FilterLanguageLvl != null || FilterDate != null;
@@ -324,8 +357,9 @@ public class ExamOverviewViewModel : ViewModelBase
 
     private void OpenExamInfo(object? obj)
     {
-        _currentExamStore.CurrentExam = SelectedExam;
-        switch (SelectedExam?.ExamState)
+        var exam = SelectedExam == null ? null : _examService.GetExamById(SelectedExam.Id);
+        _currentExamStore.CurrentExam = exam;
+        switch (exam?.ExamState)
         {
             case Domain.Model.Exam.State.NotStarted:
             case Domain.Model.Exam.State.Locked:

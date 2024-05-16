@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:model="clr-namespace:LangLang.Domain.Model"
+             xmlns:exam="clr-namespace:LangLang.WPF.ViewModels.Tutor.Exam"
+             d:DataContext="{d:DesignInstance Type=exam:ExamOverviewViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="550" d:DesignWidth="800"
              Height="550" Width="800">
@@ -70,7 +72,7 @@
                       ColumnWidth="*"
                       >
                     <DataGrid.Columns >
-                        <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}"/>
+                        <DataGridTextColumn Header="Language" Binding="{Binding LanguageName}"/>
                         <DataGridTextColumn Header="Level" Binding="{Binding LanguageLevel}"/>
                         <DataGridTemplateColumn Header="Date">
                             <DataGridTemplateColumn.CellTemplate>
@@ -82,13 +84,13 @@
                         <DataGridTemplateColumn Header="Time">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding TimeOfDay, StringFormat='{}{0:hh\\:mm}'}"/>
+                                    <TextBlock Text="{Binding Time, StringFormat='{}{0:hh\\:mm}'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="MaxStudents" Binding="{Binding MaxStudents}"/>
                         <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
-                        <DataGridTextColumn Header="State" Binding="{Binding ExamState}"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding State}"/>
                     </DataGrid.Columns>
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="SelectionChanged">
@@ -125,7 +127,6 @@
                 
                 <Label>State:</Label>
                 <TextBlock Margin="5,0,0,0" Text="{Binding ExamState}"></TextBlock>
-                <Button Margin="10,5,10,0" Padding="2,2,2,2" Name="btnViewInfo" Content="View Info" Command="{Binding OpenExamInfoCommand}"></Button>
                 </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Margin="5" Content="Add" Width="70" Height="50" Command="{Binding AddCommand}" />
@@ -133,7 +134,7 @@
                 <Button Margin="5" Content="Delete" Width="70" Height="50"  Command="{Binding DeleteCommand}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Margin="5" Content="Students list" Width="230" Height="40" IsEnabled="False" Command="{Binding StudentListCommand}"/>
+                <Button Margin="5" Content="View Info" Width="230" Height="40" Command="{Binding OpenExamInfoCommand}"/>
             </StackPanel>
         </Grid>
     </Border>
