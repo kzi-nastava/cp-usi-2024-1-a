@@ -97,7 +97,10 @@ namespace LangLang.Application.UseCases.Course
 
         public Domain.Model.Course? ValidateInputs(string name, string? languageName, LanguageLevel? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, Domain.Model.Course.CourseState? state, int maxStudents)
         {
-            if (FieldsEmpty(name, languageName, level, duration, state, start, maxStudents) || scheduleDays.Count == 0) return null;
+            if (!Domain.Model.Course.IsValid(name, languageName, level, duration, state, start, maxStudents, scheduleDays))
+            {
+                return null;
+            }
             Language? language = _languageRepository.Get(languageName!);
             if (language == null)
             {
@@ -120,11 +123,6 @@ namespace LangLang.Application.UseCases.Course
                 maxStudents
             );
             
-        }
-
-        private static bool FieldsEmpty(string name, string? languageName, LanguageLevel? level, int? duration, Domain.Model.Course.CourseState? state, DateTime? start, int maxStudents)
-        {
-            return name == "" || languageName == null || duration == null || start == null || maxStudents == 0 || level == null || state == null;
         }
 
         public void UpdateStates()
