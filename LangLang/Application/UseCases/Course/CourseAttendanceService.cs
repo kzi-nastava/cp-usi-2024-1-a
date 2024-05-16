@@ -66,10 +66,10 @@ namespace LangLang.Application.UseCases.Course
 
         public void RemoveAttendee(string studentId, string courseId)
         {
-            CourseAttendance attendance = _courseAttendanceRepository.
-<<<<<<< HEAD
+            /*CourseAttendance attendance = _courseAttendanceRepository.
+            //<<<<<<< HEAD
             _courseAttendanceDAO.DeleteCourseAttendance(GetStudentAttendance(studentId)!.Id);
-=======
+            //=======
             
             List<CourseAttendance> attendances = _courseAttendanceRepository.GetForStudent(studentId);
             foreach (CourseAttendance attendance in attendances)
@@ -84,7 +84,8 @@ namespace LangLang.Application.UseCases.Course
                 }
             }
 >>>>>>> develop
-        }
+        */
+         }
 
         public CourseAttendance? GradeStudent(string studentId, string courseId, int knowledgeGrade, int activityGrade)
         {
