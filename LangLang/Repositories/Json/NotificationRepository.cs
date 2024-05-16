@@ -13,12 +13,12 @@ public class NotificationRepository : AutoIdRepository<Notification>, INotificat
     
     public List<Notification> Get(Profile profile)
     {
-        return GetAll().Values.Where(notification => notification.ReceiverId == profile.Email).ToList();
+        return GetAll().Where(notification => notification.ReceiverId == profile.Email).ToList();
     }
 
     public List<Notification> GetUnread(Profile profile)
     {
-        return GetAll().Values.Where(
+        return GetAll().Where(
             notification => notification.ReceiverId == profile.Email &&
                             notification.ReadStatus == Notification.Status.Unread
         ).ToList();

@@ -16,7 +16,7 @@ namespace LangLang.Application.UseCases.Common
 
         public List<Language> GetAll()
         {
-            return _languageRepository.GetAll().Values.ToList();
+            return _languageRepository.GetAll();
         }
         public Language? GetLanguageById(string name)
         {

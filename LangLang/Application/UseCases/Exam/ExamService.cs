@@ -22,7 +22,7 @@ public class ExamService : IExamService
 
     public List<Domain.Model.Exam> GetAllExams()
     {
-        var exams = _examRepository.GetAll().Values.ToList();
+        var exams = _examRepository.GetAll();
         return UpdateExamStates(exams);
     }
 

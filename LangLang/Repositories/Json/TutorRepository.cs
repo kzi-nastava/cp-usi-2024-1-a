@@ -9,6 +9,6 @@ namespace LangLang.Repositories.Json
         {
         }
 
-        public bool Exists(string id) => GetAll().ContainsKey(id);
+        public bool Exists(string id) => Load().ContainsKey(id);
     }
 }
