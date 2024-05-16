@@ -20,7 +20,7 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddSingleton<ILangLangViewModelFactory, LangLangViewModelFactory>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
-            services.AddScoped<StudentMenuViewModel>();
+            services.AddTransient<StudentMenuViewModel>();
             services.AddScoped<TutorMenuViewModel>();
             services.AddScoped<DirectorMenuViewModel>();
             services.AddScoped<CourseOverviewViewModel>();
