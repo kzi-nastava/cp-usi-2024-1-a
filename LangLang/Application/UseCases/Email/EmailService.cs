@@ -18,7 +18,7 @@ public class EmailService: IEmailService
     {
         SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
 
-        smtpClient.Credentials = new System.Net.NetworkCredential("language.school.usi@gmail.com", "vrgtvsjgnbnazxjj");
+        smtpClient.Credentials = new NetworkCredential("language.school.usi@gmail.com", "vrgtvsjgnbnazxjj");
         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
         smtpClient.EnableSsl = true;
         MailMessage mail = new MailMessage();
