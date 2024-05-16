@@ -4,7 +4,7 @@ using LangLang.Domain.Model;
 
 namespace LangLang.Domain.RepositoryInterfaces;
 
-public interface IPersonProfileMappingRepository : IRepository<PersonProfileMapping>
+public interface IPersonProfileMappingRepository : IRepository<PersonProfileMapping>, IObservable<PersonProfileMapping>
 {
     public Dictionary<string, PersonProfileMapping> GetMap();
 }
