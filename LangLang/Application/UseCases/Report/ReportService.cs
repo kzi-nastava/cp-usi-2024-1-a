@@ -24,7 +24,7 @@ public class ReportService: IReportService
             "level"
         };
         List<List<string>> list2 = new List<List<string>>();
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 100; i++)
         {
             list2.Add(new List<string>()
             {

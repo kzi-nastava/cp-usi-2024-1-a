@@ -17,6 +17,8 @@ public class ReportCoordinator: IReportCoordinator
     { 
         _emailService = emailService;
         _reportService = reportService;
+        SendCoursePenaltyReport();
+
     }
 
     public void SendCoursePenaltyReport()
@@ -28,10 +30,10 @@ public class ReportCoordinator: IReportCoordinator
 
         string recipient = "masamasa12332@gmail.com";
         string title = "Report of penalty statistics";
-        string paragraph = "\tThis report details the number of penalty points awarded per course. " +
+        string paragraph = "This report details the number of penalty points awarded per course. " +
             "The second table containts the average grade of student based on the number of penalty points they have." +
-            "\n\n The data is gathered over the course of 1 year.";
+            "\nThe data is gathered over the course of 1 year.";
 
-        _emailService.SendEmailWithPDFAttachment(recipient, pdfReportService.GetReportPDF(title, paragraph, tableData.ColumnNames, tableData.Rows));
+        _emailService.SendEmailWithPDFAttachment(recipient, pdfReportService.GetReportPDF(title, paragraph, tableData));
     }
 }
