@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Documents;
-using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -41,15 +38,10 @@ namespace LangLang.Application.UseCases.Course
             List<Domain.Model.Course> courses = new();
             foreach (Domain.Model.Course course in GetAll())
             {
-                if (course.State != Domain.Model.Course.CourseState.NotStarted)
+                if (course.IsApplicable())
                 {
-                    continue;
+                    courses.Add(course);
                 }
-                if (course.IsFull())
-                {
-                    continue;
-                }
-                courses.Add(course);
             }
 
             return courses;
@@ -86,7 +78,7 @@ namespace LangLang.Application.UseCases.Course
             {
                 throw new ArgumentException("Course not found");
             }
-            course.State = Domain.Model.Course.CourseState.FinishedGraded;
+            course.Finish();
             UpdateCourse(course);
         }
 
@@ -104,63 +96,42 @@ namespace LangLang.Application.UseCases.Course
 
         public Domain.Model.Course? ValidateInputs(string name, string? languageName, LanguageLevel? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, Domain.Model.Course.CourseState? state, int maxStudents)
         {
-            if (name == "" || languageName == null || duration == null || scheduleDays.Count == 0 || maxStudents == 0 || level == null || state == null)
+            if (FieldsEmpty(name, languageName, level, duration, state, start, maxStudents) || scheduleDays.Count == 0) return null;
+            Language? language = _languageRepository.Get(languageName!);
+            if (language == null)
             {
                 return null;
             }
-            if (start == null)
+            if (online)
             {
-                return null;
+                maxStudents = int.MaxValue;
             }
-            else
-            {
-                Language? language = _languageRepository.Get(languageName);
-                if (language == null)
-                {
-                    return null;
-                }
-                if (online)
-                {
-                    maxStudents = int.MaxValue;
-                }
-                return new Domain.Model.Course(
-                    name,
-                    language,
-                    (LanguageLevel)level,
-                    (int)duration,
-                    schedule,
-                    (DateTime)start,
-                    online,
-                    numStudents,
-                    (Domain.Model.Course.CourseState)state,
-                    maxStudents
-                );
-            }
+            return new Domain.Model.Course(
+                name,
+                language,
+                (LanguageLevel)level!,
+                (int)duration!,
+                schedule,
+                (DateTime)start!,
+                online,
+                numStudents,
+                (Domain.Model.Course.CourseState)state!,
+                maxStudents
+            );
+            
+        }
+
+        private static bool FieldsEmpty(string name, string? languageName, LanguageLevel? level, int? duration, Domain.Model.Course.CourseState? state, DateTime? start, int maxStudents)
+        {
+            return name == "" || languageName == null || duration == null || start == null || maxStudents == 0 || level == null || state == null;
         }
 
         public void UpdateStates()
         {
             foreach(Domain.Model.Course course in GetAll())
             {
-                if(course.Start <= DateTime.Now && course.Start + course.Duration*Constants.CancellableCourseTime >= DateTime.Now)
-                {
-                    course.State = Domain.Model.Course.CourseState.InProgress;
-                    UpdateCourse(course);
-                }else if (course.Start - Constants.CancellableCourseTime < DateTime.Now)
-                {
-                    course.State = Domain.Model.Course.CourseState.Locked;
-                    UpdateCourse(course);
-                }
-                else if(course.Start -Constants.CancellableCourseTime >= DateTime.Now)
-                {
-                    course.State = Domain.Model.Course.CourseState.NotStarted;
-                    UpdateCourse(course);
-                }
-                else
-                {
-                    course.State = Domain.Model.Course.CourseState.FinishedNotGraded;
-                    UpdateCourse(course);
-                }
+                course.UpdateState();
+                UpdateCourse(course);
             }
         }
     }

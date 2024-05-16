@@ -4,7 +4,7 @@ using LangLang.Domain.Model;
 namespace LangLang.Application.UseCases.Course;
 public interface ICourseAttendanceService
 {
-    public List<CourseAttendance> GetAttendancesForStudent(string studentId);
+    public List<CourseAttendance> GetAllStudentAttendances(string studentId);
     public List<CourseAttendance> GetAttendancesForCourse(string courseId);
     public CourseAttendance? GetStudentAttendance(string studentId);
     public List<CourseAttendance> GetFinishedCoursesStudent(string studentId);

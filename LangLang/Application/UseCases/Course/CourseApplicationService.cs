@@ -117,7 +117,7 @@ namespace LangLang.Application.UseCases.Course
         public void CancelApplication(string applicationId)
         {
             CourseApplication? application = GetCourseApplicationById(applicationId);
-            if (application!.CourseApplicationState == State.Accepted)
+            if (application!.CourseApplicationState != State.Rejected)
             {
                 ActivateStudentApplications(application.StudentId);
                 _courseService.CancelAttendance(application.CourseId);
