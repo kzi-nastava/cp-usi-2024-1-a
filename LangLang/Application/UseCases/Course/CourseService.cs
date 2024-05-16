@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -21,7 +20,7 @@ namespace LangLang.Application.UseCases.Course
         }
 
 
-        public Dictionary<string, Domain.Model.Course> GetAll()
+        public List<Domain.Model.Course> GetAll()
         {
             return _courseRepository.GetAll();
         }
@@ -37,7 +36,7 @@ namespace LangLang.Application.UseCases.Course
         public List<Domain.Model.Course> GetAvailableCourses(Student student)
         {
             List<Domain.Model.Course> courses = new();
-            foreach (Domain.Model.Course course in GetAll().Values.ToList())
+            foreach (Domain.Model.Course course in GetAll())
             {
                 if (course.IsApplicable())
                 {
@@ -127,7 +126,7 @@ namespace LangLang.Application.UseCases.Course
 
         public void UpdateStates()
         {
-            foreach(Domain.Model.Course course in GetAll().Values)
+            foreach(Domain.Model.Course course in GetAll())
             {
                 course.UpdateState();
                 UpdateCourse(course);

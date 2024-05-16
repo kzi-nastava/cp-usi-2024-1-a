@@ -390,7 +390,7 @@ namespace LangLang.WPF.ViewModels.Director
         public void LoadTutors()
         {
             var tutors = _tutorService.GetAllTutors();
-            foreach(Domain.Model.Tutor tutor in tutors.Values)
+            foreach(Domain.Model.Tutor tutor in tutors)
                 Tutors.Add(tutor);
         }
         public void LoadLanguages()
@@ -429,7 +429,7 @@ namespace LangLang.WPF.ViewModels.Director
         {
             Tutors.Clear();
             var tutors = _tutorService.GetAllTutors();
-            foreach (Domain.Model.Tutor tutor in tutors.Values)
+            foreach (Domain.Model.Tutor tutor in tutors)
             {
                 if (LanguageFilter != ""
                   && !tutor.KnownLanguages.Exists(tuple => tuple.Item1.Name == LanguageFilter))

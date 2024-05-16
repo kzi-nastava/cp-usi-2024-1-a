@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
+using LangLang.Repositories.Json.Util;
 
 namespace LangLang.Repositories.Json;
 
@@ -17,6 +19,29 @@ public class PersonProfileMappingRepository : Repository<PersonProfileMapping>, 
     
     public Dictionary<string, PersonProfileMapping> GetMap()
     {
-        return GetAll();
+        return new Dictionary<string, PersonProfileMapping>(Load());
+    }
+
+    public new PersonProfileMapping Add(PersonProfileMapping mapping)
+    {
+        mapping = base.Add(mapping);
+        NotifyObservers(mapping);
+        return mapping;
+    }
+
+    private readonly HashSet<IObserver<PersonProfileMapping>> _observers = new();
+    
+    public IDisposable Subscribe(IObserver<PersonProfileMapping> observer)
+    {
+        _observers.Add(observer);
+        return new Unsubscriber<PersonProfileMapping>(_observers, observer);
+    }
+
+    private void NotifyObservers(PersonProfileMapping mapping)
+    {
+        foreach (var observer in _observers)
+        {
+            observer.OnNext(mapping);
+        }
     }
 }

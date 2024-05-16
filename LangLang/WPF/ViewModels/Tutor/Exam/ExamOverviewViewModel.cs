@@ -196,12 +196,12 @@ public class ExamOverviewViewModel : ViewModelBase
         
         availableTimes = new ObservableCollection<TimeOnly>();
         
-        AddCommand = new RelayCommand(execute => AddExam(), execute => CanAddExam());
-        SelectedExamChangedCommand = new RelayCommand(execute => SelectExam());
-        UpdateCommand = new RelayCommand(execute => UpdateExam(), execute => CanUpdateExam());
-        DeleteCommand = new RelayCommand(execute => DeleteExam(), execute => CanDeleteExam());
-        ClearFiltersCommand = new RelayCommand(execute => ClearFilters(), execute => CanClearFilters());
-        OpenExamInfoCommand = new RelayCommand(OpenExamInfo, canExecute => SelectedExam != null);
+        AddCommand = new RelayCommand(_ => AddExam(), _ => CanAddExam());
+        SelectedExamChangedCommand = new RelayCommand(_ => SelectExam());
+        UpdateCommand = new RelayCommand(_ => UpdateExam(), _ => CanUpdateExam());
+        DeleteCommand = new RelayCommand(_ => DeleteExam(), _ => CanDeleteExam());
+        ClearFiltersCommand = new RelayCommand(_ => ClearFilters(), _ => CanClearFilters());
+        OpenExamInfoCommand = new RelayCommand(OpenExamInfo, _ => SelectedExam != null);
     }
 
     private int GetClassroomNumber()

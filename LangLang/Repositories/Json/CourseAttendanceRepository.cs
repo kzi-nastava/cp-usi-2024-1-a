@@ -13,7 +13,7 @@ namespace LangLang.Repositories.Json
         public List<CourseAttendance> GetForCourse(string courseId)
         {
             List<CourseAttendance> attendances = new();
-            foreach (CourseAttendance attendance in GetAll().Values)
+            foreach (CourseAttendance attendance in GetAll())
             {
                 if (attendance.CourseId == courseId)
                 {
@@ -25,7 +25,7 @@ namespace LangLang.Repositories.Json
         public List<CourseAttendance> GetForStudent(string studentId)
         {
             List<CourseAttendance> attendances = new();
-            foreach (CourseAttendance attendance in GetAll().Values)
+            foreach (CourseAttendance attendance in GetAll())
             {
                 if (attendance.StudentId == studentId)
                 {

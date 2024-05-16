@@ -14,6 +14,6 @@ public class ExamRepository : AutoIdRepository<Exam>, IExamRepository
     
     public List<Exam> GetByDate(DateOnly date)
     {
-        return GetAll().Values.Where(exam => exam.Date == date).ToList();
+        return GetAll().Where(exam => exam.Date == date).ToList();
     }
 }

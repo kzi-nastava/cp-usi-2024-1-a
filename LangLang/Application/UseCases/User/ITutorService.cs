@@ -6,7 +6,7 @@ namespace LangLang.Application.UseCases.User;
 
 public interface ITutorService
 {
-    public Dictionary<string, Tutor> GetAllTutors();
+    public List<Tutor> GetAllTutors();
 
     public Tutor AddTutor(Tutor tutor);
     

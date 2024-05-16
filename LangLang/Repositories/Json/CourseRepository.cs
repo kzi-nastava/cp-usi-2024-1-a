@@ -15,7 +15,7 @@ namespace LangLang.Repositories.Json
         public List<Course> GetCoursesByDate(DateOnly date)
         {
             List<Course> courses = new();
-            foreach (Course course in GetAll().Values)
+            foreach (Course course in GetAll())
             {
                 if (
                     date >= DateOnly.FromDateTime(course.Start) &&

@@ -10,12 +10,10 @@ public class ExamApplicationRepository : AutoIdRepository<ExamApplication>, IExa
     public ExamApplicationRepository(string filepath, string lastIdFilePath) : base(filepath, lastIdFilePath)
     {
     }
-    
-    public List<ExamApplication> GetAllExamApplications() => GetAll().Values.ToList();
 
     public ExamApplication? Get(string studentId, string examId)
     {
-        var applications = GetAllExamApplications().Where(application =>
+        var applications = GetAll().Where(application =>
             application.StudentId == studentId && application.ExamId == examId
         ).ToList();
         if (applications.Count <= 0)
@@ -24,18 +22,18 @@ public class ExamApplicationRepository : AutoIdRepository<ExamApplication>, IExa
     }
 
     public List<ExamApplication> GetByStudent(string studentId)
-        => GetAllExamApplications().Where(application => application.StudentId == studentId).ToList();
+        => GetAll().Where(application => application.StudentId == studentId).ToList();
 
     public List<ExamApplication> GetByExam(string examId)
-        => GetAllExamApplications().Where(application => application.ExamId == examId).ToList();
+        => GetAll().Where(application => application.ExamId == examId).ToList();
 
     public List<ExamApplication> GetPendingExamApplicationsByExam(string examId)
-        => GetAllExamApplications().Where(application => 
+        => GetAll().Where(application => 
             application.ExamId == examId && application.ExamApplicationState == ExamApplication.State.Pending
         ).ToList();
 
     public List<ExamApplication> GetByStudentAndExam(string studentId, string examId)
-        => GetAllExamApplications().Where(application =>
+        => GetAll().Where(application =>
             application.StudentId == studentId && application.ExamId == examId
         ).ToList();
 }

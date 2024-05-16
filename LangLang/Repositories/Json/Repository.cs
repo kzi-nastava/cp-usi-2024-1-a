@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using LangLang.Repositories.Json.Util;
 
 namespace LangLang.Repositories.Json;
@@ -14,9 +15,9 @@ public abstract class Repository<T> where T : class
 
     protected abstract string GetId(T item);
 
-    public Dictionary<string, T> GetAll()
+    public List<T> GetAll()
     {
-        return Load();
+        return Load().Values.ToList();
     }
     
     public T? Get(string id)
