@@ -1,11 +1,6 @@
 ﻿using LangLang.Application.UseCases.Email;
 using LangLang.Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
+
 
 namespace LangLang.Application.UseCases.Report;
 

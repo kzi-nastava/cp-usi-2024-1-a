@@ -33,6 +33,7 @@ namespace LangLang.WPF.ViewModels.Common
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
+            //for testing, so that upon running the app an email gets sent right away
             IReportCoordinator reportCoordinator = new ReportCoordinator(emailService, reportService);
 
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);

@@ -69,11 +69,9 @@ public class PDFReportService : IPDFReportService
 
     private void DrawTable(XGraphics gfx, XRect rect, List<string> columnNames, List<List<string>> tableData, XFont headerFont, XFont cellFont, PdfDocument document)
     {
-        // Define column widths
         double columnWidth = rect.Width / columnNames.Count;
         double rowHeight = 20;
 
-        // Draw column headers
         double xPosition = rect.Left;
         double yPosition = rect.Top;
         for (int i = 0; i < columnNames.Count; i++)
@@ -82,7 +80,6 @@ public class PDFReportService : IPDFReportService
             xPosition += columnWidth;
         }
 
-        // Draw table data
         yPosition += 20;
         foreach (var rowData in tableData)
         {
@@ -105,13 +102,5 @@ public class PDFReportService : IPDFReportService
             yPosition += 20;
         }
     }
-
-
-
-
-
-
-
-
 
 }
