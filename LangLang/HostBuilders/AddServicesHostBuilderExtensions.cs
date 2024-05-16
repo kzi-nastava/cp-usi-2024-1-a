@@ -2,6 +2,7 @@
 using LangLang.Application.UseCases.Common;
 using LangLang.Application.UseCases.Course;
 using LangLang.Application.UseCases.DropRequest;
+using LangLang.Application.UseCases.Email;
 using LangLang.Application.UseCases.Exam;
 using LangLang.Application.UseCases.User;
 using LangLang.Application.Utility.Authentication;
@@ -49,6 +50,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IDropRequestService, DropRequestService>();
             services.AddSingleton<IDropRequestInfoService, DropRequestInfoService>();
             services.AddSingleton<IGradeService, GradeService>();
+            services.AddSingleton<IEmailService, EmailService>();
         });
         
         return host;

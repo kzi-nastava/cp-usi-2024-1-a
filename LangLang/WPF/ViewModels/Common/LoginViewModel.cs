@@ -4,6 +4,7 @@ using System.Windows.Input;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
+using LangLang.Application.UseCases.Email;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
 using LangLang.WPF.MVVM;
@@ -31,6 +32,7 @@ namespace LangLang.WPF.ViewModels.Common
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
+            IEmailService emailService = new EmailService();
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
         }
 
