@@ -4,6 +4,8 @@ using System.Net;
 using PdfSharpCore.Pdf;
 using System.IO;
 using LangLang.Application.UseCases.Report.CoursePensaltyReport;
+using System.Windows.Documents;
+using System.Collections.Generic;
 
 
 namespace LangLang.Application.UseCases.Email;
@@ -12,9 +14,54 @@ public class EmailService: IEmailService
 {
 
     public EmailService() {
-        SendEmail("masamasa12332@gmail.com");
+        //SendEmail("masamasa12332@gmail.com");
         PDFReport pdfReportService = new PDFReport();
-        SendEmailWithPDFAttachment("masamasa12332@gmail.com", pdfReportService.GetPenaltyPointReportPDF(null!));
+        List<string> list1 = new List<string>()
+        {
+            "name",
+            "language",
+            "level"
+        };
+        List<List<string>> list2 = new List<List<string>>();
+        list2.Add(new List<string>()
+        {
+            "marija",
+            "parezanin",
+            "hey"
+        });
+        list2.Add(new List<string>()
+        {
+            "marija",
+            "parezanin",
+            "hey"
+        }); list2.Add(new List<string>()
+        {
+            "marija",
+            "parezanin",
+            "hey"
+        }); list2.Add(new List<string>()
+        {
+            "marija",
+            "parezanin",
+            "hey"
+        }); list2.Add(new List<string>()
+        {
+            "marija",
+            "parezanin",
+            "hey"
+        }); list2.Add(new List<string>()
+        {
+            "marija",
+            "parezanin",
+            "hey"
+        }); list2.Add(new List<string>()
+        {
+            "marija",
+            "parezanin",
+            "hey"
+        });
+
+        SendEmailWithPDFAttachment("masamasa12332@gmail.com", pdfReportService.GetReportPDF("titlee", "paraaagt", list1, list2));
     }
 
 

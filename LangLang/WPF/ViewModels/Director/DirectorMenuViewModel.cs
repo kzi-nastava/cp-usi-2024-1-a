@@ -15,7 +15,7 @@ namespace LangLang.WPF.ViewModels.Director
         private readonly ILoginService _loginService;
         private readonly INavigationService _navigationService;
         private readonly Domain.Model.Director _loggedInUser;
-;
+
 
         public NavigationStore NavigationStore { get; }
 
