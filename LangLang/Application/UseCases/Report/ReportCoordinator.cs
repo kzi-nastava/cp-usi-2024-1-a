@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LangLang.Application.UseCases.Report;
 
-public class ReportCoordinator
+public class ReportCoordinator: IReportCoordinator
 {
     private readonly IEmailService _emailService;
     public ReportCoordinator(IEmailService emailService) 

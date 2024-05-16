@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LangLang.Application.UseCases.Report;
 
-public class ReportService
+public class ReportService: IReportService
 {
     private readonly ICourseAttendanceService _courseAttendanceService;
     public ReportService(ICourseAttendanceService courseAttendanceService)
@@ -17,7 +17,7 @@ public class ReportService
 
     public List<List<string>> GetCoursePenaltyReport()
     {
-        
+        return null;
     }
 
 

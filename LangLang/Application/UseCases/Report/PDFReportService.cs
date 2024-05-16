@@ -1,8 +1,9 @@
 ﻿using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
 using System.Collections.Generic;
+using LangLang.Application.UseCases.Report;
 
-public class PDFReportService
+public class PDFReportService: IPDFReportService
 {
     public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<string> columnNames, List<List<string>> tableData)
     {
@@ -35,6 +36,12 @@ public class PDFReportService
         DrawTable(gfx, contentRect, columnNames, tableData, tableHeaderFont, cellFont);
 
         return pdfDocument;
+    }
+
+
+    public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<string> firstTableColumnNames, List<List<string>> firstTableData, List<string> secondTableColumnNames, List<List<string>> secondTableData)
+    {
+        return null;
     }
 
     private void DrawTable(XGraphics gfx, XRect rect, List<string> columnNames, List<List<string>> tableData, XFont headerFont, XFont cellFont)
