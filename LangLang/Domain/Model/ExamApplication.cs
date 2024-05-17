@@ -5,7 +5,7 @@ public class ExamApplication : IEntity
     public string Id { get; set; }
     public string ExamId { get; set; }
     public string StudentId { get; set; }
-    public State ExamApplicationState { get; set; }
+    public State ExamApplicationState { get; private set; }
     
     public enum State
     {
@@ -47,7 +47,7 @@ public class ExamApplication : IEntity
     {
         if (ExamApplicationState != State.Pending)
             return false;
-        ExamApplicationState = State.Accepted;
+        ExamApplicationState = State.Rejected;
         return true;
     }
 }
