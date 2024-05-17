@@ -1,8 +1,6 @@
 ﻿using LangLang.Application.DTO;
 using LangLang.Domain.RepositoryInterfaces;
-using LangLang.Repositories.Json;
 using System.Collections.Generic;
-
 
 namespace LangLang.Application.UseCases.Report;
 
