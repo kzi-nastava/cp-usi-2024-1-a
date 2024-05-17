@@ -11,23 +11,22 @@ namespace LangLang.Domain.Model
         public DateTime Time { get; set; }
         public int ClassroomNumber { get; set; }
         public int MaxStudents { get; set; }
-        public int NumStudents { get; set; }
+        public int NumStudents { get; private set; }
 
         public State ExamState { get; set; }
-        
-        [JsonIgnore]
-        public DateOnly Date => DateOnly.FromDateTime(Time.Date);
-        [JsonIgnore]
-        public TimeOnly TimeOfDay => TimeOnly.FromDateTime(Time);
-        
+
+        [JsonIgnore] public DateOnly Date => DateOnly.FromDateTime(Time.Date);
+        [JsonIgnore] public TimeOnly TimeOfDay => TimeOnly.FromDateTime(Time);
+
         public Exam()
         {
             Id = "";
             Language = new Language();
             LanguageLevel = LanguageLevel.A1;
         }
-        
-        public Exam(Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber, State examState, int maxStudents, int numStudents=0)
+
+        public Exam(Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber, State examState,
+            int maxStudents, int numStudents = 0)
         {
             Id = "";
             Language = language;
@@ -38,8 +37,9 @@ namespace LangLang.Domain.Model
             NumStudents = numStudents;
             ExamState = examState;
         }
-        
-        public Exam(string id, Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber, State examState, int maxStudents, int numStudents=0)
+
+        public Exam(string id, Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber,
+            State examState, int maxStudents, int numStudents = 0)
         {
             Id = id;
             Language = language;
@@ -50,7 +50,7 @@ namespace LangLang.Domain.Model
             NumStudents = numStudents;
             ExamState = examState;
         }
-        
+
         public void AddAttendance()
         {
             NumStudents++;
@@ -65,7 +65,19 @@ namespace LangLang.Domain.Model
         {
             return NumStudents == MaxStudents;
         }
-        
+
+        public bool MatchesFilter(Language? language = null, LanguageLevel? languageLvl = null,
+            DateOnly? date = null)
+        {
+            if (language != null && !Equals(Language, language))
+                return false;
+            if (languageLvl != null && LanguageLevel != languageLvl)
+                return false;
+            if (date != null && Date != date)
+                return false;
+            return true;
+        }
+
         public enum State
         {
             /// <summary>
