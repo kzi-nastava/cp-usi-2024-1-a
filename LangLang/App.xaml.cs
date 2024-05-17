@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using LangLang.HostBuilders;
 using LangLang.WPF.Views.Common;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,6 +14,7 @@ namespace LangLang
         private static IHostBuilder CreateHostBuilder(string[]? args = null)
         {
             return Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((_, builder) => builder.AddUserSecrets<App>())
                 .AddRepositories()
                 .AddServices()
                 .AddStores()
