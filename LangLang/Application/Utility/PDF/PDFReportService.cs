@@ -2,7 +2,7 @@
 using PdfSharpCore.Drawing;
 using System.Collections.Generic;
 using LangLang.Application.DTO;
-using LangLang.Application.Utility;
+using LangLang.Application.Utility.PDF;
 
 public class PDFReportService : IPDFReportService
 {
