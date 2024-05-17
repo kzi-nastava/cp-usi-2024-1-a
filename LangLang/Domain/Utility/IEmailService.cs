@@ -1,4 +1,4 @@
-﻿namespace LangLang.Application.UseCases.Email;
+﻿namespace LangLang.Domain.Utility;
 using PdfSharpCore.Pdf;
 
 public interface IEmailService

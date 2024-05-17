@@ -1,12 +1,12 @@
 ﻿using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
 using System.Collections.Generic;
-using LangLang.Application.UseCases.Report;
 using LangLang.Application.DTO;
+using LangLang.Domain.Utility;
 
 public class PDFReportService : IPDFReportService
 {
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, ReportTableDto tableData)
+    public PdfDocument GetReportPDF(string title, string introductoryParagraph, ReportTableDto table)
     {
         PdfDocument pdfDocument = new PdfDocument();
 
@@ -30,7 +30,7 @@ public class PDFReportService : IPDFReportService
 
         // table
         contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
-        DrawTable(gfx, contentRect, tableData.ColumnNames, tableData.Rows, tableHeaderFont, cellFont, pdfDocument);
+        DrawTable(gfx, contentRect, table.ColumnNames, table.Rows, tableHeaderFont, cellFont, pdfDocument);
 
         return pdfDocument;
     }
@@ -56,12 +56,11 @@ public class PDFReportService : IPDFReportService
         //Introductory paragraph
         contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
         gfx.DrawString(introductoryParagraph, paragraphFont, XBrushes.Black, contentRect, XStringFormats.TopLeft);
-
-        // table
-        contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
-        foreach (ReportTableDto tableData in tables)
+        foreach (ReportTableDto table in tables)
         {
-            DrawTable(gfx, contentRect, tableData.ColumnNames, tableData.Rows, tableHeaderFont, cellFont, pdfDocument);
+            // table
+            contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
+            DrawTable(gfx, contentRect, table.ColumnNames, table.Rows, tableHeaderFont, cellFont, pdfDocument);
         }
 
         return pdfDocument;
