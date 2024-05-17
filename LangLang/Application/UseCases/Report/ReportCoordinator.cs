@@ -1,5 +1,6 @@
 ﻿using LangLang.Application.DTO;
-using LangLang.Application.UseCases.Email;
+using LangLang.Domain.Utility;
+using System.Collections.Generic;
 
 
 namespace LangLang.Application.UseCases.Report;
@@ -21,7 +22,7 @@ public class ReportCoordinator: IReportCoordinator
         //SendEmail("masamasa12332@gmail.com");
         PDFReportService pdfReportService = new PDFReportService();
 
-        ReportTableDto tableData = _reportService.GetCoursePenaltyReport();
+        List<ReportTableDto> tables = _reportService.GetCoursePenaltyReport();
 
         string recipient = "masamasa12332@gmail.com";
         string title = "Report of penalty statistics";
@@ -29,6 +30,6 @@ public class ReportCoordinator: IReportCoordinator
             "The second table containts the average grade of student based on the number of penalty points they have." +
             "\nThe data is gathered over the course of 1 year.";
 
-        _emailService.SendEmailWithPDFAttachment(recipient, pdfReportService.GetReportPDF(title, paragraph, tableData));
+        _emailService.SendEmailWithPDFAttachment(recipient, pdfReportService.GetReportPDF(title, paragraph, tables));
     }
 }

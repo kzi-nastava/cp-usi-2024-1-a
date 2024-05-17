@@ -4,7 +4,7 @@ using LangLang.Application.DTO;
 using PdfSharpCore.Pdf;
 
 
-namespace LangLang.Application.UseCases.Report;
+namespace LangLang.Domain.Utility;
 
 public interface IPDFReportService
 {

@@ -2,7 +2,6 @@
 using LangLang.Application.UseCases.Common;
 using LangLang.Application.UseCases.Course;
 using LangLang.Application.UseCases.DropRequest;
-using LangLang.Application.UseCases.Email;
 using LangLang.Application.UseCases.Exam;
 using LangLang.Application.UseCases.User;
 using LangLang.Application.UseCases.Report;
