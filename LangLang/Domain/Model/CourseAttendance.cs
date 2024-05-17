@@ -11,6 +11,8 @@
         public bool IsRated { get; set; }
 
         public bool IsGraded { get; set; }
+        
+        public int PenaltyPoints { get; private set; }
 
         public CourseAttendance() {
             Id = "";
@@ -20,6 +22,7 @@
             IsGraded = false;
             KnowledgeGrade = 0;
             ActivityGrade = 0;
+            PenaltyPoints = 0;
         }
 
         public CourseAttendance(string courseId, string studentId, bool isRated, bool isGraded, int activityGrade, int knowledgeGrade)
@@ -31,9 +34,10 @@
             this.IsGraded = isGraded;
             ActivityGrade = activityGrade;
             KnowledgeGrade = knowledgeGrade;
+            PenaltyPoints = 0;
         }
 
-        public CourseAttendance(string id, string courseId, string studentId, bool isRated, bool isGraded, int activityGrade, int knowledgeGrade)
+        public CourseAttendance(string id, string courseId, string studentId, bool isRated, bool isGraded, int activityGrade, int knowledgeGrade, int penaltyPoints)
         {
             Id = id;
             CourseId = courseId;
@@ -42,6 +46,7 @@
             this.IsGraded = isGraded;
             KnowledgeGrade = knowledgeGrade;
             ActivityGrade = activityGrade;
+            PenaltyPoints = penaltyPoints;
         }
 
         public void AddGrade(int activityGrade, int knowledgeGrade)
@@ -56,5 +61,9 @@
             IsRated = true;
         }
 
+        public void AddPenaltyPoint()
+        {
+            PenaltyPoints++;
+        }
     }
 }

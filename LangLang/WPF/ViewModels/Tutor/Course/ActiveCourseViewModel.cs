@@ -193,7 +193,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         }
         private void GivePenaltyPoint(object? obj)
         {
-            _penaltyService.AddPenaltyPoint(SelectedStudent!);
+            _penaltyService.AddPenaltyPoint(SelectedStudent!, _currentCourseStore.CurrentCourse);
             MessageBox.Show("Penalty point added.", "Success");
             Students.Clear();
             Students = new ObservableCollection<Domain.Model.Student>(LoadStudents());

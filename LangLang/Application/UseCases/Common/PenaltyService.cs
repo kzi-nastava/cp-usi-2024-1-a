@@ -1,9 +1,11 @@
 ﻿using LangLang.Application.DTO;
+using LangLang.Application.UseCases.Course;
 using LangLang.Application.UseCases.User;
 using LangLang.Application.Utility.Authentication;
 using LangLang.Application.Utility.Notification;
-using LangLang.Domain.Model;
 using LangLang.Domain;
+using LangLang.Domain.Model;
+
 namespace LangLang.Application.UseCases.Common;
 
 public class PenaltyService : IPenaltyService
@@ -12,13 +14,15 @@ public class PenaltyService : IPenaltyService
     private readonly IAccountService _accountService;
     private readonly IUserProfileMapper _userProfileMapper;
     private readonly INotificationService _notificationService;
+    private readonly ICourseAttendanceService _courseAttendanceService;
 
-    public PenaltyService(IStudentService studentService, IAccountService accountService, IUserProfileMapper userProfileMapper, INotificationService notificationService)
+    public PenaltyService(IStudentService studentService, IAccountService accountService, IUserProfileMapper userProfileMapper, INotificationService notificationService, ICourseAttendanceService courseAttendanceService)
     {
         _studentService = studentService;
         _accountService = accountService;
         _userProfileMapper = userProfileMapper;
         _notificationService = notificationService;
+        _courseAttendanceService = courseAttendanceService;
     }
 
     public void AddPenaltyPoint(Student student, Person? sender = null)
@@ -31,6 +35,12 @@ public class PenaltyService : IPenaltyService
         {
             _accountService.DeactivateStudentAccount(student);  
         }
+    }
+
+    public void AddPenaltyPoint(Student student, Domain.Model.Course course, Person? sender = null)
+    {
+        _courseAttendanceService.AddPenaltyPoint(student.Id, course.Id);
+        AddPenaltyPoint(student, sender);
     }
 
     public void RemovePenaltyPoints()

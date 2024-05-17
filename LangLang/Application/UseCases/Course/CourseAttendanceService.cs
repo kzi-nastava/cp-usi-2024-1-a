@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LangLang.Application.UseCases.User;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
@@ -96,6 +97,13 @@ namespace LangLang.Application.UseCases.Course
             return attendance;
         }
 
+        public void AddPenaltyPoint(string studentId, string courseId)
+        {
+            var attendance = GetAttendance(studentId, courseId) ??
+                             throw new ArgumentException("No attendance for the given student on the given course");
+            attendance.AddPenaltyPoint();
+            _courseAttendanceRepository.Update(attendance.Id, attendance);
+        }
 
         public bool RateTutor(string courseId, string studentId, int rating)
         {
