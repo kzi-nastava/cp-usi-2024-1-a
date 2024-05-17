@@ -12,6 +12,8 @@ using LangLang.Application.Utility.Timetable;
 using LangLang.Application.Utility.Validators;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using LangLang.Application.Utility.Email;
+using LangLang.Application.Utility.PDF;
 
 namespace LangLang.HostBuilders;
 

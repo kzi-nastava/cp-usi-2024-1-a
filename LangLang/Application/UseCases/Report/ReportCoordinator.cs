@@ -1,5 +1,5 @@
 ﻿using LangLang.Application.DTO;
-using LangLang.Domain.Utility;
+using LangLang.Application.Utility.Email;
 using System.Collections.Generic;
 
 
