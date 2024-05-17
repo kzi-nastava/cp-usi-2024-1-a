@@ -3,10 +3,9 @@ using System.Net;
 using PdfSharpCore.Pdf;
 using System.IO;
 
+namespace LangLang.Domain.Utility;
 
-namespace LangLang.Application.UseCases.Email;
-
-public class EmailService: IEmailService
+public class EmailService : IEmailService
 {
     public void SendEmail(string recipient)
     {
@@ -28,7 +27,7 @@ public class EmailService: IEmailService
         pdfStream.Position = 0;
 
         SmtpClient smtpClient = GetServerClient();
-        
+
         MailMessage mail = new MailMessage();
 
         mail.From = new MailAddress("language.school.usi@gmail.com", "Lang Lang School");
