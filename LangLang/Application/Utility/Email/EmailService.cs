@@ -1,9 +1,9 @@
-﻿using System.Net.Mail;
+﻿using System.IO;
 using System.Net;
+using System.Net.Mail;
 using PdfSharpCore.Pdf;
-using System.IO;
 
-namespace LangLang.Domain.Utility;
+namespace LangLang.Application.Utility.Email;
 
 public class EmailService : IEmailService
 {
