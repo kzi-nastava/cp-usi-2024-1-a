@@ -6,10 +6,10 @@ namespace LangLang.Domain.Model
     public class Student : Person, IEntity
     {
         public string Id { get; set; }
-        
+
         public EducationLevel Education { get; set; }
         public uint PenaltyPoints { get; set; }
-        
+
         public Dictionary<string, LanguageLevel> CompletedCourseLanguages { get; set; }
         public Dictionary<string, LanguageLevel> PassedExamLanguages { get; set; }
 
@@ -21,7 +21,10 @@ namespace LangLang.Domain.Model
             PassedExamLanguages = new Dictionary<string, LanguageLevel>();
         }
 
-        public Student(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLevel educationLevel, uint penaltyPoints, Dictionary<string, LanguageLevel>? completedCourseLanguages = null, Dictionary<string, LanguageLevel>? passedExamLanguages = null)
+        public Student(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber,
+            EducationLevel educationLevel, uint penaltyPoints,
+            Dictionary<string, LanguageLevel>? completedCourseLanguages = null,
+            Dictionary<string, LanguageLevel>? passedExamLanguages = null)
             : base(name, surname, birthDate, gender, phoneNumber)
         {
             Id = "";
@@ -30,8 +33,10 @@ namespace LangLang.Domain.Model
             CompletedCourseLanguages = completedCourseLanguages ?? new Dictionary<string, LanguageLevel>();
             PassedExamLanguages = passedExamLanguages ?? new Dictionary<string, LanguageLevel>();
         }
-        
-        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, EducationLevel educationLvl, uint penaltyPoints, Dictionary<string, LanguageLevel> completedCourseLanguages, Dictionary<string, LanguageLevel> passedExamLanguages)
+
+        public Student(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber,
+            EducationLevel educationLvl, uint penaltyPoints, Dictionary<string, LanguageLevel> completedCourseLanguages,
+            Dictionary<string, LanguageLevel> passedExamLanguages)
             : base(name, surname, birthDate, gender, phoneNumber)
         {
             Id = id;
@@ -53,27 +58,58 @@ namespace LangLang.Domain.Model
 
         public void AddPenaltyPoint()
         {
-            PenaltyPoints++; 
+            PenaltyPoints++;
         }
 
         public void RemovePenaltyPoint()
         {
-            if (PenaltyPoints > 0) { PenaltyPoints--; }
+            if (PenaltyPoints > 0)
+            {
+                PenaltyPoints--;
+            }
         }
 
         public void AddCompletedCourseLanguage(Language language, LanguageLevel languageLevel)
         {
             CompletedCourseLanguages[language.Name] = languageLevel;
         }
-        
+
         public void AddPassedExamLanguage(Language language, LanguageLevel languageLevel)
         {
             CompletedCourseLanguages[language.Name] = languageLevel;
         }
+
+        /// <summary>
+        /// Checks if the user has finished a course for the given language at the given level or above.
+        /// </summary>
+        /// <param name="language">Language to check for.</param>
+        /// <param name="languageLevel">Language level to check.</param>
+        /// <returns>True if the user has finished a required course, false otherwise.</returns>
+        public bool HasCourseKnowledge(Language language, LanguageLevel languageLevel)
+        {
+            return CompletedCourseLanguages.ContainsKey(language.Name) &&
+                   CompletedCourseLanguages[language.Name] < languageLevel;
+        }
+
+        /// <summary>
+        /// Checks if the user has passed an exam for the given language at the given level or above.
+        /// </summary>
+        /// <param name="language">Language to check for.</param>
+        /// <param name="languageLevel">Language level to check.</param>
+        /// <returns>True if the user has passed a required exam, false otherwise.</returns>
+        public bool HasExamKnowledge(Language language, LanguageLevel languageLevel)
+        {
+            return PassedExamLanguages.ContainsKey(language.Name) &&
+                   PassedExamLanguages[language.Name] >= languageLevel;
+        }
     }
-    
+
     public enum EducationLevel
     {
-        ElementarySchool, HighSchool, CollegeDegree, MastersDegree, PhD
+        ElementarySchool,
+        HighSchool,
+        CollegeDegree,
+        MastersDegree,
+        PhD
     }
 }

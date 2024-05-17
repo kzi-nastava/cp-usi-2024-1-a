@@ -38,18 +38,16 @@ public class ExamApplicationService : IExamApplicationService
 
     public ExamApplication AcceptApplication(ExamApplication application)
     {
-        if (application.ExamApplicationState != ExamApplication.State.Pending)
+        if (!application.Accept())
             throw new ArgumentException("Cannot accept application that is not pending.");
-        application.ExamApplicationState = ExamApplication.State.Accepted;
         return _examApplicationRepository.Update(application.Id, application) ??
                throw new ArgumentException("No application with the given id.");
     }
 
     public ExamApplication RejectApplication(ExamApplication application)
     {
-        if (application.ExamApplicationState != ExamApplication.State.Pending)
+        if (!application.Reject())
             throw new ArgumentException("Cannot reject application that is not pending.");
-        application.ExamApplicationState = ExamApplication.State.Rejected;
         return _examApplicationRepository.Update(application.Id, application) ??
                throw new ArgumentException("No application with the given id.");
     }

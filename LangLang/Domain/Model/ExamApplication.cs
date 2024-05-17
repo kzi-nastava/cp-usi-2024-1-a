@@ -34,4 +34,20 @@ public class ExamApplication : IEntity
         StudentId = studentId;
         ExamApplicationState = examApplicationState;
     }
+
+    public bool Accept()
+    {
+        if (ExamApplicationState != State.Pending)
+            return false;
+        ExamApplicationState = State.Accepted;
+        return true;
+    }
+    
+    public bool Reject()
+    {
+        if (ExamApplicationState != State.Pending)
+            return false;
+        ExamApplicationState = State.Accepted;
+        return true;
+    }
 }
