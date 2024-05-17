@@ -7,11 +7,18 @@ namespace LangLang.Application.Utility.Email;
 
 public class EmailService : IEmailService
 {
+    private readonly EmailCredentials _emailCredentials;
+
+    public EmailService(EmailCredentials emailCredentials)
+    {
+        _emailCredentials = emailCredentials;
+    }
+
     public void SendEmail(string recipient)
     {
         SmtpClient smtpClient = GetServerClient();
         MailMessage mail = new MailMessage();
-        mail.From = new MailAddress("language.school.usi@gmail.com", "Lang Lang School");
+        mail.From = new MailAddress(_emailCredentials.EmailAddress, "Lang Lang School");
         mail.To.Add(new MailAddress(recipient));
 
 
@@ -51,11 +58,10 @@ public class EmailService : IEmailService
 
     private SmtpClient GetServerClient()
     {
-        SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
-        smtpClient.Credentials = new NetworkCredential("language.school.usi@gmail.com", "vrgtvsjgnbnazxjj");
+        var smtpClient = new SmtpClient(_emailCredentials.Host, _emailCredentials.Port);
+        smtpClient.Credentials = new NetworkCredential(_emailCredentials.EmailAddress, _emailCredentials.Password);
         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
         smtpClient.EnableSsl = true;
         return smtpClient;
     }
 }
-
