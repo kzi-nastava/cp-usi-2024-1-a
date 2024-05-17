@@ -21,4 +21,5 @@ public interface ICourseService
     public Domain.Model.Course? ValidateInputs(string name, string? languageName, LanguageLevel? level, int? duration,
         Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start,
         bool online, int numStudents, Domain.Model.Course.CourseState? state, int maxStudents);
+    List<Domain.Model.Course> GetCoursesForLastYear();
 }

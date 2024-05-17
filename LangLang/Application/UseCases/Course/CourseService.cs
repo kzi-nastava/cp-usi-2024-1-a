@@ -12,7 +12,8 @@ namespace LangLang.Application.UseCases.Course
         private readonly ILanguageRepository _languageRepository;
         private readonly ITutorRepository _tutorRepository;
 
-        public CourseService(ICourseRepository courseRepository, ILanguageRepository languageRepository, ITutorRepository tutorRepository)
+        public CourseService(ICourseRepository courseRepository, ILanguageRepository languageRepository,
+            ITutorRepository tutorRepository)
         {
             _courseRepository = courseRepository;
             _languageRepository = languageRepository;
@@ -24,6 +25,7 @@ namespace LangLang.Application.UseCases.Course
         {
             return _courseRepository.GetAll();
         }
+
         public Dictionary<string, Domain.Model.Course> GetCoursesByTutor(Tutor loggedInUser)
         {
             Dictionary<string, Domain.Model.Course> courses = new();
@@ -31,8 +33,10 @@ namespace LangLang.Application.UseCases.Course
             {
                 courses.Add(courseId, _courseRepository.Get(courseId)!);
             }
+
             return courses;
         }
+
         public List<Domain.Model.Course> GetAvailableCourses(Student student)
         {
             List<Domain.Model.Course> courses = new();
@@ -78,6 +82,7 @@ namespace LangLang.Application.UseCases.Course
             {
                 throw new ArgumentException("Course not found");
             }
+
             course.Finish();
             UpdateCourse(course);
         }
@@ -94,21 +99,28 @@ namespace LangLang.Application.UseCases.Course
             UpdateCourse(GetCourseById(courseId)!);
         }
 
-        public Domain.Model.Course? ValidateInputs(string name, string? languageName, LanguageLevel? level, int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents, Domain.Model.Course.CourseState? state, int maxStudents)
+        public Domain.Model.Course? ValidateInputs(string name, string? languageName, LanguageLevel? level,
+            int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule,
+            ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents,
+            Domain.Model.Course.CourseState? state, int maxStudents)
         {
-            if (!Domain.Model.Course.IsValid(name, languageName, level, duration, state, start, maxStudents, scheduleDays))
+            if (!Domain.Model.Course.IsValid(name, languageName, level, duration, state, start, maxStudents,
+                    scheduleDays))
             {
                 return null;
             }
+
             Language? language = _languageRepository.Get(languageName!);
             if (language == null)
             {
                 return null;
             }
+
             if (online)
             {
                 maxStudents = int.MaxValue;
             }
+
             return new Domain.Model.Course(
                 name,
                 language,
@@ -121,12 +133,14 @@ namespace LangLang.Application.UseCases.Course
                 (Domain.Model.Course.CourseState)state!,
                 maxStudents
             );
-            
         }
+
+        public List<Domain.Model.Course> GetCoursesForLastYear() =>
+            _courseRepository.GetForTimePeriod(DateTime.Now.AddYears(-1), DateTime.Now);
 
         public void UpdateStates()
         {
-            foreach(Domain.Model.Course course in GetAll())
+            foreach (Domain.Model.Course course in GetAll())
             {
                 course.UpdateState();
                 UpdateCourse(course);

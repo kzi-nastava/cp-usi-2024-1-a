@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.User;
@@ -176,6 +177,18 @@ public class ExamCoordinator : IExamCoordinator
                 }
             }
         }
+    }
+
+    public List<ExamAttendance> GetGradedAttendancesForLastYear()
+    {
+        List<ExamAttendance> attendances = new();
+        var exams = _examService.GetExamsForTimePeriod(DateTime.Now.AddYears(-1), DateTime.Now);
+        foreach (var exam in exams)
+        {
+            attendances.AddRange(_examAttendanceService.GetAttendancesForExam(exam.Id)
+                .Where(attendance => attendance.IsGraded));
+        }
+        return attendances;
     }
 
     public void RemoveAttendee(string studentId)

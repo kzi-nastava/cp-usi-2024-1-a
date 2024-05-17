@@ -166,4 +166,7 @@ public class ExamService : IExamService
         exam.Confirm();
         UpdateExam(exam);
     }
+
+    public List<Domain.Model.Exam> GetExamsForTimePeriod(DateTime from, DateTime to) =>
+        _examRepository.GetForTimePeriod(from, to);
 }

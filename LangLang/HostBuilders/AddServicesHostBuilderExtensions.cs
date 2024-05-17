@@ -55,6 +55,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IPDFReportService, PDFReportService>();
             services.AddSingleton<IReportCoordinator, ReportCoordinator>();
             services.AddSingleton<IReportService, ReportService>();
+            services.AddSingleton<IPointsBySkillReportService, PointsBySkillReportService>();
         });
 
         return host;
