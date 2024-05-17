@@ -37,28 +37,28 @@ namespace LangLang.WPF.Views.Tutor.Course
                 cbThursday.SelectedIndex = -1;
                 cbFriday.SelectedIndex = -1;
 
-                var selectedCourse = ((DataGrid)sender).SelectedItem as Domain.Model.Course;
+                var selectedCourse = ((DataGrid)sender).SelectedItem as CourseViewModel;
                 if(selectedCourse != null)
                 {
-                    foreach(WorkDay day in selectedCourse.Schedule.Keys)
+                    foreach(WorkDay day in selectedCourse.Schedule.Schedule.Keys)
                     {
                         cbSchedule.SelectedItems.Add(day);
                         switch(day)
                         {
                             case WorkDay.Monday:
-                                cbMonday.SelectedValue = selectedCourse.Schedule[day].Item1;
+                                cbMonday.SelectedValue = selectedCourse.Schedule.Schedule[day].Item1;
                                 break;
                             case WorkDay.Tuesday:
-                                cbTuesday.SelectedValue = selectedCourse.Schedule[day].Item1;
+                                cbTuesday.SelectedValue = selectedCourse.Schedule.Schedule[day].Item1;
                                 break;
                             case WorkDay.Wednesday:
-                                cbWednesday.SelectedValue = selectedCourse.Schedule[day].Item1;
+                                cbWednesday.SelectedValue = selectedCourse.Schedule.Schedule[day].Item1;
                                 break;
                             case WorkDay.Thursday:
-                                cbThursday.SelectedValue = selectedCourse.Schedule[day].Item1;
+                                cbThursday.SelectedValue = selectedCourse.Schedule.Schedule[day].Item1;
                                 break;
                             case WorkDay.Friday:
-                                cbFriday.SelectedValue = selectedCourse.Schedule[day].Item1;
+                                cbFriday.SelectedValue = selectedCourse.Schedule.Schedule[day].Item1;
                                 break;
                         }
                     }

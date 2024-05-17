@@ -19,7 +19,6 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
     {
         private readonly ICourseService _courseService;
         private readonly ITimetableService _timetableService;
-        private readonly INavigationService _navigationService;
         private readonly IPopupNavigationService _popupNavigationService;
         private readonly CurrentCourseStore _currentCourseStore;
         private readonly Domain.Model.Tutor _loggedInUser;
@@ -30,7 +29,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         public RelayCommand ToggleMaxStudentsCommand { get; }
         public RelayCommand ClearFiltersCommand { get; }
         public RelayCommand SelectedCourseChangedCommand { get; set; }
-        public ObservableCollection<Domain.Model.Course> Courses { get; set; }
+        public ObservableCollection<CourseViewModel> Courses { get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLevel> LanguageLevels { get; set; }
         public ObservableCollection<LanguageLevel> Levels { get; set; }
@@ -150,7 +149,11 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         public ObservableCollection<WorkDay> ScheduleDays
         {
             get => scheduleDays;
-            set => SetField(ref scheduleDays, value);
+            set
+            {
+                scheduleDays = value;
+                OnPropertyChanged();
+            }
         }
 
         private Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
@@ -260,8 +263,8 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             }
         }
 
-        private Domain.Model.Course? selectedItem;
-        public Domain.Model.Course? SelectedItem
+        private CourseViewModel? selectedItem;
+        public CourseViewModel? SelectedItem
         {
             get => selectedItem;
             set {
@@ -269,18 +272,17 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
                 SelectCourse(value);
             }
         }
-        public CourseOverviewViewModel(IAuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, INavigationService navigationService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
+        public CourseOverviewViewModel(IAuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
         {
             _loggedInUser = (Domain.Model.Tutor?)authenticationStore.CurrentUser.Person ??
                            throw new InvalidOperationException(
                                "Cannot create CourseViewModel without currently logged in tutor");
             _currentCourseStore = currentCourseStore;
             _courseService = courseService;
-            _navigationService = navigationService;
             _timetableService = timetableService;
             _popupNavigationService = popupNavigationService;
             _courseService.UpdateStates();
-            Courses = new ObservableCollection<Domain.Model.Course>();
+            Courses = new ObservableCollection<CourseViewModel>();
             Languages = new ObservableCollection<string?>();
             LanguageLevels = new ObservableCollection<LanguageLevel>();
             Levels = new ObservableCollection<LanguageLevel>();
@@ -310,7 +312,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
 
         private void OpenCourseInfo(object? obj)
         {
-            _currentCourseStore.CurrentCourse = selectedItem;
+            _currentCourseStore.CurrentCourse = _courseService.GetCourseById(SelectedItem!.Id);
             switch (SelectedItem?.State)
             {
                 case CourseState.NotStarted:
@@ -329,12 +331,12 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         {
             if (selectedItem != null)
             {
-
-                Name = selectedItem.Name;
-                LanguageName = selectedItem.Language.Name;
-                Level = selectedItem.Level;
-                Duration = selectedItem.Duration;
-                Schedule = selectedItem.Schedule;
+                Domain.Model.Course course = _courseService.GetCourseById(SelectedItem!.Id)!;
+                Name = course.Name;
+                LanguageName = course.Language.Name;
+                Level = course.Level;
+                Duration = course.Duration;
+                Schedule = course.Schedule;
                 ScheduleDays = new ObservableCollection<WorkDay>();
                 foreach (WorkDay workday in Schedule.Keys)
                 {
@@ -360,8 +362,8 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
                 {
                     Friday = Schedule[WorkDay.Friday].Item1;
                 }
-                Start = selectedItem.Start;
-                Online = selectedItem.Online;
+                Start = course.Start;
+                Online = course.Online;
                 if (Online)
                 {
                     MaxStudents = int.MaxValue;
@@ -369,11 +371,11 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
                 }
                 else
                 {
-                    MaxStudents = selectedItem.MaxStudents;
+                    MaxStudents = course.MaxStudents;
                     IsMaxStudentsDisabled = false;
                 }
-                NumStudents = selectedItem.NumStudents;
-                State = selectedItem.State;
+                NumStudents = course.NumStudents;
+                State = course.State;
 
             }
         }
@@ -421,7 +423,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
 
                 }
                 _courseService.UpdateCourse(updatedCourse);
-                Courses.Add(updatedCourse);
+                Courses.Add(new CourseViewModel(updatedCourse));
                 RemoveInputs();
             }
         }
@@ -446,7 +448,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
                 return;
             }
             _courseService.AddCourse(course, _loggedInUser);
-            Courses.Add(course);
+            Courses.Add(new CourseViewModel(course));
             RemoveInputs();
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -494,7 +496,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         {
             var courses = _courseService.GetCoursesByTutor(_loggedInUser);
             foreach(Domain.Model.Course course in courses.Values){
-                Courses.Add(course);
+                Courses.Add(new CourseViewModel(course));
             }
 
         }
@@ -595,7 +597,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
                         { 
                             if(course.Duration == DurationFilter || DurationFilter == 0)
                             {
-                                Courses.Add(course);
+                                Courses.Add(new CourseViewModel(course));
                             }
                         }
                     }
