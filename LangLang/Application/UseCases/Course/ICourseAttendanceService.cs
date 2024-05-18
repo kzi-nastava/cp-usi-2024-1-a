@@ -13,6 +13,6 @@ public interface ICourseAttendanceService
     public bool RateTutor(string courseId, string studentId, int rating);
     public CourseAttendance? GetAttendance(string studentId, string courseId);
     public CourseAttendance? GradeStudent(string studentId, string CourseId, int knowledgeGrade, int activityGrade);
-
+    void AddPenaltyPoint(string studentId, string courseId);
 }
 
