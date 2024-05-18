@@ -4,11 +4,11 @@ namespace LangLang.Domain.Model
 {
     public class ExamGrade
     {
-        private uint _readingScore;
+        private readonly uint _readingScore;
         public uint ReadingScore
         {
             get => _readingScore;
-            set
+            private init
             {
                 if (value > Constants.MaxReadingScore)
                     throw new ArgumentException("Invalid reading score range");
@@ -16,39 +16,39 @@ namespace LangLang.Domain.Model
             }
         }
 
-        private uint writingScore;
+        private readonly uint _writingScore;
         public uint WritingScore
         {
-            get => writingScore;
-            set
+            get => _writingScore;
+            private init
             {
                 if (value > Constants.MaxWritingScore)
                     throw new ArgumentException("Invalid writing score range");
-                writingScore = value;
+                _writingScore = value;
             }
         }
 
-        private uint listeningScore;
+        private readonly uint _listeningScore;
         public uint ListeningScore
         {
-            get => listeningScore;
-            set
+            get => _listeningScore;
+            private init
             {
                 if (value > Constants.MaxListeningScore)
                     throw new ArgumentException("Invalid listening score range");
-                listeningScore = value;
+                _listeningScore = value;
             }
         }
 
-        private uint speakingScore;
+        private readonly uint _speakingScore;
         public uint SpeakingScore
         {
-            get => speakingScore;
-            set
+            get => _speakingScore;
+            private init
             {
                 if (value > Constants.MaxSpeakingScore)
                     throw new ArgumentException("Invalid speaking score range");
-                speakingScore = value;
+                _speakingScore = value;
             }
         }
 
@@ -62,6 +62,25 @@ namespace LangLang.Domain.Model
             WritingScore = writingScore;
             ListeningScore = listeningScore;
             SpeakingScore = speakingScore;
+        }
+
+        public bool IsPassing()
+        {
+            if (ReadingScore < CeilDivide(Constants.MaxReadingScore, 2))
+                return false;
+            if (WritingScore < CeilDivide(Constants.MaxWritingScore, 2))
+                return false;
+            if (ListeningScore < CeilDivide(Constants.MaxListeningScore, 2))
+                return false;
+            if (SpeakingScore < CeilDivide(Constants.MaxSpeakingScore, 2))
+                return false;
+            var sum = ReadingScore + WritingScore + ListeningScore + SpeakingScore;
+            return sum > Constants.MinPassingScore;
+        }
+        
+        private static long CeilDivide(uint a, int b)
+        {
+            return (a + b - 1) / b;
         }
     }
 }

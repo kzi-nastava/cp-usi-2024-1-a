@@ -7,4 +7,5 @@ namespace LangLang.Domain.RepositoryInterfaces;
 public interface ICourseRepository : IRepository<Course>
 {
     public List<Course> GetCoursesByDate(DateOnly date);
+    List<Course> GetForTimePeriod(DateTime from, DateTime to);
 }

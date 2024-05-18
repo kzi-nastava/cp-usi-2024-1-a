@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Domain.Utility;
@@ -29,6 +30,11 @@ namespace LangLang.Repositories.Json
             }
 
             return courses;
+        }
+
+        public List<Course> GetForTimePeriod(DateTime from, DateTime to)
+        {
+            return GetAll().Where(course => course.Start >= from && course.Start <= to).ToList();
         }
     }
 }

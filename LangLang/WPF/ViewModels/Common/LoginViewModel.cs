@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Input;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.UseCases.Report;
+using LangLang.Application.Utility.Email;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
 using LangLang.Domain.Utility;
@@ -33,9 +35,6 @@ namespace LangLang.WPF.ViewModels.Common
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
-            //for testing, so that upon running the app an email gets sent right away
-            IReportCoordinator reportCoordinator = new ReportCoordinator(emailService, reportService);
-
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
         }
 
@@ -109,12 +108,12 @@ namespace LangLang.WPF.ViewModels.Common
             IntPtr unmanagedString = IntPtr.Zero;
             try
             {
-                unmanagedString = System.Runtime.InteropServices.Marshal.SecureStringToGlobalAllocUnicode(securePassword);
-                return System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedString)!;
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);
+                return Marshal.PtrToStringUni(unmanagedString)!;
             }
             finally
             {
-                System.Runtime.InteropServices.Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
         }
 

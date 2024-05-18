@@ -1,8 +1,9 @@
-﻿using PdfSharpCore.Pdf;
-using PdfSharpCore.Drawing;
 using System.Collections.Generic;
 using LangLang.Application.DTO;
-using LangLang.Domain.Utility;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
+
+namespace LangLang.Application.Utility.PDF;
 
 public class PDFReportService : IPDFReportService
 {

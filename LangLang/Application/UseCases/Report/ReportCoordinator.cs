@@ -1,7 +1,7 @@
 ﻿using LangLang.Application.DTO;
 using LangLang.Application.Utility.Email;
 using System.Collections.Generic;
-
+using LangLang.Application.Utility.PDF;
 
 namespace LangLang.Application.UseCases.Report;
 
@@ -13,8 +13,6 @@ public class ReportCoordinator: IReportCoordinator
     { 
         _emailService = emailService;
         _reportService = reportService;
-        SendCoursePenaltyReport();
-
     }
 
     public void SendCoursePenaltyReport()

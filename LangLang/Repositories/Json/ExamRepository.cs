@@ -16,4 +16,9 @@ public class ExamRepository : AutoIdRepository<Exam>, IExamRepository
     {
         return GetAll().Where(exam => exam.Date == date).ToList();
     }
+
+    public List<Exam> GetForTimePeriod(DateTime from, DateTime to)
+    {
+        return GetAll().Where(exam => exam.Time >= from && exam.Time <= to).ToList();
+    }
 }

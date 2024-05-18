@@ -4,9 +4,7 @@ using LangLang.Application.DTO;
 using LangLang.Application.UseCases.User;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
-using LangLang.Domain.Utility;
 using static LangLang.Domain.Model.Exam;
-
 
 namespace LangLang.Application.UseCases.Exam
 {
@@ -16,15 +14,13 @@ namespace LangLang.Application.UseCases.Exam
         private readonly IStudentService _studentService;
         private readonly ITutorService _tutorService;
         private readonly IExamAttendanceRepository _examAttendanceRepository;
-        private readonly IGradeService _gradeService;
 
-        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceRepository examAttendanceRepository, IGradeService gradeService)
+        public ExamAttendanceService(IExamService examService, IStudentService studentService, ITutorService tutorService, IExamAttendanceRepository examAttendanceRepository)
         {
             _examService = examService;
             _studentService = studentService;
             _tutorService = tutorService;
             _examAttendanceRepository = examAttendanceRepository;
-            _gradeService = gradeService;
         }
 
         public List<ExamAttendance> GetAttendancesForStudent(string studentId)
@@ -126,7 +122,7 @@ namespace LangLang.Application.UseCases.Exam
         {
             foreach (var attendance in GetAttendancesForExam(exam.Id))
             {
-                if (attendance.Grade != null && _gradeService.IsPassingGrade(attendance.Grade))
+                if (attendance.Grade != null && attendance.Grade.IsPassing())
                 {
                     var student = _studentService.GetStudentById(attendance.StudentId);
                     if(student == null) continue;
@@ -141,7 +137,7 @@ namespace LangLang.Application.UseCases.Exam
             foreach (var attendance in attendances)
             {
                 var foundExam = _examService.GetExamById(attendance.ExamId);
-                if (foundExam != null && foundExam.ExamState != Domain.Model.Exam.State.Reported)
+                if (foundExam != null && foundExam.ExamState != State.Reported)
                     return false;
             }
             return true;
