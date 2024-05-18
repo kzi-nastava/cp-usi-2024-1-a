@@ -1,4 +1,5 @@
 ﻿using System;
+using LangLang.Domain;
 using LangLang.Domain.Model;
 
 namespace LangLang.Application.DTO;
@@ -24,5 +25,18 @@ public class ExamDto
         ClassroomNumber = classroomNumber;
         MaxStudents = maxStudents;
         Tutor = tutor;
+    }
+
+    public bool IsValid()
+    {
+        if (Language == null || LanguageLevel == null || Date == null || Time == null ||
+            MaxStudents <= 0 ||
+            ClassroomNumber <= 0 || ClassroomNumber > Constants.ClassroomsNumber)
+            return false;
+
+        if (Date.Value.ToDateTime(Time.Value).Subtract(Constants.LockedExamTime) < DateTime.Now)
+            return false;
+
+        return true;
     }
 }

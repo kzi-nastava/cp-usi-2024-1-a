@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.User;
@@ -95,13 +96,13 @@ public class ExamCoordinator : IExamCoordinator
         }
         _examApplicationService.CancelApplication(application);
     }
+    
     public void SendNotification(string? message, string receiverId)
     {
         if (message != null)
         {
-
-            Profile? receiver = _userProfileMapper.GetProfile(new UserDto(_studentService.GetStudentById(receiverId), UserType.Student));
-            Profile? sender = _authenticationStore.CurrentUserProfile;
+            var receiver = _userProfileMapper.GetProfile(new UserDto(_studentService.GetStudentById(receiverId), UserType.Student));
+            var sender = _authenticationStore.CurrentUserProfile;
 
             if (receiver == null)
             {
@@ -109,7 +110,6 @@ public class ExamCoordinator : IExamCoordinator
             }
             _notificationService.AddNotification(message, receiver, sender);
         }
-
     }
 
     public void FinishExam(Domain.Model.Exam exam)
@@ -179,6 +179,18 @@ public class ExamCoordinator : IExamCoordinator
         }
     }
 
+    public List<ExamAttendance> GetGradedAttendancesForLastYear()
+    {
+        List<ExamAttendance> attendances = new();
+        var exams = _examService.GetExamsForTimePeriod(DateTime.Now.AddYears(-1), DateTime.Now);
+        foreach (var exam in exams)
+        {
+            attendances.AddRange(_examAttendanceService.GetAttendancesForExam(exam.Id)
+                .Where(attendance => attendance.IsGraded));
+        }
+        return attendances;
+    }
+
     public void RemoveAttendee(string studentId)
     {
         var attendingExam = GetAttendingExam(studentId);
@@ -187,17 +199,13 @@ public class ExamCoordinator : IExamCoordinator
         _examApplicationService.DeleteApplications(studentId);
     }
 
-    public bool CanBeModified(string examId)
+    private bool CanBeModified(string examId)
     {
-        Domain.Model.Exam? exam = _examService.GetExamById(examId);
+        var exam = _examService.GetExamById(examId);
         if (exam == null)
         {
             return false;
         }
-        if (exam.ExamState != Domain.Model.Exam.State.NotStarted)
-        {
-            return false;
-        }
-        return true;
+        return exam.CanBeUpdated();
     }
 }

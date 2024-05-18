@@ -10,7 +10,6 @@ using LangLang.Application.Utility.Navigation;
 using LangLang.Application.Utility.Notification;
 using LangLang.Application.Utility.Timetable;
 using LangLang.Application.Utility.Validators;
-using LangLang.Domain.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using LangLang.Application.Utility.Email;
@@ -52,11 +51,11 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IExamCoordinator, ExamCoordinator>();
             services.AddSingleton<IDropRequestService, DropRequestService>();
             services.AddSingleton<IDropRequestInfoService, DropRequestInfoService>();
-            services.AddSingleton<IGradeService, GradeService>();
             services.AddSingleton<IEmailService, EmailService>(_ => new EmailService(GetEmailCredentials(hostContext)));
             services.AddSingleton<IPDFReportService, PDFReportService>();
             services.AddSingleton<IReportCoordinator, ReportCoordinator>();
             services.AddSingleton<IReportService, ReportService>();
+            services.AddSingleton<IPointsBySkillReportService, PointsBySkillReportService>();
         });
 
         return host;

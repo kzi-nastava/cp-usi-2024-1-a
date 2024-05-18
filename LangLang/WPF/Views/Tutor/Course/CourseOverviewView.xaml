@@ -72,7 +72,7 @@
                       >
                 <DataGrid.Columns >
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}"/>
+                    <DataGridTextColumn Header="Language" Binding="{Binding LanguageName}"/>
                     <DataGridTextColumn Header="LanguageLvl" Binding="{Binding Level}"/>
                     <DataGridTextColumn Header="Duration" Binding="{Binding Duration}"/>
                     <DataGridTextColumn Header="Schedule" Binding="{Binding Schedule}"/>
@@ -89,7 +89,7 @@
                 <Label>Name:</Label>
                 <TextBox Margin="5,0,0,0" Name="tbName" Text="{Binding Name}" />
                 <Label>Language:</Label>
-                <ComboBox Margin="5,0,0,0" x:Name="cbLanguages" SelectedItem="{Binding LanguageName}"  ItemsSource="{Binding Languages}"/>
+                <ComboBox Margin="5,0,0,0" x:Name="cbLanguages" SelectedItem="{Binding LanguageName, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding Languages}"/>
                 <Label>Language level:</Label>
                 <ComboBox Margin="5,0,0,0" x:Name="cbLevel" SelectedItem="{Binding Level}" ItemsSource="{Binding LanguageLevels}"/>
                 <Label>Duration:</Label>
@@ -102,7 +102,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <ListBox SelectionMode="Multiple" Margin="5,0,0,0" Name="cbSchedule" Grid.Column="0" SelectionChanged="cbSchedule_SelectionChanged" SelectedItem="{Binding ScheduleDays}" ItemsSource="{Binding WorkDays, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ListBox SelectionMode="Multiple" Margin="5,0,0,0" Name="cbSchedule" Grid.Column="0" SelectionChanged="cbSchedule_SelectionChanged" SelectedItem="{Binding ScheduleDays, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding WorkDays, UpdateSourceTrigger=PropertyChanged}"/>
                     <StackPanel Grid.Column="1">
                         <ComboBox Margin="5,2,5,0" Name="cbMonday" SelectedItem="{Binding Monday, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding MondayHours}" Validation.ErrorTemplate="{x:Null}"/>
                         <ComboBox Margin="5,2,5,0" Name="cbTuesday" SelectedItem="{Binding Tuesday}" ItemsSource="{Binding TuesdayHours}" Validation.ErrorTemplate="{x:Null}"/>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using LangLang.Application.DTO;
-using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -31,12 +30,10 @@ public class ExamService : IExamService
     public Domain.Model.Exam? GetExamById(string id)
     {
         var exam = _examRepository.Get(id);
-        if (exam != null)
-        {
-            exam = UpdateExamStateBasedOnDateTime(exam);
-            _examRepository.Update(exam.Id, exam);
-        }
+        if (exam == null) return null;
 
+        exam.UpdateExamStateBasedOnCurrentDateTime();
+        _examRepository.Update(exam.Id, exam);
         return exam;
     }
 
@@ -54,22 +51,11 @@ public class ExamService : IExamService
 
     private bool IsExamValid(ExamDto examDto)
     {
-        if (examDto.Language == null || examDto.LanguageLevel == null || examDto.Date == null || examDto.Time == null ||
-            examDto.MaxStudents <= 0 ||
-            examDto.ClassroomNumber <= 0 || examDto.ClassroomNumber > Constants.ClassroomsNumber)
-        {
+        if (!examDto.IsValid())
             return false;
-        }
 
-        if (_languageRepository.Get(examDto.Language.Name) == null)
-        {
+        if (_languageRepository.Get(examDto.Language!.Name) == null)
             return false;
-        }
-
-        if (examDto.Date.Value.ToDateTime(examDto.Time.Value).Subtract(Constants.LockedExamTime) < DateTime.Now)
-        {
-            return false;
-        }
 
         return true;
     }
@@ -110,35 +96,22 @@ public class ExamService : IExamService
             throw new ArgumentException("No exam id provided");
         }
 
-        var oldExam = _examRepository.Get(examDto.Id);
-        if (oldExam == null)
+        var exam = _examRepository.Get(examDto.Id);
+        if (exam == null)
         {
             throw new ArgumentException("Exam not found");
         }
 
-        if (oldExam.ExamState != Domain.Model.Exam.State.NotStarted)
-        {
-            throw new ArgumentException("Exam cannot be updated at this state");
-        }
-
         DateTime dateTime = new DateTime(examDto.Date!.Value.Year, examDto.Date.Value.Month, examDto.Date.Value.Day,
             examDto.Time!.Value.Hour, examDto.Time.Value.Minute, examDto.Time.Value.Second);
-        var examState = Domain.Model.Exam.State.NotStarted;
-        if (dateTime - Constants.LockedExamTime < DateTime.Now)
-        {
-            examState = Domain.Model.Exam.State.Locked;
-        }
 
-        var exam = new Domain.Model.Exam(
-            examDto.Id!,
+        exam.Update(
             examDto.Language!,
             examDto.LanguageLevel!.Value,
             dateTime,
             examDto.ClassroomNumber,
-            examState,
             examDto.MaxStudents
         );
-        exam = UpdateExamStateBasedOnDateTime(exam);
 
         exam = _examRepository.Update(exam.Id, exam);
         if (exam == null)
@@ -164,83 +137,36 @@ public class ExamService : IExamService
         _examRepository.Delete(id);
     }
 
-    public List<Domain.Model.Exam> GetAvailableExamsForStudent(Student student)
-    {
-        List<Domain.Model.Exam> exams = new();
-        foreach (Domain.Model.Exam exam in GetAllExams())
-        {
-            if (exam.ExamState != Domain.Model.Exam.State.NotStarted)
-            {
-                continue;
-            }
-
-            if (exam.IsFull())
-            {
-                continue;
-            }
-
-            if (!student.CompletedCourseLanguages.ContainsKey(exam.Language.Name) ||
-                student.CompletedCourseLanguages[exam.Language.Name] < exam.LanguageLevel)
-            {
-                continue;
-            }
-
-            if (student.PassedExamLanguages.ContainsKey(exam.Language.Name) &&
-                student.PassedExamLanguages[exam.Language.Name] >= exam.LanguageLevel)
-            {
-                continue;
-            }
-
-            exams.Add(exam);
-        }
-
-        return exams;
-    }
+    public List<Domain.Model.Exam> GetAvailableExamsForStudent(Student student) =>
+        GetAllExams().Where(exam => exam.IsAvailable(student)).ToList();
 
     public List<Domain.Model.Exam> FilterExams(Language? language = null, LanguageLevel? languageLvl = null,
         DateOnly? date = null) =>
         GetAllExams().Where(exam => exam.MatchesFilter(language, languageLvl, date)).ToList();
 
-    private List<Domain.Model.Exam> UpdateExamStates(IEnumerable<Domain.Model.Exam> exams)
+    private List<Domain.Model.Exam> UpdateExamStates(List<Domain.Model.Exam> exams)
     {
-        var updatedExams = exams.Select(UpdateExamStateBasedOnDateTime).ToList();
-        updatedExams.ForEach(exam => _examRepository.Update(exam.Id, exam));
-        return updatedExams;
-    }
+        foreach (var exam in exams)
+        {
+            exam.UpdateExamStateBasedOnCurrentDateTime();
+            _examRepository.Update(exam.Id, exam);
+        }
 
-    private Domain.Model.Exam UpdateExamStateBasedOnDateTime(Domain.Model.Exam exam)
-    {
-        if (exam.ExamState is Domain.Model.Exam.State.Canceled or Domain.Model.Exam.State.Graded
-            or Domain.Model.Exam.State.Reported)
-            return exam;
-        exam.ExamState = GetExamStateBasedOnDateTime(DateTime.Now, exam.Date, exam.TimeOfDay);
-        return exam;
-    }
-
-    private static Domain.Model.Exam.State GetExamStateBasedOnDateTime(DateTime dateTime, DateOnly examDate,
-        TimeOnly examTime)
-    {
-        DateTime examDateTime = examDate.ToDateTime(examTime);
-        if (dateTime < examDateTime.Subtract(Constants.LockedExamTime))
-            return Domain.Model.Exam.State.NotStarted;
-        if (dateTime < examDateTime.Subtract(Constants.ConfirmedExamTime))
-            return Domain.Model.Exam.State.Locked;
-        if (dateTime < examDateTime)
-            return Domain.Model.Exam.State.Confirmed;
-        if (dateTime < examDateTime.Add(Constants.ExamDuration))
-            return Domain.Model.Exam.State.InProgress;
-        return Domain.Model.Exam.State.Finished;
+        return exams;
     }
 
     public void FinishExam(Domain.Model.Exam exam)
     {
-        exam.ExamState = Domain.Model.Exam.State.Finished;
+        exam.Finish();
         UpdateExam(exam);
     }
 
     public void ConfirmExam(Domain.Model.Exam exam)
     {
-        exam.ExamState = Domain.Model.Exam.State.Confirmed;
+        exam.Confirm();
         UpdateExam(exam);
     }
+
+    public List<Domain.Model.Exam> GetExamsForTimePeriod(DateTime from, DateTime to) =>
+        _examRepository.GetForTimePeriod(from, to);
 }

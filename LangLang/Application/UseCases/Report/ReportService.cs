@@ -1,16 +1,19 @@
 ﻿using LangLang.Application.DTO;
 using LangLang.Domain.RepositoryInterfaces;
 using System.Collections.Generic;
+using System.Globalization;
+using LangLang.Application.UseCases.Course;
+using LangLang.Application.UseCases.Exam;
 
 namespace LangLang.Application.UseCases.Report;
 
 public class ReportService: IReportService
 {
-    private readonly ICourseAttendanceRepository _courseAttendanceRepository;
+    private readonly IPointsBySkillReportService _pointsBySkillReportService;
 
-    public ReportService(ICourseAttendanceRepository courseAttendanceRepository)
+    public ReportService(IPointsBySkillReportService pointsBySkillReportService)
     {
-        _courseAttendanceRepository = courseAttendanceRepository;
+        _pointsBySkillReportService = pointsBySkillReportService;
     }
 
     public List<ReportTableDto> GetCoursePenaltyReport()
@@ -54,5 +57,8 @@ public class ReportService: IReportService
         return tables;
     }
 
-
+    public List<ReportTableDto> GetPointsBySkillReport()
+    {
+        return _pointsBySkillReportService.GetReport();
+    }
 }
