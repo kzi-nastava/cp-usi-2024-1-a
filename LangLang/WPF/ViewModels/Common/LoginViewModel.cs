@@ -9,7 +9,6 @@ using LangLang.Application.UseCases.Report;
 using LangLang.Application.Utility.Email;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
-using LangLang.Domain.Utility;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
 
