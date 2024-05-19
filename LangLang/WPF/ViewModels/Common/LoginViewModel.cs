@@ -6,7 +6,6 @@ using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.UseCases.Report;
-using LangLang.Application.Utility.Email;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
 using LangLang.WPF.MVVM;
@@ -28,13 +27,15 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, IEmailService emailService, IReportService reportService)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore,IReportCoordinator reportCoordinator)
         {
             _loginService = loginService;
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
+            reportCoordinator.SendCoursePenaltyReport();
+
         }
 
         public string Email
