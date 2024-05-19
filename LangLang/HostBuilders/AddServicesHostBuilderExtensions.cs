@@ -56,6 +56,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IReportCoordinator, ReportCoordinator>();
             services.AddSingleton<IReportService, ReportService>();
             services.AddSingleton<IPointsBySkillReportService, PointsBySkillReportService>();
+            services.AddSingleton<IPenaltyByCourseReportService, PenaltyByCourseReportService>();
         });
 
         return host;
