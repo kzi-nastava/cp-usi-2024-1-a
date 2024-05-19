@@ -27,15 +27,13 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore,IReportCoordinator reportCoordinator)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
         {
             _loginService = loginService;
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
-            reportCoordinator.SendCoursePenaltyReport("masamasa12332@gmail.com");
-
         }
 
         public string Email
