@@ -20,11 +20,11 @@ public class ReportCoordinator: IReportCoordinator
     public void SendCoursePenaltyReport(string recipient)
     {
         string emailSubject = "Report for penalty points per course";
-        string emailBody = "You've requested a report about the number of penalty points awarded by course. You can find said reported attached bellow.\n\n";
+        string emailBody = "You've requested a report about the number of penalty points awarded by course. You can find said reported attached bellow.";
         string pdfName = "LangLang Report";
-        string pdfTextTitle = "Report of penalty statistics";
+        List<string> reportTitles = new List<string>() { "Penalty points per course", "Average grades per penalty point" };
 
         List<ReportTableDto> tables = _reportService.GetCoursePenaltyReport();
-        _emailService.SendEmailWithPDFAttachment(recipient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(pdfTextTitle, tables));
+        _emailService.SendEmailWithPDFAttachment(recipient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(reportTitles, tables));
     }
 }
