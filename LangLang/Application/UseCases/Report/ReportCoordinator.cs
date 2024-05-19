@@ -9,25 +9,22 @@ public class ReportCoordinator: IReportCoordinator
 {
     private readonly IEmailService _emailService;
     private readonly IReportService _reportService;
-    public ReportCoordinator(IEmailService emailService, IReportService reportService) 
+    private readonly IPDFReportService _pdfReportService;
+    public ReportCoordinator(IEmailService emailService, IReportService reportService, IPDFReportService pdfReportService) 
     { 
         _emailService = emailService;
         _reportService = reportService;
+        _pdfReportService = pdfReportService;
     }
 
-    public void SendCoursePenaltyReport()
+    public void SendCoursePenaltyReport(string recipient)
     {
-        //SendEmail("masamasa12332@gmail.com");
-        PDFReportService pdfReportService = new PDFReportService();
+        string emailSubject = "Report for penalty points per course";
+        string emailBody = "You've requested a report about the number of penalty points awarded by course. You can find said reported attached bellow.\n\n";
+        string pdfName = "LangLang Report";
+        string pdfTextTitle = "Report of penalty statistics";
 
         List<ReportTableDto> tables = _reportService.GetCoursePenaltyReport();
-
-        string recipient = "masamasa12332@gmail.com";
-        string title = "Report of penalty statistics";
-        string paragraph = "This report details the number of penalty points awarded per course. " +
-            "The second table containts the average grade of student based on the number of penalty points they have." +
-            "\nThe data is gathered over the course of 1 year.";
-
-        _emailService.SendEmailWithPDFAttachment(recipient, pdfReportService.GetReportPDF(title, paragraph, tables));
+        _emailService.SendEmailWithPDFAttachment(recipient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(pdfTextTitle, tables));
     }
 }

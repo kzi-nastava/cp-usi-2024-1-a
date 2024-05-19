@@ -7,7 +7,7 @@ namespace LangLang.Application.Utility.PDF;
 
 public class PDFReportService : IPDFReportService
 {
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, ReportTableDto table)
+    public PdfDocument GetReportPDF(string title, ReportTableDto table)
     {
         PdfDocument pdfDocument = new PdfDocument();
 
@@ -24,10 +24,6 @@ public class PDFReportService : IPDFReportService
         //title
         XSize titleSize = gfx.MeasureString(title, titleFont);
         gfx.DrawString(title, titleFont, XBrushes.Black, new XPoint(contentRect.Left + (contentRect.Width - titleSize.Width) / 2, contentRect.Top));
-
-        //Introductory paragraph
-        contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
-        gfx.DrawString(introductoryParagraph, paragraphFont, XBrushes.Black, contentRect, XStringFormats.TopLeft);
 
         // table
         contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
@@ -36,7 +32,7 @@ public class PDFReportService : IPDFReportService
         return pdfDocument;
     }
 
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<ReportTableDto> tables)
+    public PdfDocument GetReportPDF(string title, List<ReportTableDto> tables)
     {
         PdfDocument pdfDocument = new PdfDocument();
 
@@ -54,9 +50,6 @@ public class PDFReportService : IPDFReportService
         XSize titleSize = gfx.MeasureString(title, titleFont);
         gfx.DrawString(title, titleFont, XBrushes.Black, new XPoint(contentRect.Left + (contentRect.Width - titleSize.Width) / 2, contentRect.Top));
 
-        //Introductory paragraph
-        contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
-        gfx.DrawString(introductoryParagraph, paragraphFont, XBrushes.Black, contentRect, XStringFormats.TopLeft);
         foreach (ReportTableDto table in tables)
         {
             // table

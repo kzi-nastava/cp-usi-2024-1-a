@@ -34,7 +34,7 @@ namespace LangLang.WPF.ViewModels.Common
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
-            reportCoordinator.SendCoursePenaltyReport();
+            reportCoordinator.SendCoursePenaltyReport("masamasa12332@gmail.com");
 
         }
 
