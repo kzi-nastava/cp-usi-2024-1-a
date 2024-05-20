@@ -14,7 +14,7 @@ public class EmailService : IEmailService
         _emailCredentials = emailCredentials;
     }
 
-    public void SendEmail(string recipient)
+    public void SendEmail(string recipient, string emailSubject, string emailBody)
     {
         SmtpClient smtpClient = GetServerClient();
         MailMessage mail = new MailMessage();
@@ -22,12 +22,12 @@ public class EmailService : IEmailService
         mail.To.Add(new MailAddress(recipient));
 
 
-        mail.Subject = "Checking if emailing works";
-        mail.Body = "Wow. It does.";
+        mail.Subject = emailSubject;
+        mail.Body = emailBody;
         smtpClient.Send(mail);
     }
 
-    public void SendEmailWithPDFAttachment(string recipient, PdfDocument document)
+    public void SendEmailWithPDFAttachment(string recipient, string emailSubject, string emailBody, string pdfTitle, PdfDocument document)
     {
         MemoryStream pdfStream = new MemoryStream();
         document.Save(pdfStream, false);
@@ -37,15 +37,15 @@ public class EmailService : IEmailService
 
         MailMessage mail = new MailMessage();
 
-        mail.From = new MailAddress("language.school.usi@gmail.com", "Lang Lang School");
+        mail.From = new MailAddress(_emailCredentials.EmailAddress, "Lang Lang School");
         mail.To.Add(new MailAddress(recipient));
 
 
-        Attachment attachment = new Attachment(pdfStream, "LangLangReport.pdf", "application/pdf");
+        Attachment attachment = new Attachment(pdfStream, pdfTitle, "application/pdf");
 
 
-        mail.Subject = "Checking if emailing works";
-        mail.Body = "Wow. It does.";
+        mail.Subject = emailSubject;
+        mail.Body = emailBody;
         mail.Attachments.Add(attachment);
 
         smtpClient.Send(mail);

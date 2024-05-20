@@ -6,6 +6,6 @@ namespace LangLang.Application.Utility.PDF;
 
 public interface IPDFReportService
 {
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, ReportTableDto tableData);
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<ReportTableDto> tables);
+    public PdfDocument GetReportPDF(string title, ReportTableDto table);
+    public PdfDocument GetReportPDF(List<string> title, List<ReportTableDto> tables);
 }

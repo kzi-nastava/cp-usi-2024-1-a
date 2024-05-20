@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.DropRequest;
@@ -258,6 +259,18 @@ namespace LangLang.Application.UseCases.Course
         {
             _dropRequestService.Deny(dropRequest);
             _courseApplicationService.ActivateStudentApplications(dropRequest.SenderId);
+        }
+
+        public List<CourseAttendance> GetGradedAttendancesForLastYear()
+        {
+            List<CourseAttendance> attendances = new();
+            var courses = _courseService.GetCoursesForLastYear();
+            foreach (var course in courses)
+            {
+                attendances.AddRange(_courseAttendanceService.GetAttendancesForCourse(course.Id)
+                    .Where(attendance => attendance.IsGraded));
+            }
+            return attendances;
         }
     }
 }

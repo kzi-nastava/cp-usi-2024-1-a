@@ -1,6 +1,6 @@
 ﻿namespace LangLang.Application.UseCases.Report;
 
 public interface IReportCoordinator
-{ 
-    public void SendCoursePenaltyReport();
+{
+    public void SendCoursePenaltyReport(string recipient);
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using LangLang.Application.DTO;
 using PdfSharpCore.Drawing;
@@ -7,7 +8,7 @@ namespace LangLang.Application.Utility.PDF;
 
 public class PDFReportService : IPDFReportService
 {
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, ReportTableDto table)
+    public PdfDocument GetReportPDF(string title, ReportTableDto table)
     {
         PdfDocument pdfDocument = new PdfDocument();
 
@@ -24,10 +25,6 @@ public class PDFReportService : IPDFReportService
         //title
         XSize titleSize = gfx.MeasureString(title, titleFont);
         gfx.DrawString(title, titleFont, XBrushes.Black, new XPoint(contentRect.Left + (contentRect.Width - titleSize.Width) / 2, contentRect.Top));
-
-        //Introductory paragraph
-        contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
-        gfx.DrawString(introductoryParagraph, paragraphFont, XBrushes.Black, contentRect, XStringFormats.TopLeft);
 
         // table
         contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
@@ -36,30 +33,34 @@ public class PDFReportService : IPDFReportService
         return pdfDocument;
     }
 
-    public PdfDocument GetReportPDF(string title, string introductoryParagraph, List<ReportTableDto> tables)
+    public PdfDocument GetReportPDF(List<string> titles, List<ReportTableDto> tables)
     {
+        if (titles.Count != tables.Count)
+        {
+            throw new ArgumentException("The number of titles must match the number of tables.");
+        }
+
         PdfDocument pdfDocument = new PdfDocument();
 
-        PdfPage page = pdfDocument.AddPage();
-
-        XGraphics gfx = XGraphics.FromPdfPage(page);
-
         XFont titleFont = new XFont("Arial", 16, XFontStyle.Bold);
-        XFont paragraphFont = new XFont("Arial", 12);
         XFont tableHeaderFont = new XFont("Arial", 12, XFontStyle.Bold);
         XFont cellFont = new XFont("Arial", 10);
-        XRect contentRect = new XRect(40, 40, page.Width - 80, page.Height - 80);
 
-        //title
-        XSize titleSize = gfx.MeasureString(title, titleFont);
-        gfx.DrawString(title, titleFont, XBrushes.Black, new XPoint(contentRect.Left + (contentRect.Width - titleSize.Width) / 2, contentRect.Top));
-
-        //Introductory paragraph
-        contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
-        gfx.DrawString(introductoryParagraph, paragraphFont, XBrushes.Black, contentRect, XStringFormats.TopLeft);
-        foreach (ReportTableDto table in tables)
+        for (int i = 0; i < tables.Count; i++)
         {
-            // table
+            string title = titles[i];
+            ReportTableDto table = tables[i];
+
+            PdfPage page = pdfDocument.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XRect contentRect = new XRect(40, 40, page.Width - 80, page.Height - 80);
+
+            // Title
+            XSize titleSize = gfx.MeasureString(title, titleFont);
+            gfx.DrawString(title, titleFont, XBrushes.Black,
+                new XPoint(contentRect.Left + (contentRect.Width - titleSize.Width) / 2, contentRect.Top));
+
+            // Table
             contentRect = new XRect(contentRect.Left, contentRect.Top + 40, contentRect.Width, contentRect.Height - 40);
             DrawTable(gfx, contentRect, table.ColumnNames, table.Rows, tableHeaderFont, cellFont, pdfDocument);
         }
