@@ -54,10 +54,10 @@ namespace LangLang.WPF.ViewModels.Student
         {
             int selectedRating = Convert.ToInt32(parameter);
 
-            bool successfull = _courseAttendanceService.RateTutor(_currentCourseStore.CurrentCourse!.Id, _loggedInUser.Id, selectedRating);
+            bool successful = _courseAttendanceService.RateTutor(_currentCourseStore.CurrentCourse!, _loggedInUser.Id, selectedRating);
 
-            Domain.Model.Tutor tutor = _tutorService.GetTutorForCourse(_currentCourseStore.CurrentCourse!.Id)!;
-            if (successfull)
+            Domain.Model.Tutor tutor = _tutorService.GetTutorById(_currentCourseStore.CurrentCourse!.TutorId!)!;
+            if (successful)
             {
                 MessageBox.Show($"You've rated tutor {tutor.Name} {tutor.Surname} with {selectedRating}.", "Success");
             }

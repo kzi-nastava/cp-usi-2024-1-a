@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using LangLang.Application.DTO;
 
 namespace LangLang.Domain.Model
 {
@@ -59,6 +58,8 @@ namespace LangLang.Domain.Model
             Reported
         }
 
+        public string? TutorId { get; set; }
+
         [JsonIgnore] public DateOnly Date => DateOnly.FromDateTime(Time.Date);
         [JsonIgnore] public TimeOnly TimeOfDay => TimeOnly.FromDateTime(Time);
 
@@ -69,10 +70,11 @@ namespace LangLang.Domain.Model
             LanguageLevel = LanguageLevel.A1;
         }
 
-        public Exam(Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber, State examState,
+        public Exam(string tutorId, Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber, State examState,
             int maxStudents, int numStudents = 0)
         {
             Id = "";
+            TutorId = tutorId;
             Language = language;
             LanguageLevel = languageLevel;
             Time = time;
@@ -83,10 +85,11 @@ namespace LangLang.Domain.Model
             UpdateExamStateBasedOnCurrentDateTime();
         }
 
-        public Exam(string id, Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber,
+        public Exam(string id, string tutorId, Language language, LanguageLevel languageLevel, DateTime time, int classroomNumber,
             State examState, int maxStudents, int numStudents = 0)
         {
             Id = id;
+            TutorId = tutorId;
             Language = language;
             LanguageLevel = languageLevel;
             Time = time;

@@ -24,6 +24,7 @@ namespace LangLang.Domain.Model
 
         public CourseState State { get; set; }
 
+        public string? TutorId { get; set; }
         
         public Course()
         {
@@ -39,9 +40,10 @@ namespace LangLang.Domain.Model
             NumStudents = 0;
             State = CourseState.Canceled;
         }
-        public Course(string id,string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
+        public Course(string id, string tutorId, string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
         {
             Id = id;
+            TutorId = tutorId;
             Name = name;
             Language = language;
             Level = level;
@@ -54,9 +56,10 @@ namespace LangLang.Domain.Model
             State = state;
         }
         // Constructor without id when creating a new course
-        public Course(string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
+        public Course(string tutorId, string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
         { 
             Id = "0";
+            TutorId = tutorId;
             Name = name;
             Language = language;
             Level = level;

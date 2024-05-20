@@ -409,7 +409,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             CreateSchedule();
             if(SelectedItem != null)
             {
-                Domain.Model.Course? updatedCourse = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+                Domain.Model.Course? updatedCourse = _courseService.ValidateInputs(_loggedInUser, Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
                 if(updatedCourse == null)
                 {
                     MessageBox.Show("There was an error updating the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -432,7 +432,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             if(SelectedItem != null)
             {
                 string keyToDelete = SelectedItem.Id;
-                _courseService.DeleteCourse(keyToDelete, _loggedInUser);
+                _courseService.DeleteCourse(keyToDelete);
                 Courses.Remove(SelectedItem);
                 RemoveInputs();
             }
@@ -440,14 +440,14 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         private void SaveCourse(object? obj)
         {
             CreateSchedule();
-            Domain.Model.Course? course = _courseService.ValidateInputs(Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+            Domain.Model.Course? course = _courseService.ValidateInputs(_loggedInUser, Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
 
             if (course == null)
             {
                 MessageBox.Show("There was an error saving the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            _courseService.AddCourse(course, _loggedInUser);
+            _courseService.AddCourse(course);
             Courses.Add(new CourseViewModel(course));
             RemoveInputs();
             MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -495,7 +495,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         public void LoadCourses()
         {
             var courses = _courseService.GetCoursesByTutor(_loggedInUser);
-            foreach(Domain.Model.Course course in courses.Values){
+            foreach(var course in courses){
                 Courses.Add(new CourseViewModel(course));
             }
 
@@ -587,7 +587,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         {
             Courses.Clear();
             var courses = _courseService.GetCoursesByTutor(_loggedInUser);
-            foreach (Domain.Model.Course course in courses.Values)
+            foreach (Domain.Model.Course course in courses)
             {
                 if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
                 {
