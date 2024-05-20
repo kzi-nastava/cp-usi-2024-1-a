@@ -86,7 +86,7 @@ namespace LangLang.Application.UseCases.Course
             UpdateCourse(GetCourseById(courseId)!);
         }
 
-        public Domain.Model.Course? ValidateInputs(Tutor tutor, string name, string? languageName, LanguageLevel? level,
+        public Domain.Model.Course? ValidateInputs(Tutor? tutor, string name, string? languageName, LanguageLevel? level,
             int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule,
             ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents,
             Domain.Model.Course.CourseState? state, int maxStudents)
@@ -102,6 +102,8 @@ namespace LangLang.Application.UseCases.Course
             {
                 return null;
             }
+
+            if (tutor == null) return null;
 
             if (online)
             {

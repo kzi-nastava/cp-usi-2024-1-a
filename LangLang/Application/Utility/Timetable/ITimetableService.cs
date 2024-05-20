@@ -11,4 +11,8 @@ public interface ITimetableService
     public Dictionary<WorkDay, List<TimeOnly>> GetAvailableLessonTimes(DateOnly start, int numOfWeeks, Tutor tutor);
 
     public List<int> GetAvailableClassrooms(DateOnly date, TimeOnly time, TimeSpan duration, Tutor tutor);
+
+    public List<TimeOnly> GetAllExamTimes();
+
+    public List<TimeOnly> GetAllLessonTimes();
 }

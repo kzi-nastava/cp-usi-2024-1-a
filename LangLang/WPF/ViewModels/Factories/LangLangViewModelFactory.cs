@@ -41,10 +41,10 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<ActiveCourseViewModel> createActiveCourseInfoViewModel,
         CreateViewModel<UpcomingCourseViewModel> createUpcomingCourseInfoViewModel,
         CreateViewModel<RateTutorViewModel> createRateTutorViewModel,
-        CreateViewModel<FinishedCourseViewModel> createfinishedCourseInfoViewModel,
+        CreateViewModel<FinishedCourseViewModel> createFinishedCourseInfoViewModel,
         CreateViewModel<ActiveExamViewModel> createActiveExamInfoViewModel,
         CreateViewModel<UpcomingExamViewModel> createUpcomingExamInfoViewModel,
-        CreateViewModel<FinishedExamViewModel> createfinishedExamInfoViewModel,
+        CreateViewModel<FinishedExamViewModel> createFinishedExamInfoViewModel,
         CreateViewModel<TutorOverviewViewModel> createTutorTableViewModel
         )
     {
@@ -60,10 +60,10 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createActiveCourseInfoViewModel = createActiveCourseInfoViewModel;
         _createUpcomingCourseInfoViewModel = createUpcomingCourseInfoViewModel;
         _createRateTutorViewModel = createRateTutorViewModel;
-        _createFinishedCourseInfoViewModel = createfinishedCourseInfoViewModel;
+        _createFinishedCourseInfoViewModel = createFinishedCourseInfoViewModel;
         _createActiveExamInfoViewModel = createActiveExamInfoViewModel;
         _createUpcomingExamInfoViewModel = createUpcomingExamInfoViewModel;
-        _createFinishedExamInfoViewModel = createfinishedExamInfoViewModel;
+        _createFinishedExamInfoViewModel = createFinishedExamInfoViewModel;
 
         _createTutorTableViewModel = createTutorTableViewModel;
     }

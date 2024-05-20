@@ -18,7 +18,7 @@ public interface ICourseService
     public void AddAttendance(string courseId);
     public void CancelAttendance(string courseId);
     public void UpdateStates();
-    public Domain.Model.Course? ValidateInputs(Tutor tutor, string name, string? languageName, LanguageLevel? level, int? duration,
+    public Domain.Model.Course? ValidateInputs(Tutor? tutor, string name, string? languageName, LanguageLevel? level, int? duration,
         Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start,
         bool online, int numStudents, Domain.Model.Course.CourseState? state, int maxStudents);
     List<Domain.Model.Course> GetCoursesForLastYear();
