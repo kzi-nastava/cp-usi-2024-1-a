@@ -10,14 +10,21 @@ using LangLang.WPF.Views.Factories;
 
 namespace LangLang.WPF.Views.Director
 {
-    public partial class TutorOverviewWindow : NavigableWindow
+    public partial class TutorOverviewView : UserControl
     {
         private bool deletingRow = false;
-        public TutorOverviewWindow(TutorOverviewViewModel tutorOverviewViewModel, ILangLangWindowFactory windowFactory)
-        : base(tutorOverviewViewModel, windowFactory)
+        private TutorOverviewViewModel tutorOverview;
+        public TutorOverviewView()
+        {
+            InitializeComponent();
+            dpBirthDate.DisplayDateStart = new DateTime(1924, 1, 1);
+            dpBirthDate.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
+        }
+        public TutorOverviewView(TutorOverviewViewModel tutorOverviewViewModel, ILangLangWindowFactory windowFactory)
         {
             InitializeComponent();
             DataContext = tutorOverviewViewModel;
+            tutorOverview = tutorOverviewViewModel;
             tutorOverviewViewModel.Window = this;
             dpBirthDate.DisplayDateStart = new DateTime(1924, 1, 1);
             dpBirthDate.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
@@ -140,6 +147,8 @@ namespace LangLang.WPF.Views.Director
         {
             while (knownLanguagesHolder.Items.Count > 1)
                 knownLanguagesHolder.Items.RemoveAt(0); // remove everything except + button
-        }    
+        }
+
+        
     }
 }

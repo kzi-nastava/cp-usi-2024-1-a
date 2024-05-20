@@ -22,8 +22,11 @@ public abstract class NavigableWindow : Window
     {
         Unsubscribe();
         var currentViewModel = _navigableDataContext.NavigationStore.CurrentViewModel;
-        if(currentViewModel != null)
-            _windowFactory.CreateWindow(currentViewModel).Show();
+        if (currentViewModel != null)
+        {
+            Window w = _windowFactory.CreateWindow(currentViewModel);
+            w.Show();
+        }
         _isUserClosing = false;
         Close();
     }
