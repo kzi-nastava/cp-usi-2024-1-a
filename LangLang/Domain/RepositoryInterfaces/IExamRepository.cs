@@ -7,5 +7,6 @@ namespace LangLang.Domain.RepositoryInterfaces;
 public interface IExamRepository : IRepository<Exam>
 {
     public List<Exam> GetByDate(DateOnly date);
-    List<Exam> GetForTimePeriod(DateTime from, DateTime to);
+    public List<Exam> GetForTimePeriod(DateTime from, DateTime to);
+    public List<Exam> GetByTutorId(string tutorId);
 }

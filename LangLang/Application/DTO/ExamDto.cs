@@ -30,7 +30,7 @@ public class ExamDto
     public bool IsValid()
     {
         if (Language == null || LanguageLevel == null || Date == null || Time == null ||
-            MaxStudents <= 0 ||
+            Tutor == null || MaxStudents <= 0 ||
             ClassroomNumber <= 0 || ClassroomNumber > Constants.ClassroomsNumber)
             return false;
 

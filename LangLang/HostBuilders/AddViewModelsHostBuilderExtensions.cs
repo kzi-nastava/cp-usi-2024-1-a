@@ -23,8 +23,8 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddTransient<StudentMenuViewModel>();
             services.AddScoped<TutorMenuViewModel>();
             services.AddScoped<DirectorMenuViewModel>();
-            services.AddScoped<CourseOverviewViewModel>();
-            services.AddScoped<ExamOverviewViewModel>();
+            services.AddTransient<CourseOverviewViewModel>();
+            services.AddTransient<ExamOverviewViewModel>();
             services.AddTransient<StudentAccountViewModel>();
             services.AddTransient<NotificationListViewModel>();
             services.AddTransient<ActiveCourseViewModel>();
@@ -33,6 +33,8 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddTransient<ActiveExamViewModel>();
             services.AddTransient<UpcomingExamViewModel>();
             services.AddTransient<FinishedExamViewModel>();
+            services.AddScoped<CourseOverviewForDirectorViewModel>();
+            services.AddScoped<ExamOverviewForDirectorViewModel>();
 
             services.AddTransient<TutorOverviewViewModel>();
             services.AddTransient<RateTutorViewModel>();
@@ -83,11 +85,11 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddScoped<CreateViewModel<UpcomingExamViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<UpcomingExamViewModel>
             );
+            
             services.AddScoped<CreateViewModel<FinishedExamViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<FinishedExamViewModel>
             );
-
-
+            
             services.AddScoped<CreateViewModel<TutorOverviewViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<TutorOverviewViewModel>
             );
@@ -97,7 +99,15 @@ public static class AddViewModelsHostBuilderExtensions
             );
 
             services.AddScoped<CreateViewModel<RateTutorViewModel>>(
-            servicesProvider => servicesProvider.GetRequiredService<RateTutorViewModel>
+                servicesProvider => servicesProvider.GetRequiredService<RateTutorViewModel>
+            );
+
+            services.AddScoped<CreateViewModel<CourseOverviewForDirectorViewModel>>(
+                serviceProvider => serviceProvider.GetRequiredService<CourseOverviewForDirectorViewModel>
+            );
+
+            services.AddScoped<CreateViewModel<ExamOverviewForDirectorViewModel>>(
+                serviceProvider => serviceProvider.GetRequiredService<ExamOverviewForDirectorViewModel>
             );
         });
         

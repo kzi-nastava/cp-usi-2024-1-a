@@ -329,7 +329,7 @@ namespace LangLang.WPF.ViewModels.Student
             _courseCoordinator.CancelApplication(_loggedInUser.Id, courseId);
 
             Course cancelledCourse = _courseService.GetCourseById(courseId)!;
-            string tutorName = _tutorService.GetTutorNameForCourse(cancelledCourse.Id);
+            string tutorName = _tutorService.GetTutorById(cancelledCourse.TutorId!)!.GetFullName();
             Courses.Add(new CourseViewModel(cancelledCourse, tutorName));
 
             foreach(CourseViewModel courseViewModel in AppliedCourses) {
@@ -410,7 +410,7 @@ namespace LangLang.WPF.ViewModels.Student
             var availableCourses = _courseCoordinator.GetAvailableCourses(_loggedInUser.Id);
             foreach (Course course in availableCourses)
             {
-                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                string tutorName = _tutorService.GetTutorById(course.TutorId!)!.GetFullName();
                 Courses.Add(new CourseViewModel(course, tutorName));
             }
         }
@@ -424,7 +424,7 @@ namespace LangLang.WPF.ViewModels.Student
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Id)!;
             if(attendingCourse != null)
             {
-                string tutorName = _tutorService.GetTutorNameForCourse(attendingCourse.Id);
+                string tutorName = _tutorService.GetTutorById(attendingCourse.TutorId!)!.GetFullName();
                 AttendingCourse.Add(new CourseViewModel(attendingCourse, tutorName));
             }
         }
@@ -433,7 +433,7 @@ namespace LangLang.WPF.ViewModels.Student
         {
             foreach (Course course in _courseCoordinator.GetAppliedCoursesStudent(_loggedInUser.Id))
             {
-                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                string tutorName = _tutorService.GetTutorById(course.TutorId!)!.GetFullName();;
                 AppliedCourses.Add(new CourseViewModel(course, tutorName));
             }
         }
@@ -443,7 +443,7 @@ namespace LangLang.WPF.ViewModels.Student
             var finishedCourses = _courseCoordinator.GetFinishedCoursesStudent(_loggedInUser.Id);
             foreach (Course course in finishedCourses)
             {
-                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                string tutorName = _tutorService.GetTutorById(course.TutorId!)!.GetFullName();
                 FinishedCourses.Add(new CourseViewModel(course, tutorName));
             }
         }
@@ -516,7 +516,7 @@ namespace LangLang.WPF.ViewModels.Student
                         {
                             if (course.Duration == CourseDurationFilter || CourseDurationFilter == 0)
                             {
-                                string tutorName = _tutorService.GetTutorNameForCourse(course.Id);
+                                string tutorName = _tutorService.GetTutorById(course.TutorId!)!.GetFullName();
                                 Courses.Add(new CourseViewModel(course, tutorName));
                             }
                         }

@@ -5,7 +5,6 @@ using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Domain.Utility;
-using LangLang.Repositories.Json.Util;
 using TimeOnly = System.TimeOnly;
 
 namespace LangLang.Application.Utility.Timetable;
@@ -21,7 +20,7 @@ public class TimetableService : ITimetableService
         _examRepository = examRepository;
     }
 
-    private List<TimeOnly> GetAllExamTimes()
+    public List<TimeOnly> GetAllExamTimes()
     {
         int totalNumber = Convert.ToInt32(Math.Round(TimeSpan.FromDays(1).TotalMinutes / Constants.ExamDuration.TotalMinutes));
         
@@ -36,7 +35,7 @@ public class TimetableService : ITimetableService
         return times;
     }
 
-    private List<TimeOnly> GetAllLessonTimes()
+    public List<TimeOnly> GetAllLessonTimes()
     {
         int totalNumber = Convert.ToInt32(Math.Round(TimeSpan.FromDays(1).TotalMinutes / Constants.LessonDuration.TotalMinutes));
         
@@ -130,7 +129,7 @@ public class TimetableService : ITimetableService
         foreach (Exam exam in exams)
         {
             // if the current tutor is busy in one classroom, mark all other classrooms as taken
-            if (tutor.Exams.Contains(exam.Id))
+            if (exam.TutorId == tutor.Id)
             {
                 for (int j = 1; j <= Constants.ClassroomsNumber; j++)
                 {
@@ -148,7 +147,7 @@ public class TimetableService : ITimetableService
         {
             if(course.Online) continue;
             Tuple<TimeOnly, int> timeAndClassroom = course.Schedule[DayConverter.ToWorkDay(date.DayOfWeek)];
-            if (tutor.Courses.Contains(course.Id))
+            if (course.TutorId == tutor.Id)
             {
                 for (int j = 1; j <= Constants.ClassroomsNumber; j++)
                 {

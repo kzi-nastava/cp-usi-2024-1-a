@@ -21,4 +21,9 @@ public class ExamRepository : AutoIdRepository<Exam>, IExamRepository
     {
         return GetAll().Where(exam => exam.Time >= from && exam.Time <= to).ToList();
     }
+
+    public List<Exam> GetByTutorId(string tutorId)
+    {
+        return GetAll().Where(exam => exam.TutorId == tutorId).ToList();
+    }
 }

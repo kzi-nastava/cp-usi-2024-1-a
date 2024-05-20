@@ -98,14 +98,14 @@ namespace LangLang.Application.UseCases.Course
             _courseAttendanceRepository.Update(attendance.Id, attendance);
         }
 
-        public bool RateTutor(string courseId, string studentId, int rating)
+        public bool RateTutor(Domain.Model.Course course, string studentId, int rating)
         {
-            CourseAttendance attendance = GetAttendance(studentId, courseId)!;
+            CourseAttendance attendance = GetAttendance(studentId, course.Id)!;
             if (!attendance.IsRated)
             {
                 attendance.AddRating();
                 _courseAttendanceRepository.Update(attendance.Id, attendance);
-                Tutor tutor = _tutorService.GetTutorForCourse(courseId)!;
+                Tutor tutor = _tutorService.GetTutorById(course.TutorId!)!;
                _tutorService.AddRating(tutor, rating);
                 return true;
             }
