@@ -6,6 +6,8 @@
         xmlns:mvvm="clr-namespace:LangLang.WPF.MVVM"
         xmlns:exam="clr-namespace:LangLang.WPF.ViewModels.Tutor.Exam"
         xmlns:examView="clr-namespace:LangLang.WPF.Views.Tutor.Exam"
+        xmlns:tutorView="clr-namespace:LangLang.WPF.Views.Director"
+        xmlns:tutor ="clr-namespace:LangLang.WPF.ViewModels.Director"
         xmlns:course="clr-namespace:LangLang.WPF.ViewModels.Tutor.Course"
         xmlns:courseView="clr-namespace:LangLang.WPF.Views.Tutor.Course"
         mc:Ignorable="d"
@@ -18,6 +20,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type course:CourseOverviewViewModel}">
                 <courseView:CourseOverviewView></courseView:CourseOverviewView>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type tutor:TutorOverviewViewModel}">
+                <tutorView:TutorOverviewView></tutorView:TutorOverviewView>
             </DataTemplate>
         </mvvm:NavigableWindow.Resources>
     <Grid>
@@ -64,6 +69,7 @@
 
 
             <ContentControl Grid.Column="2" Content="{Binding CurrentViewModel, UpdateSourceTrigger=PropertyChanged}"/>
+            
 
         </Grid>
 

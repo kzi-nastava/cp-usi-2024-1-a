@@ -24,7 +24,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<UpcomingCourseViewModel> _createUpcomingCourseInfoViewModel;
     private readonly CreateViewModel<RateTutorViewModel> _createRateTutorViewModel;
     private readonly CreateViewModel<FinishedCourseViewModel> _createFinishedCourseInfoViewModel;
-    private readonly CreateViewModel<TutorOverviewViewModel> _createTutorTableViewModel;
+    private readonly CreateViewModel<TutorOverviewViewModel> _createTutorOverviewViewModel;
     private readonly CreateViewModel<ActiveExamViewModel> _createActiveExamInfoViewModel;
     private readonly CreateViewModel<UpcomingExamViewModel> _createUpcomingExamInfoViewModel;
     private readonly CreateViewModel<FinishedExamViewModel> _createFinishedExamInfoViewModel;
@@ -45,7 +45,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<ActiveExamViewModel> createActiveExamInfoViewModel,
         CreateViewModel<UpcomingExamViewModel> createUpcomingExamInfoViewModel,
         CreateViewModel<FinishedExamViewModel> createfinishedExamInfoViewModel,
-        CreateViewModel<TutorOverviewViewModel> createTutorTableViewModel
+        CreateViewModel<TutorOverviewViewModel> createTutorOverviewViewModel
         )
     {
         _createLoginViewModel = createLoginViewModel;
@@ -64,8 +64,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createActiveExamInfoViewModel = createActiveExamInfoViewModel;
         _createUpcomingExamInfoViewModel = createUpcomingExamInfoViewModel;
         _createFinishedExamInfoViewModel = createfinishedExamInfoViewModel;
-
-        _createTutorTableViewModel = createTutorTableViewModel;
+        _createTutorOverviewViewModel = createTutorOverviewViewModel;
     }
 
     public ViewModelBase CreateViewModel(ViewType viewType)
@@ -88,7 +87,7 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.ActiveExamInfo => _createActiveExamInfoViewModel(),
             ViewType.UpcomingExamInfo => _createUpcomingExamInfoViewModel(),
             ViewType.FinishedExamInfo => _createFinishedExamInfoViewModel(),
-            ViewType.TutorTable => _createTutorTableViewModel(),
+            ViewType.TutorTable => _createTutorOverviewViewModel(),
             _ => throw new ArgumentOutOfRangeException(nameof(viewType), viewType, "No ViewModel exists for the given ViewType: " + viewType)
         };
     }

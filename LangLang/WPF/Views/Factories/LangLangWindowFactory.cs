@@ -26,7 +26,7 @@ public class LangLangWindowFactory : ILangLangWindowFactory
             RegisterViewModel registerViewModel => new RegisterWindow(registerViewModel, this),
             StudentMenuViewModel studentViewModel => new StudentMenuWindow(studentViewModel, this),
             TutorMenuViewModel tutorViewModel => new TutorMenuWindow(tutorViewModel, this),
-            DirectorMenuViewModel directorViewModel => new DirectorMenuWindow(directorViewModel, this),
+            DirectorMenuViewModel directorMenuViewModel => new DirectorMenuWindow(directorMenuViewModel, this),
             StudentAccountViewModel studentAccountViewModel => new StudentAccountWindow(studentAccountViewModel, this),
             NotificationListViewModel notificationViewModel => new NotificationListWindow(notificationViewModel, this),
             ActiveCourseViewModel activeCourseInfoViewModel => new ActiveCourseWindow(activeCourseInfoViewModel, this),
@@ -35,7 +35,7 @@ public class LangLangWindowFactory : ILangLangWindowFactory
             ActiveExamViewModel activeExamInfoViewModel => new ActiveExamWindow(activeExamInfoViewModel, this),
             UpcomingExamViewModel upcomingExamInfoViewModel => new UpcomingExamWindow(upcomingExamInfoViewModel, this),
             FinishedExamViewModel finishedExamInfoViewModel => new FinishedExamWindow(finishedExamInfoViewModel, this),
-            TutorOverviewViewModel tutorTableViewModel => new TutorOverviewWindow(tutorTableViewModel, this),
+            //TutorOverviewViewModel tutorOverviewViewModel => new TutorOverviewView(tutorOverviewViewModel, this),
             RateTutorViewModel rateTutorViewModel => new RateTutorWindow(rateTutorViewModel, this),
             _ => throw new ArgumentOutOfRangeException(nameof(viewModel), viewModel,
                 "No Window exists for the given ViewModel: " + viewModel.GetType())

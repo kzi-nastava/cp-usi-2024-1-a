@@ -2,8 +2,9 @@
 using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.Utility.Navigation;
 using LangLang.WPF.MVVM;
-using LangLang.WPF.ViewModels.Common;
 using LangLang.WPF.ViewModels.Factories;
+using LangLang.WPF.ViewModels.Tutor.Course;
+using LangLang.WPF.ViewModels.Tutor.Exam;
 using System;
 
 namespace LangLang.WPF.ViewModels.Director
@@ -29,7 +30,7 @@ namespace LangLang.WPF.ViewModels.Director
             {
                 if (tutorOverviewViewModel == null)
                 {
-                    tutorOverviewViewModel = (TutorOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.Tutor);
+                    tutorOverviewViewModel = (TutorOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.TutorTable);
                 }
 
                 return tutorOverviewViewModel;
@@ -76,7 +77,7 @@ namespace LangLang.WPF.ViewModels.Director
             NavigationStore = navigationStore;
             NavCommand = new RelayCommand(execute => OnNav(execute as string));
             _viewModelFactory = viewModelFactory;
-            CurrentViewModel = CourseOverviewViewModel;
+            CurrentViewModel = TutorOverviewViewModel;
             //OpenTutorTableCommand = new RelayCommand(execute => OpenTutorTable());
             LogoutCommand = new RelayCommand(execute => Logout());
             _loggedInUser = (Domain.Model.Director?)authenticationStore.CurrentUser.Person ??
@@ -89,8 +90,8 @@ namespace LangLang.WPF.ViewModels.Director
         {
             CurrentViewModel = destination switch
             {
-                "courses" => CourseOverviewViewModel,
-                "exams" => ExamOverviewViewModel,
+                //"courses" => CourseOverviewViewModel,
+                //"exams" => ExamOverviewViewModel,
                 "tutor" => TutorOverviewViewModel,
                 _ => CurrentViewModel
             };

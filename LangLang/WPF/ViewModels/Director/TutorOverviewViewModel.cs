@@ -184,11 +184,17 @@ namespace LangLang.WPF.ViewModels.Director
                 OnPropertyChanged();
             }
         }
-        private TutorOverviewWindow? _window;
-        public TutorOverviewWindow Window
+        private TutorOverviewView? _window;
+        public TutorOverviewView Window
         {
             get => _window!;
-            set => _window = value;
+            set
+            {
+                if(_window == null)
+                {
+                    _window = value;
+                }
+            }
         }
 
         public NavigationStore NavigationStore { get; }
