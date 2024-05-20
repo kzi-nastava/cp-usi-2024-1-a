@@ -130,7 +130,7 @@ public class TimetableService : ITimetableService
         foreach (Exam exam in exams)
         {
             // if the current tutor is busy in one classroom, mark all other classrooms as taken
-            if (tutor.Exams.Contains(exam.Id))
+            if (exam.TutorId == tutor.Id)
             {
                 for (int j = 1; j <= Constants.ClassroomsNumber; j++)
                 {
@@ -148,7 +148,7 @@ public class TimetableService : ITimetableService
         {
             if(course.Online) continue;
             Tuple<TimeOnly, int> timeAndClassroom = course.Schedule[DayConverter.ToWorkDay(date.DayOfWeek)];
-            if (tutor.Courses.Contains(course.Id))
+            if (course.TutorId == tutor.Id)
             {
                 for (int j = 1; j <= Constants.ClassroomsNumber; j++)
                 {

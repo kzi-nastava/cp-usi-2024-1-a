@@ -103,8 +103,6 @@ namespace LangLang.Application.UseCases.User
                 registerDto.Gender,
                 registerDto.PhoneNumber,
                 registerDto.KnownLanguages,
-                new List<string>(),
-                new List<string>(),
                 new int[5],
                 registerDto.DateAdded
             ));

@@ -10,14 +10,11 @@ namespace LangLang.Application.UseCases.Exam;
 public class ExamService : IExamService
 {
     private readonly IExamRepository _examRepository;
-    private readonly ITutorRepository _tutorRepository;
     private readonly ILanguageRepository _languageRepository;
 
-    public ExamService(IExamRepository examRepository, ITutorRepository tutorRepository,
-        ILanguageRepository languageRepository)
+    public ExamService(IExamRepository examRepository, ILanguageRepository languageRepository)
     {
         _examRepository = examRepository;
-        _tutorRepository = tutorRepository;
         _languageRepository = languageRepository;
     }
 
@@ -39,14 +36,7 @@ public class ExamService : IExamService
 
     public List<Domain.Model.Exam> GetExamsByTutor(string tutorId)
     {
-        Tutor? tutor = _tutorRepository.Get(tutorId);
-        if (tutor == null)
-        {
-            return new List<Domain.Model.Exam>();
-        }
-
-        List<string> examIds = tutor.Exams;
-        return UpdateExamStates(_examRepository.Get(examIds));
+        return _examRepository.GetByTutorId(tutorId);
     }
 
     private bool IsExamValid(ExamDto examDto)
@@ -69,19 +59,10 @@ public class ExamService : IExamService
 
         DateTime dateTime = new DateTime(examDto.Date!.Value.Year, examDto.Date.Value.Month, examDto.Date.Value.Day,
             examDto.Time!.Value.Hour, examDto.Time.Value.Minute, examDto.Time.Value.Second);
-        Domain.Model.Exam exam = new Domain.Model.Exam(examDto.Language!, examDto.LanguageLevel!.Value, dateTime,
+        Domain.Model.Exam exam = new Domain.Model.Exam(examDto.Tutor!.Id, examDto.Language!, examDto.LanguageLevel!.Value, dateTime,
             examDto.ClassroomNumber,
             Domain.Model.Exam.State.NotStarted, examDto.MaxStudents);
-        exam = _examRepository.Add(exam);
-
-        if (examDto.Tutor == null)
-        {
-            throw new ArgumentException("No tutor provided");
-        }
-
-        examDto.Tutor.Exams.Add(exam.Id);
-        _tutorRepository.Update(examDto.Tutor.Id, examDto.Tutor);
-        return exam;
+        return _examRepository.Add(exam);
     }
 
     public Domain.Model.Exam UpdateExam(ExamDto examDto)

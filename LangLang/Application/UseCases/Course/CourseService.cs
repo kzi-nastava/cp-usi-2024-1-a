@@ -10,14 +10,11 @@ namespace LangLang.Application.UseCases.Course
     {
         private readonly ICourseRepository _courseRepository;
         private readonly ILanguageRepository _languageRepository;
-        private readonly ITutorRepository _tutorRepository;
 
-        public CourseService(ICourseRepository courseRepository, ILanguageRepository languageRepository,
-            ITutorRepository tutorRepository)
+        public CourseService(ICourseRepository courseRepository, ILanguageRepository languageRepository)
         {
             _courseRepository = courseRepository;
             _languageRepository = languageRepository;
-            _tutorRepository = tutorRepository;
         }
 
 
@@ -26,17 +23,11 @@ namespace LangLang.Application.UseCases.Course
             return _courseRepository.GetAll();
         }
 
-        public Dictionary<string, Domain.Model.Course> GetCoursesByTutor(Tutor loggedInUser)
+        public List<Domain.Model.Course> GetCoursesByTutor(Tutor tutor)
         {
-            Dictionary<string, Domain.Model.Course> courses = new();
-            foreach (string courseId in loggedInUser.Courses)
-            {
-                courses.Add(courseId, _courseRepository.Get(courseId)!);
-            }
-
-            return courses;
+            return _courseRepository.GetByTutorId(tutor.Id);
         }
-
+        
         public List<Domain.Model.Course> GetAvailableCourses(Student student)
         {
             List<Domain.Model.Course> courses = new();
@@ -51,11 +42,9 @@ namespace LangLang.Application.UseCases.Course
             return courses;
         }
 
-        public void AddCourse(Domain.Model.Course course, Tutor loggedInUser)
+        public void AddCourse(Domain.Model.Course course)
         {
             _courseRepository.Add(course);
-            loggedInUser.Courses.Add(course.Id);
-            _tutorRepository.Update(loggedInUser.Id, loggedInUser);
         }
 
         public Domain.Model.Course? GetCourseById(string id)
@@ -63,11 +52,9 @@ namespace LangLang.Application.UseCases.Course
             return _courseRepository.Get(id);
         }
 
-        public void DeleteCourse(string id, Tutor loggedInUser)
+        public void DeleteCourse(string id)
         {
-            loggedInUser.Courses.Remove(id);
             _courseRepository.Delete(id);
-            _tutorRepository.Update(loggedInUser.Id, loggedInUser);
         }
 
         public void UpdateCourse(Domain.Model.Course course)
@@ -99,7 +86,7 @@ namespace LangLang.Application.UseCases.Course
             UpdateCourse(GetCourseById(courseId)!);
         }
 
-        public Domain.Model.Course? ValidateInputs(string name, string? languageName, LanguageLevel? level,
+        public Domain.Model.Course? ValidateInputs(Tutor tutor, string name, string? languageName, LanguageLevel? level,
             int? duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule,
             ObservableCollection<WorkDay> scheduleDays, DateTime? start, bool online, int numStudents,
             Domain.Model.Course.CourseState? state, int maxStudents)
@@ -122,6 +109,7 @@ namespace LangLang.Application.UseCases.Course
             }
 
             return new Domain.Model.Course(
+                tutor.Id,
                 name,
                 language,
                 (LanguageLevel)level!,

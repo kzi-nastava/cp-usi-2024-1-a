@@ -12,8 +12,7 @@ namespace LangLang.Domain.Model
         public int[] RatingCounts { get; set; } = new int[10];
 
         public List<Tuple<Language, LanguageLevel>> KnownLanguages { get; set; }
-        public List<string> Courses { get; set; }
-        public List<string> Exams { get; set; }
+
         public DateTime DateAdded { get; set; }
         
         public string KnownLanguagesAsString
@@ -31,29 +30,23 @@ namespace LangLang.Domain.Model
         {
             Id = "";
             KnownLanguages = new();
-            Courses = new();
-            Exams = new();
             DateAdded = DateTime.Now;
         }
 		
-        public Tutor(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLevel>> knownLanguages, List<string> courses, List<string> exams, int[] ratingCounts, DateTime? dateAdded = null) : base(name, surname, birthDate, gender, phoneNumber)
+        public Tutor(string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLevel>> knownLanguages, int[] ratingCounts, DateTime? dateAdded = null) : base(name, surname, birthDate, gender, phoneNumber)
         {
             Id = "";
             KnownLanguages = knownLanguages;
-            Courses = courses;
-            Exams = exams;
             this.RatingCounts = ratingCounts;
             if (dateAdded == null)
                 DateAdded = DateTime.Now;
             else
                 DateAdded = (DateTime)dateAdded;
         }
-        public Tutor(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLevel>> knownLanguages, List<string> courses, List<string> exams, int[] ratingCounts, DateTime? dateAdded = null) : base(name, surname, birthDate, gender, phoneNumber)
+        public Tutor(string id, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLevel>> knownLanguages, int[] ratingCounts, DateTime? dateAdded = null) : base(name, surname, birthDate, gender, phoneNumber)
         {
             Id = id;
             KnownLanguages = knownLanguages;
-            Courses = courses;
-            Exams = exams;
             this.RatingCounts = ratingCounts;
             if (dateAdded == null)
                 DateAdded = DateTime.Now;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -16,38 +15,6 @@ namespace LangLang.Application.UseCases.User
         }
 
         public List<Tutor> GetAllTutors() => _tutorRepository.GetAll();
-
-        public Tutor? GetTutorForCourse(string courseId)
-        {
-            foreach(Tutor tutor in _tutorRepository.GetAll())
-            {
-                List<string> courses = tutor.Courses;
-                foreach(string teachingCourseId in courses)
-                {
-                    if (teachingCourseId == courseId) return tutor;
-                }
-            }
-            return null;
-        }
-
-        public string GetTutorNameForCourse(string courseId)
-        {
-            Tutor tutor = GetTutorForCourse(courseId)!;
-            return tutor.GetFullName();
-        }
-
-        public Tutor? GetTutorForExam(string examId)
-        {
-            foreach (Tutor tutor in _tutorRepository.GetAll())
-            {
-                List<string> exams = tutor.Exams;
-                foreach (string teachingExamId in exams)
-                {
-                    if (teachingExamId == examId) return tutor;
-                }
-            }
-            return null;
-        }
 
         public void AddRating(Tutor tutor, int rating)
         {

@@ -36,5 +36,10 @@ namespace LangLang.Repositories.Json
         {
             return GetAll().Where(course => course.Start >= from && course.Start <= to).ToList();
         }
+
+        public List<Course> GetByTutorId(string tutorId)
+        {
+            return GetAll().Where(course => course.TutorId == tutorId).ToList();
+        }
     }
 }

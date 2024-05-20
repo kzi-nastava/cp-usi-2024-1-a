@@ -101,7 +101,7 @@ namespace LangLang.Application.UseCases.Exam
                 attendance.AddRating();
                 Domain.Model.Exam exam = _examService.GetExamById(attendance.ExamId)!;
                 //Tutor tutor = _tutorService.GetTutor(exam.TutorId);
-                Tutor tutor = _tutorService.GetTutorForExam(exam.Id)!;
+                Tutor tutor = _tutorService.GetTutorById(exam.TutorId!)!;
                _tutorService.AddRating(tutor, rating);  //after tutor id gets added to course/exam
                                                         //i will only pass tutor id and then the service will findById
             }
