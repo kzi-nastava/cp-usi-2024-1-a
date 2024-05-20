@@ -4,11 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="clr-namespace:LangLang.WPF.MVVM"
+        xmlns:exam="clr-namespace:LangLang.WPF.ViewModels.Tutor.Exam"
+        xmlns:examView="clr-namespace:LangLang.WPF.Views.Tutor.Exam"
+        xmlns:course="clr-namespace:LangLang.WPF.ViewModels.Tutor.Course"
+        xmlns:courseView="clr-namespace:LangLang.WPF.Views.Tutor.Course"
         mc:Ignorable="d"
-        Title="DirectorWindow" Height="200" Width="200" ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterScreen">
-    <StackPanel Orientation="Vertical"  Margin="0,30,0,0">
-        <Button Content="View tutors" Margin="10" Height="40" FontSize="20" Command="{Binding OpenTutorTableCommand}"/>
-        <Button Content="Logout" Margin="10" Height="40" FontSize="20" Command="{Binding LogoutCommand}"/>
-    </StackPanel>
+        Title="DirectorWindow" Height="770" Width="1030" ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
+                      >
+        <mvvm:NavigableWindow.Resources>
+            <DataTemplate DataType="{x:Type exam:ExamOverviewViewModel}">
+                <examView:ExamOverviewView></examView:ExamOverviewView>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type course:CourseOverviewViewModel}">
+                <courseView:CourseOverviewView></courseView:CourseOverviewView>
+            </DataTemplate>
+        </mvvm:NavigableWindow.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid x:Name = "NavBar">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width = "200" />
+                <ColumnDefinition Width = "800" />
+            </Grid.ColumnDefinitions>
+            <Grid Background="LightGray">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Button Content="View tutors" 
+                        Margin="20,10,20,10" 
+                        CommandParameter = "tutors" 
+                        Command="{Binding NavCommand}" 
+                        Grid.Row="1"
+                        />
+                <Button Content = "Courses" 
+                    Command = "{Binding NavCommand}"
+                    CommandParameter = "courses" 
+                    Grid.Row = "2"
+                     Margin="20,10,20,10"
+                />
+
+                <Button Content = "Exams" 
+                    Command = "{Binding NavCommand}" 
+                    CommandParameter = "exams" 
+                    Grid.Row = "3" 
+                    Margin="20,10,20,10"
+                 />
+                <Button Content="Logout" Margin="20,430,20,10" Height="35"  Command="{Binding LogoutCommand}" Grid.Row="5" />
+
+            </Grid>
+
+
+
+            <ContentControl Grid.Column="2" Content="{Binding CurrentViewModel, UpdateSourceTrigger=PropertyChanged}"/>
+
+        </Grid>
+
+    </Grid>
 </mvvm:NavigableWindow>
