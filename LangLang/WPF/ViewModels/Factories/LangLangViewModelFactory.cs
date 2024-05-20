@@ -44,8 +44,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<FinishedCourseViewModel> createFinishedCourseInfoViewModel,
         CreateViewModel<ActiveExamViewModel> createActiveExamInfoViewModel,
         CreateViewModel<UpcomingExamViewModel> createUpcomingExamInfoViewModel,
-        CreateViewModel<TutorOverviewViewModel> createTutorOverviewViewModel
-        CreateViewModel<FinishedExamViewModel> createFinishedExamInfoViewModel,
+        CreateViewModel<TutorOverviewViewModel> createTutorOverviewViewModel,
+        CreateViewModel<FinishedExamViewModel> createFinishedExamInfoViewModel
         )
     {
         _createLoginViewModel = createLoginViewModel;
