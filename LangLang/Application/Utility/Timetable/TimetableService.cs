@@ -5,7 +5,6 @@ using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Domain.Utility;
-using LangLang.Repositories.Json.Util;
 using TimeOnly = System.TimeOnly;
 
 namespace LangLang.Application.Utility.Timetable;
@@ -21,7 +20,7 @@ public class TimetableService : ITimetableService
         _examRepository = examRepository;
     }
 
-    private List<TimeOnly> GetAllExamTimes()
+    public List<TimeOnly> GetAllExamTimes()
     {
         int totalNumber = Convert.ToInt32(Math.Round(TimeSpan.FromDays(1).TotalMinutes / Constants.ExamDuration.TotalMinutes));
         
@@ -36,7 +35,7 @@ public class TimetableService : ITimetableService
         return times;
     }
 
-    private List<TimeOnly> GetAllLessonTimes()
+    public List<TimeOnly> GetAllLessonTimes()
     {
         int totalNumber = Convert.ToInt32(Math.Round(TimeSpan.FromDays(1).TotalMinutes / Constants.LessonDuration.TotalMinutes));
         
