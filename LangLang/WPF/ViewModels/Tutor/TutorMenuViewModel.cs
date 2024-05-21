@@ -45,7 +45,7 @@ namespace LangLang.WPF.ViewModels.Tutor
             {
                 if (examViewModel == null)
                 {
-                    examViewModel = (ExamOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.Exam);
+                    examViewModel = (ExamOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.ExamTutor);
                 }
         
                 return examViewModel;
@@ -70,7 +70,7 @@ namespace LangLang.WPF.ViewModels.Tutor
             {
                 if (courseViewModel == null)
                 {
-                    courseViewModel = (CourseOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.Course);
+                    courseViewModel = (CourseOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.CourseTutor);
                 }
         
                 return courseViewModel;

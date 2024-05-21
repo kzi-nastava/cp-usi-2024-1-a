@@ -28,6 +28,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
     private readonly CreateViewModel<ActiveExamViewModel> _createActiveExamInfoViewModel;
     private readonly CreateViewModel<UpcomingExamViewModel> _createUpcomingExamInfoViewModel;
     private readonly CreateViewModel<FinishedExamViewModel> _createFinishedExamInfoViewModel;
+    private readonly CreateViewModel<CourseOverviewForDirectorViewModel> _createCourseOverviewForDirectorViewModel;
+    private readonly CreateViewModel<ExamOverviewForDirectorViewModel> _createExamOverviewForDirectorViewModel;
 
     public LangLangViewModelFactory(CreateViewModel<LoginViewModel> createLoginViewModel,
         CreateViewModel<RegisterViewModel> createRegisterViewModel,
@@ -45,7 +47,9 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         CreateViewModel<ActiveExamViewModel> createActiveExamInfoViewModel,
         CreateViewModel<UpcomingExamViewModel> createUpcomingExamInfoViewModel,
         CreateViewModel<TutorOverviewViewModel> createTutorOverviewViewModel,
-        CreateViewModel<FinishedExamViewModel> createFinishedExamInfoViewModel
+        CreateViewModel<FinishedExamViewModel> createFinishedExamInfoViewModel,
+        CreateViewModel<CourseOverviewForDirectorViewModel> createCourseOverviewForDirectorViewModel,
+        CreateViewModel<ExamOverviewForDirectorViewModel> createExamOverviewForDirectorViewModel
         )
     {
         _createLoginViewModel = createLoginViewModel;
@@ -65,6 +69,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
         _createUpcomingExamInfoViewModel = createUpcomingExamInfoViewModel;
         _createTutorOverviewViewModel = createTutorOverviewViewModel;
         _createFinishedExamInfoViewModel = createFinishedExamInfoViewModel;
+        _createCourseOverviewForDirectorViewModel = createCourseOverviewForDirectorViewModel;
+        _createExamOverviewForDirectorViewModel = createExamOverviewForDirectorViewModel;
     }
 
     public ViewModelBase CreateViewModel(ViewType viewType)
@@ -76,8 +82,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.Student => _createStudentViewModel(),
             ViewType.Tutor => _createTutorViewModel(),
             ViewType.Director => _createDirectorViewModel(),
-            ViewType.Course => _createCourseViewModel(),
-            ViewType.Exam => _createExamViewModel(),
+            ViewType.CourseTutor => _createCourseViewModel(),
+            ViewType.ExamTutor => _createExamViewModel(),
             ViewType.StudentAccount => _createStudentAccountViewModel(),
             ViewType.Notifications => _createNotificationViewModel(),
             ViewType.ActiveCourseInfo => _createActiveCourseInfoViewModel(),
@@ -88,6 +94,8 @@ public class LangLangViewModelFactory : ILangLangViewModelFactory
             ViewType.UpcomingExamInfo => _createUpcomingExamInfoViewModel(),
             ViewType.FinishedExamInfo => _createFinishedExamInfoViewModel(),
             ViewType.TutorTable => _createTutorOverviewViewModel(),
+            ViewType.CourseDirector => _createCourseOverviewForDirectorViewModel(),
+            ViewType.ExamDirector => _createExamOverviewForDirectorViewModel(),
             _ => throw new ArgumentOutOfRangeException(nameof(viewType), viewType, "No ViewModel exists for the given ViewType: " + viewType)
         };
     }
