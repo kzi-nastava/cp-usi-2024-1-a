@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LangLang.Repositories.Json.Util;
+namespace LangLang.Core;
 
 public static class PagingExtensions
 {
