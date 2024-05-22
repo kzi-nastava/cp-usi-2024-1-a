@@ -93,7 +93,7 @@ namespace LangLang.Domain.Model
 
         public double GetScore(Language language, LanguageLevel languageLevel)
         {
-            var knownLanguageLevelIdx = 0;
+            var knownLanguageLevelIdx = -1;
             for (int i = 0; i < KnownLanguages.Count; i++)
             {
                 if (Equals(KnownLanguages[i].Item1, language))
@@ -102,9 +102,13 @@ namespace LangLang.Domain.Model
                     break;
                 }
             }
+
+            int languageLevelScore = knownLanguageLevelIdx == -1
+                ? -(int)languageLevel
+                : KnownLanguages[knownLanguageLevelIdx].Item2 - languageLevel;
             
             return GetAverageRating() == 0 ? 1000 : 0
-                + 10 * (KnownLanguages[knownLanguageLevelIdx].Item2 - languageLevel)
+                + 10 * languageLevelScore
                 + 100 * GetAverageRating()
                 ;
         }
