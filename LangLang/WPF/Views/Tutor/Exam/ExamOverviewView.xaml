@@ -112,7 +112,12 @@
                                 Command="{Binding PreviousPageCommand}"
                                 Content="{materialIcons:MaterialIconExt Kind=ChevronLeft}"
                                 />
-                        <TextBlock Grid.Column="1" Text="{Binding PageNumber}" Margin="10 0" />
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding PageNumber}" 
+                                   Margin="10 0"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   />
                         <Button Grid.Column="2" Height="Auto" VerticalAlignment="Center"
                                 Command="{Binding NextPageCommand}"
                                 Content="{materialIcons:MaterialIconExt Kind=ChevronRight}"
