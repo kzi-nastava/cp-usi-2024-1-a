@@ -121,7 +121,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
         private void FinishExam(object? obj)
         {
             _examCoordinator.FinishExam(_currentExamStore.CurrentExam!);
-            _closepopupNavigationService.Navigate(Factories.ViewType.Exam);
+            _closepopupNavigationService.Navigate(Factories.ViewType.ExamTutor);
         }
         private void KickStudent(object? obj)
         {
