@@ -9,8 +9,11 @@ public static class PagingExtensions
     {
         if (pageNumber <= 0 || recordsPerPage <= 0)
             throw new ArgumentException("Arguments must be positive integers.");
-        if (pageNumber * recordsPerPage + recordsPerPage >= original.Count)
+        if ((pageNumber - 1) * recordsPerPage >= original.Count)
             return new List<T>();
+        if (pageNumber * recordsPerPage >= original.Count)
+            return original.GetRange((pageNumber - 1) * recordsPerPage,
+                original.Count - (pageNumber - 1) * recordsPerPage);
         return original.GetRange((pageNumber - 1) * recordsPerPage, recordsPerPage);
     } 
 }
