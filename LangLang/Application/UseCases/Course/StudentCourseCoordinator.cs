@@ -193,6 +193,17 @@ namespace LangLang.Application.UseCases.Course
             return _courseService.GetCourseById(courseAttendance.CourseId);
         }
 
+        public List<Domain.Model.Course> GetFinishedCourses()
+        {
+            List<CourseAttendance> attendances = _courseAttendanceService.GetFinishedCourses();
+            List<Domain.Model.Course> finishedCourses = new();
+            foreach (CourseAttendance attendance in attendances)
+            {
+                finishedCourses.Add(_courseService.GetCourseById(attendance.CourseId)!);
+            }
+            return finishedCourses;
+        }
+
         public List<Domain.Model.Course> GetFinishedCoursesStudent(string studentId)
         {
             List<CourseAttendance> attendances = _courseAttendanceService.GetFinishedCoursesStudent(studentId);

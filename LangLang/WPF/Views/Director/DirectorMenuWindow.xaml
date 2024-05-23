@@ -46,6 +46,7 @@
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -75,8 +76,14 @@
                     Grid.Row = "4" 
                     Margin="20,10,20,10"
                  />
-                <Button Content="Logout" Margin="20,430,20,10" Height="35"  Command="{Binding LogoutCommand}" Grid.Row="5" />
 
+                <Button Content = "Reports" 
+                    Command = "{Binding NavCommand}" 
+                    CommandParameter = "finishedCourses" 
+                    Grid.Row = "5" 
+                    Margin="20,10,20,10"
+                 />
+                <Button Content="Logout" Margin="20,10,20,10" Height="35"  Command="{Binding LogoutCommand}" Grid.Row="6" />
             </Grid>
 
 

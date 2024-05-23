@@ -5,133 +5,86 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Height="700" Width="800">
-    <Border  Padding="10" >
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
+        <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
+        <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
+        <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
+    </UserControl.Resources>
+
+    <Border Padding="10">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="250"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="100"/>
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="28.4"/>
+                    <RowDefinition Height="21.6"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0">Course Overview</Label>
-                <Label FontSize="14" Margin="2,30,0,0" >Filter</Label>
-                <StackPanel Orientation="Horizontal" Margin="0,50,0,0">
-                    <Grid Margin="5,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="45"/>
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
+                <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0" Grid.RowSpan="2">Finished course Overview</Label>
 
-                        <StackPanel Orientation="Vertical" Grid.Column="0">
-                            <Label>Language:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguage" SelectedItem="{Binding LanguageFilter}" ItemsSource="{Binding Languages}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="1">
-                            <Label>Language Level:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterLanguageLvl" SelectedItem="{Binding LevelFilter}" ItemsSource="{Binding Levels}"/>
+                <DataGrid Grid.Row="2" ItemsSource="{Binding Courses}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                        <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
+                        <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
+                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
+                        <DataGridTextColumn Header="Tutor" Binding="{Binding TutorFullName}" Width="150" />
 
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="2">
-                            <Label>Start:</Label>
-                            <DatePicker Margin="5,0,0,0" Name="dpFilterStart" SelectedDate="{Binding StartFilter}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="4">
-                            <Label>Online:</Label>
-                            <CheckBox Margin="5,0,0,0" IsChecked="{Binding OnlineFilter}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="3">
-                            <Label>Durations:</Label>
-                            <ComboBox Margin="5,0,0,0" x:Name="cbFilterState" SelectedItem="{Binding DurationFilter}" ItemsSource="{Binding Durations}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="5">
-                            <Button Command="{Binding ClearFiltersCommand}" Width="60" Content="Clear" HorizontalAlignment="Left" Margin="0,25,0,0"/>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-                <DataGrid Grid.Row="1" CanUserAddRows="False" 
-                      ItemsSource="{Binding Courses}" 
-                      SelectedItem="{Binding SelectedItem}"
-                      Margin="10,20,10,10" 
-                      x:Name="dgCourses" 
-                      CanUserDeleteRows="False" 
-                      Grid.Column="0" 
-                      IsReadOnly="True"
-                      AutoGenerateColumns="False"
-                      SelectionChanged="dgCourses_SelectionChanged"
-                      >
-                    <DataGrid.Columns >
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Language" Binding="{Binding LanguageName}"/>
-                        <DataGridTextColumn Header="LanguageLvl" Binding="{Binding Level}"/>
-                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}"/>
-                        <DataGridTextColumn Header="Schedule" Binding="{Binding Schedule}"/>
-                        <DataGridTextColumn Header="Start" Binding="{Binding Start}"/>
-                        <DataGridTextColumn Header="Online" Binding="{Binding Online}"/>
-                        <DataGridTextColumn Header="MaxStudents" Binding="{Binding MaxStudents}"/>
-                        <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
-                        <DataGridTextColumn Header="State" Binding="{Binding State}"/>
+                        <DataGridTextColumn Header="Starts" Width="*">
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="Start" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Online" Width="60">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Online}" Value="True">
+                                            <Setter Property="Text" Value="Yes"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Online}" Value="False">
+                                            <Setter Property="Text" Value="No"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Width="90">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Apply"
+                                            FontSize="14"
+                                            Foreground="White"
+                                            Background="{StaticResource BlueBtnColor}"
+                                            Height="25"
+                                            Width="80"
+                                            BorderThickness="0"
+                                            Margin="2"
+                                            Command="{Binding DataContext.ApplyCourseCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding Id}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
-
-            <StackPanel Grid.Column="1" Grid.Row="0" >
-                <Label>Name:</Label>
-                <TextBox Margin="5,0,0,0" Name="tbName" Text="{Binding Name}" />
-                <Label>Language:</Label>
-                <ComboBox Margin="5,0,0,0" x:Name="cbLanguages" SelectedItem="{Binding LanguageName, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding Languages}"/>
-                <Label>Language level:</Label>
-                <ComboBox Margin="5,0,0,0" x:Name="cbLevel" SelectedItem="{Binding Level}" ItemsSource="{Binding LanguageLevels}"/>
-                <Label>Duration:</Label>
-                <ComboBox Margin="5,0,0,0" Name="cbDuration" SelectedItem="{Binding Duration}" ItemsSource="{Binding Durations, UpdateSourceTrigger=PropertyChanged}"/>
-
-                <Label>Shedule:</Label>
-                <Grid Height="120">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <ListBox SelectionMode="Multiple" Margin="5,0,0,0" Name="cbSchedule" Grid.Column="0" SelectionChanged="cbSchedule_SelectionChanged" SelectedItem="{Binding ScheduleDays, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding WorkDays, UpdateSourceTrigger=PropertyChanged}"/>
-                    <StackPanel Grid.Column="1">
-                        <ComboBox Margin="5,2,5,0" Name="cbMonday" SelectedItem="{Binding Monday, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding MondayHours}" Validation.ErrorTemplate="{x:Null}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbTuesday" SelectedItem="{Binding Tuesday}" ItemsSource="{Binding TuesdayHours}" Validation.ErrorTemplate="{x:Null}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbWednesday" SelectedItem="{Binding Wednesday}" ItemsSource="{Binding WednesdayHours}" Validation.ErrorTemplate="{x:Null}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbThursday" SelectedItem="{Binding Thursday}" ItemsSource="{Binding ThursdayHours}" Validation.ErrorTemplate="{x:Null}"/>
-                        <ComboBox Margin="5,2,5,0" Name="cbFriday" SelectedItem="{Binding Friday}" ItemsSource="{Binding FridayHours}" Validation.ErrorTemplate="{x:Null}"/>
-                    </StackPanel>
-                </Grid>
-                <Label>Start:</Label>
-                <DatePicker Margin="5,0,0,0" Name="dpStart" SelectedDate="{Binding Start, UpdateSourceTrigger=PropertyChanged}" />
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,0">
-                    <Label>Online</Label>
-                    <CheckBox Margin="5,5,0,0" IsChecked="{Binding Online, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ToggleMaxStudentsCommand}"/>
-                </StackPanel>
-                <Label>Max Students:</Label>
-                <TextBox Margin="5,0,0,0" Name="tbMaxStudents" IsReadOnly="{Binding IsMaxStudentsDisabled}" Text="{Binding MaxStudents, UpdateSourceTrigger=PropertyChanged}"/>
-                <Label>Number of students:</Label>
-                <TextBox Margin="5,0,0,0" Name="tbStudentsNum" IsEnabled="False" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
-                <Label>State:</Label>
-                <ComboBox Margin="5,0,0,0" Name="cbState" SelectedItem="{Binding State}" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Margin="15,45,5,0" Padding="2,5,2,5" Name="btnViewInfo" Content="View Info" Command="{Binding OpenCourseInfoCommand}"></Button>
-
-
-            </StackPanel>
-            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Margin="5" Content="Save" Width="70" Command="{Binding AddCourseCommand}" />
-                <Button Margin="5" Content="Update" Width="70" Command="{Binding UpdateCourseCommand}"/>
-                <Button Margin="5" Content="Delete" Width="70"  Command="{Binding DeleteCourseCommand}"/>
-            </StackPanel>
         </Grid>
     </Border>
 </UserControl>

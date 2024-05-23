@@ -7,6 +7,7 @@ public interface ICourseAttendanceService
     public List<CourseAttendance> GetAllStudentAttendances(string studentId);
     public List<CourseAttendance> GetAttendancesForCourse(string courseId);
     public CourseAttendance? GetStudentAttendance(string studentId);
+    public List<CourseAttendance> GetFinishedCourses();
     public List<CourseAttendance> GetFinishedCoursesStudent(string studentId);
     public CourseAttendance AddAttendance(string studentId, string courseId);
     public void RemoveAttendee(string studentId, string courseId);

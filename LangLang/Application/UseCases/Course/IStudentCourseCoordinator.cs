@@ -18,6 +18,7 @@ public interface IStudentCourseCoordinator
     public void CancelApplication(string studentId, string courseId);
     public void RemoveAttendee(string studentId);
     public void ApplyForCourse(string courseId, string studentId);
+    public List<Domain.Model.Course> GetFinishedCourses();
     public void FinishCourse(string courseId, ObservableCollection<Student> students);
     public void GenerateAttendance(string courseId);
     public void DropCourse(string studentId, string message);
