@@ -13,7 +13,7 @@ using LangLang.Domain;
 using LangLang.Domain.Model;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
-using LangLang.WPF.ViewModels.Student;
+using LangLang.WPF.ViewModels.Tutor.Exam;
 
 namespace LangLang.WPF.ViewModels.Director;
 
