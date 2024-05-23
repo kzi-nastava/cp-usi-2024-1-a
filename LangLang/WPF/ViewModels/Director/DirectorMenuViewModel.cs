@@ -90,9 +90,9 @@ namespace LangLang.WPF.ViewModels.Director
         {
             CurrentViewModel = destination switch
             {
-                //"courses" => CourseOverviewViewModel,
+                "courses" => CourseOverviewViewModel,
                 "exams" => ExamOverviewViewModel,
-                "tutor" => TutorOverviewViewModel,
+                "tutors" => TutorOverviewViewModel,
                 _ => CurrentViewModel
             };
         }
