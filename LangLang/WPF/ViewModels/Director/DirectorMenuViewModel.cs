@@ -24,6 +24,7 @@ namespace LangLang.WPF.ViewModels.Director
         private TutorOverviewViewModel? tutorOverviewViewModel;
         private CourseOverviewForDirectorViewModel? courseOverviewViewModel;
         private ExamOverviewForDirectorViewModel? examOverviewViewModel;
+        private FinishedCourseOverviewForDirectorViewModel? finishedCourseOverviewViewModel;
         private TutorOverviewViewModel TutorOverviewViewModel
         {
             get
@@ -60,6 +61,18 @@ namespace LangLang.WPF.ViewModels.Director
                 return courseOverviewViewModel;
             }
         }
+        private FinishedCourseOverviewForDirectorViewModel FinishedCourseOverviewViewModel
+        {
+            get
+            {
+                if (finishedCourseOverviewViewModel == null)
+                {
+                    finishedCourseOverviewViewModel = (FinishedCourseOverviewForDirectorViewModel)_viewModelFactory.CreateViewModel(ViewType.FinishedCourseForDirector);
+                }
+
+                return finishedCourseOverviewViewModel;
+            }
+        }
 
         public ViewModelBase CurrentViewModel
         {
@@ -93,6 +106,7 @@ namespace LangLang.WPF.ViewModels.Director
                 "courses" => CourseOverviewViewModel,
                 "exams" => ExamOverviewViewModel,
                 "tutors" => TutorOverviewViewModel,
+                "finishedCourses" => FinishedCourseOverviewViewModel,
                 _ => CurrentViewModel
             };
         }
