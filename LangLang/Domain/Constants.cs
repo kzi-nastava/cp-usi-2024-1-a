@@ -21,8 +21,4 @@ public static class Constants
     public const uint MaxListeningScore = 40;
     public const uint MaxSpeakingScore = 50;
     public const uint MinPassingScore = 160;
-    
-
-
-
 }

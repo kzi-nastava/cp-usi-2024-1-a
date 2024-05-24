@@ -23,20 +23,23 @@
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="28.4"/>
-                    <RowDefinition Height="21.6"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="85"/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0" Grid.RowSpan="2">Finished course Overview</Label>
+                <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0"  Grid.Row="0">Finished courses</Label>
+                <StackPanel Orientation="Vertical" Grid.Row="1" RenderTransformOrigin="0.501,0.518">
+                    <Label>The overview of all the finished courses, where you may send an email of appreciaton to the best students that attended the selected course.</Label>
+                    <Label> When ranking students prioritize:</Label>
+                    <ComboBox Margin="5,0,0,0" x:Name="cbPriorityPicker" SelectedItem="{Binding PriorityPicker}" ItemsSource="{Binding Priorities}" Width="136"/>
+                </StackPanel>
 
-                <DataGrid Grid.Row="2" ItemsSource="{Binding Courses}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10">
+                <DataGrid Grid.Row="2" ItemsSource="{Binding Courses}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10,10,10,10">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
-                        <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
+                        <DataGridTextColumn Header="Language" Binding="{Binding LanguageName}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="60" />
                         <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="60" />
-                        <DataGridTextColumn Header="Tutor" Binding="{Binding TutorFullName}" Width="150" />
-
                         <DataGridTextColumn Header="Starts" Width="*">
                             <DataGridTextColumn.Binding>
                                 <Binding Path="Start" StringFormat="{}{0:MM/dd/yyyy HH:mm}" />
@@ -57,18 +60,18 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTemplateColumn Width="90">
+                        <DataGridTemplateColumn Width="130">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Apply"
+                                    <Button Content="Send emails"
                                             FontSize="14"
                                             Foreground="White"
                                             Background="{StaticResource BlueBtnColor}"
                                             Height="25"
-                                            Width="80"
+                                            Width="110"
                                             BorderThickness="0"
                                             Margin="2"
-                                            Command="{Binding DataContext.ApplyCourseCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            Command="{Binding DataContext.SendCongratulationsEmailCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                             CommandParameter="{Binding Id}">
                                         <Button.Template>
                                             <ControlTemplate TargetType="{x:Type Button}">
