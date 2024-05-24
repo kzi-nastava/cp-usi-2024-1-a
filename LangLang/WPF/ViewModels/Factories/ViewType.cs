@@ -21,5 +21,6 @@ public enum ViewType
     Notifications,
     TutorTable,
     RateTutor,
-    FinishedCourseForDirector
+    FinishedCourseForDirector,
+    Reports
 }

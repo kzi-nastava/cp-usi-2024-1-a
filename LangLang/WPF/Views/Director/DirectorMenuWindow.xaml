@@ -12,6 +12,8 @@
         xmlns:courseView="clr-namespace:LangLang.WPF.Views.Tutor.Course"
         xmlns:finishedCourse="clr-namespace:LangLang.WPF.ViewModels.Director"
         xmlns:finishedCourseView="clr-namespace:LangLang.WPF.Views.Director"
+        xmlns:reportView="clr-namespace:LangLang.WPF.Views.Director"
+        xmlns:report="clr-namespace:LangLang.WPF.ViewModels.Director"
         mc:Ignorable="d"
         Title="DirectorWindow" Height="770" Width="1030" ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
@@ -29,6 +31,9 @@
             <DataTemplate DataType="{x:Type finishedCourse:FinishedCourseOverviewForDirectorViewModel}">
                 <finishedCourseView:FinishedCourseOverviewView></finishedCourseView:FinishedCourseOverviewView>
             </DataTemplate>
+        <DataTemplate DataType="{x:Type report:ReportViewModel}">
+            <reportView:ReportsView></reportView:ReportsView>
+        </DataTemplate>
     </mvvm:NavigableWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -79,7 +84,7 @@
 
                 <Button Content = "Reports" 
                     Command = "{Binding NavCommand}" 
-                    CommandParameter = "finishedCourses" 
+                    CommandParameter = "reports" 
                     Grid.Row = "5" 
                     Margin="20,10,20,10"
                  />

@@ -38,6 +38,7 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddScoped<FinishedCourseOverviewForDirectorViewModel>();
             services.AddTransient<TutorOverviewViewModel>();
             services.AddTransient<RateTutorViewModel>();
+            services.AddScoped<ReportViewModel>();
             
             services.AddScoped<CreateViewModel<LoginViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<LoginViewModel>
@@ -70,18 +71,23 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddScoped<CreateViewModel<StudentAccountViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<StudentAccountViewModel>
             );
+
             services.AddScoped<CreateViewModel<ActiveCourseViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<ActiveCourseViewModel>
             );
+
             services.AddScoped<CreateViewModel<UpcomingCourseViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<UpcomingCourseViewModel>
             );
+
             services.AddScoped<CreateViewModel<FinishedCourseViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<FinishedCourseViewModel>
             );
+
             services.AddScoped<CreateViewModel<ActiveExamViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<ActiveExamViewModel>
             );
+
             services.AddScoped<CreateViewModel<UpcomingExamViewModel>>(
                 servicesProvider => servicesProvider.GetRequiredService<UpcomingExamViewModel>
             );
@@ -112,6 +118,10 @@ public static class AddViewModelsHostBuilderExtensions
 
             services.AddScoped<CreateViewModel<ExamOverviewForDirectorViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<ExamOverviewForDirectorViewModel>
+            );
+
+            services.AddScoped<CreateViewModel<ReportViewModel>>(
+                serviceProvider => serviceProvider.GetRequiredService<ReportViewModel>
             );
         });
         

@@ -3,8 +3,6 @@ using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.Utility.Navigation;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
-using LangLang.WPF.ViewModels.Tutor.Course;
-using LangLang.WPF.ViewModels.Tutor.Exam;
 using System;
 
 namespace LangLang.WPF.ViewModels.Director
@@ -25,6 +23,7 @@ namespace LangLang.WPF.ViewModels.Director
         private CourseOverviewForDirectorViewModel? courseOverviewViewModel;
         private ExamOverviewForDirectorViewModel? examOverviewViewModel;
         private FinishedCourseOverviewForDirectorViewModel? finishedCourseOverviewViewModel;
+        private ReportViewModel? reportViewModel;
         private TutorOverviewViewModel TutorOverviewViewModel
         {
             get
@@ -74,6 +73,19 @@ namespace LangLang.WPF.ViewModels.Director
             }
         }
 
+        private ReportViewModel ReportViewModel
+        {
+            get
+            {
+                if (reportViewModel == null)
+                {
+                    reportViewModel = (ReportViewModel)_viewModelFactory.CreateViewModel(ViewType.Reports);
+                }
+
+                return reportViewModel;
+            }
+        }
+
         public ViewModelBase CurrentViewModel
         {
             get => currentViewModel;
@@ -107,6 +119,7 @@ namespace LangLang.WPF.ViewModels.Director
                 "exams" => ExamOverviewViewModel,
                 "tutors" => TutorOverviewViewModel,
                 "finishedCourses" => FinishedCourseOverviewViewModel,
+                "reports" => ReportViewModel,
                 _ => CurrentViewModel
             };
         }
