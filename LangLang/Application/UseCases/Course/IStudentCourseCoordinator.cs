@@ -25,4 +25,5 @@ public interface IStudentCourseCoordinator
     public void DenyDropRequest(Domain.Model.DropRequest dropRequest);
     public bool CanDropCourse(string courseId);
     public List<CourseAttendance> GetGradedAttendancesForLastYear();
+    public void RemoveCoursesOfTutor(Tutor tutor);
 }

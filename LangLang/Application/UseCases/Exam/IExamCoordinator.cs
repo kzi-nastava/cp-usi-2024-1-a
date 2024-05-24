@@ -22,4 +22,5 @@ public interface IExamCoordinator
     public void ConfirmExam(Domain.Model.Exam exam);
     public void GenerateAttendance(string examId);
     List<ExamAttendance> GetGradedAttendancesForLastYear();
+    public void DeleteExamsByTutor(Tutor tutor);
 }

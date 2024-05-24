@@ -70,7 +70,16 @@
                       AutoGenerateColumns="False"
                       SelectionChanged="dgCourses_SelectionChanged"
                       >
-                <DataGrid.Columns >
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasTutor}" Value="False">
+                                    <Setter Property="Background" Value="LightCoral"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns >
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
                     <DataGridTextColumn Header="Language" Binding="{Binding LanguageName}"/>
                     <DataGridTextColumn Header="LanguageLvl" Binding="{Binding Level}"/>
@@ -123,9 +132,29 @@
                 <TextBox Margin="5,0,0,0" Name="tbStudentsNum" IsEnabled="False" Text="{Binding NumStudents, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label>State:</Label>
                 <ComboBox Margin="5,0,0,0" Name="cbState" SelectedItem="{Binding State}" ItemsSource="{Binding States, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Margin="15,45,5,0" Padding="2,5,2,5" Name="btnViewInfo" Content="View Info" Command="{Binding OpenCourseInfoCommand}"></Button>
-
-
+                
+                <Button Margin="15,45,5,0" Padding="2,5,2,5" Name="btnPickTutor" Content="Select tutor" Command="{Binding SelectTutorCommand}">
+                    <Button.Visibility>
+                        <Binding Path="IsSelectTutorButtonVisible">
+                            <Binding.Converter>
+                                <BooleanToVisibilityConverter />
+                            </Binding.Converter>
+                        </Binding>
+                    </Button.Visibility>
+                </Button>
+                
+                <Button Margin="15,45,5,0" Padding="2,5,2,5" Name="btnViewInfo" Content="View Info" Command="{Binding OpenCourseInfoCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelectTutorButtonVisible, ElementName=button1}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Margin="5" Content="Save" Width="70" Command="{Binding AddCourseCommand}" />

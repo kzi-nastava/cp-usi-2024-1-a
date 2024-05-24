@@ -12,8 +12,9 @@ public class CourseTutorSelectionDto
     public Dictionary<WorkDay, Tuple<TimeOnly, int>> Schedule { get; }
     public List<WorkDay> ScheduleDays { get; }
     public DateTime? Start { get; }
+    public Course? ExceptionCourse { get; }
 
-    public CourseTutorSelectionDto(Language language, LanguageLevel languageLevel, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, List<WorkDay> scheduleDays, DateTime? start)
+    public CourseTutorSelectionDto(Language language, LanguageLevel languageLevel, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, List<WorkDay> scheduleDays, DateTime? start, Course? exceptionCourse = null)
     {
         Language = language;
         LanguageLevel = languageLevel;
@@ -21,5 +22,6 @@ public class CourseTutorSelectionDto
         Schedule = schedule;
         ScheduleDays = scheduleDays;
         Start = start;
+        ExceptionCourse = exceptionCourse;
     }
 }

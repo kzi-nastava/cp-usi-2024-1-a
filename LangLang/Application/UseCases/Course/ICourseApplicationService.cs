@@ -19,5 +19,5 @@ public interface ICourseApplicationService
     public void PauseStudentApplications(string studentId);
     public void DeleteApplication(string applicationId);
     public void CancelApplication(string applicationId);
-
+    public void RemoveCourseApplications(string courseId);
 }

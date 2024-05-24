@@ -18,8 +18,9 @@ namespace LangLang.Application.UseCases.User
         private readonly IExamCoordinator _examCoordinator;
         private readonly IPersonProfileMappingRepository _personProfileMappingRepository;
         private readonly IUserProfileMapper _userProfileMapper;
+        private readonly ICourseService _courseService;
 
-        public AccountService(IProfileService profileService, IStudentService studentService, ITutorService tutorService, IStudentCourseCoordinator studentCourseCoordinator, IPersonProfileMappingRepository personProfileMappingRepository, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator)
+        public AccountService(IProfileService profileService, IStudentService studentService, ITutorService tutorService, IStudentCourseCoordinator studentCourseCoordinator, IPersonProfileMappingRepository personProfileMappingRepository, IUserProfileMapper userProfileMapper, IExamCoordinator examCoordinator, ICourseService courseService)
         {
             _profileService = profileService;
             _studentService = studentService;
@@ -28,6 +29,7 @@ namespace LangLang.Application.UseCases.User
             _personProfileMappingRepository = personProfileMappingRepository;
             _userProfileMapper = userProfileMapper;
             _examCoordinator = examCoordinator;
+            _courseService = courseService;
         }
 
         public void UpdateStudent(string studentId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
@@ -55,8 +57,11 @@ namespace LangLang.Application.UseCases.User
             _examCoordinator.RemoveAttendee(student.Id);
             _studentService.DeleteAccount(student);
             var profile = _userProfileMapper.GetProfile(new UserDto(student, UserType.Student));
-            if(profile != null)
+            if (profile != null)
+            {
                 _profileService.DeleteProfile(profile.Email);
+                _personProfileMappingRepository.Delete(profile.Email);
+            }
         }
 
         public void DeactivateStudentAccount(Student student)
@@ -126,10 +131,16 @@ namespace LangLang.Application.UseCases.User
 
         public void DeleteTutor(Tutor tutor)
         {
+            _examCoordinator.DeleteExamsByTutor(tutor);
+            _studentCourseCoordinator.RemoveCoursesOfTutor(tutor);
+            _courseService.RemoveTutorFromAllCourses(tutor);
             _tutorService.DeleteAccount(tutor);
             var profile = _userProfileMapper.GetProfile(new UserDto(tutor, UserType.Tutor));
             if (profile != null)
+            {
                 _profileService.DeleteProfile(profile.Email);
+                _personProfileMappingRepository.Delete(profile.Email);
+            }
         }
     }
 }
