@@ -97,6 +97,12 @@ namespace LangLang.Domain.Model
             return State == CourseState.FinishedGraded || State == CourseState.FinishedNotGraded;
         }
 
+        public bool IsFinishedAndGraded()
+        {
+            return State == CourseState.FinishedGraded;
+        }
+
+
         public bool CanBeModified()
         {
             return State == CourseState.NotStarted;

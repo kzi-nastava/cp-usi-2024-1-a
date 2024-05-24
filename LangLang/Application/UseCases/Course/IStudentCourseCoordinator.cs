@@ -9,6 +9,7 @@ public interface IStudentCourseCoordinator
     public void Accept(string studentId, string courseId);
     public List<Domain.Model.Course> GetAvailableCourses(string studentId);
     public Domain.Model.Course? GetStudentAttendingCourse(string studentId);
+    public List<Domain.Model.Course> GetFinishedAndGradedCourses();
     public List<Domain.Model.Course> GetFinishedCoursesStudent(string studentId);
     public List<Domain.Model.Course> GetAppliedCoursesStudent(string studentId);
     public List<Student> GetAppliedStudentsCourse(string courseId);

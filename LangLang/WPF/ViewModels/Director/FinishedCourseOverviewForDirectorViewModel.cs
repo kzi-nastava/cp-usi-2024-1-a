@@ -28,7 +28,7 @@ public class FinishedCourseOverviewForDirectorViewModel : ViewModelBase
 
     public void LoadCourses()
     {
-        var finishedCourses = _courseCoordinator.GetFinishedCourses();
+        var finishedCourses = _courseCoordinator.GetFinishedAndGradedCourses();
         foreach (Course course in finishedCourses)
         {
             Courses.Add(new CourseViewModel(course));

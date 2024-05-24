@@ -19,7 +19,19 @@ namespace LangLang.Application.UseCases.Course
             _tutorService = tutorService;
             _courseAttendanceRepository = courseAttendanceRepository;
         }
-
+        public CourseAttendance? GetAttendance(string studentId, string courseId)
+        {
+            List<CourseAttendance> attendances = _courseAttendanceRepository.GetForStudent(studentId);
+            foreach (CourseAttendance attendance in attendances)
+            {
+                Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
+                if (course.Id == courseId)
+                {
+                    return attendance;
+                }
+            }
+            return null;
+        }
         public List<CourseAttendance> GetAllStudentAttendances(string studentId)
         {
             return _courseAttendanceRepository.GetForStudent(studentId);
@@ -52,6 +64,19 @@ namespace LangLang.Application.UseCases.Course
             {
                 Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
                 if (course.IsFinished())
+                    finishedAttendances.Add(attendance);
+            }
+            return finishedAttendances;
+        }
+
+        public List<CourseAttendance> GetFinishedAndGradedCourses()
+        {
+            List<CourseAttendance> allAttendances = _courseAttendanceRepository.GetAll();
+            List<CourseAttendance> finishedAttendances = new();
+            foreach (CourseAttendance attendance in allAttendances)
+            {
+                Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
+                if (course.IsFinishedAndGraded())
                     finishedAttendances.Add(attendance);
             }
             return finishedAttendances;
@@ -122,20 +147,6 @@ namespace LangLang.Application.UseCases.Course
                 return true;
             }
             return false;
-        }
-
-        public CourseAttendance? GetAttendance(string studentId, string courseId)
-        {
-            List<CourseAttendance> attendances = _courseAttendanceRepository.GetForStudent(studentId);
-            foreach (CourseAttendance attendance in attendances)
-            {
-                Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.Id == courseId)
-                {
-                    return attendance;
-                }
-            }
-            return null;
         }
 
     }

@@ -192,6 +192,16 @@ namespace LangLang.Application.UseCases.Course
             if (courseAttendance == null) return null;
             return _courseService.GetCourseById(courseAttendance.CourseId);
         }
+        public List<Domain.Model.Course> GetFinishedAndGradedCourses()
+        {
+            List<CourseAttendance> attendances = _courseAttendanceService.GetFinishedAndGradedCourses();
+            List<Domain.Model.Course> finishedCourses = new();
+            foreach (CourseAttendance attendance in attendances)
+            {
+                finishedCourses.Add(_courseService.GetCourseById(attendance.CourseId)!);
+            }
+            return finishedCourses;
+        }
 
         public List<Domain.Model.Course> GetFinishedCourses()
         {

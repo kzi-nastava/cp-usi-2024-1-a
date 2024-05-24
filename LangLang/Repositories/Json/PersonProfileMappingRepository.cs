@@ -16,7 +16,20 @@ public class PersonProfileMappingRepository : Repository<PersonProfileMapping>, 
     {
         return mapping.Email;
     }
-    
+
+    public string GetEmailByUserId(string userId)
+    {
+        var profiles = GetMap();
+        foreach (PersonProfileMapping profile in profiles.Values)
+        {
+            if (profile.UserId == userId)
+            {
+                return profile.Email;
+            }
+        }
+        return null;
+    }
+
     public Dictionary<string, PersonProfileMapping> GetMap()
     {
         return new Dictionary<string, PersonProfileMapping>(Load());
