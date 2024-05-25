@@ -16,6 +16,9 @@ public interface IExamService
     public Domain.Model.Exam AddExam(ExamDto examDto);
 
     public Domain.Model.Exam UpdateExam(ExamDto examDto);
+
+    public Domain.Model.Exam? SetTutor(Domain.Model.Exam exam, Tutor tutor);
+
     public void UpdateExam(Domain.Model.Exam exam);
 
     public void DeleteExam(string id);

@@ -24,6 +24,9 @@ public class ExamOverviewViewModel : ViewModelBase
     private readonly NavigationStore _navigationStore;
     private readonly IPopupNavigationService _popupNavigationService;
     private readonly CurrentExamStore _currentExamStore;
+    public bool IsSelectTutorButtonVisible { get; }
+
+    public RelayCommand SelectTutorCommand { get; }
     public RelayCommand OpenExamInfoCommand { get; }
     public RelayCommand AddCommand { get; set; }
     public RelayCommand SelectedExamChangedCommand { get; set; }
@@ -218,6 +221,7 @@ public class ExamOverviewViewModel : ViewModelBase
         DeleteCommand = new RelayCommand(_ => DeleteExam(), _ => CanDeleteExam());
         ClearFiltersCommand = new RelayCommand(_ => ClearFilters(), _ => CanClearFilters());
         OpenExamInfoCommand = new RelayCommand(OpenExamInfo, _ => SelectedExam != null);
+        IsSelectTutorButtonVisible = false;
     }
 
     private int GetClassroomNumber()

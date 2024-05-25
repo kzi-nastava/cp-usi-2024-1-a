@@ -4,6 +4,7 @@ using System.Linq;
 using LangLang.Application.DTO;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
+using LangLang.Repositories.Json;
 
 namespace LangLang.Application.UseCases.Exam;
 
@@ -101,6 +102,11 @@ public class ExamService : IExamService
         }
 
         return exam;
+    }
+    public Domain.Model.Exam? SetTutor(Domain.Model.Exam exam, Tutor tutor)
+    {
+        exam.TutorId = tutor.Id;
+        return _examRepository.Update(exam.Id, exam);
     }
 
     public void UpdateExam(Domain.Model.Exam exam)
