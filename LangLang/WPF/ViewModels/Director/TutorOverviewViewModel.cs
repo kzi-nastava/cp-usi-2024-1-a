@@ -23,7 +23,6 @@ namespace LangLang.WPF.ViewModels.Director
         private readonly ILanguageService _languageService;
         private readonly IAccountService _accountService;
         private readonly IUserValidator _userValidator;
-        private readonly INavigationService _navigationService;
         private readonly IUserProfileMapper _userProfileMapper;
         public RelayCommand AddKnownLangaugeCommand { get; }
         public RelayCommand ChangeLanguageCommand { get; }
@@ -189,10 +188,9 @@ namespace LangLang.WPF.ViewModels.Director
 
         public NavigationStore NavigationStore { get; }
 
-        public TutorOverviewViewModel(NavigationStore navigationStore, INavigationService navigationService, IAccountService accountService, ITutorService tutorService, ILanguageService languageService, IUserValidator userValidator, IUserProfileMapper userProfileMapper)
+        public TutorOverviewViewModel(NavigationStore navigationStore, IAccountService accountService, ITutorService tutorService, ILanguageService languageService, IUserValidator userValidator, IUserProfileMapper userProfileMapper)
         {
             NavigationStore = navigationStore;
-            _navigationService = navigationService;
             _accountService = accountService;
             _tutorService = tutorService;
             _languageService = languageService;
