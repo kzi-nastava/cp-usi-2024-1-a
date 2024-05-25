@@ -25,7 +25,6 @@ namespace LangLang.WPF.ViewModels.Director
         private readonly IUserValidator _userValidator;
         private readonly INavigationService _navigationService;
         private readonly IUserProfileMapper _userProfileMapper;
-        public RelayCommand GoBackCommand { get; }
         public RelayCommand AddKnownLangaugeCommand { get; }
         public RelayCommand ChangeLanguageCommand { get; }
         public RelayCommand ChangeLevelCommand { get; }
@@ -210,7 +209,6 @@ namespace LangLang.WPF.ViewModels.Director
             else
                 throw new Exception("No languages found");
 
-            GoBackCommand = new RelayCommand(execute => GoBack());
             AddKnownLangaugeCommand = new RelayCommand(execute => AddKnownLanguage());
             ChangeLanguageCommand = new RelayCommand(execute => ChangeLanguage(execute as Tuple<int, string>));
             ChangeLevelCommand = new RelayCommand(execute => ChangeLevel(execute as Tuple<int, LanguageLevel>));
@@ -226,11 +224,6 @@ namespace LangLang.WPF.ViewModels.Director
             LoadLanguages();
             LoadLanguageLevels();
             LoadGenders();
-        }
-
-        private void GoBack()
-        {
-            _navigationService.Navigate(Factories.ViewType.Director);
         }
 
         private void ClearFilters()
