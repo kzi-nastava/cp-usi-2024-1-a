@@ -77,5 +77,40 @@ namespace LangLang.Domain.Model
             else
                 RatingCounts[rating]++;
         }
+
+        public bool KnowsLanguage(Language language, LanguageLevel languageLevel)
+        {
+            foreach (var knownLanguage in KnownLanguages)
+            {
+                if(!Equals(knownLanguage.Item1, language))
+                    continue;
+                if (knownLanguage.Item2 < languageLevel)
+                    return false;
+                return true;
+            }
+            return false;
+        }
+
+        public double GetScore(Language language, LanguageLevel languageLevel)
+        {
+            var knownLanguageLevelIdx = -1;
+            for (int i = 0; i < KnownLanguages.Count; i++)
+            {
+                if (Equals(KnownLanguages[i].Item1, language))
+                {
+                    knownLanguageLevelIdx = i;
+                    break;
+                }
+            }
+
+            int languageLevelScore = knownLanguageLevelIdx == -1
+                ? -(int)languageLevel
+                : KnownLanguages[knownLanguageLevelIdx].Item2 - languageLevel;
+            
+            return GetAverageRating() == 0 ? 1000 : 0
+                + 10 * languageLevelScore
+                + 100 * GetAverageRating()
+                ;
+        }
     }
 }

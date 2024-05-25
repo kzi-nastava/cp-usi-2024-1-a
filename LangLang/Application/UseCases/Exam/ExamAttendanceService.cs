@@ -142,5 +142,14 @@ namespace LangLang.Application.UseCases.Exam
             }
             return true;
         }
+
+        public void DeleteAttendancesForExam(string examId)
+        {
+            var attendances = GetAttendancesForExam(examId);
+            foreach (var attendance in attendances)
+            {
+                _examAttendanceRepository.Delete(attendance.Id);
+            }
+        }
     }
 }

@@ -22,8 +22,8 @@ namespace LangLang.WPF.ViewModels.Director
         private ViewModelBase currentViewModel;
 
         private TutorOverviewViewModel? tutorOverviewViewModel;
-        private CourseOverviewViewModel? courseOverviewViewModel;
-        private ExamOverviewViewModel? examOverviewViewModel;
+        private CourseOverviewForDirectorViewModel? courseOverviewViewModel;
+        private ExamOverviewForDirectorViewModel? examOverviewViewModel;
         private TutorOverviewViewModel TutorOverviewViewModel
         {
             get
@@ -36,25 +36,25 @@ namespace LangLang.WPF.ViewModels.Director
                 return tutorOverviewViewModel;
             }
         }
-        private ExamOverviewViewModel ExamOverviewViewModel
+        private ExamOverviewForDirectorViewModel ExamOverviewViewModel
         {
             get
             {
                 if (examOverviewViewModel == null)
                 {
-                    examOverviewViewModel = (ExamOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.Exam);
+                    examOverviewViewModel = (ExamOverviewForDirectorViewModel)_viewModelFactory.CreateViewModel(ViewType.ExamDirector);
                 }
 
                 return examOverviewViewModel;
             }
         }
-        private CourseOverviewViewModel CourseOverviewViewModel
+        private CourseOverviewForDirectorViewModel CourseOverviewViewModel
         {
             get
             {
                 if (courseOverviewViewModel == null)
                 {
-                    courseOverviewViewModel = (CourseOverviewViewModel)_viewModelFactory.CreateViewModel(ViewType.Course);
+                    courseOverviewViewModel = (CourseOverviewForDirectorViewModel)_viewModelFactory.CreateViewModel(ViewType.CourseDirector);
                 }
 
                 return courseOverviewViewModel;
@@ -77,7 +77,7 @@ namespace LangLang.WPF.ViewModels.Director
             NavigationStore = navigationStore;
             NavCommand = new RelayCommand(execute => OnNav(execute as string));
             _viewModelFactory = viewModelFactory;
-            CurrentViewModel = TutorOverviewViewModel;
+            currentViewModel = TutorOverviewViewModel;
             //OpenTutorTableCommand = new RelayCommand(execute => OpenTutorTable());
             LogoutCommand = new RelayCommand(execute => Logout());
             _loggedInUser = (Domain.Model.Director?)authenticationStore.CurrentUser.Person ??
@@ -90,9 +90,9 @@ namespace LangLang.WPF.ViewModels.Director
         {
             CurrentViewModel = destination switch
             {
-                //"courses" => CourseOverviewViewModel,
-                //"exams" => ExamOverviewViewModel,
-                "tutor" => TutorOverviewViewModel,
+                "courses" => CourseOverviewViewModel,
+                "exams" => ExamOverviewViewModel,
+                "tutors" => TutorOverviewViewModel,
                 _ => CurrentViewModel
             };
         }

@@ -4,21 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="clr-namespace:LangLang.WPF.MVVM"
-        xmlns:exam="clr-namespace:LangLang.WPF.ViewModels.Tutor.Exam"
+        xmlns:exam="clr-namespace:LangLang.WPF.ViewModels.Director"
         xmlns:examView="clr-namespace:LangLang.WPF.Views.Tutor.Exam"
         xmlns:tutorView="clr-namespace:LangLang.WPF.Views.Director"
         xmlns:tutor ="clr-namespace:LangLang.WPF.ViewModels.Director"
-        xmlns:course="clr-namespace:LangLang.WPF.ViewModels.Tutor.Course"
+        xmlns:course="clr-namespace:LangLang.WPF.ViewModels.Director"
         xmlns:courseView="clr-namespace:LangLang.WPF.Views.Tutor.Course"
         mc:Ignorable="d"
         Title="DirectorWindow" Height="770" Width="1030" ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
                       >
         <mvvm:NavigableWindow.Resources>
-            <DataTemplate DataType="{x:Type exam:ExamOverviewViewModel}">
+            <DataTemplate DataType="{x:Type exam:ExamOverviewForDirectorViewModel}">
                 <examView:ExamOverviewView></examView:ExamOverviewView>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type course:CourseOverviewViewModel}">
+            <DataTemplate DataType="{x:Type course:CourseOverviewForDirectorViewModel}">
                 <courseView:CourseOverviewView></courseView:CourseOverviewView>
             </DataTemplate>
             <DataTemplate DataType="{x:Type tutor:TutorOverviewViewModel}">

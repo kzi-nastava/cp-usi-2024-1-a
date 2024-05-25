@@ -116,7 +116,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
         private void SelectStudent()
         {
             if (SelectedStudent == null) return;
-            Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent.Student, UserType.Student));
+            Profile? profile = _userProfileMapper.GetProfile(new UserDto(selectedStudent!.Student, UserType.Student));
             if (profile == null) return;
             Email = profile.Email;
 
@@ -187,7 +187,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam
             }
 
             _examCoordinator.ConfirmExam(_currentExamStore.CurrentExam);
-            _closepopupNavigationService.Navigate(Factories.ViewType.Exam);
+            _closepopupNavigationService.Navigate(Factories.ViewType.ExamTutor);
         }
     }
 }

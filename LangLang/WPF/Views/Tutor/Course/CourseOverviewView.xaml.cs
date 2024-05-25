@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using LangLang.Domain.Model;
-using LangLang.WPF.ViewModels.Common;
+using LangLang.WPF.ViewModels.Director;
 using LangLang.WPF.ViewModels.Tutor.Course;
 
 namespace LangLang.WPF.Views.Tutor.Course
@@ -14,22 +14,23 @@ namespace LangLang.WPF.Views.Tutor.Course
         }
         private void cbSchedule_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var viewModel = DataContext as CourseOverviewViewModel;
-            if (viewModel != null)
+            var selectedItems = new ObservableCollection<WorkDay>();
+            foreach (var item in cbSchedule.SelectedItems)
             {
-                var selectedItems = new ObservableCollection<WorkDay>();
-                foreach (var item in cbSchedule.SelectedItems)
-                {
-                    selectedItems.Add((WorkDay)item);
-                }
+                selectedItems.Add((WorkDay)item);
+            }
+            if (DataContext is CourseOverviewViewModel viewModel)
+            {
                 viewModel.ScheduleDays = selectedItems;
+            } else if (DataContext is CourseOverviewForDirectorViewModel viewModel2)
+            {
+                viewModel2.ScheduleDays = selectedItems;
             }
         }
 
         private void dgCourses_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var viewModel = DataContext as CourseOverviewViewModel;
-            if(viewModel != null)
+            if(DataContext is CourseOverviewViewModel || DataContext is CourseOverviewForDirectorViewModel)
             {
                 cbSchedule.SelectedItems.Clear();
                 cbMonday.SelectedIndex = -1;

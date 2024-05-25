@@ -17,5 +17,6 @@ public interface IExamAttendanceService
     public ExamAttendance? GetAttendance(string studentId, string examId);
     public void AddPassedLanguagesToStudents(Domain.Model.Exam exam);
     public bool AvailableForApplication(Domain.Model.Exam exam, Student student);
+    public void DeleteAttendancesForExam(string examId);
 }
 

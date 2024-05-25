@@ -18,6 +18,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         public int MaxStudents { get;set; }
         public int NumStudents { get; set; }
         public CourseState State { get; set; }
+        public bool HasTutor { get; set; }
 
         public CourseViewModel(Domain.Model.Course course): this(
             course.Id,
@@ -30,12 +31,13 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             course.Online,
             course.MaxStudents,
             course.NumStudents,
-            course.State
+            course.State,
+            course.TutorId != null
             )
         {
         }
 
-        public CourseViewModel(string id, string name, string languageName, string level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int maxStudents, int numStudents, CourseState state)
+        public CourseViewModel(string id, string name, string languageName, string level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int maxStudents, int numStudents, CourseState state, bool hasTutor)
         {
             Id = id;
             Name = name;
@@ -48,6 +50,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             MaxStudents = maxStudents;
             NumStudents = numStudents;
             State = state;
+            HasTutor = hasTutor;
         }
 
     }

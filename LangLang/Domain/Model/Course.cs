@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace LangLang.Domain.Model
 {
@@ -26,6 +25,8 @@ namespace LangLang.Domain.Model
 
         public string? TutorId { get; set; }
         
+        public bool IsCreatedByTutor { get; set; }
+        
         public Course()
         {
             Id = "0";
@@ -39,8 +40,9 @@ namespace LangLang.Domain.Model
             MaxStudents = 0;
             NumStudents = 0;
             State = CourseState.Canceled;
+            IsCreatedByTutor = true;
         }
-        public Course(string id, string tutorId, string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
+        public Course(string id, string tutorId, string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0, bool isCreatedByTutor = true)
         {
             Id = id;
             TutorId = tutorId;
@@ -54,9 +56,10 @@ namespace LangLang.Domain.Model
             MaxStudents = maxStudents;
             NumStudents = numStudents;
             State = state;
+            IsCreatedByTutor = isCreatedByTutor;
         }
         // Constructor without id when creating a new course
-        public Course(string tutorId, string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0)
+        public Course(string tutorId, string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0, bool isCreatedByTutor = true)
         { 
             Id = "0";
             TutorId = tutorId;
@@ -70,6 +73,7 @@ namespace LangLang.Domain.Model
             MaxStudents = maxStudents;
             NumStudents = numStudents;
             State = state;
+            IsCreatedByTutor = isCreatedByTutor;
         }
 
         public void AddAttendance()
