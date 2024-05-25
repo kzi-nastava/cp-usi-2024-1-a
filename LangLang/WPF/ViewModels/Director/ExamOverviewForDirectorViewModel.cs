@@ -7,6 +7,8 @@ using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Common;
 using LangLang.Application.UseCases.Exam;
+using LangLang.Application.UseCases.TutorSelection;
+using LangLang.Application.UseCases.User;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Application.Utility.Timetable;
 using LangLang.Domain;
@@ -25,6 +27,11 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
     private readonly IPopupNavigationService _popupNavigationService;
     private readonly CurrentExamStore _currentExamStore;
     private readonly ILanguageService _languageService;
+    private readonly IAutoExamTutorSelector _autoExamSelector;
+    private readonly ITutorService _tutorService;
+    public bool IsSelectTutorButtonVisible { get; }
+
+    public RelayCommand SelectTutorCommand { get; }
     public RelayCommand OpenExamInfoCommand { get; }
     public RelayCommand AddCommand { get; set; }
     public RelayCommand SelectedExamChangedCommand { get; set; }
@@ -183,9 +190,12 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
 
     public ExamOverviewForDirectorViewModel(IExamService examService,
         ITimetableService timetableService, CurrentExamStore currentExamStore,
-        IPopupNavigationService popupNavigationService, NavigationStore navigationStore, ILanguageService languageService)
+        IPopupNavigationService popupNavigationService, NavigationStore navigationStore,
+        ILanguageService languageService, IAutoExamTutorSelector autoExamTutorSelector, ITutorService tutorService)
     {
         _examService = examService;
+        _autoExamSelector = autoExamTutorSelector;
+        _tutorService = tutorService;
         _timetableService = timetableService;
         _currentExamStore = currentExamStore;
         _popupNavigationService = popupNavigationService;
@@ -217,6 +227,45 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         DeleteCommand = new RelayCommand(_ => DeleteExam(), _ => CanDeleteExam());
         ClearFiltersCommand = new RelayCommand(_ => ClearFilters(), _ => CanClearFilters());
         OpenExamInfoCommand = new RelayCommand(OpenExamInfo, _ => SelectedExam != null);
+        SelectTutorCommand = new RelayCommand(SelectTutor, _ => CanSelectTutor());
+        IsSelectTutorButtonVisible = true;
+    }
+
+    private void SelectTutor(object? obj)
+    {
+        if (SelectedExam == null) return;
+        var exam = _examService.GetExamById(SelectedExam.Id);
+        if (exam == null)
+        {
+            MessageBox.Show("Unknown error occurred!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        var tutor = _autoExamSelector.Select(new ExamTutorSelectionDto(
+            exam.Language,
+            exam.LanguageLevel,
+            exam.Date,
+            TimeOnly.FromDateTime(exam.Time),
+            exam
+        ));
+        if(tutor == null)
+        {
+            MessageBox.Show("No tutor available for course!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        var newExam = _examService.SetTutor(exam, tutor);
+        if (newExam == null)
+        {
+            MessageBox.Show("Error setting the tutor for exam!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        Exams[Exams.IndexOf(SelectedExam!)] = new ExamViewModel(newExam);
+
+        MessageBox.Show("The tutor is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private bool CanSelectTutor()
+    {
+        return SelectedExam is { HasTutor: false };
     }
 
     private int GetClassroomNumber()
@@ -224,8 +273,13 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         DateOnly? selectedDate = ExamDate != null ? DateOnly.FromDateTime(ExamDate!.Value) : null;
         if (selectedDate != null && ExamTime != null)
         {
+            var tutor = GetTutor();
+            if (tutor == null) {
+                return -1;        
+            }
+      
             var classrooms = _timetableService.GetAvailableClassrooms(selectedDate.Value, ExamTime.Value,
-                Constants.ExamDuration, GetTutor());
+                Constants.ExamDuration, tutor);
             if (classrooms.Count > 0)
             {
                 return classrooms[0];
@@ -287,12 +341,13 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         int classroomNumber = GetClassroomNumber();
 
         var exam = _examService.GetExamById(SelectedExam!.Id);
+        var tutor = _tutorService.GetTutorById(exam?.TutorId ?? "");
         if (exam == null) return;
 
         try
         {
             exam = _examService.UpdateExam(new ExamDto(_selectedExam!.Id, Language, LanguageLevel, selectedDate,
-                ExamTime, classroomNumber, MaxStudents));
+                ExamTime, classroomNumber, MaxStudents, tutor));
             Exams[Exams.IndexOf(SelectedExam!)] = new ExamViewModel(exam);
             ResetFields();
         }
@@ -398,8 +453,29 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         return ConvertToExamViewModel(_examService.GetAllExams());
     }
 
-    private Domain.Model.Tutor GetTutor()
+    private Domain.Model.Tutor? GetTutor()
     {
-        throw new NotImplementedException();
+        if(SelectedExam != null && SelectedExam.HasTutor)
+        {
+            return GetOldTutor();
+            
+        }
+
+        var language = _languageService.GetLanguageById(Language!.Name);
+        if (language == null) return null;
+        return _autoExamSelector.Select(new ExamTutorSelectionDto(
+            language,
+            (LanguageLevel)LanguageLevel!,
+            DateOnly.FromDateTime((DateTime)ExamDate!),
+            (TimeOnly)ExamTime!
+        ));
+    }
+
+    private Domain.Model.Tutor? GetOldTutor()
+    {
+        var exam = _examService.GetExamById(SelectedExam!.Id);
+        if (exam == null) throw new ArgumentException("Exam couldn't be found!");
+
+        return _tutorService.GetTutorById(exam.TutorId!);
     }
 }

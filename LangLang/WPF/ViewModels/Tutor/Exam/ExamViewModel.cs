@@ -12,9 +12,10 @@ public class ExamViewModel
     public int MaxStudents { get; }
     public int NumStudents { get; }
     public string State { get; }
+    public bool HasTutor { get; set; }
 
     private ExamViewModel(string id, string languageName, string languageLevel, DateOnly date, TimeOnly time, int maxStudents,
-        int numStudents, string state)
+        int numStudents, string state, bool hasTutor)
     {
         Id = id;
         LanguageName = languageName;
@@ -24,6 +25,7 @@ public class ExamViewModel
         MaxStudents = maxStudents;
         NumStudents = numStudents;
         State = state;
+        HasTutor = hasTutor;
     }
 
     public ExamViewModel(Domain.Model.Exam exam) : this(
@@ -34,7 +36,8 @@ public class ExamViewModel
         exam.TimeOfDay,
         exam.MaxStudents,
         exam.NumStudents,
-        exam.ExamState.ToString()
+        exam.ExamState.ToString(),
+        exam.TutorId != null
     )
     {
     }
