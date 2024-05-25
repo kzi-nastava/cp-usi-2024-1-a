@@ -21,12 +21,9 @@ namespace LangLang.WPF.ViewModels.Director
     {
         private readonly ITutorService _tutorService;
         private readonly ILanguageService _languageService;
-        private readonly IRegisterService _registerService;
         private readonly IAccountService _accountService;
         private readonly IUserValidator _userValidator;
-        private readonly INavigationService _navigationService;
         private readonly IUserProfileMapper _userProfileMapper;
-        public RelayCommand GoBackCommand { get; }
         public RelayCommand AddKnownLangaugeCommand { get; }
         public RelayCommand ChangeLanguageCommand { get; }
         public RelayCommand ChangeLevelCommand { get; }
@@ -42,6 +39,10 @@ namespace LangLang.WPF.ViewModels.Director
         public bool changedLanguages;
         public bool changedEmailOrPassword;
         public bool selectingTutor;
+
+        public event Action? RemoveKnownLanguages;
+        public event KnownLanguageAddedHandler? KnownLanguageAdded;
+        public delegate void KnownLanguageAddedHandler(int languageIndex, int levelIndex, ObservableCollection<string?> languages, ObservableCollection<LanguageLevel> levels);
 
         private string name = "";
         public string Name
@@ -184,26 +185,12 @@ namespace LangLang.WPF.ViewModels.Director
                 OnPropertyChanged();
             }
         }
-        private TutorOverviewView? _window;
-        public TutorOverviewView Window
-        {
-            get => _window!;
-            set
-            {
-                if(_window == null)
-                {
-                    _window = value;
-                }
-            }
-        }
 
         public NavigationStore NavigationStore { get; }
 
-        public TutorOverviewViewModel(NavigationStore navigationStore, INavigationService navigationService, IRegisterService registerService, IAccountService accountService, ITutorService tutorService, ILanguageService languageService, IUserValidator userValidator, IUserProfileMapper userProfileMapper)
+        public TutorOverviewViewModel(NavigationStore navigationStore, IAccountService accountService, ITutorService tutorService, ILanguageService languageService, IUserValidator userValidator, IUserProfileMapper userProfileMapper)
         {
             NavigationStore = navigationStore;
-            _navigationService = navigationService;
-            _registerService = registerService;
             _accountService = accountService;
             _tutorService = tutorService;
             _languageService = languageService;
@@ -220,7 +207,6 @@ namespace LangLang.WPF.ViewModels.Director
             else
                 throw new Exception("No languages found");
 
-            GoBackCommand = new RelayCommand(execute => GoBack());
             AddKnownLangaugeCommand = new RelayCommand(execute => AddKnownLanguage());
             ChangeLanguageCommand = new RelayCommand(execute => ChangeLanguage(execute as Tuple<int, string>));
             ChangeLevelCommand = new RelayCommand(execute => ChangeLevel(execute as Tuple<int, LanguageLevel>));
@@ -236,11 +222,6 @@ namespace LangLang.WPF.ViewModels.Director
             LoadLanguages();
             LoadLanguageLevels();
             LoadGenders();
-        }
-
-        private void GoBack()
-        {
-            _navigationService.Navigate(Factories.ViewType.Director);
         }
 
         private void ClearFilters()
@@ -262,7 +243,7 @@ namespace LangLang.WPF.ViewModels.Director
                 languageIndex = Languages.IndexOf(value.Item1);
                 levelIndex = Levels.IndexOf(value.Item2);
             }
-            Window.AddKnownLanguage(languageIndex, levelIndex, Languages, Levels);
+            KnownLanguageAdded?.Invoke(languageIndex, levelIndex, Languages, Levels);
             if (value == null)
             {
                 changedLanguages = true;
@@ -303,7 +284,7 @@ namespace LangLang.WPF.ViewModels.Director
 
         private void SwitchKnownLanguages(Domain.Model.Tutor selectedItem)
         {
-            Window.RemoveKnownLanguages();
+            RemoveKnownLanguages?.Invoke();
             KnownLanguages.Clear();
             foreach (var tuple in selectedItem.KnownLanguages)
                 AddKnownLanguage(new Tuple<string, LanguageLevel>(tuple.Item1.Name, tuple.Item2));
@@ -427,7 +408,7 @@ namespace LangLang.WPF.ViewModels.Director
             selectedItem = null;
 
             selectingTutor = true;
-            Window.RemoveKnownLanguages(); 
+            RemoveKnownLanguages?.Invoke(); 
             KnownLanguages.Clear();
             selectingTutor = false;
         }

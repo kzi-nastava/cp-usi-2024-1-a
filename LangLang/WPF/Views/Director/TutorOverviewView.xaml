@@ -72,8 +72,6 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
-            <Button Grid.Column="0" Grid.Row="1" Width="70" Content="Go back" HorizontalAlignment="Left" Margin="5,5,0,5" Command="{Binding GoBackCommand}" Grid.ColumnSpan="2"/>
-
             <StackPanel Grid.Column="2" Grid.Row="0" >
                 <Grid>
                     <Grid.ColumnDefinitions>
