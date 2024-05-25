@@ -5,6 +5,7 @@ using LangLang.Application.UseCases.DropRequest;
 using LangLang.Application.UseCases.Exam;
 using LangLang.Application.UseCases.User;
 using LangLang.Application.UseCases.Report;
+using LangLang.Application.UseCases.TutorSelection;
 using LangLang.Application.Utility.Authentication;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Application.Utility.Notification;
@@ -58,6 +59,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IPointsBySkillReportService, PointsBySkillReportService>();
             services.AddSingleton<IPenaltyByCourseReportService, PenaltyByCourseReportService>();
             services.AddSingleton<IBestStudentsByCourseService, BestStudentsByCourseService>();
+            services.AddSingleton<IAutoCourseTutorSelector, AutoCourseTutorSelector>();
         });
 
         return host;

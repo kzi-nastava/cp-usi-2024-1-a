@@ -16,5 +16,6 @@ public interface ICourseAttendanceService
     public CourseAttendance? GetAttendance(string studentId, string courseId);
     public CourseAttendance? GradeStudent(string studentId, string CourseId, int knowledgeGrade, int activityGrade);
     void AddPenaltyPoint(string studentId, string courseId);
+    public void RemoveCourseAttendances(string courseId);
 }
 

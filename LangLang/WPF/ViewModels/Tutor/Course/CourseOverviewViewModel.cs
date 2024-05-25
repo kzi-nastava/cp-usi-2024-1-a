@@ -22,6 +22,9 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
         private readonly IPopupNavigationService _popupNavigationService;
         private readonly CurrentCourseStore _currentCourseStore;
         private readonly Domain.Model.Tutor _loggedInUser;
+        
+        public bool IsSelectTutorButtonVisible { get; }
+        
         public RelayCommand OpenCourseInfoCommand { get; }
         public RelayCommand AddCourseCommand { get; }
         public RelayCommand DeleteCourseCommand { get; }
@@ -308,6 +311,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             ClearFiltersCommand = new RelayCommand(ClearFilters);
             SelectedCourseChangedCommand = new RelayCommand(SelectCourse);
             OpenCourseInfoCommand = new RelayCommand(OpenCourseInfo, canExecute => SelectedItem != null);
+            IsSelectTutorButtonVisible = false;
         }
 
         private void OpenCourseInfo(object? obj)

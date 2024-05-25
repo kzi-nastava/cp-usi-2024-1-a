@@ -135,6 +135,14 @@ namespace LangLang.Application.UseCases.Course
             _courseAttendanceRepository.Update(attendance.Id, attendance);
         }
 
+        public void RemoveCourseAttendances(string courseId)
+        {
+            foreach (var attendance in GetAttendancesForCourse(courseId))
+            {
+                _courseAttendanceRepository.Delete(attendance.Id);
+            }
+        }
+
         public bool RateTutor(Domain.Model.Course course, string studentId, int rating)
         {
             CourseAttendance attendance = GetAttendance(studentId, course.Id)!;
