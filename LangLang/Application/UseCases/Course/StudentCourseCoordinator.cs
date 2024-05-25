@@ -293,5 +293,18 @@ namespace LangLang.Application.UseCases.Course
             }
             return attendances;
         }
+
+        public void RemoveCoursesOfTutor(Tutor tutor)
+        {
+            foreach (var course in _courseService.GetCoursesByTutor(tutor))
+            {
+                if (course.IsCreatedByTutor && course.CanBeModified())
+                {
+                    _courseApplicationService.RemoveCourseApplications(course.Id);
+                    _courseAttendanceService.RemoveCourseAttendances(course.Id);
+                    _courseService.DeleteCourse(course.Id);
+                }
+            }
+        }
     }
 }

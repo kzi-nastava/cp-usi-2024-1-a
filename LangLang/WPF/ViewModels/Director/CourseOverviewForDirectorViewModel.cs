@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Common;
 using LangLang.Application.UseCases.Course;
+using LangLang.Application.UseCases.TutorSelection;
 using LangLang.Application.UseCases.User;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Application.Utility.Timetable;
@@ -25,7 +27,11 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
     private readonly CurrentCourseStore _currentCourseStore;
     private readonly ITutorService _tutorService;
     private readonly ILanguageService _languageService;
-    public RelayCommand OpenCourseInfoCommand { get; }
+    private readonly IAutoCourseTutorSelector _autoCourseTutorSelector;
+    
+    public bool IsSelectTutorButtonVisible { get; }
+    
+    public RelayCommand SelectTutorCommand { get; }
     public RelayCommand AddCourseCommand { get; }
     public RelayCommand DeleteCourseCommand { get; }
     public RelayCommand UpdateCourseCommand { get; }
@@ -275,11 +281,12 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
             SelectCourse(value);
         }
     }
-    public CourseOverviewForDirectorViewModel(ICourseService courseService, ITimetableService timetableService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore, ITutorService tutorService, ILanguageService languageService)
+    public CourseOverviewForDirectorViewModel(ICourseService courseService, ITimetableService timetableService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore, ITutorService tutorService, ILanguageService languageService, IAutoCourseTutorSelector autoCourseTutorSelector)
     {
         _currentCourseStore = currentCourseStore;
         _tutorService = tutorService;
         _languageService = languageService;
+        _autoCourseTutorSelector = autoCourseTutorSelector;
         _courseService = courseService;
         _timetableService = timetableService;
         _popupNavigationService = popupNavigationService;
@@ -309,24 +316,51 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
         ToggleMaxStudentsCommand = new RelayCommand(ToggleMaxStudents);
         ClearFiltersCommand = new RelayCommand(ClearFilters);
         SelectedCourseChangedCommand = new RelayCommand(SelectCourse);
-        OpenCourseInfoCommand = new RelayCommand(OpenCourseInfo, canExecute => SelectedItem != null);
+        SelectTutorCommand = new RelayCommand(SelectTutor, _ => CanSelectTutor());
+        IsSelectTutorButtonVisible = true;
     }
 
-    private void OpenCourseInfo(object? obj)
+    private void SelectTutor(object? obj)
     {
-        _currentCourseStore.CurrentCourse = _courseService.GetCourseById(SelectedItem!.Id);
-        switch (SelectedItem?.State)
+        if(SelectedItem != null)
         {
-            case Course.CourseState.NotStarted:
-            _popupNavigationService.Navigate(ViewType.UpcomingCourseInfo);
-                break;
-            case Course.CourseState.InProgress:
-            _popupNavigationService.Navigate(ViewType.ActiveCourseInfo);
-                break;
-            case Course.CourseState.FinishedNotGraded:
-            _popupNavigationService.Navigate(ViewType.FinishedCourseInfo);
-                break;
+            var course = _courseService.GetCourseById(SelectedItem.Id);
+            if (course == null)
+            {
+                MessageBox.Show("Unknown error occurred!", "Error1", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            var tutor = _autoCourseTutorSelector.Select(new CourseTutorSelectionDto(
+                course.Language,
+                course.Level,
+                course.Duration,
+                course.Schedule,
+                course.Schedule.Keys.ToList(),
+                course.Start,
+                course
+                ));
+            if (tutor == null)
+            {
+                MessageBox.Show("No tutor available for course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var newCourse = _courseService.SetTutor(course, tutor);
+            if (newCourse == null)
+            {
+                MessageBox.Show("Error setting the tutor for course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            
+            Courses[Courses.IndexOf(SelectedItem!)] = new CourseViewModel(newCourse);
+            
+            MessageBox.Show("The tutor is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+    }
+
+    private bool CanSelectTutor()
+    {
+        return SelectedItem is { HasTutor: false };
     }
 
     private void SelectCourse(object? obj)
@@ -408,11 +442,17 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
     }
     private void UpdateCourse(object? obj)
     {
-        CreateSchedule();
         if(SelectedItem != null)
         {
             var oldCourse = _courseService.GetCourseById(SelectedItem.Id);
             var tutor = _tutorService.GetTutorById(oldCourse?.TutorId ?? "");
+            if (tutor == null)
+            {
+                MessageBox.Show("No tutor selected for course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            CreateSchedule();
+            SetClassroomNumbers(tutor);
             Domain.Model.Course? updatedCourse = _courseService.ValidateInputs(tutor, Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
             if(updatedCourse == null)
             {
@@ -444,24 +484,38 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
     private void SaveCourse(object? obj)
     {
         CreateSchedule();
-        Domain.Model.Course? course = _courseService.ValidateInputs(GetTutor(), Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
+        var tutor = GetTutor();
+        var course = _courseService.ValidateInputs(tutor, Name, LanguageName, Level, Duration, Schedule, ScheduleDays, Start, Online, NumStudents, State, MaxStudents);
 
         if (course == null)
         {
             MessageBox.Show("There was an error saving the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
-        _courseService.AddCourse(course);
+
+        SetClassroomNumbers(tutor);
+        
+        _courseService.AddCourse(course, false);
         Courses.Add(new CourseViewModel(course));
         RemoveInputs();
         MessageBox.Show("The course is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
 
     }
-    private int GetClassroomNumber(TimeOnly? time)
+
+    private void SetClassroomNumbers(Domain.Model.Tutor? tutor)
+    {
+        foreach(WorkDay workDay in ScheduleDays)
+        {
+            var classroomNumber = tutor != null ? GetClassroomNumber(Schedule[workDay].Item1, tutor) : -1;
+            Schedule[workDay] = new Tuple<TimeOnly, int>(Schedule[workDay].Item1, classroomNumber);
+        }
+    }
+
+    private int GetClassroomNumber(TimeOnly? time, Domain.Model.Tutor tutor)
     {
         if (Start != null && time != null)
         {
-            var classrooms = _timetableService.GetAvailableClassrooms(DateOnly.FromDateTime((DateTime)Start), time.Value, Constants.ExamDuration, GetTutor());
+            var classrooms = _timetableService.GetAvailableClassrooms(DateOnly.FromDateTime((DateTime)Start), time.Value, Constants.ExamDuration, tutor);
             if (classrooms.Count > 0)
             {
                 return classrooms[0];
@@ -477,22 +531,22 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
         {
             if(workDay == WorkDay.Monday && Monday != null)
             {
-                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Monday, GetClassroomNumber(Monday));
+                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Monday, -1);
             }else if(workDay == WorkDay.Tuesday && Tuesday != null)
             {
-                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Tuesday, GetClassroomNumber(Tuesday));
+                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Tuesday, -1);
             }
             else if (workDay == WorkDay.Wednesday && Wednesday != null)
             {
-                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Wednesday, GetClassroomNumber(Wednesday));
+                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Wednesday, -1);
             }
             else if (workDay == WorkDay.Thursday && Thursday != null)
             {
-                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Thursday, GetClassroomNumber(Thursday));
+                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Thursday, -1);
             }
             else if (workDay == WorkDay.Friday && Friday != null)
             {
-                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Friday, GetClassroomNumber(Friday));
+                Schedule[workDay] = new Tuple<TimeOnly, int>((TimeOnly)Friday, -1);
             }
         }
     }
@@ -623,6 +677,16 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
 
     private Domain.Model.Tutor? GetTutor()
     {
-        throw new NotImplementedException();
+        var language = _languageService.GetLanguageById(LanguageName);
+        if (language == null) return null;
+        if (Duration == null) return null;
+        return _autoCourseTutorSelector.Select(new CourseTutorSelectionDto(
+            language,
+            Level,
+            Duration.Value,
+            Schedule,
+            ScheduleDays.ToList(),
+            Start
+        ));
     }
 }

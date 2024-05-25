@@ -67,6 +67,14 @@ public class ExamApplicationService : IExamApplicationService
         }
     }
 
+    public void DeleteApplicationsForExam(string examId)
+    {
+        foreach (var application in GetExamApplications(examId))
+        {
+            _examApplicationRepository.Delete(application.Id);
+        }
+    }
+
     /// <summary>
     /// Filters out exams for which the student has <b>NOT</b> already applied for from the given exam list.
     /// </summary>

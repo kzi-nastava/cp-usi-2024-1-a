@@ -10,7 +10,7 @@ public interface ICourseService
     public List<Domain.Model.Course> GetAll();
     public List<Domain.Model.Course> GetCoursesByTutor(Tutor loggedInUser);
     public List<Domain.Model.Course> GetAvailableCourses(Student student);
-    public void AddCourse(Domain.Model.Course course);
+    public void AddCourse(Domain.Model.Course course, bool isCreatedByTutor = true);
     public Domain.Model.Course? GetCourseById(string id);
     public void DeleteCourse(string id);
     public void UpdateCourse(Domain.Model.Course course);
@@ -22,4 +22,6 @@ public interface ICourseService
         Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, ObservableCollection<WorkDay> scheduleDays, DateTime? start,
         bool online, int numStudents, Domain.Model.Course.CourseState? state, int maxStudents);
     List<Domain.Model.Course> GetCoursesForLastYear();
+    public void RemoveTutorFromAllCourses(Tutor tutor);
+    public Domain.Model.Course? SetTutor(Domain.Model.Course course, Tutor tutor);
 }
