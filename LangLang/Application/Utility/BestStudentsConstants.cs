@@ -1,6 +1,6 @@
 ﻿namespace LangLang.Application.Utility
 {
-    public class BestStudentsConstants
+    public static class BestStudentsConstants
     {
         public enum GradingPriority
         {
