@@ -274,7 +274,9 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         if (selectedDate != null && ExamTime != null)
         {
             var tutor = GetTutor();
-            if (tutor == null) throw new ArgumentException("Can not find the tutor");
+            if (tutor == null) {
+                return -1;        
+            }
       
             var classrooms = _timetableService.GetAvailableClassrooms(selectedDate.Value, ExamTime.Value,
                 Constants.ExamDuration, tutor);
@@ -453,9 +455,7 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
 
     private Domain.Model.Tutor? GetTutor()
     {
-        if (SelectedExam == null) return null;
-
-        if(SelectedExam.HasTutor)
+        if(SelectedExam != null && SelectedExam.HasTutor)
         {
             return GetOldTutor();
             
@@ -467,8 +467,7 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
             language,
             (LanguageLevel)LanguageLevel!,
             DateOnly.FromDateTime((DateTime)ExamDate!),
-            (TimeOnly)ExamTime!,
-            _examService.GetExamById(SelectedExam.Id)
+            (TimeOnly)ExamTime!
         ));
     }
 
