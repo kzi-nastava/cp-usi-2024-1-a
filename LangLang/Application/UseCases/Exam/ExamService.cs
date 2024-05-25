@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LangLang.Application.DTO;
+using LangLang.Core;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Repositories.Json;
@@ -131,6 +132,11 @@ public class ExamService : IExamService
         DateOnly? date = null) =>
         GetAllExams().Where(exam => exam.MatchesFilter(language, languageLvl, date)).ToList();
 
+    public List<Domain.Model.Exam> FilterExamsForPage(int pageNumber, int examsPerPage, Language? language = null,
+        LanguageLevel? languageLvl = null,
+        DateOnly? date = null) =>
+        FilterExams().GetPage(pageNumber, examsPerPage);
+
     private List<Domain.Model.Exam> UpdateExamStates(List<Domain.Model.Exam> exams)
     {
         foreach (var exam in exams)
@@ -156,4 +162,10 @@ public class ExamService : IExamService
 
     public List<Domain.Model.Exam> GetExamsForTimePeriod(DateTime from, DateTime to) =>
         _examRepository.GetForTimePeriod(from, to);
+
+    public List<Domain.Model.Exam> GetAllExamsForPage(int pageNumber, int examsPerPage) =>
+        _examRepository.GetAllForPage(pageNumber, examsPerPage);
+
+    public List<Domain.Model.Exam> GetExamsByTutorForPage(string tutorId, int pageNumber, int examsPerPage) =>
+        _examRepository.GetByTutorIdForPage(tutorId, pageNumber, examsPerPage);
 }

@@ -27,10 +27,18 @@ public interface IExamService
 
     public List<Domain.Model.Exam> FilterExams(Language? language = null, LanguageLevel? languageLvl = null,
         DateOnly? date = null);
+
+    public List<Domain.Model.Exam> FilterExamsForPage(int pageNumber, int examsPerPage, Language? language = null,
+        LanguageLevel? languageLvl = null,
+        DateOnly? date = null);
     
     public void FinishExam(Domain.Model.Exam exam);
     
     public void ConfirmExam(Domain.Model.Exam exam);
     
-    List<Domain.Model.Exam> GetExamsForTimePeriod(DateTime from, DateTime to);
+    public List<Domain.Model.Exam> GetExamsForTimePeriod(DateTime from, DateTime to);
+
+    public List<Domain.Model.Exam> GetAllExamsForPage(int pageNumber, int examsPerPage);
+    
+    public List<Domain.Model.Exam> GetExamsByTutorForPage(string tutorId, int pageNumber, int examsPerPage);
 }

@@ -28,13 +28,15 @@ public class ExamOverviewViewModel : ViewModelBase
 
     public RelayCommand SelectTutorCommand { get; }
     public RelayCommand OpenExamInfoCommand { get; }
-    public RelayCommand AddCommand { get; set; }
+    public RelayCommand AddCommand { get; }
     public RelayCommand SelectedExamChangedCommand { get; set; }
-    public RelayCommand UpdateCommand { get; set; }
-    public RelayCommand DeleteCommand { get; set; }
-    public RelayCommand ClearFiltersCommand { get; set; }
+    public RelayCommand UpdateCommand { get; }
+    public RelayCommand DeleteCommand { get; }
+    public RelayCommand ClearFiltersCommand { get; }
+    public RelayCommand PreviousPageCommand { get; }
+    public RelayCommand NextPageCommand { get; }
 
-    private ObservableCollection<ExamViewModel> _exams;
+    private ObservableCollection<ExamViewModel> _exams = null!;
     private ObservableCollection<Language> _languages;
     private ObservableCollection<LanguageLevel> _languageLevels;
     private ObservableCollection<LanguageLevel> _filterLanguageLevels;
@@ -50,9 +52,14 @@ public class ExamOverviewViewModel : ViewModelBase
     private int _numStudents;
     private Domain.Model.Exam.State _examState;
 
+    private bool _filterIsActive;
+
     private Language? _filterLanguage;
     private LanguageLevel? _filterLanguageLvl;
     private DateTime? _filterDate;
+
+    private int _pageNumber = 1;
+    private int _examsPerPage = 5;
 
     private readonly Dictionary<Language, List<LanguageLevel>> _languageToLvl;
 
@@ -182,6 +189,31 @@ public class ExamOverviewViewModel : ViewModelBase
             FilterExams();
         }
     }
+    
+    public int PageNumber
+    {
+        get => _pageNumber;
+        private set
+        {
+            SetField(ref _pageNumber, value);
+            LoadExams();
+        }
+    }
+
+    public int ExamsPerPage
+    {
+        get => _examsPerPage;
+        set
+        {
+            SetField(ref _examsPerPage, value);
+            if(PageNumber == 1)
+                LoadExams();
+            else
+                PageNumber = 1;
+        } 
+    }
+    
+    public ObservableCollection<int> PageSizeOptions { get; }
 
     public ExamOverviewViewModel(IAuthenticationStore authenticationStore, IExamService examService,
         ITimetableService timetableService, CurrentExamStore currentExamStore,
@@ -195,10 +227,10 @@ public class ExamOverviewViewModel : ViewModelBase
         _currentExamStore = currentExamStore;
         _popupNavigationService = popupNavigationService;
         _navigationStore = navigationStore;
-        _exams = new ObservableCollection<ExamViewModel>(LoadExams());
         _languages = new ObservableCollection<Language>(_tutor.KnownLanguages.Select(tuple => tuple.Item1));
         _languageLevels = new ObservableCollection<LanguageLevel>();
         _filterLanguageLevels = new ObservableCollection<LanguageLevel>(Enum.GetValues<LanguageLevel>());
+        LoadExams();
 
         _languageToLvl = new Dictionary<Language, List<LanguageLevel>>();
         foreach (var knownLanguage in _tutor.KnownLanguages)
@@ -215,6 +247,8 @@ public class ExamOverviewViewModel : ViewModelBase
 
         _availableTimes = new ObservableCollection<TimeOnly>();
 
+        PageSizeOptions = new ObservableCollection<int>() { 1, 5, 10, 20 };
+
         AddCommand = new RelayCommand(_ => AddExam(), _ => CanAddExam());
         SelectedExamChangedCommand = new RelayCommand(_ => SelectExam());
         UpdateCommand = new RelayCommand(_ => UpdateExam(), _ => CanUpdateExam());
@@ -222,6 +256,9 @@ public class ExamOverviewViewModel : ViewModelBase
         ClearFiltersCommand = new RelayCommand(_ => ClearFilters(), _ => CanClearFilters());
         OpenExamInfoCommand = new RelayCommand(OpenExamInfo, _ => SelectedExam != null);
         IsSelectTutorButtonVisible = false;
+        PreviousPageCommand = new RelayCommand(_ => GoToPreviousPage(), _ => CanGoToPreviousPage());
+        NextPageCommand = new RelayCommand(_ => GoToNextPage(), _ => CanGoToNextPage());
+
     }
 
     private int GetClassroomNumber()
@@ -332,14 +369,24 @@ public class ExamOverviewViewModel : ViewModelBase
 
     private void FilterExams()
     {
-        DateOnly? filterDateOnly = FilterDate != null ? DateOnly.FromDateTime(FilterDate!.Value) : null;
-        Exams = new ObservableCollection<ExamViewModel>(ConvertToExamViewModel(_examService.FilterExams(FilterLanguage,
-            FilterLanguageLvl, filterDateOnly)));
+        _filterIsActive = true;
+        LoadExams();
     }
 
-    private List<ExamViewModel> LoadExams()
+    private void LoadExams()
     {
-        return ConvertToExamViewModel(_examService.GetExamsByTutor(_tutor.Id));
+        if (_filterIsActive)
+        {
+            DateOnly? filterDateOnly = FilterDate != null ? DateOnly.FromDateTime(FilterDate!.Value) : null;
+            Exams = new ObservableCollection<ExamViewModel>(ConvertToExamViewModel(
+                _examService.FilterExamsForPage(PageNumber, ExamsPerPage, FilterLanguage, FilterLanguageLvl,
+                    filterDateOnly)));
+        }
+        else
+        {
+            Exams = new ObservableCollection<ExamViewModel>(
+                ConvertToExamViewModel(_examService.GetExamsByTutorForPage(_tutor.Id, PageNumber, ExamsPerPage)));
+        }
     }
 
     private List<ExamViewModel> ConvertToExamViewModel(List<Domain.Model.Exam> exams)
@@ -352,6 +399,8 @@ public class ExamOverviewViewModel : ViewModelBase
         FilterLanguage = null;
         FilterLanguageLvl = null;
         FilterDate = null;
+        _filterIsActive = false;
+        PageNumber = 1;
     }
 
     private bool CanClearFilters()
@@ -384,5 +433,26 @@ public class ExamOverviewViewModel : ViewModelBase
     private void OnPopupClosed()
     {
         _navigationStore.PopupClosed -= OnPopupClosed;
+    }
+    
+    
+    private void GoToPreviousPage()
+    {
+        PageNumber--;
+    }
+
+    private bool CanGoToPreviousPage()
+    {
+        return PageNumber > 1;
+    }
+
+    private void GoToNextPage()
+    {
+        PageNumber++;
+    }
+
+    private bool CanGoToNextPage()
+    {
+        return Exams.Count == ExamsPerPage;
     }
 }
