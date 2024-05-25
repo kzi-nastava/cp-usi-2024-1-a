@@ -56,6 +56,7 @@ public class BestStudentsByCourseService: IBestStudentsByCourseService
         {
             throw new ArgumentException("No students attended the course.");
         }
+
         studentRanks = studentRanks.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
         return studentRanks.Keys.Take((int)Utility.BestStudentsConstants.NumOfBestStudents).ToList(); ;
     }   
