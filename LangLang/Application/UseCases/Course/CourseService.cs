@@ -42,8 +42,9 @@ namespace LangLang.Application.UseCases.Course
             return courses;
         }
 
-        public void AddCourse(Domain.Model.Course course)
+        public void AddCourse(Domain.Model.Course course, bool isCreatedByTutor = true)
         {
+            course.IsCreatedByTutor = isCreatedByTutor;
             _courseRepository.Add(course);
         }
 
@@ -127,6 +128,21 @@ namespace LangLang.Application.UseCases.Course
 
         public List<Domain.Model.Course> GetCoursesForLastYear() =>
             _courseRepository.GetForTimePeriod(DateTime.Now.AddYears(-1), DateTime.Now);
+
+        public void RemoveTutorFromAllCourses(Tutor tutor)
+        {
+            foreach (var course in GetCoursesByTutor(tutor))
+            {
+                course.TutorId = null;
+                _courseRepository.Update(course.Id, course);
+            }
+        }
+
+        public Domain.Model.Course? SetTutor(Domain.Model.Course course, Tutor tutor)
+        {
+            course.TutorId = tutor.Id;
+            return _courseRepository.Update(course.Id, course);
+        }
 
         public void UpdateStates()
         {

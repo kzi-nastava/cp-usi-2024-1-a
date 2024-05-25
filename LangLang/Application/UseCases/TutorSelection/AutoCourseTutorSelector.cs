@@ -30,15 +30,15 @@ public class AutoCourseTutorSelector : IAutoCourseTutorSelector
         return tutors.Where(tutor =>
             tutor.KnowsLanguage(dto.Language, dto.LanguageLevel) &&
             dto.Start != null &&
-            IsAvailableForSchedule(tutor, dto.Schedule, dto.ScheduleDays, dto.Start.Value, dto.Duration)
+            IsAvailableForSchedule(tutor, dto.Schedule, dto.ScheduleDays, dto.Start.Value, dto.Duration, dto.ExceptionCourse)
         ).ToList();
     }
 
     private bool IsAvailableForSchedule(Tutor tutor, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule,
-        List<WorkDay> scheduleDays, DateTime start, int duration)
+        List<WorkDay> scheduleDays, DateTime start, int duration, Domain.Model.Course? exceptionCourse)
     {
         var availableTimes =
-            _timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(start), duration, tutor);
+            _timetableService.GetAvailableLessonTimes(DateOnly.FromDateTime(start), duration, tutor, exceptionCourse);
         foreach (var day in scheduleDays)
         {
             if (!availableTimes[day].Contains(schedule[day].Item1))

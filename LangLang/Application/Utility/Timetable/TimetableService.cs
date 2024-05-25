@@ -50,10 +50,10 @@ public class TimetableService : ITimetableService
         return times;
     }
     
-    public List<TimeOnly> GetAvailableExamTimes(DateOnly date, Tutor tutor)
+    public List<TimeOnly> GetAvailableExamTimes(DateOnly date, Tutor tutor, Course? exceptionCourse = null, Exam? exceptionExam = null)
     {
         List<TimeOnly> candidateTimes = GetAllExamTimes();
-        Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor);
+        Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor, exceptionCourse, exceptionExam);
 
         HashSet<TimeOnly> availableTimes = new HashSet<TimeOnly>();
         for (int i = 1; i <= Constants.ClassroomsNumber; i++)
@@ -67,7 +67,7 @@ public class TimetableService : ITimetableService
         return result;
     }
 
-    public Dictionary<WorkDay, List<TimeOnly>> GetAvailableLessonTimes(DateOnly start, int numOfWeeks, Tutor tutor)
+    public Dictionary<WorkDay, List<TimeOnly>> GetAvailableLessonTimes(DateOnly start, int numOfWeeks, Tutor tutor, Course? exceptionCourse = null, Exam? exceptionExam = null)
     {
         Dictionary<WorkDay, List<TimeOnly>> availableTimes = new();
         for (int i = 0; i < numOfWeeks * 7; i++)
@@ -78,7 +78,7 @@ public class TimetableService : ITimetableService
                 continue;
             }
             List<TimeOnly> candidateTimes = GetAllLessonTimes();
-            Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor);
+            Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor, exceptionCourse, exceptionExam);
             WorkDay day = DayConverter.ToWorkDay(date.DayOfWeek);
             for (int j = 1; j <= Constants.ClassroomsNumber; j++)
             {
@@ -93,9 +93,9 @@ public class TimetableService : ITimetableService
         return availableTimes;
     }
     
-    public List<int> GetAvailableClassrooms(DateOnly date, TimeOnly time, TimeSpan duration, Tutor tutor)
+    public List<int> GetAvailableClassrooms(DateOnly date, TimeOnly time, TimeSpan duration, Tutor tutor, Course? exceptionCourse = null, Exam? exceptionExam = null)
     {
-        Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor);
+        Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = GetTakenTimes(date, tutor, exceptionCourse, exceptionExam);
         List<int> availableClassrooms = new();
         for (int i = 1; i <= Constants.ClassroomsNumber; i++)
         {
@@ -117,7 +117,7 @@ public class TimetableService : ITimetableService
         return availableClassrooms;
     }
 
-    private  Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> GetTakenTimes(DateOnly date, Tutor tutor)
+    private  Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> GetTakenTimes(DateOnly date, Tutor tutor, Course? exceptionCourse = null, Exam? exceptionExam = null)
     {
         Dictionary<int, List<Tuple<TimeOnly, TimeSpan>>> takenTimes = new();
         for (int i = 1; i <= Constants.ClassroomsNumber; i++)
@@ -128,6 +128,7 @@ public class TimetableService : ITimetableService
         List<Exam> exams = _examRepository.GetByDate(date);
         foreach (Exam exam in exams)
         {
+            if(exceptionExam != null && exam.Id == exceptionExam.Id) continue;
             // if the current tutor is busy in one classroom, mark all other classrooms as taken
             if (exam.TutorId == tutor.Id)
             {
@@ -145,6 +146,7 @@ public class TimetableService : ITimetableService
         List<Course> courses = _courseRepository.GetCoursesByDate(date);
         foreach (Course course in courses)
         {
+            if(exceptionCourse != null && course.Id == exceptionCourse.Id) continue;
             if(course.Online) continue;
             Tuple<TimeOnly, int> timeAndClassroom = course.Schedule[DayConverter.ToWorkDay(date.DayOfWeek)];
             if (course.TutorId == tutor.Id)

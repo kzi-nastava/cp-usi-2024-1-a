@@ -17,4 +17,5 @@ public interface IExamApplicationService
     public List<Domain.Model.Exam> FilterAppliedExams(Student student, List<Domain.Model.Exam> exams);
     public List<Domain.Model.Exam> FilterNotAppliedExams(Student student, List<Domain.Model.Exam> exams);
     public void DeleteApplications(string studentId);
+    public void DeleteApplicationsForExam(string examId);
 }

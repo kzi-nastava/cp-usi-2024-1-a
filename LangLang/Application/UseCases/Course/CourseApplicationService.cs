@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using LangLang.Application.UseCases.User;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using static LangLang.Domain.Model.CourseApplication;
@@ -10,13 +9,11 @@ namespace LangLang.Application.UseCases.Course
     public class CourseApplicationService : ICourseApplicationService
     {
         private readonly ICourseService _courseService;
-        private readonly IStudentService _studentService;
         private readonly ICourseApplicationRepository _courseApplicationRepository;
 
-        public CourseApplicationService(ICourseService courseService, IStudentService studentService, ICourseApplicationRepository courseApplicationRepository)
+        public CourseApplicationService(ICourseService courseService, ICourseApplicationRepository courseApplicationRepository)
         {
             _courseService = courseService;
-            _studentService = studentService;
             _courseApplicationRepository = courseApplicationRepository;
         }
 
@@ -124,6 +121,15 @@ namespace LangLang.Application.UseCases.Course
             }
             DeleteApplication(applicationId);
         }
+
+        public void RemoveCourseApplications(string courseId)
+        {
+            foreach (var application in GetApplicationsForCourse(courseId))
+            {
+                _courseApplicationRepository.Delete(application.Id);
+            }
+        }
+
         public void RemoveStudentApplications(string studentId)
         {
             List<CourseApplication> applications = _courseApplicationRepository.GetForStudent(studentId);

@@ -191,6 +191,16 @@ public class ExamCoordinator : IExamCoordinator
         return attendances;
     }
 
+    public void DeleteExamsByTutor(Tutor tutor)
+    {
+        var exams = _examService.GetExamsByTutor(tutor.Id);
+        foreach (var exam in exams)
+        {
+            _examApplicationService.DeleteApplicationsForExam(exam.Id);
+            _examAttendanceService.DeleteAttendancesForExam(exam.Id);
+        }
+    }
+
     public void RemoveAttendee(string studentId)
     {
         var attendingExam = GetAttendingExam(studentId);
