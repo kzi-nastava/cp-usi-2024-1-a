@@ -3,8 +3,6 @@ using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.Utility.Navigation;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
-using LangLang.WPF.ViewModels.Tutor.Course;
-using LangLang.WPF.ViewModels.Tutor.Exam;
 using System;
 
 namespace LangLang.WPF.ViewModels.Director
@@ -24,6 +22,8 @@ namespace LangLang.WPF.ViewModels.Director
         private TutorOverviewViewModel? tutorOverviewViewModel;
         private CourseOverviewForDirectorViewModel? courseOverviewViewModel;
         private ExamOverviewForDirectorViewModel? examOverviewViewModel;
+        private FinishedCourseOverviewForDirectorViewModel? finishedCourseOverviewViewModel;
+        private ReportViewModel? reportViewModel;
         private TutorOverviewViewModel TutorOverviewViewModel
         {
             get
@@ -60,6 +60,31 @@ namespace LangLang.WPF.ViewModels.Director
                 return courseOverviewViewModel;
             }
         }
+        private FinishedCourseOverviewForDirectorViewModel FinishedCourseOverviewViewModel
+        {
+            get
+            {
+                if (finishedCourseOverviewViewModel == null)
+                {
+                    finishedCourseOverviewViewModel = (FinishedCourseOverviewForDirectorViewModel)_viewModelFactory.CreateViewModel(ViewType.FinishedCourseForDirector);
+                }
+
+                return finishedCourseOverviewViewModel;
+            }
+        }
+
+        private ReportViewModel ReportViewModel
+        {
+            get
+            {
+                if (reportViewModel == null)
+                {
+                    reportViewModel = (ReportViewModel)_viewModelFactory.CreateViewModel(ViewType.Reports);
+                }
+
+                return reportViewModel;
+            }
+        }
 
         public ViewModelBase CurrentViewModel
         {
@@ -93,6 +118,8 @@ namespace LangLang.WPF.ViewModels.Director
                 "courses" => CourseOverviewViewModel,
                 "exams" => ExamOverviewViewModel,
                 "tutors" => TutorOverviewViewModel,
+                "finishedCourses" => FinishedCourseOverviewViewModel,
+                "reports" => ReportViewModel,
                 _ => CurrentViewModel
             };
         }
