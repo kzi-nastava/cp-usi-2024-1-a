@@ -58,7 +58,7 @@ public class BestStudentsByCourseService: IBestStudentsByCourseService
         }
 
         studentRanks = studentRanks.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-        return studentRanks.Keys.Take((int)Utility.BestStudentsConstants.NumOfBestStudents).ToList(); ;
+        return studentRanks.Keys.Take((int)Utility.BestStudentsConstants.NumOfBestStudents).ToList();
     }   
 
     private void SendEmailToStudents(List<string> studentIds, string courseId)
