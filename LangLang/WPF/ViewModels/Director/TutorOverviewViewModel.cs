@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Navigation;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
@@ -24,6 +25,9 @@ namespace LangLang.WPF.ViewModels.Director
         private readonly IAccountService _accountService;
         private readonly IUserValidator _userValidator;
         private readonly IUserProfileMapper _userProfileMapper;
+
+        public NavigationStore NavigationStore { get; }
+
         public RelayCommand AddKnownLangaugeCommand { get; }
         public RelayCommand ChangeLanguageCommand { get; }
         public RelayCommand ChangeLevelCommand { get; }
@@ -33,10 +37,14 @@ namespace LangLang.WPF.ViewModels.Director
         public RelayCommand DeleteTutorCommand { get; }
         public RelayCommand UpdateTutorCommand { get; }
         public RelayCommand ClearFiltersCommand { get; }
+        public RelayCommand PreviousPageCommand { get; }
+        public RelayCommand NextPageCommand { get; }
+
         public ObservableCollection<TutorOverviewDto> Tutors{ get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLevel> Levels { get; set; }
         public ObservableCollection<Gender> Genders { get; set; }
+
         public bool changedLanguages;
         public bool changedEmailOrPassword;
         public bool selectingTutor;
@@ -44,6 +52,10 @@ namespace LangLang.WPF.ViewModels.Director
         public event Action? RemoveKnownLanguages;
         public event KnownLanguageAddedHandler? KnownLanguageAdded;
         public delegate void KnownLanguageAddedHandler(int languageIndex, int levelIndex, ObservableCollection<string?> languages, ObservableCollection<LanguageLevel> levels);
+
+        private bool _filterIsActive;
+        private int _pageNumber = 1;
+        private int _tutorsPerPage = 5;
 
         private string _name = "";
         public string Name
@@ -190,7 +202,30 @@ namespace LangLang.WPF.ViewModels.Director
             }
         }
 
-        public NavigationStore NavigationStore { get; }
+        public int PageNumber
+        {
+            get => _pageNumber;
+            private set
+            {
+                SetField(ref _pageNumber, value);
+                LoadTutors();
+            }
+        }
+
+        public int TutorsPerPage
+        {
+            get => _tutorsPerPage;
+            set
+            {
+                SetField(ref _tutorsPerPage, value);
+                if (PageNumber == 1)
+                    LoadTutors();
+                else
+                    PageNumber = 1;
+            }
+        }
+
+        public ObservableCollection<int> PageSizeOptions { get; }
 
         public TutorOverviewViewModel(NavigationStore navigationStore, IAccountService accountService, ITutorService tutorService, ILanguageService languageService, IUserValidator userValidator, IUserProfileMapper userProfileMapper)
         {
@@ -211,6 +246,8 @@ namespace LangLang.WPF.ViewModels.Director
             else
                 throw new Exception("No languages found");
 
+            PageSizeOptions = new ObservableCollection<int>() { 1, 5, 10, 20 };
+
             AddKnownLangaugeCommand = new RelayCommand(execute => AddKnownLanguage());
             ChangeLanguageCommand = new RelayCommand(execute => ChangeLanguage(execute as Tuple<int, string>));
             ChangeLevelCommand = new RelayCommand(execute => ChangeLevel(execute as Tuple<int, LanguageLevel>));
@@ -220,6 +257,8 @@ namespace LangLang.WPF.ViewModels.Director
             UpdateTutorCommand = new RelayCommand(execute => UpdateTutor(), execute => CanUpdateTutor());
             ClearFiltersCommand = new RelayCommand(execute => ClearFilters());
             RefreshSelectionCommand = new RelayCommand(execute => RefreshSelection());
+            PreviousPageCommand = new RelayCommand(_ => GoToPreviousPage(), _ => CanGoToPreviousPage());
+            NextPageCommand = new RelayCommand(_ => GoToNextPage(), _ => CanGoToNextPage());
         }
         private void LoadCollections()
         {
@@ -231,6 +270,7 @@ namespace LangLang.WPF.ViewModels.Director
 
         private void ClearFilters()
         {
+            _filterIsActive = false;
             LanguageFilter = "";
             LevelFilter = null;
             DateAddedMinFilter = null;
@@ -382,29 +422,36 @@ namespace LangLang.WPF.ViewModels.Director
             MessageBox.Show(combinedMessage, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             return true;
         }
-        public void LoadTutors()
+        private void LoadTutors()
         {
-            var tutors = _tutorService.GetAllTutors();
-            foreach(Domain.Model.Tutor tutor in tutors)
+            Tutors.Clear();
+            List<Domain.Model.Tutor> tutors;
+            if (_filterIsActive)
+                tutors = _tutorService.GetFilteredTutorsForPage(PageNumber, TutorsPerPage, LanguageFilter,
+                                                                            LevelFilter, DateAddedMinFilter,
+                                                                            DateAddedMaxFilter);
+            else
+                tutors = _tutorService.GetAllTutorsForPage(PageNumber, TutorsPerPage);
+            foreach (Domain.Model.Tutor tutor in tutors)
                 Tutors.Add(new TutorOverviewDto(tutor));
         }
-        public void LoadLanguages()
+        private void LoadLanguages()
         {
             var languages = _languageService.GetAll();
             foreach (Language language in languages)
                 Languages.Add(language.Name);
         }
-        public void LoadLanguageLevels()
+        private void LoadLanguageLevels()
         {
             foreach (LanguageLevel lvl in Enum.GetValues(typeof(LanguageLevel)))
                 Levels.Add(lvl);
         }
-        public void LoadGenders()
+        private void LoadGenders()
         {
             foreach (Gender gender in Enum.GetValues(typeof(Gender)))
                 Genders.Add(gender);
         }
-        public void RemoveInputs()
+        private void RemoveInputs()
         {
             Name = "";
             Surname = "";
@@ -420,12 +467,18 @@ namespace LangLang.WPF.ViewModels.Director
             KnownLanguages.Clear();
             selectingTutor = false;
         }
-        public void FilterTutors()
+        private void FilterTutors()
         {
-            Tutors.Clear();
-            var filteredTutors = _tutorService.GetFilteredTutors(LanguageFilter, LevelFilter, DateAddedMinFilter, DateAddedMaxFilter);
-            foreach (Domain.Model.Tutor tutor in filteredTutors)
-                Tutors.Add(new TutorOverviewDto(tutor));
+            _filterIsActive = true;
+            LoadTutors();
         }
+        private void GoToPreviousPage()
+            => PageNumber--;
+        private void GoToNextPage()
+            => PageNumber++;
+        private bool CanGoToPreviousPage()
+            => PageNumber > 1;
+        private bool CanGoToNextPage()
+            => Tutors.Count == TutorsPerPage;
     }
 }

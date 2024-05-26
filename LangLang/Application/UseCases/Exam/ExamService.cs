@@ -135,7 +135,7 @@ public class ExamService : IExamService
     public List<Domain.Model.Exam> FilterExamsForPage(int pageNumber, int examsPerPage, Language? language = null,
         LanguageLevel? languageLvl = null,
         DateOnly? date = null) =>
-        FilterExams().GetPage(pageNumber, examsPerPage);
+        FilterExams(language, languageLvl, date).GetPage(pageNumber, examsPerPage);
 
     private List<Domain.Model.Exam> UpdateExamStates(List<Domain.Model.Exam> exams)
     {
