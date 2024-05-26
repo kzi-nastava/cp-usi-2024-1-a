@@ -28,11 +28,12 @@ namespace LangLang.WPF.ViewModels.Director
         public RelayCommand ChangeLanguageCommand { get; }
         public RelayCommand ChangeLevelCommand { get; }
         public RelayCommand DeleteKnownLanguageCommand { get; }
+        public RelayCommand RefreshSelectionCommand { get; }
         public RelayCommand AddTutorCommand { get; }
         public RelayCommand DeleteTutorCommand { get; }
         public RelayCommand UpdateTutorCommand { get; }
         public RelayCommand ClearFiltersCommand { get; }
-        public ObservableCollection<Domain.Model.Tutor> Tutors{ get; set; }
+        public ObservableCollection<TutorOverviewDto> Tutors{ get; set; }
         public ObservableCollection<string?> Languages { get; set; }
         public ObservableCollection<LanguageLevel> Levels { get; set; }
         public ObservableCollection<Gender> Genders { get; set; }
@@ -44,141 +45,144 @@ namespace LangLang.WPF.ViewModels.Director
         public event KnownLanguageAddedHandler? KnownLanguageAdded;
         public delegate void KnownLanguageAddedHandler(int languageIndex, int levelIndex, ObservableCollection<string?> languages, ObservableCollection<LanguageLevel> levels);
 
-        private string name = "";
+        private string _name = "";
         public string Name
         {
-            get => name;
-            set => SetField(ref name, value);
+            get => _name;
+            set => SetField(ref _name, value);
         }
-        private string surname = "";
+        private string _surname = "";
         public string Surname
         {
-            get => surname;
-            set => SetField(ref surname, value);
+            get => _surname;
+            set => SetField(ref _surname, value);
         }
-        private string email = "";
+        private string _email = "";
         public string Email
         {
-            get => email;
+            get => _email;
             set 
             {
-                email = value;
+                _email = value;
                 changedEmailOrPassword = true;
                 OnPropertyChanged();
             }
         }
-        private string password = "";
+        private string _password = "";
         public string Password
         {
-            get => password;
+            get => _password;
             set
             {
-                password = value;
+                _password = value;
                 changedEmailOrPassword = true;
                 OnPropertyChanged();
             }
         }
-        private string phoneNumber = "";
+        private string _phoneNumber = "";
         public string PhoneNumber
         {
-            get => phoneNumber;
-            set => SetField(ref phoneNumber, value);
+            get => _phoneNumber;
+            set => SetField(ref _phoneNumber, value);
         }
-        private Gender selectedGender;
+        private Gender _selectedGender;
         public Gender SelectedGender
         {
-            get => selectedGender;
-            set => SetField(ref selectedGender, value);
+            get => _selectedGender;
+            set => SetField(ref _selectedGender, value);
         }
 
-        private DateTime? birthDate = null;
+        private DateTime? _birthDate = null;
         public DateTime? BirthDate
         {
-            get => birthDate;
-            set => SetField(ref birthDate, value);
+            get => _birthDate;
+            set => SetField(ref _birthDate, value);
         }
-        private DateTime? dateAdded = null;
+        private DateTime? _dateAdded = null;
         public DateTime? DateAdded
         {
-            get => dateAdded != null ? dateAdded : DateTime.Now;
-            set => SetField(ref dateAdded, value);
+            get => _dateAdded != null ? _dateAdded : DateTime.Now;
+            set => SetField(ref _dateAdded, value);
         }
-        private List<Tuple<string, LanguageLevel>> knownLanguages = new();
+        private List<Tuple<string, LanguageLevel>> _knownLanguages = new();
         public List<Tuple<string, LanguageLevel>> KnownLanguages
         {
-            get => knownLanguages;
-            set => SetField(ref knownLanguages, value);
+            get => _knownLanguages;
+            set => SetField(ref _knownLanguages, value);
         }
 
         // Filter values
-        private string languageFilter = "";
+        private string _languageFilter = "";
         public string LanguageFilter
         {
-            get => languageFilter;
+            get => _languageFilter;
             set
             {
-                languageFilter = value;
+                _languageFilter = value;
                 FilterTutors();
                 OnPropertyChanged();
             }
         }
 
-        private LanguageLevel? levelFilter;
+        private LanguageLevel? _levelFilter;
         public LanguageLevel? LevelFilter
         {
-            get => levelFilter;
+            get => _levelFilter;
             set
             {
-                levelFilter = value;
+                _levelFilter = value;
                 FilterTutors();
                 OnPropertyChanged();
             }
         }
 
-        private DateTime? dateAddedMinFilter;
+        private DateTime? _dateAddedMinFilter;
         public DateTime? DateAddedMinFilter
         {
-            get => dateAddedMinFilter;
+            get => _dateAddedMinFilter;
             set
             {
-                dateAddedMinFilter = value;
+                _dateAddedMinFilter = value;
                 FilterTutors();
                 OnPropertyChanged();
             }
         }
-        private DateTime? dateAddedMaxFilter;
+        private DateTime? _dateAddedMaxFilter;
         public DateTime? DateAddedMaxFilter
         {
-            get => dateAddedMaxFilter;
+            get => _dateAddedMaxFilter;
             set
             {
-                dateAddedMaxFilter = value;
+                _dateAddedMaxFilter = value;
                 FilterTutors();
                 OnPropertyChanged();
             }
         }
 
-        private Domain.Model.Tutor? selectedItem;
-        public Domain.Model.Tutor? SelectedItem
+        private TutorOverviewDto? _selectedItem;
+        public TutorOverviewDto? SelectedItem
         {
-            get => selectedItem;
+            get => _selectedItem;
             set
             {
-                selectedItem = value;
+                _selectedItem = value;
                 changedLanguages = false;
                 selectingTutor = true;
-                if (selectedItem != null)
+                if (_selectedItem != null)
                 {
-                    UserDto userDto = new(selectedItem, UserType.Tutor);
-                    Name = selectedItem.Name;
-                    Surname = selectedItem.Surname;
+                    Domain.Model.Tutor? tutor = _tutorService.GetTutorById(_selectedItem.Id);
+                    if (tutor == null) 
+                        return;
+                    UserDto userDto = new(tutor, UserType.Tutor);
+                    Name = tutor.Name;
+                    Surname = tutor.Surname;
                     Email = _userProfileMapper.GetProfile(userDto)!.Email;
                     Password = _userProfileMapper.GetProfile(userDto)!.Password;
-                    PhoneNumber = selectedItem.PhoneNumber;
-                    BirthDate = selectedItem.BirthDate;
-                    DateAdded = selectedItem.DateAdded;
-                    SelectedGender = selectedItem.Gender;
-                    SwitchKnownLanguages(selectedItem);
+                    PhoneNumber = tutor.PhoneNumber;
+                    BirthDate = tutor.BirthDate;
+                    DateAdded = tutor.DateAdded;
+                    SelectedGender = tutor.Gender;
+                    SwitchKnownLanguages(tutor);
                 }
                 changedEmailOrPassword = false;
                 selectingTutor = false;
@@ -215,6 +219,7 @@ namespace LangLang.WPF.ViewModels.Director
             DeleteTutorCommand = new RelayCommand(execute => DeleteTutor(), execute => CanDeleteTutor());
             UpdateTutorCommand = new RelayCommand(execute => UpdateTutor(), execute => CanUpdateTutor());
             ClearFiltersCommand = new RelayCommand(execute => ClearFilters());
+            RefreshSelectionCommand = new RelayCommand(execute => RefreshSelection());
         }
         private void LoadCollections()
         {
@@ -247,10 +252,10 @@ namespace LangLang.WPF.ViewModels.Director
             if (value == null)
             {
                 changedLanguages = true;
-                knownLanguages.Add(Tuple.Create(Languages[0]!, LanguageLevel.A1));
+                _knownLanguages.Add(Tuple.Create(Languages[0]!, LanguageLevel.A1));
             }
             else
-                knownLanguages.Add(value);
+                _knownLanguages.Add(value);
             OnPropertyChanged();
         }
         private void ChangeLanguage(Tuple<int, string>? indexLanguagePair)
@@ -281,12 +286,12 @@ namespace LangLang.WPF.ViewModels.Director
             KnownLanguages.RemoveAt((int)index);
             OnPropertyChanged();
         }
-
-        private void SwitchKnownLanguages(Domain.Model.Tutor selectedItem)
+        private void RefreshSelection() => SelectedItem = _selectedItem;
+        private void SwitchKnownLanguages(Domain.Model.Tutor selectedTutor)
         {
             RemoveKnownLanguages?.Invoke();
             KnownLanguages.Clear();
-            foreach (var tuple in selectedItem.KnownLanguages)
+            foreach (var tuple in selectedTutor.KnownLanguages)
                 AddKnownLanguage(new Tuple<string, LanguageLevel>(tuple.Item1.Name, tuple.Item2));
         }
         private bool CanUpdateTutor()
@@ -315,14 +320,17 @@ namespace LangLang.WPF.ViewModels.Director
 
             Domain.Model.Tutor tutor = _accountService.UpdateTutor(SelectedItem.Id, Password, Name, Surname, (DateTime)BirthDate!, SelectedGender, PhoneNumber, knownLanguagesRightType, (DateTime)DateAdded!);
             Tutors.Remove(SelectedItem);
-            Tutors.Add(tutor);
+            Tutors.Add(new TutorOverviewDto(tutor));
             RemoveInputs();
         }
         private void DeleteTutor()
         {
             if (SelectedItem == null) 
                 return;
-            _accountService.DeleteTutor(SelectedItem);
+            Domain.Model.Tutor? tutor = _tutorService.GetTutorById(SelectedItem.Id);
+            if (tutor == null)
+                return;
+            _accountService.DeleteTutor(tutor);
             Tutors.Remove(SelectedItem);
             RemoveInputs();
         }
@@ -349,7 +357,7 @@ namespace LangLang.WPF.ViewModels.Director
                 knownLanguagesRightType,
                 (DateTime)DateAdded!
                 ));
-            Tutors.Add(tutor);
+            Tutors.Add(new TutorOverviewDto(tutor));
             RemoveInputs();
             MessageBox.Show("The tutor is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -378,7 +386,7 @@ namespace LangLang.WPF.ViewModels.Director
         {
             var tutors = _tutorService.GetAllTutors();
             foreach(Domain.Model.Tutor tutor in tutors)
-                Tutors.Add(tutor);
+                Tutors.Add(new TutorOverviewDto(tutor));
         }
         public void LoadLanguages()
         {
@@ -405,7 +413,7 @@ namespace LangLang.WPF.ViewModels.Director
             PhoneNumber = "";
             BirthDate = null;
             DateAdded = null;
-            selectedItem = null;
+            _selectedItem = null;
 
             selectingTutor = true;
             RemoveKnownLanguages?.Invoke(); 
@@ -421,14 +429,14 @@ namespace LangLang.WPF.ViewModels.Director
                 if (LanguageFilter != ""
                   && !tutor.KnownLanguages.Exists(tuple => tuple.Item1.Name == LanguageFilter))
                     continue;
-                if (levelFilter != null
-                  && !tutor.KnownLanguages.Exists(tuple => tuple.Item2 == levelFilter))
+                if (_levelFilter != null
+                  && !tutor.KnownLanguages.Exists(tuple => tuple.Item2 == _levelFilter))
                     continue;
                 if (DateAddedMinFilter != null && tutor.DateAdded < DateAddedMinFilter)
                     continue;
                 if (DateAddedMaxFilter != null && tutor.DateAdded > DateAddedMaxFilter)
                     continue;
-                Tutors.Add(tutor);
+                Tutors.Add(new TutorOverviewDto(tutor));
             }
         }
     }

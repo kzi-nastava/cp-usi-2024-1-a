@@ -15,17 +15,6 @@ namespace LangLang.Domain.Model
 
         public DateTime DateAdded { get; set; }
         
-        public string KnownLanguagesAsString
-        {
-            get
-            {
-                StringBuilder builder = new();
-                foreach (var tuple in KnownLanguages)
-                    builder.AppendLine($"{tuple.Item1.Name} - {tuple.Item2.ToStr()}");
-                return builder.ToString().TrimEnd();
-            }
-        }
-
         public Tutor() : base("", "", DateTime.Now, Gender.Other, "")
         {
             Id = "";

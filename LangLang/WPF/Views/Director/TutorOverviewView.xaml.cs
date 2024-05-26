@@ -28,6 +28,7 @@ namespace LangLang.WPF.Views.Director
                 return;
             viewModel.RemoveKnownLanguages += RemoveKnownLanguages;
             viewModel.KnownLanguageAdded += AddKnownLanguage;
+            viewModel.RefreshSelectionCommand.Execute(null);
         }
 
         public void LanguageSelectionChanged(object sender, SelectionChangedEventArgs e) 

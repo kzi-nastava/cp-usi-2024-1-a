@@ -67,7 +67,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Name}"/>
                         <DataGridTextColumn Header="Surname" Width="1*" Binding="{Binding Surname}"/>
-                        <DataGridTextColumn Header="KnownLanguages" Width="1.6*" Binding="{Binding KnownLanguagesAsString}"/>
+                        <DataGridTextColumn Header="KnownLanguages" Width="1.6*" Binding="{Binding KnownLanguages}"/>
                         <DataGridTextColumn Header="DateAdded" Width="1*" Binding="{Binding DateAdded}"/>
                     </DataGrid.Columns>
                 </DataGrid>
