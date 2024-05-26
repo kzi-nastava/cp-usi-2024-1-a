@@ -75,6 +75,7 @@ public class PointsByCourseReportService : IPointsByCourseReportService
         foreach(var course in courses)
         {
             coursesScore.Add(course.Id, new Dictionary<string, float> { { "Knowledge", 0 }, { "Activity" , 0 }, });
+            attendancePerCourse.Add(course.Id, 0);
         }
         if (attendances.Count == 0)
         {
