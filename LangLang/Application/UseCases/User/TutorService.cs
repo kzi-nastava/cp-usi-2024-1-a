@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -42,5 +43,9 @@ namespace LangLang.Application.UseCases.User
             _tutorRepository.Update(tutor.Id, tutor);
             return true;
         }
+
+        public List<Tutor> GetFilteredTutors(string? languageName = null, LanguageLevel? languageLevel = null,
+                                  DateTime? dateAddedMin = null, DateTime? dateAddedMax = null) =>
+            GetAllTutors().Where(tutor => tutor.MatchesFilter(languageName, languageLevel, dateAddedMin, dateAddedMax)).ToList();
     }
 }

@@ -359,7 +359,7 @@ namespace LangLang.WPF.ViewModels.Director
                 ));
             Tutors.Add(new TutorOverviewDto(tutor));
             RemoveInputs();
-            MessageBox.Show("The tutor is added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("The tutor was added successfully!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         /**<summary>
@@ -423,21 +423,9 @@ namespace LangLang.WPF.ViewModels.Director
         public void FilterTutors()
         {
             Tutors.Clear();
-            var tutors = _tutorService.GetAllTutors();
-            foreach (Domain.Model.Tutor tutor in tutors)
-            {
-                if (LanguageFilter != ""
-                  && !tutor.KnownLanguages.Exists(tuple => tuple.Item1.Name == LanguageFilter))
-                    continue;
-                if (_levelFilter != null
-                  && !tutor.KnownLanguages.Exists(tuple => tuple.Item2 == _levelFilter))
-                    continue;
-                if (DateAddedMinFilter != null && tutor.DateAdded < DateAddedMinFilter)
-                    continue;
-                if (DateAddedMaxFilter != null && tutor.DateAdded > DateAddedMaxFilter)
-                    continue;
+            var filteredTutors = _tutorService.GetFilteredTutors(LanguageFilter, LevelFilter, DateAddedMinFilter, DateAddedMaxFilter);
+            foreach (Domain.Model.Tutor tutor in filteredTutors)
                 Tutors.Add(new TutorOverviewDto(tutor));
-            }
         }
     }
 }

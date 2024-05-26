@@ -101,5 +101,21 @@ namespace LangLang.Domain.Model
                 + 100 * GetAverageRating()
                 ;
         }
+
+        public bool MatchesFilter(string? languageName = null, LanguageLevel? languageLevel = null, 
+                                  DateTime? dateAddedMin = null, DateTime? dateAddedMax = null)
+        {
+            if (languageName != ""
+              && !KnownLanguages.Exists(tuple => tuple.Item1.Name == languageName))
+                return false;
+            if (languageLevel != null
+              && !KnownLanguages.Exists(tuple => tuple.Item2 == languageLevel))
+                return false;
+            if (dateAddedMin != null && DateAdded < dateAddedMin)
+                return false;
+            if (dateAddedMax != null && DateAdded > dateAddedMax)
+                return false;
+            return true;
+        }
     }
 }
