@@ -24,4 +24,8 @@ public class ReportService: IReportService
     {
         return _pointsBySkillReportService.GetReport();
     }
+    public List<ReportTableDto> GetAverageCoursePointsReport()
+    {
+        
+    }
 }
