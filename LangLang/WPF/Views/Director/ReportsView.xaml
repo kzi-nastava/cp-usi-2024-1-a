@@ -48,8 +48,8 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="2" RenderTransformOrigin="0.501,0.518">
-                    <TextBlock FontSize="14" Height="40" TextWrapping="Wrap">Recieve email with a PDF report detailing the number of penalty points awarded by course in the past year. The report also includes the average grade for student grouped by the number of penalty points recieved.</TextBlock>
-                    <Button x:Name="SendReportBtn2" Content="Send report" FontSize="16" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="150" BorderThickness="0" Command="{Binding ConfirmCommand}" Margin="10">
+                    <TextBlock FontSize="14" Height="40" TextWrapping="Wrap">Recieve email with a PDF report detailing the average course scores. The report also includes average tutor score.</TextBlock>
+                    <Button x:Name="SendReportBtn2" Content="Send report" FontSize="16" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="150" BorderThickness="0" Command="{Binding SendAverageCourseScoreCommand}" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border CornerRadius="10" Background="{TemplateBinding Background}">
