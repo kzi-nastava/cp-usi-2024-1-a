@@ -10,6 +10,10 @@
         xmlns:tutor ="clr-namespace:LangLang.WPF.ViewModels.Director"
         xmlns:course="clr-namespace:LangLang.WPF.ViewModels.Director"
         xmlns:courseView="clr-namespace:LangLang.WPF.Views.Tutor.Course"
+        xmlns:finishedCourse="clr-namespace:LangLang.WPF.ViewModels.Director"
+        xmlns:finishedCourseView="clr-namespace:LangLang.WPF.Views.Director"
+        xmlns:reportView="clr-namespace:LangLang.WPF.Views.Director"
+        xmlns:report="clr-namespace:LangLang.WPF.ViewModels.Director"
         mc:Ignorable="d"
         Title="DirectorWindow" Height="770" Width="1030" ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
@@ -24,7 +28,13 @@
             <DataTemplate DataType="{x:Type tutor:TutorOverviewViewModel}">
                 <tutorView:TutorOverviewView></tutorView:TutorOverviewView>
             </DataTemplate>
-        </mvvm:NavigableWindow.Resources>
+            <DataTemplate DataType="{x:Type finishedCourse:FinishedCourseOverviewForDirectorViewModel}">
+                <finishedCourseView:FinishedCourseOverviewView></finishedCourseView:FinishedCourseOverviewView>
+            </DataTemplate>
+        <DataTemplate DataType="{x:Type report:ReportViewModel}">
+            <reportView:ReportsView></reportView:ReportsView>
+        </DataTemplate>
+    </mvvm:NavigableWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -37,6 +47,8 @@
             <Grid Background="LightGray">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="90"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
@@ -62,8 +74,21 @@
                     Grid.Row = "3" 
                     Margin="20,10,20,10"
                  />
-                <Button Content="Logout" Margin="20,430,20,10" Height="35"  Command="{Binding LogoutCommand}" Grid.Row="5" />
 
+                <Button Content = "Finished courses" 
+                    Command = "{Binding NavCommand}" 
+                    CommandParameter = "finishedCourses" 
+                    Grid.Row = "4" 
+                    Margin="20,10,20,10"
+                 />
+
+                <Button Content = "Reports" 
+                    Command = "{Binding NavCommand}" 
+                    CommandParameter = "reports" 
+                    Grid.Row = "5" 
+                    Margin="20,10,20,10"
+                 />
+                <Button Content="Logout" Margin="20,10,20,10" Height="35"  Command="{Binding LogoutCommand}" Grid.Row="6" />
             </Grid>
 
 

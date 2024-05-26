@@ -13,22 +13,23 @@ namespace LangLang.WPF.Views.Director
     public partial class TutorOverviewView : UserControl
     {
         private bool deletingRow = false;
-        private TutorOverviewViewModel tutorOverview;
         public TutorOverviewView()
         {
             InitializeComponent();
+            DataContextChanged += new DependencyPropertyChangedEventHandler(SubscribeToEvents);
             dpBirthDate.DisplayDateStart = new DateTime(1924, 1, 1);
             dpBirthDate.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
         }
-        public TutorOverviewView(TutorOverviewViewModel tutorOverviewViewModel, ILangLangWindowFactory windowFactory)
+        public void SubscribeToEvents(object sender, DependencyPropertyChangedEventArgs e)
         {
-            InitializeComponent();
-            DataContext = tutorOverviewViewModel;
-            tutorOverview = tutorOverviewViewModel;
-            tutorOverviewViewModel.Window = this;
-            dpBirthDate.DisplayDateStart = new DateTime(1924, 1, 1);
-            dpBirthDate.DisplayDateEnd = DateTime.Today.AddYears(-16);   //minimum age of 16
+            if (e.OldValue != null) // not first call, avoiding double subriptions
+                return;
+            if (e.NewValue is not TutorOverviewViewModel viewModel) // invalid event arguments
+                return;
+            viewModel.RemoveKnownLanguages += RemoveKnownLanguages;
+            viewModel.KnownLanguageAdded += AddKnownLanguage;
         }
+
         public void LanguageSelectionChanged(object sender, SelectionChangedEventArgs e) 
         {
             if (DataContext is not TutorOverviewViewModel viewModel) // unable to parse DataContext

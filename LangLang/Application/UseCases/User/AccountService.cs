@@ -32,6 +32,11 @@ namespace LangLang.Application.UseCases.User
             _courseService = courseService;
         }
 
+        public string GetEmailByUserId(string userId)
+        {
+            return _personProfileMappingRepository.GetEmailByUserId(userId);
+        }
+
         public void UpdateStudent(string studentId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
         {
             if (_studentCourseCoordinator.GetStudentAttendingCourse(studentId) != null)

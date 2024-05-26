@@ -424,7 +424,15 @@ namespace LangLang.WPF.ViewModels.Student
             Course attendingCourse = _courseCoordinator.GetStudentAttendingCourse(_loggedInUser.Id)!;
             if(attendingCourse != null)
             {
-                string tutorName = _tutorService.GetTutorById(attendingCourse.TutorId!)!.GetFullName();
+                string tutorName = "tutor not available";
+                if (attendingCourse.TutorId != null)
+                {
+                    Domain.Model.Tutor tutor = _tutorService.GetTutorById(attendingCourse.TutorId!)!;
+                    if (tutor != null)
+                    {
+                        tutorName = _tutorService.GetTutorById(attendingCourse.TutorId!)!.GetFullName();
+                    }
+                }
                 AttendingCourse.Add(new CourseViewModel(attendingCourse, tutorName));
             }
         }

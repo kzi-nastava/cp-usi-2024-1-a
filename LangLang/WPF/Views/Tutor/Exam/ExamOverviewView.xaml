@@ -20,9 +20,9 @@
                 <ColumnDefinition Width="250"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="70"/>
-                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="3">
                 <Grid.RowDefinitions>
@@ -159,14 +159,36 @@
                 <Label>State:</Label>
                 <TextBlock Margin="5,0,0,0" Text="{Binding ExamState}"></TextBlock>
                 </StackPanel>
-            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Margin="5" Content="Add" Width="70" Height="50" Command="{Binding AddCommand}" />
                 <Button Margin="5" Content="Update" Width="70" Height="50" Command="{Binding UpdateCommand}"/>
                 <Button Margin="5" Content="Delete" Width="70" Height="50"  Command="{Binding DeleteCommand}"/>
             </StackPanel>
-            <StackPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Margin="5" Content="View Info" Width="230" Height="40" Command="{Binding OpenExamInfoCommand}"/>
-            </StackPanel>
+            <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!--<Button Margin="5" Content="View Info" Width="230" Height="40" Command="{Binding OpenExamInfoCommand}"/>-->
+
+                    <Button Margin="5,95,5,0" Padding="2,5,2,5" Width="230" Name="btnPickTutor" Content="Select tutor" Command="{Binding SelectTutorCommand}">
+                        <Button.Visibility>
+                            <Binding Path="IsSelectTutorButtonVisible">
+                                <Binding.Converter>
+                                    <BooleanToVisibilityConverter />
+                                </Binding.Converter>
+                            </Binding>
+                        </Button.Visibility>
+                    </Button>
+
+                    <Button Margin="5,45,5,0" Padding="2,5,2,5" Width="230" Name="btnViewInfo" Content="View Info" Command="{Binding OpenExamInfoCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelectTutorButtonVisible, ElementName=button1}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
         </Grid>
     </Border>
     </Grid>
