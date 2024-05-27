@@ -12,7 +12,7 @@
 
         public bool IsGraded { get; set; }
         
-        public int PenaltyPoints { get; private set; }
+        public int PenaltyPoints { get; set; }
 
         public CourseAttendance() {
             Id = "";
