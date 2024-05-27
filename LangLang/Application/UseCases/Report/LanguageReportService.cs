@@ -62,7 +62,8 @@ public class LanguageReportService : ILanguageReportService
         foreach(Language language in created.Keys)
         {
             List<string> row = new() { created[language].ToString() }; // courses created
-            if (totalPenaltyPoints.ContainsKey(language)) { // created keys are always a superset of others' keys
+            if (totalPenaltyPoints.ContainsKey(language))
+            { // created keys are always a superset of others' keys
                 uint count = counts[language];
                 row.AddRange(new List<string>
                 {
@@ -71,6 +72,8 @@ public class LanguageReportService : ILanguageReportService
                     (totalKnowledgeGrade[language]/count).ToString(CultureInfo.InvariantCulture)  // average knoweldge grade
                 });
             }
+            else
+                row.AddRange(new List<string> { "N/A", "N/A", "N/A" });
         }
 
         return new ReportTableDto(_coursesHeader.ToList(), rows);
@@ -113,6 +116,8 @@ public class LanguageReportService : ILanguageReportService
                     (totalSpeaking [language]/count).ToString(CultureInfo.InvariantCulture)  // average speaking
                 });
             }
+            else
+                row.AddRange(new List<string> { "N/A", "N/A", "N/A", "N/A" });
         }
 
         return new ReportTableDto(_examsHeader.ToList(), rows);
