@@ -47,16 +47,16 @@ public class LanguageReportService : ILanguageReportService
 
         var courses = _courseService.GetCoursesForLastYear();
         foreach (var course in courses)
-            created[course.Language]++;
-
+            created.Add(course.Language, 1);
+         
         var attendences = _courseCoordinator.GetGradedAttendancesForLastYear();
         foreach (var attendance in attendences)
         {
             Language language = _courseService.GetCourseById(attendance.CourseId)!.Language;
-            totalPenaltyPoints[language] += attendance.PenaltyPoints;
-            totalActivityGrade[language] += attendance.ActivityGrade;
-            totalKnowledgeGrade[language] += attendance.KnowledgeGrade;
-            counts[language]++;
+            totalPenaltyPoints.Add(language, attendance.PenaltyPoints);
+            totalActivityGrade.Add(language, attendance.ActivityGrade);
+            totalKnowledgeGrade.Add(language, attendance.KnowledgeGrade);
+            counts.Add(language, 1);
         }
         List<List<string>> rows = new();
         foreach(Language language in created.Keys)
@@ -86,18 +86,18 @@ public class LanguageReportService : ILanguageReportService
 
         var exams = _examService.GetExamsForTimePeriod(DateTime.Now.AddYears(-1), DateTime.Now);
         foreach (var exam in exams)
-            created[exam.Language]++;
+            created.Add(exam.Language, 1);
 
         var attendences = _examCoordinator.GetGradedAttendancesForLastYear();
         foreach (var attendance in attendences)
         {
             Language language = _examService.GetExamById(attendance.ExamId)!.Language;
             ExamGrade grade = attendance.Grade!; // we believe that GetGradedAttendancesForLastYear returned only graded exams
-            totalReading[language] += grade.ReadingScore;
-            totalWriting[language] += grade.WritingScore;
-            totalListening[language] += grade.ListeningScore;
-            totalSpeaking[language] += grade.SpeakingScore;
-            counts[language]++;
+            totalReading.Add(language, grade.ReadingScore);
+            totalWriting.Add(language, grade.WritingScore);
+            totalListening.Add(language, grade.ListeningScore);
+            totalSpeaking.Add(language, grade.SpeakingScore);
+            counts.Add(language, 1);
         }
         List<List<string>> rows = new();
         foreach (Language language in created.Keys)
