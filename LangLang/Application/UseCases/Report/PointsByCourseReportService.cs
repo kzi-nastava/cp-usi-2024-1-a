@@ -92,8 +92,11 @@ public class PointsByCourseReportService : IPointsByCourseReportService
 
         foreach(KeyValuePair<string, int> pair in attendancePerCourse)
         {
-            coursesScore[pair.Key]["Activity"] /= pair.Value;
-            coursesScore[pair.Key]["Knowledge"] /= pair.Value;
+            if(pair.Value != 0)
+            {
+                coursesScore[pair.Key]["Activity"] /= pair.Value;
+                coursesScore[pair.Key]["Knowledge"] /= pair.Value;
+            }
         }
 
         return coursesScore;
