@@ -36,7 +36,7 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddScoped<CourseOverviewForDirectorViewModel>();
             services.AddScoped<ExamOverviewForDirectorViewModel>();
             services.AddScoped<FinishedCourseOverviewForDirectorViewModel>();
-            services.AddTransient<TutorOverviewViewModel>();
+            services.AddScoped<TutorOverviewViewModel>();
             services.AddTransient<RateTutorViewModel>();
             services.AddScoped<ReportViewModel>();
             
