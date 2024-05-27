@@ -38,8 +38,10 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
     public RelayCommand UpdateCommand { get; set; }
     public RelayCommand DeleteCommand { get; set; }
     public RelayCommand ClearFiltersCommand { get; set; }
+    public RelayCommand PreviousPageCommand { get; }
+    public RelayCommand NextPageCommand { get; }
 
-    private ObservableCollection<ExamViewModel> _exams;
+    private ObservableCollection<ExamViewModel> _exams = new ObservableCollection<ExamViewModel>();
     private ObservableCollection<Language> _languages;
     private ObservableCollection<LanguageLevel> _languageLevels;
     private ObservableCollection<LanguageLevel> _filterLanguageLevels;
@@ -55,9 +57,14 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
     private int _numStudents;
     private Domain.Model.Exam.State _examState;
 
+    private bool _filterIsActive;
+
     private Language? _filterLanguage;
     private LanguageLevel? _filterLanguageLvl;
     private DateTime? _filterDate;
+
+    private int _pageNumber = 1;
+    private int _examsPerPage = 5;
 
     private readonly Dictionary<Language, List<LanguageLevel>> _languageToLvl;
 
@@ -188,6 +195,30 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         }
     }
 
+    public int PageNumber
+    {
+        get => _pageNumber;
+        private set
+        {
+            SetField(ref _pageNumber, value);
+            LoadExams();
+        }
+    }
+
+    public int ExamsPerPage
+    {
+        get => _examsPerPage;
+        set
+        {
+            SetField(ref _examsPerPage, value);
+            if (PageNumber == 1)
+                LoadExams();
+            else
+                PageNumber = 1;
+        }
+    }
+    public ObservableCollection<int> PageSizeOptions { get; }
+
     public ExamOverviewForDirectorViewModel(IExamService examService,
         ITimetableService timetableService, CurrentExamStore currentExamStore,
         IPopupNavigationService popupNavigationService, NavigationStore navigationStore,
@@ -201,7 +232,7 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         _popupNavigationService = popupNavigationService;
         _navigationStore = navigationStore;
         _languageService = languageService;
-        _exams = new ObservableCollection<ExamViewModel>(LoadExams());
+        LoadExams();
         _languages = new ObservableCollection<Language>(GetLanguages().Select(tuple => tuple.Item1));
         _languageLevels = new ObservableCollection<LanguageLevel>();
         _filterLanguageLevels = new ObservableCollection<LanguageLevel>(Enum.GetValues<LanguageLevel>());
@@ -229,6 +260,9 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         OpenExamInfoCommand = new RelayCommand(OpenExamInfo, _ => SelectedExam != null);
         SelectTutorCommand = new RelayCommand(SelectTutor, _ => CanSelectTutor());
         IsSelectTutorButtonVisible = true;
+        PreviousPageCommand = new RelayCommand(_ => GoToPreviousPage(), _ => CanGoToPreviousPage());
+        NextPageCommand = new RelayCommand(_ => GoToNextPage(), _ => CanGoToNextPage());
+        PageSizeOptions = new ObservableCollection<int>() { 1, 5, 10, 20 };
     }
 
     private void SelectTutor(object? obj)
@@ -382,9 +416,8 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
 
     private void FilterExams()
     {
-        DateOnly? filterDateOnly = FilterDate != null ? DateOnly.FromDateTime(FilterDate!.Value) : null;
-        Exams = new ObservableCollection<ExamViewModel>(ConvertToExamViewModel(_examService.FilterExams(FilterLanguage,
-            FilterLanguageLvl, filterDateOnly)));
+        _filterIsActive = true;
+        LoadExams();
     }
 
     private List<ExamViewModel> ConvertToExamViewModel(List<Domain.Model.Exam> exams)
@@ -397,6 +430,7 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         FilterLanguage = null;
         FilterLanguageLvl = null;
         FilterDate = null;
+        _filterIsActive = false;
     }
 
     private bool CanClearFilters()
@@ -448,9 +482,20 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
         return result;
     }
 
-    private List<ExamViewModel> LoadExams()
+    private void LoadExams()
     {
-        return ConvertToExamViewModel(_examService.GetAllExams());
+        if (_filterIsActive)
+        {
+            DateOnly? filterDateOnly = FilterDate != null ? DateOnly.FromDateTime(FilterDate!.Value) : null;
+            Exams = new ObservableCollection<ExamViewModel>(ConvertToExamViewModel(
+                _examService.FilterExamsForPage(PageNumber, ExamsPerPage, FilterLanguage, FilterLanguageLvl,
+                    filterDateOnly)));
+        }
+        else
+        {
+            Exams = new ObservableCollection<ExamViewModel>(
+                ConvertToExamViewModel(_examService.GetAllExamsForPage(PageNumber, ExamsPerPage)));
+        }
     }
 
     private Domain.Model.Tutor? GetTutor()
@@ -478,4 +523,25 @@ public class ExamOverviewForDirectorViewModel : ViewModelBase
 
         return _tutorService.GetTutorById(exam.TutorId!);
     }
+
+    private void GoToPreviousPage()
+    {
+        PageNumber--;
+    }
+
+    private bool CanGoToPreviousPage()
+    {
+        return PageNumber > 1;
+    }
+
+    private void GoToNextPage()
+    {
+        PageNumber++;
+    }
+
+    private bool CanGoToNextPage()
+    {
+        return Exams.Count == ExamsPerPage;
+    }
+
 }
