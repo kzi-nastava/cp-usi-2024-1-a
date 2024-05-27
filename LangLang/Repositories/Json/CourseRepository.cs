@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LangLang.Core;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Domain.Utility;
@@ -40,6 +41,16 @@ namespace LangLang.Repositories.Json
         public List<Course> GetByTutorId(string tutorId)
         {
             return GetAll().Where(course => course.TutorId == tutorId).ToList();
+        }
+
+        public List<Course> GetAllForPage(int pageNumber, int coursesPerPage)
+        {
+            return GetAll().GetPage(pageNumber, coursesPerPage);
+        }
+
+        public List<Course> GetByTutorIdForPage(string tutorId, int pageNumber, int coursesPerPage)
+        {
+            return GetByTutorId(tutorId).GetPage(pageNumber, coursesPerPage);
         }
     }
 }

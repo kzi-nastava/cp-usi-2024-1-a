@@ -24,4 +24,12 @@ public interface ICourseService
     List<Domain.Model.Course> GetCoursesForLastYear();
     public void RemoveTutorFromAllCourses(Tutor tutor);
     public Domain.Model.Course? SetTutor(Domain.Model.Course course, Tutor tutor);
+
+    public List<Domain.Model.Course> FilterCoursesForPage(int pageNumber, int coursesPerPage, string? language = null,
+        LanguageLevel? languageLvl = null, DateTime? start = null, bool? online = null, int? duration = null);
+    public List<Domain.Model.Course> FilterCourses(string? language = null,
+        LanguageLevel? languageLvl = null, DateTime? start = null, bool? online = null, int? duration = null);
+    public List<Domain.Model.Course> GetAllCoursesForPage(int pageNumber, int coursesPerPage);
+
+    public List<Domain.Model.Course> GetCoursesByTutorForPage(string tutorId, int pageNumber, int coursesPerPage);
 }
