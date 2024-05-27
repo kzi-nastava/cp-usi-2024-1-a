@@ -15,12 +15,16 @@ public class ReportViewModel : ViewModelBase
     private readonly string loggedInDirectorEmail;
 
     public ICommand SendCoursePenaltyReportCommand { get; }
+    public ICommand SendAverageCourseScoreCommand { get; }
+    public ICommand SendPointsBySkillReportCommand { get; }
     public ICommand SendLanguageReportCommand { get; }
 
     public ReportViewModel(IReportCoordinator reportCoordinator, IAuthenticationStore authenticationStore, IAccountService accountService)
     {
         _reportCoordinator = reportCoordinator;
         SendCoursePenaltyReportCommand = new RelayCommand(execute => SendCongratulationsEmail());
+        SendAverageCourseScoreCommand = new RelayCommand(execute => SendAverageCourseScoreEmail());
+        SendPointsBySkillReportCommand = new RelayCommand(execute => SendPointsBySkillReportEmail());
         SendLanguageReportCommand = new RelayCommand(execute => SendLanguageReport());
         Domain.Model.Director _loggedInUser = (Domain.Model.Director?)authenticationStore.CurrentUser.Person ??
                                 throw new InvalidOperationException(
@@ -28,8 +32,12 @@ public class ReportViewModel : ViewModelBase
         loggedInDirectorEmail = accountService.GetEmailByUserId(_loggedInUser.Id);
     }
 
+    private void SendPointsBySkillReportEmail()
+        => SendReport(_reportCoordinator.SendPointsBySkillReport);
     private void SendCongratulationsEmail()
         => SendReport(_reportCoordinator.SendCoursePenaltyReport);
+    private void SendAverageCourseScoreEmail()
+        => SendReport(_reportCoordinator.SendAverageCoursePointsReport);
     private void SendLanguageReport()
         => SendReport(_reportCoordinator.SendLanguageReport);
 

@@ -15,17 +15,6 @@ namespace LangLang.Domain.Model
 
         public DateTime DateAdded { get; set; }
         
-        public string KnownLanguagesAsString
-        {
-            get
-            {
-                StringBuilder builder = new();
-                foreach (var tuple in KnownLanguages)
-                    builder.AppendLine($"{tuple.Item1.Name} - {tuple.Item2.ToStr()}");
-                return builder.ToString().TrimEnd();
-            }
-        }
-
         public Tutor() : base("", "", DateTime.Now, Gender.Other, "")
         {
             Id = "";
@@ -111,6 +100,22 @@ namespace LangLang.Domain.Model
                 + 10 * languageLevelScore
                 + 100 * GetAverageRating()
                 ;
+        }
+
+        public bool MatchesFilter(string? languageName = null, LanguageLevel? languageLevel = null, 
+                                  DateTime? dateAddedMin = null, DateTime? dateAddedMax = null)
+        {
+            if (languageName != ""
+              && !KnownLanguages.Exists(tuple => tuple.Item1.Name == languageName))
+                return false;
+            if (languageLevel != null
+              && !KnownLanguages.Exists(tuple => tuple.Item2 == languageLevel))
+                return false;
+            if (dateAddedMin != null && DateAdded < dateAddedMin)
+                return false;
+            if (dateAddedMax != null && DateAdded > dateAddedMax)
+                return false;
+            return true;
         }
     }
 }

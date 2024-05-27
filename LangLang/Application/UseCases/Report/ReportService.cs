@@ -8,12 +8,14 @@ public class ReportService: IReportService
 {
     private readonly IPointsBySkillReportService _pointsBySkillReportService;
     private readonly IPenaltyByCourseReportService _penaltyByCourseReportService;
+    private readonly IPointsByCourseReportService _pointsByCourseReportService;
     private readonly ILanguageReportService _languageReportService;
 
-    public ReportService(IPointsBySkillReportService pointsBySkillReportService, IPenaltyByCourseReportService penaltyByCourseReportService, ILanguageReportService languageReportService)
+    public ReportService(IPointsBySkillReportService pointsBySkillReportService, IPenaltyByCourseReportService penaltyByCourseReportService, IPointsByCourseReportService pointsByCourseReportService, ILanguageReportService languageReportService)
     {
         _pointsBySkillReportService = pointsBySkillReportService;
         _penaltyByCourseReportService = penaltyByCourseReportService;
+        _pointsByCourseReportService = pointsByCourseReportService;
         _languageReportService = languageReportService;
     }
 
@@ -25,6 +27,10 @@ public class ReportService: IReportService
     public List<ReportTableDto> GetPointsBySkillReport()
     {
         return _pointsBySkillReportService.GetReport();
+    }
+    public List<ReportTableDto> GetAverageCoursePointsReport()
+    {
+        return _pointsByCourseReportService.GetReport();
     }
 
     public List<ReportTableDto> GetLanguageReport()

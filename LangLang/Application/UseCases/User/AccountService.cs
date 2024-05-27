@@ -113,7 +113,7 @@ namespace LangLang.Application.UseCases.User
                 registerDto.Gender,
                 registerDto.PhoneNumber,
                 registerDto.KnownLanguages,
-                new int[5],
+                new int[10],
                 registerDto.DateAdded
             ));
             _personProfileMappingRepository.Add(new PersonProfileMapping(
