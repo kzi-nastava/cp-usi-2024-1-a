@@ -27,4 +27,17 @@ public class ReportCoordinator: IReportCoordinator
         List<ReportTableDto> tables = _reportService.GetCoursePenaltyReport();
         _emailService.SendEmailWithPDFAttachment(recipient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(reportTitles, tables));
     }
+    public void SendLanguageReport(string recipient)
+    {
+        string emailSubject = "Report for languages";
+        string emailBody = @"You can find the report attached bellow with following information:
+    - Number of courses and exams created for each language
+    - Average number of penalty point for each language
+    - Average scores for each language";
+        string pdfName = "LangLang Report";
+        List<string> reportTitles = new List<string>() { "Course info", "Exam info" };
+
+        List<ReportTableDto> tables = _reportService.GetLanguageReport();
+        _emailService.SendEmailWithPDFAttachment(recipient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(reportTitles, tables));
+    }
 }
