@@ -43,7 +43,7 @@ public class LanguageReportService : ILanguageReportService
         Dictionary<Language, int> totalPenaltyPoints = new();
         Dictionary<Language, int> totalActivityGrade = new();
         Dictionary<Language, int> totalKnowledgeGrade = new();
-        Dictionary<Language, uint> counts = new();
+        Dictionary<Language, float> counts = new();
 
         var courses = _courseService.GetCoursesForLastYear();
         foreach (var couse in courses)
@@ -76,7 +76,7 @@ public class LanguageReportService : ILanguageReportService
                 language.Name,                  // language
                 created[language].ToString() }; // courses created
             if (totalPenaltyPoints.ContainsKey(language)) { // created keys are always a superset of others' keys
-                uint count = counts[language];
+                float count = counts[language];
                 row.AddRange(new List<string>
                 {
                     (totalPenaltyPoints [language]/count).ToString(CultureInfo.InvariantCulture), // average penalty points
@@ -98,7 +98,7 @@ public class LanguageReportService : ILanguageReportService
         Dictionary<Language, uint> totalWriting   = new();
         Dictionary<Language, uint> totalListening = new();
         Dictionary<Language, uint> totalSpeaking  = new();
-        Dictionary<Language, uint> counts = new();
+        Dictionary<Language, float> counts = new();
 
         var exams = _examService.GetExamsForTimePeriod(DateTime.Now.AddYears(-1), DateTime.Now);
         foreach (var exam in exams)
@@ -134,7 +134,7 @@ public class LanguageReportService : ILanguageReportService
                 language.Name,                  // language
                 created[language].ToString() }; // exams created
             if (totalReading.ContainsKey(language)) { // created keys are always a superset of others' keys
-                uint count = counts[language];
+                float count = counts[language];
                 row.AddRange(new List<string>
                 {
                     (totalReading  [language]/count).ToString(CultureInfo.InvariantCulture), // average reading
