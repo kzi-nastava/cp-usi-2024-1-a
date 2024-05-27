@@ -33,9 +33,9 @@ public class ReportCoordinator: IReportCoordinator
         string emailBody = @"You can find the report attached bellow with following information:
     - Number of courses and exams created for each language
     - Average number of penalty point for each language
-    - Average scores for each language";
+    - Average grades for each language";
         string pdfName = "LangLang Report";
-        List<string> reportTitles = new List<string>() { "Course info", "Exam info" };
+        List<string> reportTitles = new List<string>() { "Courses created and averages", "Exams created and averages" };
 
         List<ReportTableDto> tables = _reportService.GetLanguageReport();
         _emailService.SendEmailWithPDFAttachment(recipient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(reportTitles, tables));

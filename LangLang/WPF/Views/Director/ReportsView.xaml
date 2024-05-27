@@ -75,7 +75,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="4" RenderTransformOrigin="0.501,0.518">
-                    <TextBlock FontSize="14"  Height="40" TextWrapping="Wrap">Recieve email with a PDF report detailing the number of courses and exams created in the past year. The report also includes the average number of penalty points and average grades for both courses and exams.</TextBlock>
+                    <TextBlock FontSize="14"  Height="40" TextWrapping="Wrap">Recieve email with a PDF report detailing the number of courses and exams created in the past year per language. The report also includes the average number of penalty points and average grades for both courses and exams.</TextBlock>
                     <Button x:Name="SendReportBtn4" Content="Send report" FontSize="16" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="35" Width="150" BorderThickness="0" Command="{Binding SendLanguageReportCommand}" Margin="10">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">

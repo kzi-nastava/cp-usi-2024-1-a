@@ -17,8 +17,8 @@ public class LanguageReportService : ILanguageReportService
     private readonly ICourseService _courseService;
     private readonly IStudentCourseCoordinator _courseCoordinator;
 
-    private readonly string[] _coursesHeader = new string[] { "Courses created", "Average penalty points", "Average activity grade", "Average knowledge grade" };
-    private readonly string[] _examsHeader = new string[] { "Exams created", "Average reading", "Average writing", "Average listening", "Average speaking" };
+    private readonly string[] _coursesHeader = new string[] { "Language", "Courses created", "Penalty points", "Activity grade", "Knowledge grade" };
+    private readonly string[] _examsHeader = new string[] { "Language", "Exams created", "Reading", "Writing", "Listening", "Speaking" };
 
     public LanguageReportService(IExamCoordinator examCoordinator, ICourseService courseService, IStudentCourseCoordinator courseCoordinator, IExamService examService)
     {
@@ -46,24 +46,36 @@ public class LanguageReportService : ILanguageReportService
         Dictionary<Language, uint> counts = new();
 
         var courses = _courseService.GetCoursesForLastYear();
-        foreach (var course in courses)
-            created.Add(course.Language, 1);
-         
+        foreach (var couse in courses)
+        {
+            if (!created.ContainsKey(couse.Language))
+                created[couse.Language] = 0;
+            created[couse.Language]++;
+        }
+
         var attendences = _courseCoordinator.GetGradedAttendancesForLastYear();
         foreach (var attendance in attendences)
         {
             Language language = _courseService.GetCourseById(attendance.CourseId)!.Language;
-            totalPenaltyPoints.Add(language, attendance.PenaltyPoints);
-            totalActivityGrade.Add(language, attendance.ActivityGrade);
-            totalKnowledgeGrade.Add(language, attendance.KnowledgeGrade);
-            counts.Add(language, 1);
+            if (!totalPenaltyPoints.ContainsKey(language))
+            {
+                totalPenaltyPoints [language] = 0;
+                totalActivityGrade [language] = 0;
+                totalKnowledgeGrade[language] = 0;
+                counts[language] = 0;
+            }
+            totalPenaltyPoints [language] += attendance.PenaltyPoints;
+            totalActivityGrade [language] += attendance.ActivityGrade;
+            totalKnowledgeGrade[language] += attendance.KnowledgeGrade;
+            counts[language]++;
         }
         List<List<string>> rows = new();
         foreach(Language language in created.Keys)
         {
-            List<string> row = new() { created[language].ToString() }; // courses created
-            if (totalPenaltyPoints.ContainsKey(language))
-            { // created keys are always a superset of others' keys
+            List<string> row = new() { 
+                language.Name,                  // language
+                created[language].ToString() }; // courses created
+            if (totalPenaltyPoints.ContainsKey(language)) { // created keys are always a superset of others' keys
                 uint count = counts[language];
                 row.AddRange(new List<string>
                 {
@@ -74,6 +86,7 @@ public class LanguageReportService : ILanguageReportService
             }
             else
                 row.AddRange(new List<string> { "N/A", "N/A", "N/A" });
+            rows.Add(row);
         }
 
         return new ReportTableDto(_coursesHeader.ToList(), rows);
@@ -89,24 +102,38 @@ public class LanguageReportService : ILanguageReportService
 
         var exams = _examService.GetExamsForTimePeriod(DateTime.Now.AddYears(-1), DateTime.Now);
         foreach (var exam in exams)
-            created.Add(exam.Language, 1);
+        {
+            if (!created.ContainsKey(exam.Language))
+                created[exam.Language] = 0;
+            created[exam.Language]++;
+        }
 
         var attendences = _examCoordinator.GetGradedAttendancesForLastYear();
         foreach (var attendance in attendences)
         {
             Language language = _examService.GetExamById(attendance.ExamId)!.Language;
             ExamGrade grade = attendance.Grade!; // we believe that GetGradedAttendancesForLastYear returned only graded exams
-            totalReading.Add(language, grade.ReadingScore);
-            totalWriting.Add(language, grade.WritingScore);
-            totalListening.Add(language, grade.ListeningScore);
-            totalSpeaking.Add(language, grade.SpeakingScore);
-            counts.Add(language, 1);
+            if (!totalReading.ContainsKey(language))
+            {
+                totalReading  [language] = 0;
+                totalWriting  [language] = 0;
+                totalListening[language] = 0;
+                totalSpeaking [language] = 0;
+                counts        [language] = 0;
+            }
+            totalReading  [language] += grade.ReadingScore;
+            totalWriting  [language] += grade.WritingScore;
+            totalListening[language] += grade.ListeningScore;
+            totalSpeaking [language] += grade.SpeakingScore;
+            counts[language]++;
         }
         List<List<string>> rows = new();
         foreach (Language language in created.Keys)
         {
-            List<string> row = new() { created[language].ToString() }; // exams created
-            if (totalReading.ContainsKey(language)){ // created keys are always a superset of others' keys
+            List<string> row = new() {
+                language.Name,                  // language
+                created[language].ToString() }; // exams created
+            if (totalReading.ContainsKey(language)) { // created keys are always a superset of others' keys
                 uint count = counts[language];
                 row.AddRange(new List<string>
                 {
@@ -118,6 +145,7 @@ public class LanguageReportService : ILanguageReportService
             }
             else
                 row.AddRange(new List<string> { "N/A", "N/A", "N/A", "N/A" });
+            rows.Add(row);
         }
 
         return new ReportTableDto(_examsHeader.ToList(), rows);
