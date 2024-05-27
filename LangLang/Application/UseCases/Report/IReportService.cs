@@ -9,4 +9,6 @@ public interface IReportService
 
     public List<ReportTableDto> GetPointsBySkillReport();
 
+    public List<ReportTableDto> GetAverageCoursePointsReport();
+
 }

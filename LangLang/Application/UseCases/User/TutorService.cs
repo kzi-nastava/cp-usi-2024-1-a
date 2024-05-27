@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using LangLang.Core;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -42,5 +44,16 @@ namespace LangLang.Application.UseCases.User
             _tutorRepository.Update(tutor.Id, tutor);
             return true;
         }
+
+        public List<Tutor> GetFilteredTutors(string? languageName = null, LanguageLevel? languageLevel = null,
+                                  DateTime? dateAddedMin = null, DateTime? dateAddedMax = null)
+            => GetAllTutors().Where(tutor => tutor.MatchesFilter(languageName, languageLevel, dateAddedMin, dateAddedMax)).ToList();
+
+        public List<Tutor> GetAllTutorsForPage(int pageNumber, int tutorsPerPage)
+            => GetAllTutors().GetPage(pageNumber, tutorsPerPage);
+
+        public List<Tutor> GetFilteredTutorsForPage(int pageNumber, int tutorsPerPage, string? languageName = null,
+            LanguageLevel? languageLevel = null, DateTime? dateAddedMin = null, DateTime? dateAddedMax = null)
+            => GetFilteredTutors(languageName, languageLevel, dateAddedMin, dateAddedMax).GetPage(pageNumber, tutorsPerPage);
     }
 }
