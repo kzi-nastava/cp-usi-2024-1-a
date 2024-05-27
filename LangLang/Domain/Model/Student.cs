@@ -88,7 +88,7 @@ namespace LangLang.Domain.Model
         public bool HasCourseKnowledge(Language language, LanguageLevel languageLevel)
         {
             return CompletedCourseLanguages.ContainsKey(language.Name) &&
-                   CompletedCourseLanguages[language.Name] < languageLevel;
+                   CompletedCourseLanguages[language.Name] >= languageLevel;
         }
 
         /// <summary>
