@@ -18,4 +18,11 @@ public interface ITutorService
 
     public bool UpdateTutor(Tutor tutor, string name, string surname, DateTime birthDate, Gender gender,
         string phoneNumber, List<Tuple<Language, LanguageLevel>> knownLanguages, DateTime dateAdded);
+
+    public List<Tutor> GetFilteredTutors(string? languageName = null, LanguageLevel? languageLevel = null,
+                                  DateTime? dateAddedMin = null, DateTime? dateAddedMax = null);
+    public List<Tutor> GetAllTutorsForPage(int pageNumber, int tutorsPerPage);
+    public List<Tutor> GetFilteredTutorsForPage(int pageNumber, int tutorsPerPage, string? languageName = null, LanguageLevel? languageLevel = null,
+                                  DateTime? dateAddedMin = null, DateTime? dateAddedMax = null);
+
 }
