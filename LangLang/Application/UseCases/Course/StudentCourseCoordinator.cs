@@ -198,7 +198,11 @@ namespace LangLang.Application.UseCases.Course
             List<Domain.Model.Course> finishedCourses = new();
             foreach (CourseAttendance attendance in attendances)
             {
-                finishedCourses.Add(_courseService.GetCourseById(attendance.CourseId)!);
+                Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
+                if(course != null && !finishedCourses.Contains(course))
+                {
+                    finishedCourses.Add(course);
+                }
             }
             return finishedCourses;
         }

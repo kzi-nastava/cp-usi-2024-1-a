@@ -21,7 +21,7 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
             services.AddTransient<StudentMenuViewModel>();
-            services.AddScoped<TutorMenuViewModel>();
+            services.AddTransient<TutorMenuViewModel>();
             services.AddScoped<DirectorMenuViewModel>();
             services.AddTransient<CourseOverviewViewModel>();
             services.AddTransient<ExamOverviewViewModel>();
