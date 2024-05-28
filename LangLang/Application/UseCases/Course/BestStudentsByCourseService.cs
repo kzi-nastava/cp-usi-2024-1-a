@@ -71,7 +71,7 @@ public class BestStudentsByCourseService: IBestStudentsByCourseService
             if (student != null)
             {
                 string studentName = student.Name + " " + student.Surname;
-                string email = _accountService.GetEmailByUserId(studentId);
+                string email = _accountService.GetEmailByUserId(studentId, UserType.Student);
                 string emailSubject = "Congratulations on Your Outstanding Performance!";
                 string emailBody = string.Format(Utility.BestStudentsConstants.bestStudentsAppreciationEmailBody, studentName, courseName);
                 _emailService.SendEmail(email, emailSubject, emailBody);

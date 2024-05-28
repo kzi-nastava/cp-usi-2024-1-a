@@ -20,7 +20,10 @@ public interface IExamCoordinator
     public void RemoveAttendee(string studentId);
     public void FinishExam(Domain.Model.Exam exam);
     public void ConfirmExam(Domain.Model.Exam exam);
+    public void GradedExam(Domain.Model.Exam exam);
+    public void ReportedExam(Domain.Model.Exam exam, List<Student> passed);
     public void GenerateAttendance(string examId);
     List<ExamAttendance> GetGradedAttendancesForLastYear();
     public void DeleteExamsByTutor(Tutor tutor);
+    public List<Domain.Model.Exam> GetGradedExams();
 }

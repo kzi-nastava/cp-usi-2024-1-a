@@ -35,6 +35,8 @@ public interface IExamService
     public void FinishExam(Domain.Model.Exam exam);
     
     public void ConfirmExam(Domain.Model.Exam exam);
+    public void GradedExam(Domain.Model.Exam exam);
+    public void ReportedExam(Domain.Model.Exam exam);
     
     public List<Domain.Model.Exam> GetExamsForTimePeriod(DateTime from, DateTime to);
 

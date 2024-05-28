@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
@@ -20,8 +21,10 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
     private readonly IUserProfileMapper _userProfileMapper;
 
     private readonly IExamAttendanceService _examAttendanceService;
+    private readonly IExamCoordinator _examCoordinator;
     
     public RelayCommand GradeStudentCommand { get; }
+    public RelayCommand MarkExamAsGradedCommand { get; }
 
     private string name = "";
     private string surname = "";
@@ -89,7 +92,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
         }
     }
     public ObservableCollection<Domain.Model.Student> Students { get; set; }
-    public FinishedExamViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, IUserProfileMapper userProfileMapper, IExamAttendanceService examAttendanceService)
+    public FinishedExamViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, IUserProfileMapper userProfileMapper, IExamAttendanceService examAttendanceService, IExamCoordinator examCoordinator)
     {
         NavigationStore = navigationStore;
         _exam = currentExamStore.CurrentExam ??
@@ -97,11 +100,13 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
                     "Cannot create FinishedExamInfoViewModel without the current exam set.");
         _userProfileMapper = userProfileMapper;
         _examAttendanceService = examAttendanceService;
+        _examCoordinator = examCoordinator;
         Students = new ObservableCollection<Domain.Model.Student>(LoadStudents());
-        GradeStudentCommand = new RelayCommand(GradeStudent, _ => CanGradeStudent());
+        GradeStudentCommand = new RelayCommand(_ => GradeStudent(), _ => CanGradeStudent());
+        MarkExamAsGradedCommand = new RelayCommand(_ => MarkExamAsGraded(), _ => CanMarkExamAsGraded());
     }
 
-    private void GradeStudent(object? obj)
+    private void GradeStudent()
     {
         if (ReadingScore == "" || WritingScore == "" || ListeningScore == "" || SpeakingScore == "")
         {
@@ -173,6 +178,15 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
         Email = profile.Email;
         PenaltyPts = SelectedStudent.PenaltyPoints;
         Graded = IsGraded(SelectedStudent);
+    }
+
+    private bool CanMarkExamAsGraded() 
+        => !Students.Any(student => !IsGraded(student));
+
+    private void MarkExamAsGraded()
+    {
+        _examCoordinator.GradedExam(_exam);
+        MessageBox.Show($"Successfully marked exam as graded!", "Success", MessageBoxButton.OK);
     }
 }
 

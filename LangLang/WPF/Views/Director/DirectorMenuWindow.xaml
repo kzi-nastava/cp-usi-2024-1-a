@@ -12,6 +12,8 @@
         xmlns:courseView="clr-namespace:LangLang.WPF.Views.Tutor.Course"
         xmlns:finishedCourse="clr-namespace:LangLang.WPF.ViewModels.Director"
         xmlns:finishedCourseView="clr-namespace:LangLang.WPF.Views.Director"
+        xmlns:finishedExam="clr-namespace:LangLang.WPF.ViewModels.Director"
+        xmlns:finishedExamView="clr-namespace:LangLang.WPF.Views.Director"
         xmlns:reportView="clr-namespace:LangLang.WPF.Views.Director"
         xmlns:report="clr-namespace:LangLang.WPF.ViewModels.Director"
         mc:Ignorable="d"
@@ -31,6 +33,9 @@
             <DataTemplate DataType="{x:Type finishedCourse:FinishedCourseOverviewForDirectorViewModel}">
                 <finishedCourseView:FinishedCourseOverviewView></finishedCourseView:FinishedCourseOverviewView>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type finishedExam:FinishedExamOverviewViewModel}">
+                <finishedExamView:FinishedExamOverviewView></finishedExamView:FinishedExamOverviewView>
+            </DataTemplate>
         <DataTemplate DataType="{x:Type report:ReportViewModel}">
             <reportView:ReportsView></reportView:ReportsView>
         </DataTemplate>
@@ -47,6 +52,7 @@
             <Grid Background="LightGray">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="90"/>
+                    <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
@@ -82,13 +88,20 @@
                     Margin="20,10,20,10"
                  />
 
-                <Button Content = "Reports" 
+                <Button Content = "Finished exams" 
                     Command = "{Binding NavCommand}" 
-                    CommandParameter = "reports" 
+                    CommandParameter = "finishedExams" 
                     Grid.Row = "5" 
                     Margin="20,10,20,10"
                  />
-                <Button Content="Logout" Margin="20,10,20,10" Height="35"  Command="{Binding LogoutCommand}" Grid.Row="6" />
+                
+                <Button Content = "Reports" 
+                    Command = "{Binding NavCommand}" 
+                    CommandParameter = "reports" 
+                    Grid.Row = "6" 
+                    Margin="20,10,20,10"
+                 />
+                <Button Content="Logout" Margin="20,10,20,10" Height="35"  Command="{Binding LogoutCommand}" Grid.Row="7" />
             </Grid>
 
 

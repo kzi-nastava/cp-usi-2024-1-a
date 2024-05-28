@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using System.Windows.Navigation;
 
 namespace LangLang.Domain.Model
 {
@@ -11,9 +12,9 @@ namespace LangLang.Domain.Model
         public DateTime Time { get; set; }
         public int ClassroomNumber { get; set; }
         public int MaxStudents { get; set; }
-        public int NumStudents { get; private set; }
+        public int NumStudents { get; set; }
 
-        public State ExamState { get; private set; }
+        public State ExamState { get; set; }
 
         public enum State
         {
@@ -163,6 +164,20 @@ namespace LangLang.Domain.Model
             ExamState = State.Confirmed;
         }
 
+        public void Grade()
+        {
+            if (ExamState != State.Finished)
+                throw new InvalidOperationException("Cannot grade exam with current state.");
+            ExamState = State.Graded;
+        }
+
+        public void Report()
+        {
+            if (ExamState != State.Graded)
+                throw new InvalidOperationException("Cannot report exam with current state.");
+            ExamState = State.Reported;
+        }
+
         public bool IsAvailable(Student student)
         {
             if (ExamState != State.NotStarted)
@@ -195,5 +210,11 @@ namespace LangLang.Domain.Model
             MaxStudents = maxStudents;
             UpdateExamStateBasedOnCurrentDateTime();
         }
+
+        public bool IsGraded()
+            => ExamState == State.Graded;
+
+        public bool IsReported()
+            => ExamState == State.Reported;
     }
 }

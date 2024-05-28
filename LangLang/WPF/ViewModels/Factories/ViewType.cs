@@ -22,5 +22,6 @@ public enum ViewType
     TutorTable,
     RateTutor,
     FinishedCourseForDirector,
+    FinishedExamOverview,
     Reports
 }

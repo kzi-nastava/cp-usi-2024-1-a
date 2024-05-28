@@ -17,12 +17,12 @@ public class PersonProfileMappingRepository : Repository<PersonProfileMapping>, 
         return mapping.Email;
     }
 
-    public string GetEmailByUserId(string userId)
+    public string GetEmailByUserId(string userId, UserType userType)
     {
         var profiles = GetMap();
         foreach (PersonProfileMapping profile in profiles.Values)
         {
-            if (profile.UserId == userId)
+            if (profile.UserId == userId && profile.UserType == userType)
             {
                 return profile.Email;
             }

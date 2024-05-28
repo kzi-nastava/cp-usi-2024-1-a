@@ -32,9 +32,9 @@ namespace LangLang.Application.UseCases.User
             _courseService = courseService;
         }
 
-        public string GetEmailByUserId(string userId)
+        public string GetEmailByUserId(string userId, UserType userType)
         {
-            return _personProfileMappingRepository.GetEmailByUserId(userId);
+            return _personProfileMappingRepository.GetEmailByUserId(userId, userType);
         }
 
         public void UpdateStudent(string studentId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber)
