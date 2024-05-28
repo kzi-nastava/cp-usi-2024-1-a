@@ -194,11 +194,11 @@ namespace LangLang.Application.UseCases.Course
         }
         public List<Domain.Model.Course> GetFinishedAndGradedCourses()
         {
-            List<CourseAttendance> attendances = _courseAttendanceService.GetFinishedAndGradedCourses();
+            List<string> finishedCourseIds = _courseAttendanceService.GetFinishedAndGradedCourseIds();
             List<Domain.Model.Course> finishedCourses = new();
-            foreach (CourseAttendance attendance in attendances)
+            foreach (string courseId in finishedCourseIds)
             {
-                finishedCourses.Add(_courseService.GetCourseById(attendance.CourseId)!);
+                finishedCourses.Add(_courseService.GetCourseById(courseId)!);             
             }
             return finishedCourses;
         }

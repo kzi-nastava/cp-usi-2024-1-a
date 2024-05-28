@@ -138,7 +138,10 @@ namespace LangLang.Domain.Model
             }
             else
             {
-                State = CourseState.FinishedNotGraded;
+                if(State != CourseState.FinishedGraded)
+                {
+                    State = CourseState.FinishedNotGraded;
+                }
             }
         }
 

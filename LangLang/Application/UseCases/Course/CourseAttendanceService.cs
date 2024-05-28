@@ -69,17 +69,17 @@ namespace LangLang.Application.UseCases.Course
             return finishedAttendances;
         }
 
-        public List<CourseAttendance> GetFinishedAndGradedCourses()
+        public List<string> GetFinishedAndGradedCourseIds()
         {
             List<CourseAttendance> allAttendances = _courseAttendanceRepository.GetAll();
-            List<CourseAttendance> finishedAttendances = new();
+            List<string> finishedCourses = new();
             foreach (CourseAttendance attendance in allAttendances)
             {
                 Domain.Model.Course course = _courseService.GetCourseById(attendance.CourseId)!;
-                if (course.IsFinishedAndGraded())
-                    finishedAttendances.Add(attendance);
+                if (course.IsFinishedAndGraded() && !finishedCourses.Contains(course.Id))
+                    finishedCourses.Add(course.Id);
             }
-            return finishedAttendances;
+            return finishedCourses;
         }
 
         public List<CourseAttendance> GetFinishedCoursesStudent(string studentId)
