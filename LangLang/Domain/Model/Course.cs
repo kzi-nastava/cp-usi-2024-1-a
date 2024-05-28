@@ -128,7 +128,7 @@ namespace LangLang.Domain.Model
             {
                 State = CourseState.InProgress;
             }
-            else if (Start - Constants.CancellableCourseTime < DateTime.Now)
+            else if (Start - Constants.CancellableCourseTime < DateTime.Now && Start >= DateTime.Now)
             {
                 State = CourseState.Locked;
             }
@@ -145,6 +145,41 @@ namespace LangLang.Domain.Model
         public static bool IsValid(string name, string? languageName, LanguageLevel? level, int? duration, CourseState? state, DateTime? start, int maxStudents, ObservableCollection<WorkDay> scheduleDays)
         {
             return !(name == "" || languageName == null || duration == null || start == null || maxStudents == 0 || level == null || state == null || scheduleDays.Count == 0);
+        }
+
+        public bool MatchesFilter(string? language, LanguageLevel? level, DateTime? start, bool? online, int? duration)
+        {
+            if (language != null && language != Language.Name) return false;
+
+            if (level != null && level != Level) return false;
+
+            if (start != null && !Equals(start, Start)) return false;
+
+            if (online != null && online != Online) return false;
+
+            if (duration != null && duration != Duration) return false;
+
+            return true;
+
+            
+            //Courses.Clear();
+            //var courses = _courseService.GetCoursesByTutor(_loggedInUser);
+            //foreach (Domain.Model.Course course in courses)
+            //{
+            //    if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
+            //    {
+            //        if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter)))
+            //        {
+            //            if(course.Online == OnlineFilter || OnlineFilter == null)
+            //            { 
+            //                if(course.Duration == DurationFilter || DurationFilter == 0)
+            //                {
+            //                    Courses.Add(new CourseViewModel(course));
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
     }

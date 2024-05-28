@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using LangLang.Core;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 
@@ -151,6 +153,26 @@ namespace LangLang.Application.UseCases.Course
                 course.UpdateState();
                 UpdateCourse(course);
             }
+        }
+
+        public List<Domain.Model.Course> FilterCoursesForPage(int pageNumber, int coursesPerPage, string? language = null, LanguageLevel? languageLevel = null, DateTime? start = null, bool? online = null, int? duration = null)
+        {
+            return FilterCourses(language, languageLevel,start, online, duration).GetPage(pageNumber, coursesPerPage);
+        }
+
+        public List<Domain.Model.Course> FilterCourses(string? language = null, LanguageLevel? languageLvl = null, DateTime? start = null, bool? online = null, int? duration = null)
+        {
+            return GetAll().Where(course => course.MatchesFilter(language, languageLvl, start, online, duration)).ToList();
+        }
+
+        public List<Domain.Model.Course> GetAllCoursesForPage(int pageNumber, int coursesPerPage)
+        {
+            return _courseRepository.GetAllForPage(pageNumber, coursesPerPage);
+        }
+
+        public List<Domain.Model.Course> GetCoursesByTutorForPage(string tutorId, int pageNumber, int coursesPerPage)
+        {
+            return _courseRepository.GetByTutorIdForPage(tutorId, pageNumber, coursesPerPage);
         }
     }
 }

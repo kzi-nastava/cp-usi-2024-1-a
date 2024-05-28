@@ -30,15 +30,24 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
     private readonly IAutoCourseTutorSelector _autoCourseTutorSelector;
     
     public bool IsSelectTutorButtonVisible { get; }
-    
+    private bool _filterIsActive;
+
     public RelayCommand SelectTutorCommand { get; }
     public RelayCommand AddCourseCommand { get; }
     public RelayCommand DeleteCourseCommand { get; }
     public RelayCommand UpdateCourseCommand { get; }
     public RelayCommand ToggleMaxStudentsCommand { get; }
     public RelayCommand ClearFiltersCommand { get; }
+    public RelayCommand PreviousPageCommand { get; }
+    public RelayCommand NextPageCommand { get; }
     public RelayCommand SelectedCourseChangedCommand { get; set; }
-    public ObservableCollection<CourseViewModel> Courses { get; set; }
+
+    private ObservableCollection<CourseViewModel> _courses = null!;
+    public ObservableCollection<CourseViewModel> Courses
+    {
+        get => _courses;
+        private set => SetField(ref _courses, value);
+    }
     public ObservableCollection<string?> Languages { get; set; }
     public ObservableCollection<LanguageLevel> LanguageLevels { get; set; }
     public ObservableCollection<LanguageLevel> Levels { get; set; }
@@ -281,6 +290,32 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
             SelectCourse(value);
         }
     }
+
+    private int _coursesPerPage = 5;
+    public int CoursesPerPage
+    {
+        get => _coursesPerPage;
+        set
+        {
+            SetField(ref _coursesPerPage, value);
+            if (PageNumber == 1)
+                LoadCourses();
+            else
+                PageNumber = 1;
+        }
+    }
+
+    private int _pageNumber = 1;
+    public int PageNumber
+    {
+        get => _pageNumber;
+        private set
+        {
+            SetField(ref _pageNumber, value);
+            LoadCourses();
+        }
+    }
+    public ObservableCollection<int> PageSizeOptions { get; }
     public CourseOverviewForDirectorViewModel(ICourseService courseService, ITimetableService timetableService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore, ITutorService tutorService, ILanguageService languageService, IAutoCourseTutorSelector autoCourseTutorSelector)
     {
         _currentCourseStore = currentCourseStore;
@@ -318,6 +353,9 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
         SelectedCourseChangedCommand = new RelayCommand(SelectCourse);
         SelectTutorCommand = new RelayCommand(SelectTutor, _ => CanSelectTutor());
         IsSelectTutorButtonVisible = true;
+        PageSizeOptions = new ObservableCollection<int>() { 1, 5, 10, 20 };
+        PreviousPageCommand = new RelayCommand(_ => GoToPreviousPage(), _ => CanGoToPreviousPage());
+        NextPageCommand = new RelayCommand(_ => GoToNextPage(), _ => CanGoToNextPage());
     }
 
     private void SelectTutor(object? obj)
@@ -552,9 +590,18 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
     }
     public void LoadCourses()
     {
-        var courses = _courseService.GetAll();
-        foreach(var course in courses){
-            Courses.Add(new CourseViewModel(course));
+        if (_filterIsActive)
+        {
+            int? duration = DurationFilter == 0 ? null : DurationFilter;
+            string? language = LanguageFilter == "" ? null : LanguageFilter;
+            Courses = new ObservableCollection<CourseViewModel>(ConvertToCourseViewModel(_courseService.FilterCoursesForPage(
+                PageNumber, CoursesPerPage, language, LevelFilter, StartFilter, OnlineFilter, duration
+                )));
+        }
+        else
+        {
+            Courses = new ObservableCollection<CourseViewModel>(ConvertToCourseViewModel(
+                _courseService.GetAllCoursesForPage(PageNumber, CoursesPerPage)));
         }
 
     }
@@ -643,24 +690,13 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
     }
     public void FilterCourses()
     {
-        Courses.Clear();
-        var courses = _courseService.GetAll();
-        foreach (Domain.Model.Course course in courses)
-        {
-            if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
-            {
-                if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter)))
-                {
-                    if(course.Online == OnlineFilter || OnlineFilter == null)
-                    { 
-                        if(course.Duration == DurationFilter || DurationFilter == 0)
-                        {
-                            Courses.Add(new CourseViewModel(course));
-                        }
-                    }
-                }
-            }
-        }
+        _filterIsActive = true;
+        LoadCourses();
+    }
+
+    private List<CourseViewModel> ConvertToCourseViewModel(List<Domain.Model.Course> courses)
+    {
+        return courses.Select(exam => new CourseViewModel(exam)).ToList();
     }
 
     private List<Tuple<Language, LanguageLevel>> GetLanguages()
@@ -689,4 +725,25 @@ public class CourseOverviewForDirectorViewModel : ViewModelBase
             Start
         ));
     }
+
+    private void GoToPreviousPage()
+    {
+        PageNumber--;
+    }
+
+    private bool CanGoToPreviousPage()
+    {
+        return PageNumber > 1;
+    }
+
+    private void GoToNextPage()
+    {
+        PageNumber++;
+    }
+
+    private bool CanGoToNextPage()
+    {
+        return Courses.Count == CoursesPerPage;
+    }
+
 }
