@@ -386,7 +386,7 @@
 
                 <Label Grid.Row="0" Content="Finished exams" HorizontalAlignment="Left" FontSize="24" FontFamily="Roboto" Margin="10,3,0,0"/>
 
-                <DataGrid Grid.Row="3" ItemsSource="{Binding AvailableExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10" >
+                <DataGrid Grid.Row="3" ItemsSource="{Binding FinishedExams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}" Width="*" />
                         <DataGridTextColumn Header="Level" Binding="{Binding LanguageLevel}" Width="*" />

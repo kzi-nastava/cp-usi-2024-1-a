@@ -66,8 +66,7 @@ public class FinishedExamOverviewViewModel : ViewModelBase
             message += failed;
             System.Windows.MessageBox.Show(message, "Results sent");
         }
-        _examCoordinator.ReportedExam(_examService.GetExamById(examViewModel.Id)!, 
-            sendingResult.SuccessfullySent.Select(person => (Domain.Model.Student)person).ToList());
+        _examCoordinator.ReportedExam(_examService.GetExamById(examViewModel.Id)!);
     }
 
     private string Format(Person student)

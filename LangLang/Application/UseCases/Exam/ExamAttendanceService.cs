@@ -73,7 +73,9 @@ namespace LangLang.Application.UseCases.Exam
             
             if(_examService.GetExamById(examId)!.ExamState != State.NotStarted)
             {
-                _examService.GetExamById(examId)!.CancelAttendance();
+                Domain.Model.Exam exam = _examService.GetExamById(examId)!;
+                exam.CancelAttendance();
+                _examService.UpdateExam(exam);
             }
             _examAttendanceRepository.Delete(attendance.Id);
         }
