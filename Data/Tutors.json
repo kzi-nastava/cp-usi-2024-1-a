@@ -1,0 +1,47 @@
+{
+  "2": {
+    "Id": "2",
+    "RatingCounts": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      3
+    ],
+    "KnownLanguages": [
+      {
+        "Item1": {
+          "Name": "English",
+          "Code": "ENG"
+        },
+        "Item2": 4
+      },
+      {
+        "Item1": {
+          "Name": "Serbian",
+          "Code": "SRB"
+        },
+        "Item2": 5
+      },
+      {
+        "Item1": {
+          "Name": "French",
+          "Code": "FRA"
+        },
+        "Item2": 3
+      }
+    ],
+    "DateAdded": "1717113600000",
+    "KnownLanguagesAsString": "English - C1\r\nSerbian - C2\r\nFrench - B2",
+    "Name": "Milan",
+    "Surname": "Lazarevic",
+    "BirthDate": "1210982400000",
+    "Gender": 1,
+    "PhoneNumber": "123123"
+  }
+}

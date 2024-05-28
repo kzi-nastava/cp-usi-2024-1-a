@@ -128,7 +128,7 @@ namespace LangLang.Domain.Model
             {
                 State = CourseState.InProgress;
             }
-            else if (Start - Constants.CancellableCourseTime < DateTime.Now)
+            else if (Start - Constants.CancellableCourseTime < DateTime.Now && Start >= DateTime.Now)
             {
                 State = CourseState.Locked;
             }

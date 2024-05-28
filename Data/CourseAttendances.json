@@ -1,0 +1,22 @@
+{
+  "3": {
+    "Id": "3",
+    "CourseId": "14",
+    "StudentId": "2",
+    "KnowledgeGrade": 10,
+    "ActivityGrade": 4,
+    "IsRated": true,
+    "IsGraded": true,
+    "PenaltyPoints": 0
+  },
+  "4": {
+    "Id": "4",
+    "CourseId": "14",
+    "StudentId": "1",
+    "KnowledgeGrade": 3,
+    "ActivityGrade": 3,
+    "IsRated": true,
+    "IsGraded": true,
+    "PenaltyPoints": 0
+  }
+}

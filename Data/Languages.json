@@ -1,0 +1,26 @@
+{
+  "English": {
+    "Name": "English",
+    "Code": "ENG"
+  },
+  "French": {
+    "Name": "French",
+    "Code": "FRA"
+  },
+  "German": {
+    "Name": "German",
+    "Code": "DEU"
+  },
+  "Spanish": {
+    "Name": "Spanish",
+    "Code": "ESP"
+  },
+  "Italian": {
+    "Name": "Italian",
+    "Code": "ITA"
+  },
+  "Serbian": {
+    "Name": "Serbian",
+    "Code": "SRB"
+  }
+}

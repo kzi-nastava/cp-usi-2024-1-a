@@ -1,0 +1,87 @@
+{
+  "14": {
+    "Id": "14",
+    "Name": "Engleski",
+    "Language": {
+      "Name": "Serbian",
+      "Code": "SRB"
+    },
+    "Level": 0,
+    "Duration": 6,
+    "Schedule": {
+      "Monday": {
+        "Item1": "12:00 AM",
+        "Item2": -1
+      },
+      "Wednesday": {
+        "Item1": "1:30 AM",
+        "Item2": 1
+      },
+      "Friday": {
+        "Item1": "12:00 AM",
+        "Item2": -1
+      }
+    },
+    "Start": "1710201600000",
+    "Online": true,
+    "MaxStudents": 2147483647,
+    "NumStudents": 0,
+    "State": 1,
+    "TutorId": "2",
+    "IsCreatedByTutor": true
+  },
+  "15": {
+    "Id": "15",
+    "Name": "Engleski",
+    "Language": {
+      "Name": "English",
+      "Code": "ENG"
+    },
+    "Level": 0,
+    "Duration": 6,
+    "Schedule": {
+      "Tuesday": {
+        "Item1": "12:00 AM",
+        "Item2": -1
+      },
+      "Wednesday": {
+        "Item1": "12:00 AM",
+        "Item2": -1
+      }
+    },
+    "Start": "1710201600000",
+    "Online": false,
+    "MaxStudents": 12,
+    "NumStudents": 0,
+    "State": 1,
+    "TutorId": "2",
+    "IsCreatedByTutor": true
+  },
+  "16": {
+    "Id": "16",
+    "Name": "francuski",
+    "Language": {
+      "Name": "French",
+      "Code": "FRA"
+    },
+    "Level": 1,
+    "Duration": 3,
+    "Schedule": {
+      "Monday": {
+        "Item1": "12:00 AM",
+        "Item2": 1
+      },
+      "Tuesday": {
+        "Item1": "12:00 AM",
+        "Item2": 1
+      }
+    },
+    "Start": "1718236800000",
+    "Online": false,
+    "MaxStudents": 12,
+    "NumStudents": 0,
+    "State": 0,
+    "TutorId": "2",
+    "IsCreatedByTutor": false
+  }
+}

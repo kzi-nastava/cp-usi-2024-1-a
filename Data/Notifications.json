@@ -1,0 +1,34 @@
+{
+  "1": {
+    "Id": "1",
+    "SenderId": "m@m.m",
+    "ReceiverId": "a@a.a",
+    "Message": "Application accepted!",
+    "DateTime": "1716758635867",
+    "ReadStatus": 0
+  },
+  "2": {
+    "Id": "2",
+    "SenderId": "m@m.m",
+    "ReceiverId": "n@n.n",
+    "Message": "Application accepted!",
+    "DateTime": "1716758638572",
+    "ReadStatus": 0
+  },
+  "3": {
+    "Id": "3",
+    "SenderId": "m@m.m",
+    "ReceiverId": "a@a.a",
+    "Message": "Application accepted!",
+    "DateTime": "1716759515574",
+    "ReadStatus": 0
+  },
+  "4": {
+    "Id": "4",
+    "SenderId": "m@m.m",
+    "ReceiverId": "n@n.n",
+    "Message": "Application accepted!",
+    "DateTime": "1716759517895",
+    "ReadStatus": 0
+  }
+}
