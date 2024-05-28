@@ -55,4 +55,17 @@ public class ReportCoordinator: IReportCoordinator
         _emailService.SendEmailWithPDFAttachment(recepient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(reportTitles,tables));
     }
 
+    public void SendLanguageReport(string recipient)
+    {
+        string emailSubject = "Report for languages";
+        string emailBody = @"You can find the report attached bellow with following information:
+    - Number of courses and exams created for each language
+    - Average number of penalty point for each language
+    - Average grades for each language";
+        string pdfName = "LangLang Report";
+        List<string> reportTitles = new List<string>() { "Courses created and averages", "Exams created and averages" };
+
+        List<ReportTableDto> tables = _reportService.GetLanguageReport();
+        _emailService.SendEmailWithPDFAttachment(recipient, emailSubject, emailBody, pdfName, _pdfReportService.GetReportPDF(reportTitles, tables));
+    }
 }

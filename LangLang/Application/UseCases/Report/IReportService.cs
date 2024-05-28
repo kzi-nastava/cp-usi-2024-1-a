@@ -11,4 +11,5 @@ public interface IReportService
 
     public List<ReportTableDto> GetAverageCoursePointsReport();
 
+    public List<ReportTableDto> GetLanguageReport();
 }

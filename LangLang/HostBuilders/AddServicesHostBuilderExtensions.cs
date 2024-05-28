@@ -59,6 +59,7 @@ public static class AddServicesHostBuilderExtensions
             services.AddSingleton<IPointsBySkillReportService, PointsBySkillReportService>();
             services.AddSingleton<IPenaltyByCourseReportService, PenaltyByCourseReportService>();
             services.AddSingleton<IPointsByCourseReportService, PointsByCourseReportService>();
+            services.AddSingleton<ILanguageReportService, LanguageReportService>();
             services.AddSingleton<IBestStudentsByCourseService, BestStudentsByCourseService>();
             services.AddSingleton<IAutoCourseTutorSelector, AutoCourseTutorSelector>();
             services.AddSingleton<IAutoExamTutorSelector, AutoExamTutorSelector>();

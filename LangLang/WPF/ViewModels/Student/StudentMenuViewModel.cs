@@ -257,8 +257,8 @@ namespace LangLang.WPF.ViewModels.Student
             OpenStudentProfileCommand = new RelayCommand(_ => OpenStudentProfile());
             ApplyCourseCommand = new RelayCommand<string>(ApplyCourse);
             CancelCourseCommand = new RelayCommand<string>(CancelCourse);
-            ApplyExamCommand = new RelayCommand<Exam>(ApplyExam);
-            CancelExamCommand = new RelayCommand<Exam>(CancelExam);
+            ApplyExamCommand = new RelayCommand<ExamViewModel>(ApplyExam);
+            CancelExamCommand = new RelayCommand<ExamViewModel>(CancelExam);
             RateTutorCommand = new RelayCommand<string>(RateTutor);
             CancelAttendingCourseCommand = new RelayCommand<string>(CancelAttendingCourse!);
             CancelAttendingExamCommand = new RelayCommand(CancelAttendingExam!);
@@ -341,10 +341,11 @@ namespace LangLang.WPF.ViewModels.Student
             }
         }
 
-        private void ApplyExam(Exam exam)
+        private void ApplyExam(ExamViewModel examViewModel)
         {
             try
             {
+                Exam exam = _examService.GetExamById(examViewModel.Id)!;
                 _examCoordinator.ApplyForExam(_loggedInUser, exam);
                 MessageBox.Show($"Successful apply for exam.", "Success");
                 LoadAvailableExams();
@@ -356,8 +357,9 @@ namespace LangLang.WPF.ViewModels.Student
             }
         }
 
-        private void CancelExam(Exam exam)
+        private void CancelExam(ExamViewModel examViewModel)
         {
+            Exam exam = _examService.GetExamById(examViewModel.Id)!;
             var examApplication = _examApplicationService.GetExamApplication(_loggedInUser.Id, exam.Id);
             if (examApplication == null)
             {
