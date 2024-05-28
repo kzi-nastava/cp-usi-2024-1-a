@@ -67,6 +67,7 @@ public class ExamCoordinator : IExamCoordinator
         _examApplicationService.AcceptApplication(application);
         Domain.Model.Exam? exam = _examService.GetExamById(application.ExamId);
         exam!.AddAttendance();
+        _examService.UpdateExam(exam);
     }
 
     public void CancelApplication(string applicationId)
@@ -116,17 +117,16 @@ public class ExamCoordinator : IExamCoordinator
     {
         //_examService.CalculateAverageScores
         _examService.FinishExam(exam);
-        _examAttendanceService.AddPassedLanguagesToStudents(exam);
+        //_examAttendanceService.AddPassedLanguagesToStudents(exam);
     }
     public void ConfirmExam(Domain.Model.Exam exam)
         => _examService.ConfirmExam(exam);
     public void GradedExam(Domain.Model.Exam exam)
         => _examService.GradedExam(exam);
-    public void ReportedExam(Domain.Model.Exam exam, List<Student> passed)
+    public void ReportedExam(Domain.Model.Exam exam)
     {
         _examService.ReportedExam(exam);
-        foreach (Student student in passed)
-            _studentService.AddPassedLanguage(student, exam.Language, exam.LanguageLevel);
+        _examAttendanceService.AddPassedLanguagesToStudents(exam);
     }
 
     public List<Student> GetAppliedStudents(string examId)

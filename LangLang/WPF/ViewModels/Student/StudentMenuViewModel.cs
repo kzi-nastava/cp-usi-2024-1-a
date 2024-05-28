@@ -242,7 +242,7 @@ namespace LangLang.WPF.ViewModels.Student
             LoadAvailableExams();
             LoadAppliedExams();
             LoadAttendingExams();
-            //LoadFinishedExams();
+            LoadFinishedExams();
             LoadLanguages();
             LoadCourses();
             LoadAttendingCourse();
@@ -475,7 +475,15 @@ namespace LangLang.WPF.ViewModels.Student
                 AppliedExams.Add(new ExamViewModel(exam));
             }
         }
-        
+        private void LoadFinishedExams()
+        {
+            FinishedExams.Clear();
+            foreach (var exam in _examCoordinator.GetFinishedExams(_loggedInUser.Id))
+            {
+                FinishedExams.Add(new ExamViewModel(exam));
+            }
+        }
+
         private void LoadAttendingExams()
         {
             var exam = _examCoordinator.GetAttendingExam(_loggedInUser.Id);

@@ -7,6 +7,7 @@ using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Exam;
 using LangLang.Application.Utility.Authentication;
+using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
 using LangLang.WPF.MVVM;
 
@@ -22,6 +23,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
 
     private readonly IExamAttendanceService _examAttendanceService;
     private readonly IExamCoordinator _examCoordinator;
+    private readonly IClosePopupNavigationService _closePopupNavigationService;
     
     public RelayCommand GradeStudentCommand { get; }
     public RelayCommand MarkExamAsGradedCommand { get; }
@@ -92,7 +94,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
         }
     }
     public ObservableCollection<Domain.Model.Student> Students { get; set; }
-    public FinishedExamViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, IUserProfileMapper userProfileMapper, IExamAttendanceService examAttendanceService, IExamCoordinator examCoordinator)
+    public FinishedExamViewModel(NavigationStore navigationStore, CurrentExamStore currentExamStore, IUserProfileMapper userProfileMapper, IExamAttendanceService examAttendanceService, IExamCoordinator examCoordinator, IClosePopupNavigationService closePopupNavigationService)
     {
         NavigationStore = navigationStore;
         _exam = currentExamStore.CurrentExam ??
@@ -101,6 +103,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
         _userProfileMapper = userProfileMapper;
         _examAttendanceService = examAttendanceService;
         _examCoordinator = examCoordinator;
+        _closePopupNavigationService = closePopupNavigationService;
         Students = new ObservableCollection<Domain.Model.Student>(LoadStudents());
         GradeStudentCommand = new RelayCommand(_ => GradeStudent(), _ => CanGradeStudent());
         MarkExamAsGradedCommand = new RelayCommand(_ => MarkExamAsGraded(), _ => CanMarkExamAsGraded());
@@ -187,6 +190,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Exam;
     {
         _examCoordinator.GradedExam(_exam);
         MessageBox.Show($"Successfully marked exam as graded!", "Success", MessageBoxButton.OK);
+        _closePopupNavigationService.Navigate(Factories.ViewType.ExamTutor);
     }
 }
 
