@@ -8,7 +8,7 @@ namespace LangLang.Domain.Model
         public uint ReadingScore
         {
             get => _readingScore;
-            private init
+            init
             {
                 if (value > Constants.MaxReadingScore)
                     throw new ArgumentException("Invalid reading score range");
@@ -20,7 +20,7 @@ namespace LangLang.Domain.Model
         public uint WritingScore
         {
             get => _writingScore;
-            private init
+            init
             {
                 if (value > Constants.MaxWritingScore)
                     throw new ArgumentException("Invalid writing score range");
@@ -32,7 +32,7 @@ namespace LangLang.Domain.Model
         public uint ListeningScore
         {
             get => _listeningScore;
-            private init
+            init
             {
                 if (value > Constants.MaxListeningScore)
                     throw new ArgumentException("Invalid listening score range");
@@ -44,7 +44,7 @@ namespace LangLang.Domain.Model
         public uint SpeakingScore
         {
             get => _speakingScore;
-            private init
+            init
             {
                 if (value > Constants.MaxSpeakingScore)
                     throw new ArgumentException("Invalid speaking score range");

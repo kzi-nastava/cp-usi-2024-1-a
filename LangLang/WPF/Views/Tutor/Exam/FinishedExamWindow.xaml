@@ -9,12 +9,13 @@
         d:DataContext="{d:DesignInstance Type=exam:FinishedExamViewModel}"
                       mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="FinishedExamInfoWindow" Height="500" Width="550">
+        Title="FinishedExamInfoWindow" Height="580" Width="550">
     <mvvm:NavigableWindow.Resources>
         <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
         <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
         <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
         <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
+        <SolidColorBrush x:Key="GreenBtnColor" Color="Green" />
     </mvvm:NavigableWindow.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -88,11 +89,11 @@
                     <Label Margin="0,3,0,0" Content="(0-50)"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,20,0,0">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,20,0,0">
                 <Button Content="Grade"
                         FontSize="12"
                         Foreground="White"
-                        Background="{StaticResource BlueBtnColor}"
+                        Background="{StaticResource GreenBtnColor}"
                         Height="25"
                         Width="80"
                         BorderThickness="0"
@@ -108,6 +109,25 @@
                     </Button.Template>
                 </Button>
             </StackPanel>
+            <Button Content="Mark exam as graded"
+                    FontSize="12"
+                    Foreground="White"
+                    Background="{StaticResource BlueBtnColor}"
+                    Height="25"
+                    Width="160"
+                    BorderThickness="0"
+                    Margin="2,20,2,2"
+                    HorizontalAlignment="Left"
+                    Command="{Binding MarkExamAsGradedCommand}"
+                    >
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </StackPanel>
     </Grid>
 </mvvm:NavigableWindow>

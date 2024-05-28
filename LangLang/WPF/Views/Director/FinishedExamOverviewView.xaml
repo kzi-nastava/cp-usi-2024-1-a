@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="LangLang.WPF.Views.Director.FinishedExamOverviewView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:director="clr-namespace:LangLang.WPF.ViewModels.Director" 
+        d:DataContext="{d:DesignInstance Type=director:FinishedExamOverviewViewModel}"
+             mc:Ignorable="d"
+        Height="700" Width="800">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
+        <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
+        <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
+        <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
+    </UserControl.Resources>
+
+    <Border Padding="10">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="100"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label FontSize="20" FontFamily="Roboto" Margin="3,0,0,0"  Grid.Row="0">Finished exams</Label>
+                <StackPanel Orientation="Vertical" Grid.Row="1" RenderTransformOrigin="0.501,0.518">
+                    <Label>The overview of all finished exams, where you can send an email with the results to the students that attended selected exam.</Label>
+                </StackPanel>
+
+                <DataGrid Grid.Row="2" ItemsSource="{Binding Exams}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="10,10,10,10">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Language" Binding="{Binding LanguageName}" Width="*" />
+                        <DataGridTextColumn Header="Level" Binding="{Binding LanguageLevel}" Width="60" />
+                        <DataGridTextColumn Header="Date" Width="*">
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="Date" StringFormat="{}{0:MM/dd/yyyy}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Time" Width="*">
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="Time" StringFormat="{}{0:hh:mm}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="MaxStudents" Binding="{Binding MaxStudents}"/>
+                        <DataGridTextColumn Header="NumStudents" Binding="{Binding NumStudents}"/>
+                        <DataGridTemplateColumn Width="130">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Send emails"
+                                            FontSize="14"
+                                            Foreground="White"
+                                            Background="{StaticResource BlueBtnColor}"
+                                            Height="25"
+                                            Width="110"
+                                            BorderThickness="0"
+                                            Margin="2"
+                                            Command="{Binding DataContext.SendResultsEmailsCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding  }">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

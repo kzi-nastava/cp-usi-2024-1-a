@@ -76,7 +76,7 @@ namespace LangLang.Domain.Model
 
         public void AddPassedExamLanguage(Language language, LanguageLevel languageLevel)
         {
-            CompletedCourseLanguages[language.Name] = languageLevel;
+            PassedExamLanguages[language.Name] = languageLevel;
         }
 
         /// <summary>

@@ -13,6 +13,6 @@ public interface IAccountService
     Tutor RegisterTutor(RegisterTutorDto registerDto);
     public Tutor UpdateTutor(string tutorId, string password, string name, string surname, DateTime birthDate, Gender gender, string phoneNumber, List<Tuple<Language, LanguageLevel>> knownLanguages, DateTime dateAdded);
     public void DeleteTutor(Tutor tutor);
-    public string GetEmailByUserId(string userId);
+    public string GetEmailByUserId(string userId, UserType userType);
 }
 

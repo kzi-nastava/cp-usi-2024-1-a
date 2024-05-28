@@ -120,7 +120,14 @@ public class ExamCoordinator : IExamCoordinator
     }
     public void ConfirmExam(Domain.Model.Exam exam)
         => _examService.ConfirmExam(exam);
-
+    public void GradedExam(Domain.Model.Exam exam)
+        => _examService.GradedExam(exam);
+    public void ReportedExam(Domain.Model.Exam exam, List<Student> passed)
+    {
+        _examService.ReportedExam(exam);
+        foreach (Student student in passed)
+            _studentService.AddPassedLanguage(student, exam.Language, exam.LanguageLevel);
+    }
 
     public List<Student> GetAppliedStudents(string examId)
     {
@@ -218,4 +225,7 @@ public class ExamCoordinator : IExamCoordinator
         }
         return exam.CanBeUpdated();
     }
+
+    public List<Domain.Model.Exam> GetGradedExams()
+        => _examService.GetAllExams().Where(exam => exam.IsGraded()).ToList();
 }

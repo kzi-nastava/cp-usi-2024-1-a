@@ -36,6 +36,7 @@ public static class AddViewModelsHostBuilderExtensions
             services.AddScoped<CourseOverviewForDirectorViewModel>();
             services.AddScoped<ExamOverviewForDirectorViewModel>();
             services.AddScoped<FinishedCourseOverviewForDirectorViewModel>();
+            services.AddScoped<FinishedExamOverviewViewModel>();
             services.AddScoped<TutorOverviewViewModel>();
             services.AddTransient<RateTutorViewModel>();
             services.AddScoped<ReportViewModel>();
@@ -114,6 +115,10 @@ public static class AddViewModelsHostBuilderExtensions
 
             services.AddScoped<CreateViewModel<FinishedCourseOverviewForDirectorViewModel>>(
                 serviceProvider => serviceProvider.GetRequiredService<FinishedCourseOverviewForDirectorViewModel>
+            );
+
+            services.AddScoped<CreateViewModel<FinishedExamOverviewViewModel>>(
+                serviceProvider => serviceProvider.GetRequiredService<FinishedExamOverviewViewModel>
             );
 
             services.AddScoped<CreateViewModel<ExamOverviewForDirectorViewModel>>(

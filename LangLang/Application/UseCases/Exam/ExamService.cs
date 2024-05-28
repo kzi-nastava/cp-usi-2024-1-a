@@ -160,6 +160,18 @@ public class ExamService : IExamService
         UpdateExam(exam);
     }
 
+    public void GradedExam(Domain.Model.Exam exam)
+    {
+        exam.Grade();
+        UpdateExam(exam);
+    }
+
+    public void ReportedExam(Domain.Model.Exam exam)
+    {
+        exam.Report();
+        UpdateExam(exam);
+    }
+
     public List<Domain.Model.Exam> GetExamsForTimePeriod(DateTime from, DateTime to) =>
         _examRepository.GetForTimePeriod(from, to);
 
