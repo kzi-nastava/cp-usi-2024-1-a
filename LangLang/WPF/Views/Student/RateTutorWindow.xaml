@@ -1,0 +1,35 @@
+﻿<mvvm:NavigableWindow x:Class="LangLang.WPF.Views.Student.RateTutorWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:mvvm="clr-namespace:LangLang.WPF.MVVM"
+                      mc:Ignorable="d"
+                      WindowStartupLocation="CenterScreen"
+                      Title="Rate tutor" Height="200" Width="275">
+    <mvvm:NavigableWindow.Resources>
+        <SolidColorBrush x:Key="BlueBtnColor" Color="#34a0a4" />
+        <SolidColorBrush x:Key="RedBtnColor" Color="#91261f" />
+        <SolidColorBrush x:Key="GrayBtnColor" Color="Gray" />
+        <SolidColorBrush x:Key="YellowBtnColor" Color="#c9c30a" />
+    </mvvm:NavigableWindow.Resources>
+
+    <Grid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Height="137" Width="227">
+            <TextBlock Text="Rate the tutor:" Margin="0 0 0 10" FontSize="16"/>
+            <Slider x:Name="ratingSlider" Minimum="1" Maximum="10" TickFrequency="1" IsSnapToTickEnabled="True"/>
+            <TextBlock Text="{Binding ElementName=ratingSlider, Path=Value, StringFormat={}{0:0}}" HorizontalAlignment="Center" Margin="0 10" FontSize="16"/>
+            <Button Content="Submit rating" Command="{Binding SubmitRatingCommand}" CommandParameter="{Binding ElementName=ratingSlider, Path=Value}" Margin="0 10" FontSize="16" Foreground="White" Background="{StaticResource BlueBtnColor}" Height="36" Width="162" BorderThickness="0">
+
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+        </StackPanel>
+    </Grid>
+</mvvm:NavigableWindow>
