@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Windows.Documents;
 using System.Windows.Input;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
@@ -8,6 +10,8 @@ using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.UseCases.Report;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
+using LangLang.Repositories.Json;
+using LangLang.Repositories.SQL;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
 
@@ -34,6 +38,23 @@ namespace LangLang.WPF.ViewModels.Common
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
+
+            CourseRepository cr = new CourseRepository(LangLang.Repositories.Constants.CourseFilePath, LangLang.Repositories.Constants.CourseIdFilePath);
+            List<Course> courses = cr.GetAll();
+            int i = 0;
+            CourseRepo co = new CourseRepo();
+            foreach (Course course in courses)
+            {
+                i++;
+                co.InsertCourse(course);
+
+                if(i == 2)
+                {
+                    break;
+                }
+            }
+
+            List<Course> cccc = co.GetAllCourses();
         }
 
         public string Email
