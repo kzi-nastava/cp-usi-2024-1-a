@@ -6,10 +6,12 @@ namespace LangLang.CLI.Views;
 public class TutorMenu : ICliMenu
 {
     private readonly ExamMenu _examMenu;
+    private readonly CourseMenu _courseMenu;
     
-    public TutorMenu(ExamMenu examMenu)
+    public TutorMenu(ExamMenu examMenu, CourseMenu courseMenu)
     {
         _examMenu = examMenu;
+        _courseMenu = courseMenu;
     }
 
     public void Show()
@@ -27,7 +29,7 @@ public class TutorMenu : ICliMenu
             switch (option)
             {
                 case 1:
-                    Console.WriteLine("Course management is not implemented yet.");
+                    _courseMenu.Show();
                     break;
                 case 2:
                     _examMenu.Show();

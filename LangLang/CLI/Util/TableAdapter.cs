@@ -36,6 +36,10 @@ public class TableAdapter<T> : ITableAdapter
         var propertyInfo = typeof(T).GetProperties()[column];
         
         var value = propertyInfo.GetValue(item);
+        if (Attribute.IsDefined(propertyInfo, typeof(SkipAttribute)))
+        {
+            return "Skipped";
+        }
         if (value == null)
         {
             return "N/A";

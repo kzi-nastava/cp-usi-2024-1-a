@@ -13,6 +13,7 @@ public static class AddMenusHostBuilderExtensions
             services.AddTransient<LoginMenu>();
             services.AddTransient<TutorMenu>();
             services.AddTransient<ExamMenu>();
+            services.AddTransient<CourseMenu>();
         });
         
         return host;
