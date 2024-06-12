@@ -25,7 +25,7 @@ public class LoginMenu : ICliMenu
         Console.Clear();
         while (true)
         {
-            Console.WriteLine("\n=== Login ===");
+            Console.WriteLine("=== Login ===");
             
             var email = InputHandler.ReadString("Enter your email: ") ?? "";
             var password = InputHandler.ReadSecretString("Enter your username: ");
@@ -36,6 +36,7 @@ public class LoginMenu : ICliMenu
                 break;
             }
             Console.WriteLine(!loginResult.IsValidEmail ? "User does not exist." : "Incorrect password");
+            Console.WriteLine();
         }
         
         switch (loginResult.UserType)
