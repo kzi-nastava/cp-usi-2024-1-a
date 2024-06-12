@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace LangLang.CLI.Util;
 
@@ -11,7 +12,7 @@ public class TableAdapter<T> : ITableAdapter
 
     public TableAdapter(List<T> items)
     {
-        _columnNames = typeof(T).GetProperties().Select(propInfo => propInfo.Name).ToList();
+        _columnNames = GetProperties(typeof(T)).Select(propInfo => propInfo.Name).ToList();
         _items = items;
     }
 
@@ -33,13 +34,9 @@ public class TableAdapter<T> : ITableAdapter
     public string GetValueAt(int row, int column)
     {
         var item = _items[row];
-        var propertyInfo = typeof(T).GetProperties()[column];
+        var propertyInfo = GetProperties(typeof(T))[column];
         
         var value = propertyInfo.GetValue(item);
-        if (Attribute.IsDefined(propertyInfo, typeof(SkipAttribute)))
-        {
-            return "Skipped";
-        }
         if (value == null)
         {
             return "N/A";
@@ -89,12 +86,19 @@ public class TableAdapter<T> : ITableAdapter
     
     private static string NestedObjectToString(object nestedObject)
     {
-        var nestedProperties = nestedObject.GetType().GetProperties();
+        var nestedProperties = GetProperties(nestedObject.GetType());
         var res = "";
         foreach (var nestedProp in nestedProperties)
         {
             res += $"{nestedProp.GetValue(nestedObject)}, ";
         }
         return res;
+    }
+    
+    private static PropertyInfo[] GetProperties(Type type)
+    {
+        return type.GetProperties().Where(
+                propertyInfo => !Attribute.IsDefined(propertyInfo, typeof(SkipAttribute))
+            ).ToArray();
     }
 }
