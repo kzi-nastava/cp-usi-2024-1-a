@@ -1,23 +1,28 @@
+using LangLang.Application.DTO;
+using LangLang.Application.Utility.Email;
 using LangLang.Domain.Model;
+using LangLang.Domain.RepositoryInterfaces;
 using Npgsql;
 using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LangLang.Repositories.SQL
 {
-	public class CourseRepo
+	public class CourseRepositorySQL: ICourseRepositorySQL
 	{
-		
-        private string connectionString = "Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang;";
-        public CourseRepo()
+        private readonly DatabaseCredentials _databaseCredentials;
+
+        public CourseRepositorySQL(DatabaseCredentials credentials)
         {
-            // Create the courses table if it doesn't exist
+            _databaseCredentials = credentials;
             InitializeDatabase();
         }
+        
         private void InitializeDatabase()
         {
-            using (var conn = new NpgsqlConnection(connectionString))
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand())
@@ -60,9 +65,9 @@ namespace LangLang.Repositories.SQL
             }
         }
 
-        public void InsertCourse(Course course)
+        public void Add(Course course)
         {
-            using (var conn = new NpgsqlConnection(connectionString))
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand())
@@ -99,20 +104,18 @@ namespace LangLang.Repositories.SQL
                     cmd.Parameters.AddWithValue("TutorId", course.TutorId);
                     cmd.Parameters.AddWithValue("IsCreatedByTutor", course.IsCreatedByTutor);
 
-                    cmd.ExecuteNonQuery(); // Execute the insert query
+                    cmd.ExecuteNonQuery(); 
 
-                    // Insert or update schedule into the same table
                     InsertOrUpdateSchedule(course.Id, course.Schedule);
                 }
             }
         }
 
-
         private void InsertOrUpdateSchedule(string courseId, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule)
         {
             foreach (var kvp in schedule)
             {
-                using (var conn = new NpgsqlConnection(connectionString))
+                using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
                 {
                     conn.Open();
                     using (var cmd = new NpgsqlCommand())
@@ -128,7 +131,6 @@ namespace LangLang.Repositories.SQL
                         cmd.Parameters.AddWithValue("CourseId", courseId); // courseId is already a string
                         cmd.Parameters.AddWithValue("WorkDay", kvp.Key.ToString());
 
-                        // Convert TimeOnly to TimeSpan
                         var startTime = TimeSpan.FromHours(kvp.Value.Item1.Hour) +
                                         TimeSpan.FromMinutes(kvp.Value.Item1.Minute) +
                                         TimeSpan.FromSeconds(kvp.Value.Item1.Second);
@@ -141,12 +143,10 @@ namespace LangLang.Repositories.SQL
             }
         }
 
-
-
-        public List<Course> GetAllCourses()
+        public List<Course> GetAll()
         {
             List<Course> courses = new List<Course>();
-            using (var conn = new NpgsqlConnection(connectionString))
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand("SELECT * FROM courses", conn))
@@ -178,17 +178,15 @@ namespace LangLang.Repositories.SQL
             }
             return courses;
         }
-
-        // Helper method to retrieve schedule from the same table
+        
         private Dictionary<WorkDay, Tuple<TimeOnly, int>> GetCourseSchedule(string courseId)
         {
             var schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
-            using (var conn = new NpgsqlConnection(connectionString))
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand("SELECT * FROM course_schedule WHERE course_id = @CourseId", conn))
                 {
-                    // Convert courseId to integer
                     cmd.Parameters.AddWithValue("CourseId", courseId);
 
                     using (var reader = cmd.ExecuteReader())
@@ -206,7 +204,171 @@ namespace LangLang.Repositories.SQL
             return schedule;
         }
 
-        // Implement UpdateCourse and DeleteCourse methods if needed
+        public Course Get(string id)
+        {
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM courses WHERE id = @Id", conn))
+                {
+                    cmd.Parameters.AddWithValue("Id", id);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            Course course = new Course
+                            {
+                                Id = reader["id"].ToString()!,
+                                Name = reader["name"].ToString()!,
+                                Language = new Language(reader["language_name"].ToString()!, reader["language_code"].ToString()!),
+                                Level = (LanguageLevel)Enum.Parse(typeof(LanguageLevel), reader["level"].ToString()!),
+                                Duration = Convert.ToInt32(reader["duration"]),
+                                Start = Convert.ToDateTime(reader["start"]),
+                                Online = Convert.ToBoolean(reader["online"]),
+                                MaxStudents = Convert.ToInt32(reader["max_students"]),
+                                NumStudents = Convert.ToInt32(reader["num_students"]),
+                                State = (Course.CourseState)Enum.Parse(typeof(Course.CourseState), reader["state"].ToString()),
+                                TutorId = reader["tutor_id"].ToString(),
+                                IsCreatedByTutor = Convert.ToBoolean(reader["is_created_by_tutor"]),
+                                Schedule = GetCourseSchedule(id) // Load schedule from the same table
+                            };
+                            return course;
+                        }
+                        return null;
+                    }
+                }
+            }
+        }
+
+        public List<Course> Get(List<string> ids)
+        {
+            List<Course> courses = new List<Course>();
+
+            if (ids == null || ids.Count == 0)
+            {
+                return courses;
+            }
+
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
+            {
+                conn.Open();
+                string query = $"SELECT * FROM courses WHERE id IN ({string.Join(",", ids.Select(id => $"'{id}'"))})";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Course course = new Course
+                            {
+                                Id = reader["id"].ToString()!,
+                                Name = reader["name"].ToString()!,
+                                Language = new Language(reader["language_name"].ToString()!, reader["language_code"].ToString()!),
+                                Level = (LanguageLevel)Enum.Parse(typeof(LanguageLevel), reader["level"].ToString()!),
+                                Duration = Convert.ToInt32(reader["duration"]),
+                                Start = Convert.ToDateTime(reader["start"]),
+                                Online = Convert.ToBoolean(reader["online"]),
+                                MaxStudents = Convert.ToInt32(reader["max_students"]),
+                                NumStudents = Convert.ToInt32(reader["num_students"]),
+                                State = (Course.CourseState)Enum.Parse(typeof(Course.CourseState), reader["state"].ToString()),
+                                TutorId = reader["tutor_id"].ToString(),
+                                IsCreatedByTutor = Convert.ToBoolean(reader["is_created_by_tutor"]),
+                                Schedule = GetCourseSchedule(reader["id"].ToString()!) // Load schedule from the same table
+                            };
+                            courses.Add(course);
+                        }
+                    }
+                }
+            }
+
+            return courses;
+        }
+
+        public Course? Update(string id, Course course)
+        {
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = @"
+                UPDATE courses 
+                SET name = @Name,
+                    language_name = @LanguageName,
+                    language_code = @LanguageCode,
+                    level = @Level,
+                    duration = @Duration,
+                    start = @Start,
+                    online = @Online,
+                    max_students = @MaxStudents,
+                    num_students = @NumStudents,
+                    state = @State,
+                    tutor_id = @TutorId,
+                    is_created_by_tutor = @IsCreatedByTutor
+                WHERE id = @Id";
+
+                    cmd.Parameters.AddWithValue("Id", id);
+                    cmd.Parameters.AddWithValue("Name", course.Name);
+                    cmd.Parameters.AddWithValue("LanguageName", course.Language.Name);
+                    cmd.Parameters.AddWithValue("LanguageCode", course.Language.Code);
+                    cmd.Parameters.AddWithValue("Level", course.Level.ToString());
+                    cmd.Parameters.AddWithValue("Duration", course.Duration);
+                    cmd.Parameters.AddWithValue("Start", course.Start);
+                    cmd.Parameters.AddWithValue("Online", course.Online);
+                    cmd.Parameters.AddWithValue("MaxStudents", course.MaxStudents);
+                    cmd.Parameters.AddWithValue("NumStudents", course.NumStudents);
+                    cmd.Parameters.AddWithValue("State", course.State.ToString());
+                    cmd.Parameters.AddWithValue("TutorId", course.TutorId);
+                    cmd.Parameters.AddWithValue("IsCreatedByTutor", course.IsCreatedByTutor);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return course;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        public void Delete(string id)
+        {
+            DeleteCourseSchedule(id);
+
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "DELETE FROM courses WHERE id = @Id";
+                    cmd.Parameters.AddWithValue("Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void DeleteCourseSchedule(string courseId)
+        {
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "DELETE FROM course_schedule WHERE course_id = @CourseId";
+                    cmd.Parameters.AddWithValue("CourseId", courseId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
     }
 
