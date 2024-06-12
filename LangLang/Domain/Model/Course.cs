@@ -11,6 +11,7 @@ namespace LangLang.Domain.Model
         public Language Language { get; set; }
         public LanguageLevel Level { get; set; }
         public int Duration { get; set; }
+        [Skip]
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
         public DateTime Start { get; set; }
         public bool Online { get; set; }
