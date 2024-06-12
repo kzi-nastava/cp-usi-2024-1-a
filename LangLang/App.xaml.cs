@@ -61,7 +61,7 @@ namespace LangLang
                     // if attach to parent process fails alloc new console
                     else
                     {
-                        AttachConsole();
+                        AllocConsole();
                         ICliMenu loginMenu = _host.Services.GetRequiredService<LoginMenu>();
                         loginMenu.Show();
 
@@ -92,7 +92,7 @@ namespace LangLang
         private static extern bool AttachConsole(int dwProcessId);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool AttachConsole();
+        private static extern bool AllocConsole();
 
         [DllImport("kernel32")]
         private static extern bool FreeConsole();
