@@ -43,9 +43,6 @@ namespace LangLang.Repositories.Json
             return GetAll().Where(course => course.TutorId == tutorId).ToList();
         }
 
-
-
-
         public List<Course> GetAllForPage(int pageNumber, int coursesPerPage)
         {
             return GetAll().GetPage(pageNumber, coursesPerPage);

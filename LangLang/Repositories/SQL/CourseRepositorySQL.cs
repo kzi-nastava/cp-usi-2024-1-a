@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace LangLang.Repositories.SQL
 {
-    public class CourseRepositorySQL : ICourseRepositorySQL
+    public class CourseRepositorySQL : ICourseRepository
     {
         private readonly DatabaseCredentials _databaseCredentials;
 
@@ -66,7 +66,7 @@ namespace LangLang.Repositories.SQL
             }
         }
 
-        public void Add(Course course)
+        public Course Add(Course course)
         {
             using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
             {
@@ -110,6 +110,7 @@ namespace LangLang.Repositories.SQL
                     InsertOrUpdateSchedule(course.Id, course.Schedule);
                 }
             }
+            return course;
         }
 
         private void InsertOrUpdateSchedule(string courseId, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule)

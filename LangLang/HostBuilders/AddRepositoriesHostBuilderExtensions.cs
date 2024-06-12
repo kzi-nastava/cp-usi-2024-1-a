@@ -15,8 +15,8 @@ public static class AddRepositoriesHostBuilderExtensions
     {
         host.ConfigureServices((hostContext, services) =>
         {
-            services.AddSingleton<ICourseRepository, CourseRepository>(_ =>
-                new CourseRepository(Constants.CourseFilePath, Constants.CourseIdFilePath));
+            services.AddSingleton<ICourseRepository, CourseRepositorySQL>(_ =>
+                new CourseRepositorySQL(GetDatabaseCredentials(hostContext)));
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
             services.AddSingleton<IExamRepository, ExamRepository>(_ =>
@@ -45,8 +45,6 @@ public static class AddRepositoriesHostBuilderExtensions
                 new ExamAttendanceRepository(Constants.ExamAttendancesFilePath, Constants.ExamAttendancesIdFilePath));
             services.AddSingleton<IDropRequestRepository, DropRequestRepository>(_ =>
                 new DropRequestRepository(Constants.DropRequestFilePath, Constants.DropRequestIdFilePath));
-            services.AddSingleton<ICourseRepositorySQL, CourseRepositorySQL>(_ =>
-                new CourseRepositorySQL(GetDatabaseCredentials(hostContext)));
         });
 
         return host;
