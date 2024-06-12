@@ -10,6 +10,7 @@ using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.UseCases.Report;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
+using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Repositories.Json;
 using LangLang.Repositories.SQL;
 using LangLang.WPF.MVVM;
@@ -31,30 +32,36 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ICourseRepositorySQL crs)
         {
             _loginService = loginService;
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
             SwitchToRegisterCommand = new RelayCommand(SwitchToRegister);
+            //ICourseRepositorySQL crs = new CourseRepositorySQL(new DatabaseCredentials("localhost", 5433, "postgres", "123", "langlang"));
+            //"Host=localhost;,Username=postgres;Password=your_password;Database=langlang";
 
+            //List<Course> cccc = crs.GetAll();
+            //int b = 9;
+            //Course course = crs.Get("18");
             CourseRepository cr = new CourseRepository(LangLang.Repositories.Constants.CourseFilePath, LangLang.Repositories.Constants.CourseIdFilePath);
-            List<Course> courses = cr.GetAll();
+            /*List<Course> courses = cr.GetAll();
             int i = 0;
-            CourseRepo co = new CourseRepo();
             foreach (Course course in courses)
             {
-                i++;
-                co.InsertCourse(course);
+                crs.Add(course);
+            }*/
+            List<string> ids = new List<string>();
+            ids.Add("19");
+            ids.Add("22");
+            List<Course> lista = crs.Get(ids);
+     
+            crs.Delete("17");
 
-                if(i == 2)
-                {
-                    break;
-                }
-            }
 
-            List<Course> cccc = co.GetAllCourses();
+
+            int k = 3;
         }
 
         public string Email

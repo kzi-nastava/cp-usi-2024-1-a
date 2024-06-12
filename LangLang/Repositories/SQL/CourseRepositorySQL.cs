@@ -1,7 +1,8 @@
 using LangLang.Application.DTO;
-using LangLang.Application.Utility.Email;
+using LangLang.Core;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
+using LangLang.Domain.Utility;
 using Npgsql;
 using NpgsqlTypes;
 using System;
@@ -10,8 +11,8 @@ using System.Linq;
 
 namespace LangLang.Repositories.SQL
 {
-	public class CourseRepositorySQL: ICourseRepositorySQL
-	{
+    public class CourseRepositorySQL : ICourseRepositorySQL
+    {
         private readonly DatabaseCredentials _databaseCredentials;
 
         public CourseRepositorySQL(DatabaseCredentials credentials)
@@ -19,7 +20,7 @@ namespace LangLang.Repositories.SQL
             _databaseCredentials = credentials;
             InitializeDatabase();
         }
-        
+
         private void InitializeDatabase()
         {
             using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
@@ -104,7 +105,7 @@ namespace LangLang.Repositories.SQL
                     cmd.Parameters.AddWithValue("TutorId", course.TutorId);
                     cmd.Parameters.AddWithValue("IsCreatedByTutor", course.IsCreatedByTutor);
 
-                    cmd.ExecuteNonQuery(); 
+                    cmd.ExecuteNonQuery();
 
                     InsertOrUpdateSchedule(course.Id, course.Schedule);
                 }
@@ -178,7 +179,7 @@ namespace LangLang.Repositories.SQL
             }
             return courses;
         }
-        
+
         private Dictionary<WorkDay, Tuple<TimeOnly, int>> GetCourseSchedule(string courseId)
         {
             var schedule = new Dictionary<WorkDay, Tuple<TimeOnly, int>>();
@@ -286,6 +287,90 @@ namespace LangLang.Repositories.SQL
             return courses;
         }
 
+        public List<Course> GetByTutorId(string tutorId)
+        {
+            List<Course> courses = new List<Course>();
+
+            using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM courses WHERE tutor_id = @TutorId", conn))
+                {
+                    cmd.Parameters.AddWithValue("TutorId", tutorId);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Course course = new Course
+                            {
+                                Id = reader["id"].ToString()!,
+                                Name = reader["name"].ToString()!,
+                                Language = new Language(reader["language_name"].ToString()!, reader["language_code"].ToString()!),
+                                Level = (LanguageLevel)Enum.Parse(typeof(LanguageLevel), reader["level"].ToString()!),
+                                Duration = Convert.ToInt32(reader["duration"]),
+                                Start = Convert.ToDateTime(reader["start"]),
+                                Online = Convert.ToBoolean(reader["online"]),
+                                MaxStudents = Convert.ToInt32(reader["max_students"]),
+                                NumStudents = Convert.ToInt32(reader["num_students"]),
+                                State = (Course.CourseState)Enum.Parse(typeof(Course.CourseState), reader["state"].ToString()),
+                                TutorId = reader["tutor_id"].ToString(),
+                                IsCreatedByTutor = Convert.ToBoolean(reader["is_created_by_tutor"]),
+                                Schedule = GetCourseSchedule(reader["id"].ToString()!) // Load schedule from the same table
+                            };
+                            courses.Add(course);
+                        }
+                    }
+                }
+            }
+
+            return courses;
+        }
+
+        public List<Course> GetCoursesByDate(DateOnly date)
+        {
+            List<Course> courses = new List<Course>();
+
+            foreach (Course course in GetAll())
+            {
+                if (IsCourseActiveOnDate(course, date))
+                {
+                    courses.Add(course);
+                }
+            }
+
+            return courses;
+        }
+
+        private bool IsCourseActiveOnDate(Course course, DateOnly date)
+        {
+            if (date >= DateOnly.FromDateTime(course.Start) &&
+                date <= DateOnly.FromDateTime(course.Start.Add(TimeSpan.FromDays(7 * course.Duration))) &&
+                date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+            {
+                if (course.Schedule.ContainsKey(DayConverter.ToWorkDay(date.DayOfWeek)))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public List<Course> GetForTimePeriod(DateTime from, DateTime to)
+        {
+            List<Course> courses = new List<Course>();
+
+            foreach (Course course in GetAll())
+            {
+                if (course.Start >= from && course.Start <= to)
+                {
+                    courses.Add(course);
+                }
+            }
+
+            return courses;
+        }
+
         public Course? Update(string id, Course course)
         {
             using (var conn = new NpgsqlConnection(_databaseCredentials.ConnectionString))
@@ -368,6 +453,16 @@ namespace LangLang.Repositories.SQL
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        public List<Course> GetAllForPage(int pageNumber, int coursesPerPage)
+        {
+            return GetAll().GetPage(pageNumber, coursesPerPage);
+        }
+
+        public List<Course> GetByTutorIdForPage(string tutorId, int pageNumber, int coursesPerPage)
+        {
+            return GetByTutorId(tutorId).GetPage(pageNumber, coursesPerPage);
         }
 
     }

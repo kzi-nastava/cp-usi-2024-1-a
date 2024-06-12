@@ -1,6 +1,9 @@
-﻿using LangLang.Domain.RepositoryInterfaces;
+﻿using LangLang.Application.DTO;
+using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Repositories;
 using LangLang.Repositories.Json;
+using LangLang.Repositories.SQL;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,7 +13,7 @@ public static class AddRepositoriesHostBuilderExtensions
 {
     public static IHostBuilder AddRepositories(this IHostBuilder host)
     {
-        host.ConfigureServices(services =>
+        host.ConfigureServices((hostContext, services) =>
         {
             services.AddSingleton<ICourseRepository, CourseRepository>(_ =>
                 new CourseRepository(Constants.CourseFilePath, Constants.CourseIdFilePath));
@@ -42,8 +45,23 @@ public static class AddRepositoriesHostBuilderExtensions
                 new ExamAttendanceRepository(Constants.ExamAttendancesFilePath, Constants.ExamAttendancesIdFilePath));
             services.AddSingleton<IDropRequestRepository, DropRequestRepository>(_ =>
                 new DropRequestRepository(Constants.DropRequestFilePath, Constants.DropRequestIdFilePath));
+            services.AddSingleton<ICourseRepositorySQL, CourseRepositorySQL>(_ =>
+                new CourseRepositorySQL(GetDatabaseCredentials(hostContext)));
         });
 
         return host;
+    }
+
+
+    private static DatabaseCredentials GetDatabaseCredentials(HostBuilderContext hostContext)
+    {
+        var config = hostContext.Configuration;
+        return new DatabaseCredentials(
+            config["Database:Host"] ?? "",
+            config.GetValue<int>("Database:Port"),
+            config["Database:Username"] ?? "",
+            config["Database:Password"] ?? "",
+            config["Database:DatabaseName"] ?? ""
+        );
     }
 }
