@@ -1,11 +1,7 @@
 ﻿using LangLang.Application.DTO;
 using LangLang.Domain.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LangLang.Repositories.SQL.ComplexDataConverters;
 
 namespace LangLang.Repositories.SQL
 {
@@ -19,9 +15,33 @@ namespace LangLang.Repositories.SQL
             _databaseCredentials = databaseCredentials;
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Course>()
+                .OwnsOne(c => c.Language)
+                .Property(l => l.Name)
+                .HasColumnName("LanguageName");
+
+            modelBuilder.Entity<Course>()
+                .OwnsOne(c => c.Language)
+                .Property(l => l.Code)
+                .HasColumnName("LanguageCode");
+
+            modelBuilder.Entity<Course>()
+               .Property(e => e.Start)
+               .HasColumnType("timestamp without time zone");
+
+            modelBuilder.Entity<Course>()
+                .Property(e => e.Schedule)
+                .HasConversion(new ScheduleConverter());
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(_databaseCredentials.ConnectionString);
         }
+
     }
 }
