@@ -26,26 +26,62 @@ public class Form<T> where T : new()
 
         foreach (var property in properties)
         {
-            Type propertyType = property.PropertyType;
-            if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+            if(Attribute.IsDefined(property, typeof(SkipInFormAttribute)))
             {
-                object nestedObj = Activator.CreateInstance(propertyType);
-                PopulateProperties(nestedObj);
-                property.SetValue(obj, nestedObj);
+                // set default values
+                SetDefaultValue(obj, property);
             }
             else
             {
-                string value = "";
-                while (value == "")
+                Type propertyType = property.PropertyType;
+                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
                 {
-                    Console.Write($"Enter {property.Name} >>");
-                    value = Console.ReadLine() ?? "";
+                    object nestedObj = Activator.CreateInstance(propertyType)!;
+                    if (nestedObj == null)
+                    {
+                        return;
+                    }
+                    PopulateProperties(nestedObj);
+                    property.SetValue(obj, nestedObj);
                 }
-                object convertedValue = ConvertValue(property.PropertyType, value);
+                else
+                {
+                    string value = "";
+                    while (value == "")
+                    {
+                        Console.Write($"Enter {property.Name} >>");
+                        value = Console.ReadLine() ?? "";
+                    }
+                    object convertedValue = ConvertValue(property.PropertyType, value);
 
-                // sets the property value of a specified object
-                property.SetValue(obj, convertedValue);
+                    // sets the property value of a specified object
+                    property.SetValue(obj, convertedValue);
+                }
             }
+        }
+    }
+
+    private void SetDefaultValue(object obj, PropertyInfo property)
+    {
+        if (property.PropertyType == typeof(DateTime))
+        {
+            property.SetValue(obj, DateTime.Now);
+        }
+        else if (property.PropertyType == typeof(string))
+        {
+            property.SetValue(obj, "");
+        }
+        else if (property.PropertyType.IsEnum)
+        {
+            property.SetValue(obj, Enum.GetValues(property.PropertyType).GetValue(0));
+        }
+        else if (property.PropertyType == typeof(int))
+        {
+            property.SetValue(obj, 0);
+        }
+        else if (property.PropertyType == typeof(bool))
+        {
+            property.SetValue(obj, true);
         }
     }
 
@@ -75,11 +111,15 @@ public class Form<T> where T : new()
         {
             if (Enum.TryParse(type, value, true, out var enumValue))
             {
-                return enumValue;
+                if (enumValue != null)
+                {
+                    return enumValue;
+                }
+                return Enum.GetValues(type).GetValue(0)!;
             }
             else
             {
-                throw new ArgumentException($"Invalid value '{value}' for enum type '{type.Name}'");
+                return Enum.GetValues(type).GetValue(0)!;
             }
         }
 
