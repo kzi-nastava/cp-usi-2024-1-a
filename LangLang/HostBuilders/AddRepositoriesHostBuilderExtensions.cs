@@ -16,9 +16,14 @@ public static class AddRepositoriesHostBuilderExtensions
     {
         host.ConfigureServices((hostContext, services) =>
         {
+            services.AddSingleton<DatabaseCredentials>(provider =>
+            {
+                return GetDatabaseCredentials(hostContext);
+            });
             services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
             {
-                options.UseNpgsql(GetDatabaseCredentials(hostContext).ConnectionString);
+                var databaseCredentials = serviceProvider.GetRequiredService<DatabaseCredentials>();
+                options.UseNpgsql(databaseCredentials.ConnectionString);
             });
             services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
