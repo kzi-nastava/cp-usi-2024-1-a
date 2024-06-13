@@ -1,21 +1,25 @@
 ﻿using System;
 using LangLang.Application.DTO;
+using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
 using LangLang.CLI.Util;
 using LangLang.Domain.Model;
+using LangLang.Domain.RepositoryInterfaces;
 
 namespace LangLang.CLI.Views;
 
 public class LoginMenu : ICliMenu
 {
     private readonly ILoginService _loginService;
+    private readonly IAuthenticationStore _authenticationStore;
 
     private readonly TutorMenu _tutorMenu;
 
-    public LoginMenu(ILoginService loginService, TutorMenu tutorMenu)
+    public LoginMenu(ILoginService loginService, TutorMenu tutorMenu, IAuthenticationStore authenticationStore)
     {
         _loginService = loginService;
         _tutorMenu = tutorMenu;
+        _authenticationStore = authenticationStore;
     }
 
     public void Show()
@@ -25,7 +29,7 @@ public class LoginMenu : ICliMenu
         Console.Clear();
         while (true)
         {
-            Console.WriteLine("\n=== Login ===");
+            Console.WriteLine("=== Login ===");
             
             var email = InputHandler.ReadString("Enter your email: ") ?? "";
             var password = InputHandler.ReadSecretString("Enter your username: ");
@@ -36,6 +40,7 @@ public class LoginMenu : ICliMenu
                 break;
             }
             Console.WriteLine(!loginResult.IsValidEmail ? "User does not exist." : "Incorrect password");
+            Console.WriteLine();
         }
         
         switch (loginResult.UserType)
@@ -44,6 +49,7 @@ public class LoginMenu : ICliMenu
                         
                 break;
             case UserType.Tutor:
+                _tutorMenu.loggedInTutor = (Tutor?)_authenticationStore.CurrentUser.Person;
                 _tutorMenu.Show();
                 break;
             default:
