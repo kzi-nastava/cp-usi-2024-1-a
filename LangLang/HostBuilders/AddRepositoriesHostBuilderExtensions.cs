@@ -3,6 +3,7 @@ using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Repositories;
 using LangLang.Repositories.Json;
 using LangLang.Repositories.SQL;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,8 +16,11 @@ public static class AddRepositoriesHostBuilderExtensions
     {
         host.ConfigureServices((hostContext, services) =>
         {
-            services.AddSingleton<ICourseRepository, CourseRepositorySQL>(_ =>
-                new CourseRepositorySQL(GetDatabaseCredentials(hostContext)));
+            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                options.UseNpgsql(GetDatabaseCredentials(hostContext).ConnectionString);
+            });
+            services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
             services.AddSingleton<IExamRepository, ExamRepository>(_ =>
