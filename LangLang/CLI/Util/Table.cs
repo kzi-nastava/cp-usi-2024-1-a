@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using LangLang.CLI.Views;
 using LangLang.Core;
 
@@ -62,4 +63,16 @@ public class Table<T> : ICliMenu
         }
         Console.WriteLine("+");
     }
+    
+    public T GetItem(int row) => _tableAdapter.GetItem(row);
+
+    public void AddItem(T item) => _tableAdapter.AddItem(item);
+    
+    public void RemoveItem(T item) => _tableAdapter.RemoveItem(item);
+    
+    public void UpdateItem(T oldItem, T newItem) => _tableAdapter.UpdateItem(oldItem, newItem);
+    
+    public void ClearItems() => _tableAdapter.ClearItems();
+    
+    public void SetItems(List<T> items) => _tableAdapter.SetItems(items);
 }
