@@ -315,7 +315,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
                            throw new InvalidOperationException(
                                "Cannot create CourseViewModel without currently logged in tutor");
             _currentCourseStore = currentCourseStore;
-            _courseCoordinator = studentCourseCoordinator;
+            _courseApplicationService = courseApplication;
             _courseService = courseService;
             _timetableService = timetableService;
             _popupNavigationService = popupNavigationService;
@@ -476,6 +476,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             {
                 string keyToDelete = SelectedItem.Id;
                 _courseService.DeleteCourse(keyToDelete);
+                _courseApplicationService.RemoveCourseApplications(keyToDelete);
                 Courses.Remove(SelectedItem);
                 RemoveInputs();
             }

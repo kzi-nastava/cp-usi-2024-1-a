@@ -5,10 +5,9 @@ using System.Windows.Input;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
+using LangLang.Application.UseCases.Report;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
-using LangLang.Domain.RepositoryInterfaces;
-using LangLang.Repositories.Json;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
 
@@ -28,14 +27,9 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ICourseRepository courseRepository)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
         {
             _loginService = loginService;
-            ICourseRepository cr = new CourseRepository(Repositories.Constants.CourseFilePath, Repositories.Constants.CourseIdFilePath);
-            foreach(Course c in cr.GetAll())
-            {
-                courseRepository.Add(c);
-            }
             _navigationService = navigationService;
             NavigationStore = navigationStore;
             LoginCommand = new RelayCommand(Login!);
