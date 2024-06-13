@@ -19,6 +19,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
     {
         private readonly ICourseService _courseService;
         private readonly ITimetableService _timetableService;
+        private readonly ICourseApplicationService _courseApplicationService;
         private readonly IPopupNavigationService _popupNavigationService;
         private readonly CurrentCourseStore _currentCourseStore;
         private readonly Domain.Model.Tutor _loggedInUser;
@@ -308,12 +309,13 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
             }
         }
         public ObservableCollection<int> PageSizeOptions { get; }
-        public CourseOverviewViewModel(IAuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore)
+        public CourseOverviewViewModel(IAuthenticationStore authenticationStore, ICourseService courseService, ITimetableService timetableService, IPopupNavigationService popupNavigationService, CurrentCourseStore currentCourseStore, ICourseApplicationService courseApplication)
         {
             _loggedInUser = (Domain.Model.Tutor?)authenticationStore.CurrentUser.Person ??
                            throw new InvalidOperationException(
                                "Cannot create CourseViewModel without currently logged in tutor");
             _currentCourseStore = currentCourseStore;
+            _courseCoordinator = studentCourseCoordinator;
             _courseService = courseService;
             _timetableService = timetableService;
             _popupNavigationService = popupNavigationService;
