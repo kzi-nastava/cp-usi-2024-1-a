@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LangLang.Application.DTO;
 using LangLang.Application.UseCases.Exam;
 using LangLang.CLI.Util;
 using LangLang.Domain.Model;
@@ -17,10 +18,43 @@ public class ExamMenu : ICliMenu
 
     public void Show()
     {
-        ShowTable();
-        Console.ReadLine();
+        Console.Clear();
+        string? choice;
+        while (true)
+        {
+            Console.WriteLine("=== Exam ===");
+            ShowTable();
+            Console.WriteLine("1) Add exam");
+            Console.WriteLine("2) Update exam");
+            Console.WriteLine("3) Delete exam");
+            Console.WriteLine("4) For exit");
+            choice = InputHandler.ReadString("Enter your choice: ");
+            switch (choice)
+            {
+                case "1":
+                    AddExam();
+                    break;
+                case "2":
+
+                    break;
+                case "3":
+
+                    break;
+                case "4":
+                    return;
+                default:
+                    Console.WriteLine("Invalid option try again.");
+                    break;
+            }
+        }
     }
-    
+    private void AddExam()
+    {
+        // TODO
+        //var exam = new Form<ExamDto>().CreateObject();
+        //_examService.AddExam(exam);
+    }
+
     private List<Exam> GetExams()
     {
         return _examService.GetAllExams();

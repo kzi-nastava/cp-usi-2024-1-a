@@ -1,5 +1,6 @@
 ﻿using System;
 using LangLang.CLI.Util;
+using LangLang.Domain.Model;
 
 namespace LangLang.CLI.Views;
 
@@ -7,11 +8,13 @@ public class TutorMenu : ICliMenu
 {
     private readonly ExamMenu _examMenu;
     private readonly CourseMenu _courseMenu;
-    
+    public Tutor? loggedInTutor { get; set; }
+
     public TutorMenu(ExamMenu examMenu, CourseMenu courseMenu)
     {
         _examMenu = examMenu;
         _courseMenu = courseMenu;
+
     }
 
     public void Show()
@@ -29,7 +32,9 @@ public class TutorMenu : ICliMenu
             switch (option)
             {
                 case 1:
+                    _courseMenu.loggedInTutor = loggedInTutor;
                     _courseMenu.Show();
+                    Console.Clear();
                     break;
                 case 2:
                     _examMenu.Show();

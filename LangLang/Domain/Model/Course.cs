@@ -6,6 +6,7 @@ namespace LangLang.Domain.Model
 {
     public class Course : IEntity
     {
+        [SkipInForm]
         public string Id { get; set; }
         public string Name { get; set; }
         public Language Language { get; set; }
@@ -13,19 +14,21 @@ namespace LangLang.Domain.Model
         public int Duration { get; set; }
         [Skip]
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
+        [SkipInForm]
         public DateTime Start { get; set; }
         public bool Online { get; set; }
         public int MaxStudents { get; set; }
+        [SkipInForm]
         public int NumStudents { get; set; }
         public enum CourseState
         {
             NotStarted, Locked, Canceled, InProgress, FinishedNotGraded, FinishedGraded
         }
-
+        [SkipInForm]
         public CourseState State { get; set; }
-
+        [SkipInForm]
         public string? TutorId { get; set; }
-        
+        [SkipInForm]
         public bool IsCreatedByTutor { get; set; }
         
         public Course()
