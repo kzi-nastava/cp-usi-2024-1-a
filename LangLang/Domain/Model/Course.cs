@@ -14,7 +14,7 @@ namespace LangLang.Domain.Model
         public int Duration { get; set; }
         [Skip]
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
-        [SkipInForm]
+        // [SkipInForm]
         public DateTime Start { get; set; }
         public bool Online { get; set; }
         public int MaxStudents { get; set; }

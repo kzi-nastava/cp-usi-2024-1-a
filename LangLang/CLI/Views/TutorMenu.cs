@@ -8,7 +8,8 @@ public class TutorMenu : ICliMenu
 {
     private readonly ExamMenu _examMenu;
     private readonly CourseMenu _courseMenu;
-    public Tutor? loggedInTutor { get; set; }
+    
+    public Tutor? LoggedInTutor { get; set; }
 
     public TutorMenu(ExamMenu examMenu, CourseMenu courseMenu)
     {
@@ -32,11 +33,12 @@ public class TutorMenu : ICliMenu
             switch (option)
             {
                 case 1:
-                    _courseMenu.loggedInTutor = loggedInTutor;
+                    _courseMenu.loggedInTutor = LoggedInTutor;
                     _courseMenu.Show();
                     Console.Clear();
                     break;
                 case 2:
+                    _examMenu.LoggedInTutor = LoggedInTutor;
                     _examMenu.Show();
                     Console.Clear();
                     break;

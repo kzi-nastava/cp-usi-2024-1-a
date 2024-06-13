@@ -49,7 +49,7 @@ public class LoginMenu : ICliMenu
                         
                 break;
             case UserType.Tutor:
-                _tutorMenu.loggedInTutor = (Tutor?)_authenticationStore.CurrentUser.Person;
+                _tutorMenu.LoggedInTutor = (Tutor?)_authenticationStore.CurrentUser.Person;
                 _tutorMenu.Show();
                 break;
             default:
