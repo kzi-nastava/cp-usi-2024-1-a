@@ -1,6 +1,10 @@
-﻿using LangLang.Domain.RepositoryInterfaces;
+﻿using LangLang.Application.DTO;
+using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Repositories;
 using LangLang.Repositories.Json;
+using LangLang.Repositories.SQL;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,10 +14,18 @@ public static class AddRepositoriesHostBuilderExtensions
 {
     public static IHostBuilder AddRepositories(this IHostBuilder host)
     {
-        host.ConfigureServices(services =>
+        host.ConfigureServices((hostContext, services) =>
         {
-            services.AddSingleton<ICourseRepository, CourseRepository>(_ =>
-                new CourseRepository(Constants.CourseFilePath, Constants.CourseIdFilePath));
+            services.AddSingleton<DatabaseCredentials>(provider =>
+            {
+                return GetDatabaseCredentials(hostContext);
+            });
+            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                var databaseCredentials = serviceProvider.GetRequiredService<DatabaseCredentials>();
+                options.UseNpgsql(databaseCredentials.ConnectionString);
+            });
+            services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
             services.AddSingleton<IExamRepository, ExamRepository>(_ =>
@@ -45,5 +57,18 @@ public static class AddRepositoriesHostBuilderExtensions
         });
 
         return host;
+    }
+
+
+    private static DatabaseCredentials GetDatabaseCredentials(HostBuilderContext hostContext)
+    {
+        var config = hostContext.Configuration;
+        return new DatabaseCredentials(
+            config["Database:Host"] ?? "",
+            config.GetValue<int>("Database:Port"),
+            config["Database:Username"] ?? "",
+            config["Database:Password"] ?? "",
+            config["Database:DatabaseName"] ?? ""
+        );
     }
 }
