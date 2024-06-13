@@ -63,7 +63,7 @@ public class TutorOverviewMenu : ICliMenu
             return;
         }
 
-        var table = new Table<Tutor>(new TableAdapter<Tutor>(tutors));
+        var table = new Table(new TableAdapter<Tutor>(tutors));
         table.Show();
     }
 

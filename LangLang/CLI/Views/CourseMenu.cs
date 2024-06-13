@@ -159,7 +159,7 @@ public class CourseMenu : ICliMenu
             return;
         }
 
-        var table = new Table<Course>(new TableAdapter<Course>(courses));
+        var table = new Table(new TableAdapter<Course>(courses));
         table.Show();
     }
 }

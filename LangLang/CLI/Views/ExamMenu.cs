@@ -121,7 +121,7 @@ public class ExamMenu : ICliMenu
             return;
         }
         
-        var table = new Table<Exam>(new TableAdapter<Exam>(exams));
+        var table = new Table(new TableAdapter<Exam>(exams));
         table.Show();
     }
 }
