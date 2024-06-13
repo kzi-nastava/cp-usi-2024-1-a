@@ -34,7 +34,7 @@ public class LoginMenu : ICliMenu
             Console.WriteLine("=== Login ===");
             
             var email = InputHandler.ReadString("Enter your email: ") ?? "";
-            var password = InputHandler.ReadSecretString("Enter your username: ");
+            var password = InputHandler.ReadSecretString("Enter your password: ");
 
             loginResult = _loginService.LogIn(email, password);
             if (loginResult.IsValidUser)
