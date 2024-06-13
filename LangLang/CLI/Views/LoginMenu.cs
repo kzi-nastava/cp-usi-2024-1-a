@@ -14,12 +14,14 @@ public class LoginMenu : ICliMenu
     private readonly IAuthenticationStore _authenticationStore;
 
     private readonly TutorMenu _tutorMenu;
+    private readonly DirectorMenu _directorMenu;
 
-    public LoginMenu(ILoginService loginService, TutorMenu tutorMenu, IAuthenticationStore authenticationStore)
+    public LoginMenu(ILoginService loginService, TutorMenu tutorMenu, IAuthenticationStore authenticationStore, DirectorMenu directorMenu)
     {
         _loginService = loginService;
         _tutorMenu = tutorMenu;
         _authenticationStore = authenticationStore;
+        _directorMenu = directorMenu;
     }
 
     public void Show()
@@ -46,7 +48,7 @@ public class LoginMenu : ICliMenu
         switch (loginResult.UserType)
         {
             case UserType.Director:
-                        
+                _directorMenu.Show();
                 break;
             case UserType.Tutor:
                 _tutorMenu.LoggedInTutor = (Tutor?)_authenticationStore.CurrentUser.Person;
