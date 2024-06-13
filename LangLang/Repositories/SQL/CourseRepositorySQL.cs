@@ -4,7 +4,6 @@ using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Domain.Utility;
-using Microsoft.EntityFrameworkCore;
 
 namespace LangLang.Repositories.SQL
 {
@@ -19,7 +18,9 @@ namespace LangLang.Repositories.SQL
 
         public List<Course> GetCoursesByDate(DateOnly date)
         {
-            return _dbContext.Courses
+            var courses = _dbContext.Courses.ToList();
+
+            var filteredCourses = courses
                 .Where(course =>
                     date >= DateOnly.FromDateTime(course.Start) &&
                     date <= DateOnly.FromDateTime(course.Start.Add(TimeSpan.FromDays(7 * course.Duration))) &&
@@ -27,7 +28,10 @@ namespace LangLang.Repositories.SQL
                     course.Schedule.ContainsKey(DayConverter.ToWorkDay(date.DayOfWeek))
                 )
                 .ToList();
+
+            return filteredCourses;
         }
+
 
         public List<Course> GetForTimePeriod(DateTime from, DateTime to)
         {
@@ -75,17 +79,25 @@ namespace LangLang.Repositories.SQL
             return _dbContext.Courses.Where(course => ids.Contains(course.Id)).ToList();
         }
 
+        public string GetId()
+        {
+            var lastCourse = _dbContext.Courses.OrderByDescending(c => c.Id).FirstOrDefault();
+            int nextId = (lastCourse != null) ? int.Parse(lastCourse.Id) + 1 : 1;
+            return nextId.ToString();
+        }
+
         public Course Add(Course course)
         {
             var existingCourse = _dbContext.Courses.FirstOrDefault(c => c.Id == course.Id);
 
-            if (existingCourse != null)
+            if (existingCourse != null && course.Id != "-1")
             {
                 _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
                 _dbContext.SaveChanges();
             }
             else
             {
+                course.Id = GetId();
                 _dbContext.Courses.Add(course);
                 _dbContext.SaveChanges();
             }

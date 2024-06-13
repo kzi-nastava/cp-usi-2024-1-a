@@ -38,7 +38,7 @@ namespace LangLang.Domain.Model
         
         public Course()
         {
-            Id = "0";
+            Id = "-1";
             Name = "";
             Language = new Language("English", "en");
             Level = LanguageLevel.A1;
@@ -70,7 +70,7 @@ namespace LangLang.Domain.Model
         // Constructor without id when creating a new course
         public Course(string tutorId, string name, Language language, LanguageLevel level, int duration, Dictionary<WorkDay, Tuple<TimeOnly, int>> schedule, DateTime start, bool online, int numStudents, CourseState state, int maxStudents = 0, bool isCreatedByTutor = true)
         { 
-            Id = "0";
+            Id = "-1";
             TutorId = tutorId;
             Name = name;
             Language = language;

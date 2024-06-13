@@ -11,17 +11,12 @@ namespace LangLang.Repositories.SQL
         public DbSet<Course> Courses { get; set; }
 
         public ApplicationDbContext()
-        {
+        {}
 
-        }
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) { }
-
-        /*
-        public ApplicationDbContext(DatabaseCredentials databaseCredentials)
-        {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, DatabaseCredentials databaseCredentials)
+        : base(options) { 
             _databaseCredentials = databaseCredentials;
-        }*/
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,7 +45,7 @@ namespace LangLang.Repositories.SQL
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang");
+                optionsBuilder.UseNpgsql(_databaseCredentials.ConnectionString);
             }
         }
 
