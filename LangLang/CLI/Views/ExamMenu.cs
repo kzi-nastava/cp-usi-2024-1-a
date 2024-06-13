@@ -50,8 +50,9 @@ public class ExamMenu : ICliMenu
     }
     private void AddExam()
     {
-        var exam = new Form<ExamDto>().CreateObject();
-        _examService.AddExam(exam);
+        // TODO
+        //var exam = new Form<ExamDto>().CreateObject();
+        //_examService.AddExam(exam);
     }
 
     private List<Exam> GetExams()
