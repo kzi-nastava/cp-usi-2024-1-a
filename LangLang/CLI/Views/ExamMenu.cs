@@ -27,8 +27,8 @@ public class ExamMenu : ICliMenu
             Console.WriteLine("1) Add exam");
             Console.WriteLine("2) Update exam");
             Console.WriteLine("3) Delete exam");
-            Console.WriteLine("X) For exit");
-            choice = InputHandler.ReadString();
+            Console.WriteLine("4) For exit");
+            choice = InputHandler.ReadString("Enter your choice: ");
             switch (choice)
             {
                 case "1":
@@ -40,7 +40,7 @@ public class ExamMenu : ICliMenu
                 case "3":
 
                     break;
-                case "x":
+                case "4":
                     return;
                 default:
                     Console.WriteLine("Invalid option try again.");
@@ -50,8 +50,8 @@ public class ExamMenu : ICliMenu
     }
     private void AddExam()
     {
-        var exam = new Form<Exam>().CreateObject();
-        //_examService.AddExam(exam);
+        var exam = new Form<ExamDto>().CreateObject();
+        _examService.AddExam(exam);
     }
 
     private List<Exam> GetExams()
