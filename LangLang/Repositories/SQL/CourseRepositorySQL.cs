@@ -109,7 +109,7 @@ namespace LangLang.Repositories.SQL
             var existingCourse = _dbContext.Courses.Find(id);
             if (existingCourse != null)
             {
-                existingCourse = course;
+                _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
                 _dbContext.SaveChanges();
             }
             return existingCourse!;

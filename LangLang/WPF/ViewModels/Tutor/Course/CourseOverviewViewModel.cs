@@ -488,6 +488,7 @@ namespace LangLang.WPF.ViewModels.Tutor.Course
                 MessageBox.Show("There was an error saving the course!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            course.Id = "-1";
             _courseService.AddCourse(course);
             Courses.Add(new CourseViewModel(course));
             RemoveInputs();
