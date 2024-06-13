@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace LangLang.Domain.Model
 {
@@ -12,9 +14,18 @@ namespace LangLang.Domain.Model
         public Language Language { get; set; }
         public LanguageLevel Level { get; set; }
         public int Duration { get; set; }
+        
         [Skip]
+        [NotMapped]
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
         // [SkipInForm]
+       
+        public string ScheduleSerialized
+        {
+            get => JsonSerializer.Serialize(Schedule);
+            set => Schedule = JsonSerializer.Deserialize<Dictionary<WorkDay, Tuple<TimeOnly, int>>>(value)!;
+        }
+        [SkipInForm]
         public DateTime Start { get; set; }
         public bool Online { get; set; }
         public int MaxStudents { get; set; }
@@ -167,26 +178,6 @@ namespace LangLang.Domain.Model
             if (duration != null && duration != Duration) return false;
 
             return true;
-
-            
-            //Courses.Clear();
-            //var courses = _courseService.GetCoursesByTutor(_loggedInUser);
-            //foreach (Domain.Model.Course course in courses)
-            //{
-            //    if ((course.Language.Name == LanguageFilter || LanguageFilter == "") && (course.Level == LevelFilter || LevelFilter == null))
-            //    {
-            //        if(startFilter == null || (startFilter != null && course.Start == ((DateTime)startFilter)))
-            //        {
-            //            if(course.Online == OnlineFilter || OnlineFilter == null)
-            //            { 
-            //                if(course.Duration == DurationFilter || DurationFilter == 0)
-            //                {
-            //                    Courses.Add(new CourseViewModel(course));
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
         }
 
     }
