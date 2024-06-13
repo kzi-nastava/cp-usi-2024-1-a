@@ -44,4 +44,14 @@ public static class InputHandler
         }
         return secret;
     }
+
+    public static int? ReadInt(string? prompt)
+    {
+        var input = ReadString(prompt);
+        if (int.TryParse(input, out var result))
+        {
+            return result;
+        } 
+        return null;
+    }
 }

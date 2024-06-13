@@ -8,32 +8,37 @@ namespace LangLang.Domain.Model
 {
     public class Course : IEntity
     {
+        [SkipInForm]
         public string Id { get; set; }
         public string Name { get; set; }
         public Language Language { get; set; }
         public LanguageLevel Level { get; set; }
         public int Duration { get; set; }
-
+        
+        [Skip]
         [NotMapped]
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
+       
         public string ScheduleSerialized
         {
             get => JsonSerializer.Serialize(Schedule);
             set => Schedule = JsonSerializer.Deserialize<Dictionary<WorkDay, Tuple<TimeOnly, int>>>(value)!;
         }
+        [SkipInForm]
         public DateTime Start { get; set; }
         public bool Online { get; set; }
         public int MaxStudents { get; set; }
+        [SkipInForm]
         public int NumStudents { get; set; }
         public enum CourseState
         {
             NotStarted, Locked, Canceled, InProgress, FinishedNotGraded, FinishedGraded
         }
-
+        [SkipInForm]
         public CourseState State { get; set; }
-
+        [SkipInForm]
         public string? TutorId { get; set; }
-        
+        [SkipInForm]
         public bool IsCreatedByTutor { get; set; }
         
         public Course()

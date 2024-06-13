@@ -15,6 +15,7 @@
 *.sln.docstates
 
 LangLang/Data
+LangLang/Properties
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
