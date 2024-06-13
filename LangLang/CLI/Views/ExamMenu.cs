@@ -109,7 +109,7 @@ public class ExamMenu : ICliMenu
 
     private List<Exam> GetExams()
     {
-        return _examService.GetAllExams();
+        return LoggedInTutor == null ? _examService.GetAllExams() : _examService.GetExamsByTutor(LoggedInTutor.Id);
     }
 
     private void ShowTable()

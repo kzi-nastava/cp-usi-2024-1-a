@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LangLang.Application.DTO;
-using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Course;
-using LangLang.Application.UseCases.Exam;
+using LangLang.Application.UseCases.TutorSelection;
 using LangLang.CLI.Util;
 using LangLang.Domain.Model;
 using MigraDoc.DocumentObjectModel;
@@ -13,11 +13,14 @@ namespace LangLang.CLI.Views;
 public class CourseMenu : ICliMenu
 {
     private readonly ICourseService _courseService;
+    private readonly IAutoCourseTutorSelector _autoCourseTutorSelector;
+    
     public Tutor? loggedInTutor;
 
-    public CourseMenu(ICourseService courseService)
+    public CourseMenu(ICourseService courseService, IAutoCourseTutorSelector autoCourseTutorSelector)
     {
         _courseService = courseService;
+        _autoCourseTutorSelector = autoCourseTutorSelector;
     }
 
     public void Show()
@@ -69,16 +72,19 @@ public class CourseMenu : ICliMenu
             return;
         }
 
-        if (loggedInTutor == null)
-        {
-            Console.WriteLine("User not logged in correctly.");
-            return;
-        }
-
         var course = new Form<Course>().CreateObject();
         course.Id = courseId!;
-        course.TutorId = loggedInTutor.Id;
 
+        if (loggedInTutor != null)
+        {
+            course.TutorId = loggedInTutor.Id;
+        }
+        else
+        {
+            course.TutorId = _autoCourseTutorSelector.Select(new CourseTutorSelectionDto(course.Language, course.Level,
+                course.Duration, course.Schedule, course.Schedule.Keys.ToList(), course.Start))?.Id;
+        }
+        
         _courseService.UpdateCourse(course);
         Console.WriteLine("Course updated successfully!");
 
@@ -108,7 +114,7 @@ public class CourseMenu : ICliMenu
     {
         if (loggedInTutor == null)
         {
-            throw new ArgumentException("User not logged in correctly");
+            return true;
         }
         foreach (Course course in _courseService.GetCoursesByTutor(loggedInTutor))
         {
@@ -122,12 +128,16 @@ public class CourseMenu : ICliMenu
 
     private void AddCourse()
     {
-        if (loggedInTutor == null) {
-            Console.WriteLine("User not logged in correctly.");
-            return;
-        }
         var course = new Form<Course>().CreateObject();
-        course.TutorId = loggedInTutor.Id;
+        if (loggedInTutor != null)
+        {
+            course.TutorId = loggedInTutor.Id;
+        }
+        else
+        {
+            course.TutorId = _autoCourseTutorSelector.Select(new CourseTutorSelectionDto(course.Language, course.Level,
+                course.Duration, course.Schedule, course.Schedule.Keys.ToList(), course.Start))?.Id;
+        }
         _courseService.AddCourse(course);
     }
 
@@ -135,7 +145,7 @@ public class CourseMenu : ICliMenu
     {
         if (loggedInTutor == null)
         {
-            throw new ArgumentException("User not logged in correctly.");
+            return _courseService.GetAll();
         }
         return _courseService.GetCoursesByTutor(loggedInTutor);
     }
