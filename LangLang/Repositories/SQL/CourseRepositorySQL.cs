@@ -77,8 +77,18 @@ namespace LangLang.Repositories.SQL
 
         public Course Add(Course course)
         {
-            _dbContext.Courses.Add(course);
-            _dbContext.SaveChanges();
+            var existingCourse = _dbContext.Courses.FirstOrDefault(c => c.Id == course.Id);
+
+            if (existingCourse != null)
+            {
+                _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                _dbContext.Courses.Add(course);
+                _dbContext.SaveChanges();
+            }
             return course;
         }
 
