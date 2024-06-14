@@ -9,6 +9,7 @@ namespace LangLang.Repositories.SQL
     {
         private readonly DatabaseCredentials _databaseCredentials;
         public DbSet<Course> Courses { get; set; }
+        //public DbSet<Language> Languages { get; set; }  
 
         public ApplicationDbContext()
         {}
