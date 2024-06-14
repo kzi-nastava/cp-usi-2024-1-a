@@ -18,6 +18,7 @@ namespace LangLang.Domain.Model
         [Skip]
         [NotMapped]
         public Dictionary<WorkDay,Tuple<TimeOnly,int>> Schedule { get; set; }
+        // [SkipInForm]
        
         public string ScheduleSerialized
         {

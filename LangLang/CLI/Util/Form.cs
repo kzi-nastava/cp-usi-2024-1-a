@@ -1,11 +1,6 @@
-﻿using LangLang.CLI.Views;
-using System;
-using System.Collections.Generic;
-using System.DirectoryServices.ActiveDirectory;
+﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LangLang.CLI.Util;
 
@@ -34,9 +29,10 @@ public class Form<T> where T : new()
             else
             {
                 Type propertyType = property.PropertyType;
-                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                Type[] parsableTypes = new[] { typeof(string), typeof(DateTime), typeof(DateOnly), typeof(TimeOnly) };
+                if (property.PropertyType.IsClass && !parsableTypes.Contains(propertyType))
                 {
-                    object nestedObj = Activator.CreateInstance(propertyType)!;
+                    var nestedObj = Activator.CreateInstance(propertyType);
                     if (nestedObj == null)
                     {
                         return;
@@ -52,7 +48,13 @@ public class Form<T> where T : new()
                         Console.Write($"Enter {property.Name} >>");
                         value = Console.ReadLine() ?? "";
                     }
-                    object convertedValue = ConvertValue(property.PropertyType, value);
+                    var type = property.PropertyType;
+                    if (property.PropertyType.IsGenericType &&
+                        property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        type = Nullable.GetUnderlyingType(property.PropertyType)!;
+                    }
+                    object convertedValue = ConvertValue(type, value);
 
                     // sets the property value of a specified object
                     property.SetValue(obj, convertedValue);
@@ -66,6 +68,14 @@ public class Form<T> where T : new()
         if (property.PropertyType == typeof(DateTime))
         {
             property.SetValue(obj, DateTime.Now);
+        }
+        else if (property.PropertyType == typeof(DateOnly))
+        {
+            property.SetValue(obj, DateOnly.FromDateTime(DateTime.Now));
+        }
+        else if (property.PropertyType == typeof(TimeOnly))
+        {
+            property.SetValue(obj, TimeOnly.FromDateTime(DateTime.Now));
         }
         else if (property.PropertyType == typeof(string))
         {
@@ -101,11 +111,28 @@ public class Form<T> where T : new()
         }
         else if (type == typeof(DateTime))
         {
-            return DateTime.TryParse(value, out var dateTimeValue) ? dateTimeValue : DateTime.MinValue;
+            var format = "dd.MM.yyyy. HH:mm";
+            return DateTime.TryParseExact(value, format, null, System.Globalization.DateTimeStyles.None, out var dateTimeValue) 
+                ? dateTimeValue 
+                : DateTime.MinValue;
+        }
+        else if (type == typeof(DateOnly))
+        {
+            var dateFormat = "dd.MM.yyyy.";
+            return DateOnly.TryParseExact(value, dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dateValue) 
+                ? dateValue 
+                : DateOnly.MinValue;
+        }
+        else if (type == typeof(TimeOnly))
+        {
+            var timeFormat = "HH:mm";
+            return TimeOnly.TryParseExact(value, timeFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var timeValue) 
+                ? timeValue 
+                : TimeOnly.MinValue;
         }
         else if (type == typeof(bool))
         {
-            return bool.TryParse(value, out var boolValue) ? boolValue : false;
+            return bool.TryParse(value, out var boolValue) && boolValue;
         }
         else if (type.IsEnum)
         {
@@ -123,7 +150,7 @@ public class Form<T> where T : new()
             }
         }
 
-        return value.ToString() ?? "N/A";
+        return value;
     }
 
 }

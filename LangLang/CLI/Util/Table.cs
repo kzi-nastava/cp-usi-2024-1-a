@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using LangLang.CLI.Views;
 using LangLang.Core;
 
 namespace LangLang.CLI.Util;
 
-public class Table<T> : ICliMenu
+public class Table : ICliMenu
 {
     private const int ColumnWidth = 11;
     
-    private readonly TableAdapter<T> _tableAdapter;
+    private readonly ITableAdapter _tableAdapter;
     private readonly bool _showHeader;
     
-    public Table(TableAdapter<T> tableAdapter, bool showHeader = true)
+    public Table(ITableAdapter tableAdapter, bool showHeader = true)
     {
         _tableAdapter = tableAdapter;
         _showHeader = showHeader;
@@ -63,16 +62,4 @@ public class Table<T> : ICliMenu
         }
         Console.WriteLine("+");
     }
-    
-    public T GetItem(int row) => _tableAdapter.GetItem(row);
-
-    public void AddItem(T item) => _tableAdapter.AddItem(item);
-    
-    public void RemoveItem(T item) => _tableAdapter.RemoveItem(item);
-    
-    public void UpdateItem(T oldItem, T newItem) => _tableAdapter.UpdateItem(oldItem, newItem);
-    
-    public void ClearItems() => _tableAdapter.ClearItems();
-    
-    public void SetItems(List<T> items) => _tableAdapter.SetItems(items);
 }
