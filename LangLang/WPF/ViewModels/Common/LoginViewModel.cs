@@ -18,10 +18,10 @@ namespace LangLang.WPF.ViewModels.Common
         private string? _email;
         private SecureString? _password;
         private string? _errorMessage;
-        
+
         private readonly ILoginService _loginService;
         private readonly INavigationService _navigationService;
-        
+
         public NavigationStore NavigationStore { get; }
 
         public ICommand LoginCommand { get; }
@@ -51,9 +51,9 @@ namespace LangLang.WPF.ViewModels.Common
         public string ErrorMessage
         {
             get => _errorMessage!;
-            set =>SetField(ref _errorMessage, value);
+            set => SetField(ref _errorMessage, value);
         }
-        
+
         private void Login(object parameter)
         {
             ErrorMessage = "";

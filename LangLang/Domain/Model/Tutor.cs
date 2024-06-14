@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LangLang.Domain.Model
 {
     public class Tutor : Person, IEntity
     {
-        public string Id { get; set; }
+        [SkipInForm] public string Id { get; set; }
         
         /// <summary> Hold counts for 1 to 10 rating. </summary>
-        public int[] RatingCounts { get; set; } = new int[10];
+        [Skip] public int[] RatingCounts { get; set; } = new int[10];
 
-        public List<Tuple<Language, LanguageLevel>> KnownLanguages { get; set; }
+        [Skip] public List<Tuple<Language, LanguageLevel>> KnownLanguages { get; set; }
 
-        public DateTime DateAdded { get; set; }
+        [SkipInForm] public DateTime DateAdded { get; set; }
         
         public Tutor() : base("", "", DateTime.Now, Gender.Other, "")
         {

@@ -61,7 +61,9 @@ namespace LangLang.Domain.Model
 
         public string? TutorId { get; set; }
 
+        [Skip]
         [JsonIgnore] public DateOnly Date => DateOnly.FromDateTime(Time.Date);
+        [Skip]
         [JsonIgnore] public TimeOnly TimeOfDay => TimeOnly.FromDateTime(Time);
 
         public Exam()
