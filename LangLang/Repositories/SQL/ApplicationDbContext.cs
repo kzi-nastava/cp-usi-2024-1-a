@@ -10,6 +10,7 @@ namespace LangLang.Repositories.SQL
         private readonly DatabaseCredentials _databaseCredentials;
         public DbSet<Course> Courses { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<Exam> Exams { get; set; }
 
         public ApplicationDbContext() { }
 
@@ -59,8 +60,8 @@ namespace LangLang.Repositories.SQL
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang;");
-                //optionsBuilder.UseNpgsql(_databaseCredentials.ConnectionString);
+                //optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang;");
+                optionsBuilder.UseNpgsql(_databaseCredentials.ConnectionString);
             }
         }
     }
