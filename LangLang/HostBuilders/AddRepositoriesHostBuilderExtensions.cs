@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace LangLang.HostBuilders;
 
@@ -16,14 +18,16 @@ public static class AddRepositoriesHostBuilderExtensions
     {
         host.ConfigureServices((hostContext, services) =>
         {
-            services.AddSingleton<DatabaseCredentials>(provider =>
+            /*services.AddSingleton<DatabaseCredentials>(provider =>
             {
                 return GetDatabaseCredentials(hostContext);
-            });
-            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            });*/
+            services.AddDbContext<ApplicationDbContext>(options =>
             {
-                var databaseCredentials = serviceProvider.GetRequiredService<DatabaseCredentials>();
+                var databaseCredentials = GetDatabaseCredentials(hostContext);
+                //var databaseCredentials = serviceProvider.GetRequiredService<DatabaseCredentials>();
                 options.UseNpgsql(databaseCredentials.ConnectionString);
+                //options.UseNpgsql("Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang;");
             });
             services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
             services.AddSingleton<ILanguageRepository, LanguageRepositorySQL>();
