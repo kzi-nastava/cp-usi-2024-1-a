@@ -5,7 +5,6 @@ namespace LangLang.Domain.Model
 {
     public class Language
     {
-        [Key]
         public string Name { get; set; }
         public string Code { get; set; }
 

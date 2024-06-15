@@ -5,8 +5,9 @@ using LangLang.Domain.RepositoryInterfaces;
 
 namespace LangLang.Repositories.SQL
 {
-    public class LanguageRepositorySQL : ILanguageRepository
+    public class LanguageRepositorySQL: ILanguageRepository
     {
+        
         private readonly ApplicationDbContext _dbContext;
 
         public LanguageRepositorySQL(ApplicationDbContext dbContext)
@@ -57,5 +58,6 @@ namespace LangLang.Repositories.SQL
                 _dbContext.SaveChanges();
             }
         }
+        
     }
 }
