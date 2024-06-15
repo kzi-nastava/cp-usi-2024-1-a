@@ -26,12 +26,11 @@ public static class AddRepositoriesHostBuilderExtensions
                 options.UseNpgsql(databaseCredentials.ConnectionString);
             });
             services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
+            services.AddSingleton<ILanguageRepository, LanguageRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
             services.AddSingleton<IExamRepository, ExamRepository>(_ =>
                 new ExamRepository(Constants.ExamFilePath, Constants.ExamIdFilePath));
-            services.AddSingleton<ILanguageRepository, LanguageRepository>(_ =>
-                new LanguageRepository(Constants.LanguageFilePath));
             services.AddSingleton<IStudentRepository, StudentRepository>(_ =>
                 new StudentRepository(Constants.StudentFilePath, Constants.StudentIdFilePath));
             services.AddSingleton<ITutorRepository, TutorRepository>(_ =>

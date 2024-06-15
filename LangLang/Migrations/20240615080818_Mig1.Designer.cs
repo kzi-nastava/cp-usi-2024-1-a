@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LangLang.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240613193348_Mig1")]
+    [Migration("20240615080818_Mig1")]
     partial class Mig1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,10 @@ namespace LangLang.Migrations
 
                     b.Property<bool>("IsCreatedByTutor")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("LanguageName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("Level")
                         .HasColumnType("integer");
@@ -70,36 +74,34 @@ namespace LangLang.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LanguageName");
+
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("LangLang.Domain.Model.Language", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("LangLang.Domain.Model.Course", b =>
                 {
-                    b.OwnsOne("LangLang.Domain.Model.Language", "Language", b1 =>
-                        {
-                            b1.Property<string>("CourseId")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Code")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("LanguageCode");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("LanguageName");
-
-                            b1.HasKey("CourseId");
-
-                            b1.ToTable("Courses");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CourseId");
-                        });
-
-                    b.Navigation("Language")
+                    b.HasOne("LangLang.Domain.Model.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageName")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Language");
                 });
 #pragma warning restore 612, 618
         }
