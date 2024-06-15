@@ -2,6 +2,8 @@
 using LangLang.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using LangLang.Repositories.SQL.ComplexDataConverters;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace LangLang.Repositories.SQL
 {
@@ -12,14 +14,16 @@ namespace LangLang.Repositories.SQL
         public DbSet<Language> Languages { get; set; }
         public DbSet<Exam> Exams { get; set; }
 
-        public ApplicationDbContext() { }
-        public ApplicationDbContext(DbContextOptions options) : base(options) { }
+        public ApplicationDbContext()
+        {
+        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        /*public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, DatabaseCredentials databaseCredentials)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, DatabaseCredentials databaseCredentials)
             : base(options)
         {
             _databaseCredentials = databaseCredentials;
-        }*/
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,8 +65,19 @@ namespace LangLang.Repositories.SQL
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang;");
-                //optionsBuilder.UseNpgsql(_databaseCredentials.ConnectionString);
+                IConfigurationRoot config = new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddUserSecrets<App>()
+                    .Build();
+                DatabaseCredentials databaseCredentials =
+                    new DatabaseCredentials(
+                        config["Database:Host"] ?? "",
+                        config.GetValue<int>("Database:Port"),
+                        config["Database:Username"] ?? "",
+                        config["Database:Password"] ?? "",
+                        config["Database:DatabaseName"] ?? ""
+                    );
+                optionsBuilder.UseNpgsql(databaseCredentials.ConnectionString);
             }
         }
     }

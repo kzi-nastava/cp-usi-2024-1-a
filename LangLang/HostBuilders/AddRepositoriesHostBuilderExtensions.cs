@@ -18,16 +18,10 @@ public static class AddRepositoriesHostBuilderExtensions
     {
         host.ConfigureServices((hostContext, services) =>
         {
-            /*services.AddSingleton<DatabaseCredentials>(provider =>
-            {
-                return GetDatabaseCredentials(hostContext);
-            });*/
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 var databaseCredentials = GetDatabaseCredentials(hostContext);
-                //var databaseCredentials = serviceProvider.GetRequiredService<DatabaseCredentials>();
                 options.UseNpgsql(databaseCredentials.ConnectionString);
-                //options.UseNpgsql("Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang;");
             });
             services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
             services.AddSingleton<ILanguageRepository, LanguageRepositorySQL>();
