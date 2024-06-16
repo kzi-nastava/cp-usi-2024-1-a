@@ -18,15 +18,18 @@ public static class AddRepositoriesHostBuilderExtensions
     {
         host.ConfigureServices((hostContext, services) =>
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddSingleton<DatabaseCredentials>(provider =>
             {
-                var databaseCredentials = GetDatabaseCredentials(hostContext);
-                options.UseNpgsql(databaseCredentials.ConnectionString);
-                options.EnableSensitiveDataLogging();
+                return GetDatabaseCredentials(hostContext);
             });
-            services.AddScoped<ICourseRepository, CourseRepositorySQL>();
-            services.AddScoped<ILanguageRepository, LanguageRepositorySQL>();
-            services.AddScoped<IExamRepository, ExamRepositorySQL>();
+            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                var databaseCredentials = serviceProvider.GetRequiredService<DatabaseCredentials>();
+                options.UseNpgsql(databaseCredentials.ConnectionString);
+            });
+            services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
+            services.AddSingleton<ILanguageRepository, LanguageRepositorySQL>();
+            services.AddSingleton<IExamRepository, ExamRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
             services.AddSingleton<IStudentRepository, StudentRepository>(_ =>

@@ -34,16 +34,16 @@ namespace LangLang.Repositories.SQL
                 .Property(e => e.Start)
                 .HasColumnType("timestamp without time zone");
 
-            modelBuilder.Entity<Course>()
-                .Property(e => e.Schedule)
-                .HasConversion(new ScheduleConverter());
-
             modelBuilder.Entity<Exam>()
                 .Property(e => e.Time)
                 .HasColumnType("timestamp without time zone");
 
+            modelBuilder.Entity<Course>()
+                .Property(e => e.Schedule)
+                .HasConversion(new ScheduleConverter());
+
             modelBuilder.Entity<Language>()
-                .HasKey(l => l.Name); 
+                .HasKey(l => l.Name);
             modelBuilder.Entity<Language>()
                 .Property(l => l.Name)
                 .IsRequired();
@@ -51,6 +51,19 @@ namespace LangLang.Repositories.SQL
                 .Property(l => l.Code)
                 .IsRequired();
 
+
+            /*modelBuilder.Entity<Course>()
+                .HasOne(c => c.Language)
+                .WithMany()
+                .HasForeignKey(c => c.LanguageName)  // Specify the foreign key property
+                .IsRequired();
+
+            // Configure Exam to reference Language by name
+            modelBuilder.Entity<Exam>()
+                .HasOne(e => e.Language)
+                .WithMany()
+                .HasForeignKey(e => e.LanguageName)  // Specify the foreign key property
+                .IsRequired();*/
             // Configure Course to reference Language by name
             modelBuilder.Entity<Course>()
                 .HasOne(c => c.Language)
@@ -63,16 +76,21 @@ namespace LangLang.Repositories.SQL
                 .WithMany()
                 .HasForeignKey("LanguageName"); // Shadow property representing the foreign key
 
-            /*modelBuilder.Entity<Exam>()
-                .HasOne(e => e.Language)
-                .WithMany()
-                .IsRequired();*/
+
+            // Configure Exam to reference Language by name
             modelBuilder.Entity<Exam>()
                 .HasOne(e => e.Language)
                 .WithMany()
-                .HasForeignKey("LanguageName")
+               // .HasForeignKey("LanguageName")
                 .IsRequired();
+
+            // Define relationship using a shadow property
+           /* modelBuilder.Entity<Exam>()
+                .HasOne(e => e.Language)
+                .WithMany() */// Shadow property representing the foreign key
+
         }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

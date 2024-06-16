@@ -60,29 +60,40 @@ namespace LangLang.Repositories.SQL
 
         public Exam Add(Exam exam)
         {
-            var existingExam = _dbContext.Exams.FirstOrDefault(e => e.Id == exam.Id);
+            var existingExam = _dbContext.Exams.AsNoTracking().FirstOrDefault(e => e.Id == exam.Id);
+            var language = _dbContext.Languages.Find(exam.Language.Name);
+
+            if (language != null)
+            {
+                exam.Language = language;
+            }
 
             if (existingExam != null && exam.Id != "-1")
             {
                 _dbContext.Entry(existingExam).CurrentValues.SetValues(exam);
-                _dbContext.SaveChanges();
             }
             else
             {
                 exam.Id = GetId();
-                exam.Language = _dbContext.Languages.FirstOrDefault(l => l.Name == exam.Language.Name)!;
-                _dbContext.ChangeTracker.DetectChanges();
-                Trace.WriteLine(_dbContext.ChangeTracker.DebugView.LongView);
-                Trace.WriteLine(exam.Language);
+                //exam.Language = _dbContext.Languages.FirstOrDefault(l => l.Name == exam.Language.Name)!;
+                //_dbContext.ChangeTracker.DetectChanges();
+                //Trace.WriteLine(_dbContext.ChangeTracker.DebugView.LongView);
+                //Trace.WriteLine(exam.Language);
                 _dbContext.Exams.Add(exam);
-                _dbContext.SaveChanges();
             }
+            _dbContext.SaveChanges();
             return exam;
         }
 
         public Exam Update(string id, Exam exam)
         {
             var existingExam = _dbContext.Exams.Find(id);
+            var language = _dbContext.Languages.Find(exam.Language.Name);
+
+            if (language != null)
+            {
+                exam.Language = language;
+            }
             if (existingExam != null)
             {
                 _dbContext.Entry(existingExam).CurrentValues.SetValues(exam);
