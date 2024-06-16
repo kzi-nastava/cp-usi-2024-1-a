@@ -109,14 +109,20 @@ namespace LangLang.Repositories.SQL
             return course;
         }
 
-        public Course Update(string id, Course course)
+        public Course? Update(string id, Course course)
         {
             var existingCourse = _dbContext.Courses.Include(c => c.Language).FirstOrDefault(c => c.Id == course.Id);
-            if (existingCourse != null)
+            var language = _dbContext.Languages.Find(course.Language.Name);
+            if (existingCourse == null)
+                return null;
+
+            if (language != null)
             {
-                _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
-                _dbContext.SaveChanges();
+                course.Language = language;
+                existingCourse.Language = language;
             }
+            _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
+            _dbContext.SaveChanges();
             return existingCourse!;
         }
 
