@@ -36,7 +36,6 @@ namespace LangLang.Repositories.SQL
                 .Skip((pageNumber - 1) * examsPerPage)
                 .Take(examsPerPage)
                 .ToList();
-        }
 
         public List<Exam> GetByTutorIdForPage(string tutorId, int pageNumber, int examsPerPage)
             => _dbContext.Exams
@@ -44,7 +43,6 @@ namespace LangLang.Repositories.SQL
                 .Skip((pageNumber - 1) * examsPerPage)
                 .Take(examsPerPage)
                 .ToList();
-        }
 
         public List<Exam> GetAll() => _dbContext.Exams.ToList();
 
