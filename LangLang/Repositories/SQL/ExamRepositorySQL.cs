@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace LangLang.Repositories.SQL
 {
@@ -77,25 +78,37 @@ namespace LangLang.Repositories.SQL
 
         public Exam Add(Exam exam)
         {
-            var existingExam = _dbContext.Exams.FirstOrDefault(e => e.Id == exam.Id);
+            var existingExam = _dbContext.Exams.AsNoTracking().FirstOrDefault(e => e.Id == exam.Id);
+            var language = _dbContext.Languages.Find(exam.Language.Name);
+
+            if (language != null)
+            {
+                exam.Language = language;
+            }
 
             if (existingExam != null && exam.Id != "-1")
             {
                 _dbContext.Entry(existingExam).CurrentValues.SetValues(exam);
-                _dbContext.SaveChanges();
             }
             else
             {
                 exam.Id = GetId();
                 _dbContext.Exams.Add(exam);
-                _dbContext.SaveChanges();
             }
+            _dbContext.SaveChanges();
             return exam;
         }
 
         public Exam Update(string id, Exam exam)
         {
             var existingExam = _dbContext.Exams.Find(id);
+            var language = _dbContext.Languages.Find(exam.Language.Name);
+
+            if (language != null)
+            {
+                exam.Language = language;
+            }
+
             if (existingExam != null)
             {
                 _dbContext.Entry(existingExam).CurrentValues.SetValues(exam);

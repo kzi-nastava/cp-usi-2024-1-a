@@ -5,10 +5,9 @@ using System.Windows.Input;
 using LangLang.Application.DTO;
 using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
+using LangLang.Application.UseCases.Report;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
-using LangLang.Domain.RepositoryInterfaces;
-using LangLang.Repositories.Json;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
 
@@ -28,18 +27,8 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ILanguageRepository languageRepository, IExamRepository er)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
         {
-            LanguageRepository oldlan = new LanguageRepository(Repositories.Constants.LanguageFilePath);
-            foreach(Language l in oldlan.GetAll())
-            {
-                languageRepository.Add(l);
-            }
-            ExamRepository older = new ExamRepository(Repositories.Constants.ExamFilePath, Repositories.Constants.ExamIdFilePath);
-            foreach(Exam e in older.GetAll())
-            {
-
-            }
             _loginService = loginService;
             _navigationService = navigationService;
             NavigationStore = navigationStore;
