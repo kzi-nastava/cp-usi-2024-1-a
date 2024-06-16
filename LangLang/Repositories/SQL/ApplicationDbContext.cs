@@ -10,6 +10,7 @@ namespace LangLang.Repositories.SQL
         private readonly DatabaseCredentials _databaseCredentials;
         public DbSet<Course> Courses { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<Exam> Exams { get; set; }
 
         public ApplicationDbContext() { }
 
@@ -52,6 +53,19 @@ namespace LangLang.Repositories.SQL
                 .HasOne(c => c.Language)
                 .WithMany()
                 .HasForeignKey("LanguageName"); // Shadow property representing the foreign key
+
+            // Configure Exam to reference Language by name
+            modelBuilder.Entity<Exam>()
+                .HasOne(e => e.Language)
+                .WithMany()
+                .IsRequired();
+
+            // Define relationship using a shadow property
+            modelBuilder.Entity<Exam>()
+                .HasOne(e => e.Language)
+                .WithMany()
+                .HasForeignKey("LanguageName"); // Shadow property representing the foreign key
+
         }
 
 

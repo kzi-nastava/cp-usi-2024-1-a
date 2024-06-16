@@ -77,6 +77,43 @@ namespace LangLang.Migrations
                     b.ToTable("Courses");
                 });
 
+            modelBuilder.Entity("LangLang.Domain.Model.Exam", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ClassroomNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ExamState")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("LanguageLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LanguageName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MaxStudents")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NumStudents")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TutorId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LanguageName");
+
+                    b.ToTable("Exams");
+                });
+
             modelBuilder.Entity("LangLang.Domain.Model.Language", b =>
                 {
                     b.Property<string>("Name")
@@ -92,6 +129,17 @@ namespace LangLang.Migrations
                 });
 
             modelBuilder.Entity("LangLang.Domain.Model.Course", b =>
+                {
+                    b.HasOne("LangLang.Domain.Model.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Language");
+                });
+
+            modelBuilder.Entity("LangLang.Domain.Model.Exam", b =>
                 {
                     b.HasOne("LangLang.Domain.Model.Language", "Language")
                         .WithMany()
