@@ -5,11 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LangLang.Migrations
 {
-<<<<<<<< HEAD:LangLang/Migrations/20240616173831_MigMapaFresh.cs
     public partial class MigMapaFresh : Migration
-========
-    public partial class AddTables : Migration
->>>>>>>> 261-exam-repository-sql:LangLang/Migrations/20240616182702_AddTables.cs
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
