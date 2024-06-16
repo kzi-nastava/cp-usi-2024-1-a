@@ -285,6 +285,7 @@ public class ExamOverviewViewModel : ViewModelBase
         {
             var exam = _examService.AddExam(new ExamDto(null, Language, LanguageLevel, selectedDate, ExamTime,
                 classroomNumber, MaxStudents, _tutor));
+            exam.Id = "-1";
             Exams.Add(new ExamViewModel(exam));
             ResetFields();
         }

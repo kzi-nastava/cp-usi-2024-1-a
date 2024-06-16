@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LangLang.Migrations
 {
-    public partial class MigE : Migration
+    public partial class MigMapaFresh : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
