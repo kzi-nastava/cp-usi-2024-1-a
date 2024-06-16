@@ -12,8 +12,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LangLang.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
+<<<<<<<< HEAD:LangLang/Migrations/20240616173831_MigMapaFresh.Designer.cs
     [Migration("20240616173831_MigMapaFresh")]
     partial class MigMapaFresh
+========
+    [Migration("20240616182702_AddTables")]
+    partial class AddTables
+>>>>>>>> 261-exam-repository-sql:LangLang/Migrations/20240616182702_AddTables.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

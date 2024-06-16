@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace LangLang.Repositories.SQL
 {
@@ -20,54 +22,36 @@ namespace LangLang.Repositories.SQL
         {
             return _dbContext.Exams
                 .Where(exam => exam.Time.Date == date.ToDateTime(TimeOnly.MinValue).Date)
-                .ToList();
+                               .ToList();
         }
 
         public List<Exam> GetForTimePeriod(DateTime from, DateTime to)
-        {
-            return _dbContext.Exams
-                .Where(exam => exam.Time >= from && exam.Time <= to)
-                .ToList();
-        }
+            => _dbContext.Exams.Where(exam => exam.Time >= from && exam.Time <= to).ToList();
 
         public List<Exam> GetByTutorId(string tutorId)
-        {
-            return _dbContext.Exams
-                .Where(exam => exam.TutorId == tutorId)
-                .ToList();
-        }
+            => _dbContext.Exams.Where(exam => exam.TutorId == tutorId).ToList();
 
         public List<Exam> GetAllForPage(int pageNumber, int examsPerPage)
-        {
-            return _dbContext.Exams
+            => _dbContext.Exams
                 .Skip((pageNumber - 1) * examsPerPage)
                 .Take(examsPerPage)
                 .ToList();
         }
 
         public List<Exam> GetByTutorIdForPage(string tutorId, int pageNumber, int examsPerPage)
-        {
-            return _dbContext.Exams
+            => _dbContext.Exams
                 .Where(exam => exam.TutorId == tutorId)
                 .Skip((pageNumber - 1) * examsPerPage)
                 .Take(examsPerPage)
                 .ToList();
         }
 
-        public List<Exam> GetAll()
-        {
-            return _dbContext.Exams.ToList();
-        }
+        public List<Exam> GetAll() => _dbContext.Exams.ToList();
 
-        public Exam Get(string id)
-        {
-            return _dbContext.Exams.Find(id);
-        }
+        public Exam? Get(string id) => _dbContext.Exams?.Find(id);
 
         public List<Exam> Get(List<string> ids)
-        {
-            return _dbContext.Exams.Where(exam => ids.Contains(exam.Id)).ToList();
-        }
+            => _dbContext.Exams.Where(exam => ids.Contains(exam.Id)).ToList();
 
         public string GetId()
         {
