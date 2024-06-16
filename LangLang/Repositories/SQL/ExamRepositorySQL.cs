@@ -21,35 +21,40 @@ namespace LangLang.Repositories.SQL
         public List<Exam> GetByDate(DateOnly date)
         {
             return _dbContext.Exams
+                .Include(exam => exam.Language)
                 .Where(exam => exam.Time.Date == date.ToDateTime(TimeOnly.MinValue).Date)
-                               .ToList();
+                .ToList();
         }
 
         public List<Exam> GetForTimePeriod(DateTime from, DateTime to)
-            => _dbContext.Exams.Where(exam => exam.Time >= from && exam.Time <= to).ToList();
+            => _dbContext.Exams.Include(exam => exam.Language).Where(exam => exam.Time >= from && exam.Time <= to).ToList();
 
         public List<Exam> GetByTutorId(string tutorId)
-            => _dbContext.Exams.Where(exam => exam.TutorId == tutorId).ToList();
+            => _dbContext.Exams.Include(exam => exam.Language).Where(exam => exam.TutorId == tutorId).ToList();
 
         public List<Exam> GetAllForPage(int pageNumber, int examsPerPage)
             => _dbContext.Exams
+                .Include(exam => exam.Language)
                 .Skip((pageNumber - 1) * examsPerPage)
                 .Take(examsPerPage)
                 .ToList();
 
         public List<Exam> GetByTutorIdForPage(string tutorId, int pageNumber, int examsPerPage)
-            => _dbContext.Exams
+            => _dbContext.Exams.Include(exam => exam.Language)
                 .Where(exam => exam.TutorId == tutorId)
                 .Skip((pageNumber - 1) * examsPerPage)
                 .Take(examsPerPage)
                 .ToList();
 
-        public List<Exam> GetAll() => _dbContext.Exams.ToList();
+        public List<Exam> GetAll() => _dbContext.Exams.Include(e => e.Language).ToList();
 
-        public Exam? Get(string id) => _dbContext.Exams?.Find(id);
+        public Exam? Get(string id) => _dbContext.Exams.Include(exam => exam.Language).FirstOrDefault(e => e.Id == id);
 
         public List<Exam> Get(List<string> ids)
-            => _dbContext.Exams.Where(exam => ids.Contains(exam.Id)).ToList();
+            => _dbContext.Exams
+                .Include(exam => exam.Language)
+                .Where(exam => ids.Contains(exam.Id))
+                .ToList();
 
         public string GetId()
         {
@@ -60,7 +65,7 @@ namespace LangLang.Repositories.SQL
 
         public Exam Add(Exam exam)
         {
-            var existingExam = _dbContext.Exams.AsNoTracking().FirstOrDefault(e => e.Id == exam.Id);
+            var existingExam = _dbContext.Exams.Include(exam => exam.Language).AsNoTracking().FirstOrDefault(e => e.Id == exam.Id);
             var language = _dbContext.Languages.Find(exam.Language.Name);
 
             if (language != null)
@@ -83,7 +88,7 @@ namespace LangLang.Repositories.SQL
 
         public Exam Update(string id, Exam exam)
         {
-            var existingExam = _dbContext.Exams.Find(id);
+            var existingExam = _dbContext.Exams.Include(exam => exam.Language).FirstOrDefault(e => e.Id == exam.Id);
             var language = _dbContext.Languages.Find(exam.Language.Name);
 
             if (language != null)
@@ -101,7 +106,7 @@ namespace LangLang.Repositories.SQL
 
         public void Delete(string id)
         {
-            var examToDelete = _dbContext.Exams.Find(id);
+            var examToDelete = _dbContext.Exams.Include(exam => exam.Language).FirstOrDefault(e => e.Id == id);
             if (examToDelete != null)
             {
                 _dbContext.Exams.Remove(examToDelete);
