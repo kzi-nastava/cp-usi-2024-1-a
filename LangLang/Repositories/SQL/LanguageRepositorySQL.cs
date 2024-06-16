@@ -32,8 +32,16 @@ namespace LangLang.Repositories.SQL
 
         public Language Add(Language language)
         {
-            _dbContext.Languages.Add(language);
-            _dbContext.SaveChanges();
+            var existingLanguage = _dbContext.Languages.Find(language.Name);
+            if (existingLanguage != null)
+            {
+                Update(language.Name, language);
+            }
+            else
+            {
+                _dbContext.Languages.Add(language);
+                _dbContext.SaveChanges();
+            }
             return language;
         }
 

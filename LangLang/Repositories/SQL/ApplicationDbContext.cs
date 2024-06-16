@@ -38,6 +38,10 @@ namespace LangLang.Repositories.SQL
                 .Property(e => e.Schedule)
                 .HasConversion(new ScheduleConverter());
 
+            modelBuilder.Entity<Exam>()
+                .Property(e => e.Time)
+                .HasColumnType("timestamp without time zone");
+
             modelBuilder.Entity<Language>()
                 .HasKey(l => l.Name); 
             modelBuilder.Entity<Language>()
@@ -58,6 +62,16 @@ namespace LangLang.Repositories.SQL
                 .HasOne(c => c.Language)
                 .WithMany()
                 .HasForeignKey("LanguageName"); // Shadow property representing the foreign key
+
+            /*modelBuilder.Entity<Exam>()
+                .HasOne(e => e.Language)
+                .WithMany()
+                .IsRequired();*/
+            modelBuilder.Entity<Exam>()
+                .HasOne(e => e.Language)
+                .WithMany()
+                .HasForeignKey("LanguageName")
+                .IsRequired();
         }
 
 

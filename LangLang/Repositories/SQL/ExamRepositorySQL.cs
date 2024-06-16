@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
-using LangLang.Domain.Utility;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace LangLang.Repositories.SQL
 {
@@ -13,12 +15,16 @@ namespace LangLang.Repositories.SQL
 
         public ExamRepositorySQL(ApplicationDbContext dbContext)
         {
+            Trace.WriteLine("CREATED EXAM REPOSITORY");
             _dbContext = dbContext;
         }
 
-        public List<Exam> GetByDate(DateOnly date)
-            => _dbContext.Exams.Where(exam => exam.Date == date).ToList();
-        
+        public List<Exam> GetByDate(DateOnly date) // DateOnly.FromDateTime(exam.Time) == date
+            => _dbContext.Exams.Where(exam => exam.Time.Year  == date.Year 
+                                           && exam.Time.Month == date.Month 
+                                           && exam.Time.Day   == date.Day)
+                               .ToList();
+
         public List<Exam> GetForTimePeriod(DateTime from, DateTime to)
             => _dbContext.Exams.Where(exam => exam.Time >= from && exam.Time <= to).ToList();
 
@@ -47,14 +53,14 @@ namespace LangLang.Repositories.SQL
 
         public string GetId()
         {
-            var lastExam = _dbContext.Exams.OrderByDescending(c => c.Id).FirstOrDefault();
+            var lastExam = _dbContext.Exams.OrderByDescending(e => e.Id).FirstOrDefault();
             int nextId = (lastExam != null) ? int.Parse(lastExam.Id) + 1 : 1;
             return nextId.ToString();
         }
 
         public Exam Add(Exam exam)
         {
-            var existingExam = _dbContext.Exams.FirstOrDefault(c => c.Id == exam.Id);
+            var existingExam = _dbContext.Exams.FirstOrDefault(e => e.Id == exam.Id);
 
             if (existingExam != null && exam.Id != "-1")
             {
@@ -64,6 +70,10 @@ namespace LangLang.Repositories.SQL
             else
             {
                 exam.Id = GetId();
+                exam.Language = _dbContext.Languages.FirstOrDefault(l => l.Name == exam.Language.Name)!;
+                _dbContext.ChangeTracker.DetectChanges();
+                Trace.WriteLine(_dbContext.ChangeTracker.DebugView.LongView);
+                Trace.WriteLine(exam.Language);
                 _dbContext.Exams.Add(exam);
                 _dbContext.SaveChanges();
             }

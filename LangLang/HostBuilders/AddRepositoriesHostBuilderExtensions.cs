@@ -22,10 +22,11 @@ public static class AddRepositoriesHostBuilderExtensions
             {
                 var databaseCredentials = GetDatabaseCredentials(hostContext);
                 options.UseNpgsql(databaseCredentials.ConnectionString);
+                options.EnableSensitiveDataLogging();
             });
-            services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
-            services.AddSingleton<ILanguageRepository, LanguageRepositorySQL>();
-            services.AddSingleton<IExamRepository, ExamRepositorySQL>();
+            services.AddScoped<ICourseRepository, CourseRepositorySQL>();
+            services.AddScoped<ILanguageRepository, LanguageRepositorySQL>();
+            services.AddScoped<IExamRepository, ExamRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
             services.AddSingleton<IStudentRepository, StudentRepository>(_ =>
