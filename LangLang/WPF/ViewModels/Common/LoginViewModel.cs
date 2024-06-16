@@ -28,14 +28,18 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ILanguageRepository languageRepository)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ILanguageRepository languageRepository, IExamRepository er)
         {
             LanguageRepository oldlan = new LanguageRepository(Repositories.Constants.LanguageFilePath);
             foreach(Language l in oldlan.GetAll())
             {
                 languageRepository.Add(l);
             }
+            ExamRepository older = new ExamRepository(Repositories.Constants.ExamFilePath, Repositories.Constants.ExamIdFilePath);
+            foreach(Exam e in older.GetAll())
+            {
 
+            }
             _loginService = loginService;
             _navigationService = navigationService;
             NavigationStore = navigationStore;

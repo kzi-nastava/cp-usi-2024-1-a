@@ -54,6 +54,10 @@ namespace LangLang.Repositories.SQL
                 .WithMany()
                 .HasForeignKey("LanguageName"); // Shadow property representing the foreign key
 
+            modelBuilder.Entity<Exam>()
+                .Property(e => e.Time)
+                .HasColumnType("timestamp without time zone");
+
             // Configure Exam to reference Language by name
             modelBuilder.Entity<Exam>()
                 .HasOne(e => e.Language)

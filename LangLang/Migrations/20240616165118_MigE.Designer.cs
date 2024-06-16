@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LangLang.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240616162735_Mig1")]
-    partial class Mig1
+    [Migration("20240616165118_MigE")]
+    partial class MigE
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,7 +104,7 @@ namespace LangLang.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("TutorId")
                         .HasColumnType("text");

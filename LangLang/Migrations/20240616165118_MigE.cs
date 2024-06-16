@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LangLang.Migrations
 {
-    public partial class Mig1 : Migration
+    public partial class MigE : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,7 +58,7 @@ namespace LangLang.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     LanguageName = table.Column<string>(type: "text", nullable: false),
                     LanguageLevel = table.Column<int>(type: "integer", nullable: false),
-                    Time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Time = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ClassroomNumber = table.Column<int>(type: "integer", nullable: false),
                     MaxStudents = table.Column<int>(type: "integer", nullable: false),
                     NumStudents = table.Column<int>(type: "integer", nullable: false),
