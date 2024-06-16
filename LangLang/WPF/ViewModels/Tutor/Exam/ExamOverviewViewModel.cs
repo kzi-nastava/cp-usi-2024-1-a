@@ -335,7 +335,7 @@ public class ExamOverviewViewModel : ViewModelBase
         try
         {
             exam = _examService.UpdateExam(new ExamDto(_selectedExam!.Id, Language, LanguageLevel, selectedDate,
-                ExamTime, classroomNumber, MaxStudents));
+                ExamTime, classroomNumber, MaxStudents, _tutor));
             Exams[Exams.IndexOf(SelectedExam!)] = new ExamViewModel(exam);
             ResetFields();
         }
