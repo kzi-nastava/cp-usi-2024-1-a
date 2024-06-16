@@ -7,6 +7,8 @@ using LangLang.Application.Stores;
 using LangLang.Application.UseCases.Authentication;
 using LangLang.Application.Utility.Navigation;
 using LangLang.Domain.Model;
+using LangLang.Domain.RepositoryInterfaces;
+using LangLang.Repositories.Json;
 using LangLang.WPF.MVVM;
 using LangLang.WPF.ViewModels.Factories;
 
@@ -26,8 +28,14 @@ namespace LangLang.WPF.ViewModels.Common
         public ICommand LoginCommand { get; }
         public ICommand SwitchToRegisterCommand { get; }
 
-        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore)
+        public LoginViewModel(ILoginService loginService, INavigationService navigationService, NavigationStore navigationStore, ILanguageRepository languageRepository)
         {
+            LanguageRepository oldlan = new LanguageRepository(Repositories.Constants.LanguageFilePath);
+            foreach(Language l in oldlan.GetAll())
+            {
+                languageRepository.Add(l);
+            }
+
             _loginService = loginService;
             _navigationService = navigationService;
             NavigationStore = navigationStore;
