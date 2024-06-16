@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LangLang.Migrations
 {
-    public partial class MigMapa : Migration
+    public partial class MigMapaFresh : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,9 +51,39 @@ namespace LangLang.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Exams",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    LanguageName = table.Column<string>(type: "text", nullable: false),
+                    LanguageLevel = table.Column<int>(type: "integer", nullable: false),
+                    Time = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ClassroomNumber = table.Column<int>(type: "integer", nullable: false),
+                    MaxStudents = table.Column<int>(type: "integer", nullable: false),
+                    NumStudents = table.Column<int>(type: "integer", nullable: false),
+                    ExamState = table.Column<int>(type: "integer", nullable: false),
+                    TutorId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Exams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exams_Languages_LanguageName",
+                        column: x => x.LanguageName,
+                        principalTable: "Languages",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_LanguageName",
                 table: "Courses",
+                column: "LanguageName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Exams_LanguageName",
+                table: "Exams",
                 column: "LanguageName");
         }
 
@@ -61,6 +91,9 @@ namespace LangLang.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Courses");
+
+            migrationBuilder.DropTable(
+                name: "Exams");
 
             migrationBuilder.DropTable(
                 name: "Languages");
