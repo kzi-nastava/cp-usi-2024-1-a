@@ -13,6 +13,8 @@ namespace LangLang.Repositories.SQL
         public DbSet<Course> Courses { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<Exam> Exams { get; set; }
+        public DbSet<Tutor> Tutors { get; set; }
+
 
         public ApplicationDbContext()
         {
@@ -75,6 +77,18 @@ namespace LangLang.Repositories.SQL
                 .WithMany()
                 .HasForeignKey("LanguageName"); // Shadow property representing the foreign key
 
+            modelBuilder.Entity<Tutor>()
+                .Property(t => t.BirthDate)
+                .HasColumnType("timestamp without time zone");
+            modelBuilder.Entity<Tutor>()
+                .Property(t => t.DateAdded)
+                .HasColumnType("timestamp without time zone");
+            modelBuilder.Entity<Tutor>()
+                .Property(t => t.KnownLanguages)
+                .HasConversion(new KnownLanguagesConverter());
+            modelBuilder.Entity<Tutor>()
+                .Property(t => t.RatingCounts)
+                .HasConversion<int[]>();
         }
 
 

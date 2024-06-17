@@ -30,12 +30,11 @@ public static class AddRepositoriesHostBuilderExtensions
             services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
             services.AddSingleton<ILanguageRepository, LanguageRepositorySQL>();
             services.AddSingleton<IExamRepository, ExamRepositorySQL>();
+            services.AddSingleton<ITutorRepository, TutorRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
             services.AddSingleton<IStudentRepository, StudentRepository>(_ =>
                 new StudentRepository(Constants.StudentFilePath, Constants.StudentIdFilePath));
-            services.AddSingleton<ITutorRepository, TutorRepository>(_ =>
-                new TutorRepository(Constants.TutorFilePath, Constants.TutorIdFilePath));
             services.AddSingleton<ICourseApplicationRepository, CourseApplicationRepository>(_ =>
                 new CourseApplicationRepository(Constants.CourseApplicationsFilePath,
                     Constants.CourseApplicationsIdFilePath));
