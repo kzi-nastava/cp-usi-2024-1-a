@@ -285,6 +285,7 @@ public class ExamOverviewViewModel : ViewModelBase
         {
             var exam = _examService.AddExam(new ExamDto(null, Language, LanguageLevel, selectedDate, ExamTime,
                 classroomNumber, MaxStudents, _tutor));
+            exam.Id = "-1";
             Exams.Add(new ExamViewModel(exam));
             ResetFields();
         }
@@ -334,7 +335,7 @@ public class ExamOverviewViewModel : ViewModelBase
         try
         {
             exam = _examService.UpdateExam(new ExamDto(_selectedExam!.Id, Language, LanguageLevel, selectedDate,
-                ExamTime, classroomNumber, MaxStudents));
+                ExamTime, classroomNumber, MaxStudents, _tutor));
             Exams[Exams.IndexOf(SelectedExam!)] = new ExamViewModel(exam);
             ResetFields();
         }

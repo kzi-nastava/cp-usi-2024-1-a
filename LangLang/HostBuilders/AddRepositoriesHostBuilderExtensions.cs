@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace LangLang.HostBuilders;
 
@@ -26,16 +28,13 @@ public static class AddRepositoriesHostBuilderExtensions
                 options.UseNpgsql(databaseCredentials.ConnectionString);
             });
             services.AddSingleton<ICourseRepository, CourseRepositorySQL>();
+            services.AddSingleton<ILanguageRepository, LanguageRepositorySQL>();
+            services.AddSingleton<IExamRepository, ExamRepositorySQL>();
+            services.AddSingleton<ITutorRepository, TutorRepositorySQL>();
             services.AddSingleton<IDirectorRepository, DirectorRepository>(_ =>
                 new DirectorRepository(Constants.DirectorFilePath, Constants.DirectorIdFilePath));
-            services.AddSingleton<IExamRepository, ExamRepository>(_ =>
-                new ExamRepository(Constants.ExamFilePath, Constants.ExamIdFilePath));
-            services.AddSingleton<ILanguageRepository, LanguageRepository>(_ =>
-                new LanguageRepository(Constants.LanguageFilePath));
             services.AddSingleton<IStudentRepository, StudentRepository>(_ =>
                 new StudentRepository(Constants.StudentFilePath, Constants.StudentIdFilePath));
-            services.AddSingleton<ITutorRepository, TutorRepository>(_ =>
-                new TutorRepository(Constants.TutorFilePath, Constants.TutorIdFilePath));
             services.AddSingleton<ICourseApplicationRepository, CourseApplicationRepository>(_ =>
                 new CourseApplicationRepository(Constants.CourseApplicationsFilePath,
                     Constants.CourseApplicationsIdFilePath));

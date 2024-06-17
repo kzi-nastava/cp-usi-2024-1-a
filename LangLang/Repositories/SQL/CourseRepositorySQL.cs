@@ -4,6 +4,7 @@ using System.Linq;
 using LangLang.Domain.Model;
 using LangLang.Domain.RepositoryInterfaces;
 using LangLang.Domain.Utility;
+using Microsoft.EntityFrameworkCore;
 
 namespace LangLang.Repositories.SQL
 {
@@ -18,7 +19,7 @@ namespace LangLang.Repositories.SQL
 
         public List<Course> GetCoursesByDate(DateOnly date)
         {
-            var courses = _dbContext.Courses.ToList();
+            var courses = _dbContext.Courses.Include(c => c.Language).ToList();
 
             var filteredCourses = courses
                 .Where(course =>
@@ -36,6 +37,7 @@ namespace LangLang.Repositories.SQL
         public List<Course> GetForTimePeriod(DateTime from, DateTime to)
         {
             return _dbContext.Courses
+                .Include(c => c.Language)
                 .Where(course => course.Start >= from && course.Start <= to)
                 .ToList();
         }
@@ -43,6 +45,7 @@ namespace LangLang.Repositories.SQL
         public List<Course> GetByTutorId(string tutorId)
         {
             return _dbContext.Courses
+                .Include(exam => exam.Language)
                 .Where(course => course.TutorId == tutorId)
                 .ToList();
         }
@@ -50,6 +53,7 @@ namespace LangLang.Repositories.SQL
         public List<Course> GetAllForPage(int pageNumber, int coursesPerPage)
         {
             return _dbContext.Courses
+                .Include(c => c.Language)
                 .Skip((pageNumber - 1) * coursesPerPage)
                 .Take(coursesPerPage)
                 .ToList();
@@ -58,6 +62,7 @@ namespace LangLang.Repositories.SQL
         public List<Course> GetByTutorIdForPage(string tutorId, int pageNumber, int coursesPerPage)
         {
             return _dbContext.Courses
+                .Include(c => c.Language)
                 .Where(course => course.TutorId == tutorId)
                 .Skip((pageNumber - 1) * coursesPerPage)
                 .Take(coursesPerPage)
@@ -66,17 +71,17 @@ namespace LangLang.Repositories.SQL
 
         public List<Course> GetAll()
         {
-            return _dbContext.Courses.ToList();
+            return _dbContext.Courses.Include(c => c.Language).ToList();
         }
 
-        public Course Get(string id)
+        public Course? Get(string id)
         {
-            return _dbContext.Courses?.Find(id);
+            return _dbContext.Courses.Include(c => c.Language).FirstOrDefault(c => c.Id == id);
         }
 
         public List<Course> Get(List<string> ids)
         {
-            return _dbContext.Courses.Where(course => ids.Contains(course.Id)).ToList();
+            return _dbContext.Courses.Include(c => c.Language).Where(course => ids.Contains(course.Id)).ToList();
         }
 
         public string GetId()
@@ -88,7 +93,7 @@ namespace LangLang.Repositories.SQL
 
         public Course Add(Course course)
         {
-            var existingCourse = _dbContext.Courses.FirstOrDefault(c => c.Id == course.Id);
+            var existingCourse = _dbContext.Courses.Include(c => c.Language).FirstOrDefault(c => c.Id == course.Id);
 
             if (existingCourse != null && course.Id != "-1")
             {
@@ -104,20 +109,26 @@ namespace LangLang.Repositories.SQL
             return course;
         }
 
-        public Course Update(string id, Course course)
+        public Course? Update(string id, Course course)
         {
-            var existingCourse = _dbContext.Courses.Find(id);
-            if (existingCourse != null)
+            var existingCourse = _dbContext.Courses.Include(c => c.Language).FirstOrDefault(c => c.Id == course.Id);
+            var language = _dbContext.Languages.Find(course.Language.Name);
+            if (existingCourse == null)
+                return null;
+
+            if (language != null)
             {
-                _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
-                _dbContext.SaveChanges();
+                course.Language = language;
+                existingCourse.Language = language;
             }
+            _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
+            _dbContext.SaveChanges();
             return existingCourse!;
         }
 
         public void Delete(string id)
         {
-            var courseToDelete = _dbContext.Courses.Find(id);
+            var courseToDelete = _dbContext.Courses.Include(c => c.Language).FirstOrDefault(c => c.Id == id);
             if (courseToDelete != null)
             {
                 _dbContext.Courses.Remove(courseToDelete);
