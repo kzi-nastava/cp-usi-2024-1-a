@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LangLang.Application.DTO
+﻿namespace LangLang.Application.DTO
 {
-    //private string connectionString = "Host=localhost;Port=5433;Username=postgres;Password=123;Database=langlang;";
-
     public class DatabaseCredentials
     {
         public string Host { get; }
